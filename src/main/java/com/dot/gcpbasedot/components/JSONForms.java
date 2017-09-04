@@ -1,0 +1,351 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.dot.gcpbasedot.components;
+
+import com.dot.gcpbasedot.enums.FieldType;
+import com.dot.gcpbasedot.enums.HideView;
+import com.dot.gcpbasedot.reflection.EntityReflection;
+import com.dot.gcpbasedot.reflection.ReflectionUtils;
+import com.dot.gcpbasedot.util.Formats;
+import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.HashSet;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ *
+ * @author lacastrillov
+ */
+@Component
+public class JSONForms {
+    
+    @Autowired
+    private FieldConfigurationByAnnotations fcba;
+    
+    
+    public JSONArray getJSONProcessForm(String parent, Class dtoClass, String dateFormat){
+        JSONArray jsonFormFields= new JSONArray();
+        
+        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
+        fcba.orderPropertyDescriptor(propertyDescriptors, dtoClass, "name");
+        
+        HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, dtoClass);
+        HashSet<String> hideFields= fcba.getHideFields(dtoClass);
+        HashSet<String> fieldsNN= fcba.getNotNullFields(dtoClass);
+        HashSet<String> fieldsRO= fcba.getReadOnlyFields(dtoClass);
+        HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
+        
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            String type = propertyDescriptor.getPropertyType().getName();
+            String fieldName= propertyDescriptor.getName();
+            String fieldTitle= titledFieldsMap.get(fieldName);
+            
+            if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
+                boolean readOnly= fieldsRO.contains(fieldName);
+
+                // ADD TO jsonFormFields
+                if(!hideFields.contains(fieldName + HideView.FORM.name())){
+                    if(Formats.TYPES_LIST.contains(type)){
+                        boolean addFormField= true;
+                        JSONObject formField= new JSONObject();
+                        formField.put("name", parent + fieldName);
+                        formField.put("fieldLabel", fieldTitle);
+                        if(readOnly){
+                            formField.put("readOnly", true);
+                        }
+                        if(typeFormFields.containsKey(fieldName)){
+                            String typeForm= typeFormFields.get(fieldName)[0];
+                            if(typeForm.equals(FieldType.EMAIL.name())){
+                                formField.put("vtype", "email");
+                            }else if(typeForm.equals(FieldType.PASSWORD.name())){
+                                formField.put("inputType", "password");
+                            }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
+                                formField.put("xtype", "textarea");
+                                formField.put("height", 200);
+                            }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
+                                formField.put("xtype", "htmleditor");
+                                formField.put("enableColors", true);
+                                formField.put("enableAlignments", true);
+                                formField.put("height", 400);
+                            }else if(typeForm.equals(FieldType.LIST.name())){
+                                addFormField= false;
+                                String[] data= typeFormFields.get(fieldName);
+                                JSONArray dataArray = new JSONArray();
+                                for(int i=1; i<data.length; i++){
+                                    dataArray.put(data[i]);
+                                }
+                                jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un archivo");
+
+                                //Add Url File
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.fileRender#");
+                                jsonFormFields.put(imageField);
+                            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione una imagen");
+
+                                //Add Image
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.imageRender#");
+                                jsonFormFields.put(imageField);
+                            }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Url Youtube");
+                                
+                                //Add Video Youtube
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                                jsonFormFields.put(imageField);
+                            }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un video");
+                                
+                                //Add Video
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
+                                jsonFormFields.put(imageField);
+                            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un audio");
+                                
+                                //Add Video
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
+                                jsonFormFields.put(imageField);
+                            }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Google Maps Point");
+                                
+                                //Add GoogleMap
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
+                                jsonFormFields.put(imageField);
+                            }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un archivo");
+                                
+                                //Add Video
+                                JSONObject imageField= new JSONObject();
+                                imageField.put("name", fieldName);
+                                imageField.put("fieldLabel", fieldTitle);
+                                imageField.put("xtype", "displayfield");
+                                imageField.put("renderer", "#Instance.commonExtView.multiFileRender#");
+                                jsonFormFields.put(imageField);
+                            }
+                        }else{
+                            switch (type) {
+                                case "java.util.Date":
+                                    formField.put("xtype", "datefield");
+                                    formField.put("format", dateFormat);
+                                    formField.put("tooltip", "Seleccione la fecha");
+                                    break;
+                                case "java.sql.Time":
+                                    formField.put("xtype", "timefield");
+                                    formField.put("format", "h:i:s A");
+                                    formField.put("tooltip", "Seleccione la hora");
+                                    break;
+                                case "int":
+                                case "java.lang.Integer":
+                                case "java.lang.Long":
+                                case "java.math.BigInteger":
+                                case "double":
+                                case "java.lang.Double":
+                                case "float":
+                                case "java.lang.Float":
+                                    formField.put("xtype", "numberfield");
+                                    break;
+                                case "boolean":
+                                case "java.lang.Boolean":
+                                    formField.put("xtype", "checkbox");
+                                    formField.put("inputValue", "true");
+                                    formField.put("uncheckedValue", "false");
+                                    break;
+                            }
+                        }
+
+                        if(fieldsNN.contains(fieldName)){
+                            formField.put("allowBlank", false);
+                        }
+                        if(addFormField){
+                            jsonFormFields.put(formField);
+                        }
+                    }else{
+                        Class childClass = propertyDescriptor.getPropertyType();
+                        JSONObject fieldDefaults= new JSONObject();
+                        fieldDefaults.put("anchor", "100%");
+                        fieldDefaults.put("labelAlign", "right");
+                        
+                        JSONObject objectField= new JSONObject();
+                        objectField.put("xtype", "fieldset");
+                        objectField.put("title", fieldTitle);
+                        objectField.put("collapsible", true);
+                        objectField.put("layout", "anchor");
+                        objectField.put("defaultType", "textfield");
+                        objectField.put("minWidth", 300);
+                        objectField.put("fieldDefaults", fieldDefaults);
+                        objectField.put("items", getJSONProcessForm(parent+fieldName+".", childClass, dateFormat));
+                        
+                        jsonFormFields.put(objectField);
+                    }
+                }
+            }else if(type.equals("java.util.List")){
+                Class childClass = ReflectionUtils.getParametrizedTypeList(dtoClass, fieldName);
+                
+                JSONObject fieldDefaults= new JSONObject();
+                fieldDefaults.put("anchor", "100%");
+                fieldDefaults.put("labelAlign", "right");
+                
+                JSONObject objectFieldGroup= new JSONObject();
+                objectFieldGroup.put("id", parent+fieldName);
+                objectFieldGroup.put("xtype", "fieldset");
+                objectFieldGroup.put("title", fieldTitle+":");
+                objectFieldGroup.put("itemTop", 0);
+                objectFieldGroup.put("collapsible", true);
+                objectFieldGroup.put("layout", "anchor");
+                objectFieldGroup.put("defaultType", "textfield");
+                objectFieldGroup.put("minWidth", 300);
+                objectFieldGroup.put("fieldDefaults", fieldDefaults);
+                
+                JSONArray jsonList= new JSONArray();
+                for(int i=0; i<10; i++){
+                    JSONObject objectField= new JSONObject();
+                    objectField.put("id", parent+fieldName+"["+i+"]");
+                    if(!Formats.TYPES_LIST.contains(childClass.getName())){
+                        objectField.put("xtype", "fieldset");
+                        objectField.put("title", "Item "+i);
+                        objectField.put("collapsible", true);
+                        objectField.put("layout", "anchor");
+                        objectField.put("defaultType", "textfield");
+                        JSONObject fieldDefaultsChild= new JSONObject();
+                        fieldDefaultsChild.put("anchor", "100%");
+                        fieldDefaultsChild.put("labelAlign", "right");
+                        if(i>0){
+                            objectField.put("hidden", true);
+                            fieldDefaultsChild.put("disabled", true);
+                        }
+                        objectField.put("fieldDefaults", fieldDefaultsChild);
+                        objectField.put("items", getJSONProcessForm(parent+fieldName+"["+i+"].", childClass, dateFormat));
+                    }else{
+                        objectField.put("name", parent + fieldName + "["+i+"]");
+                        objectField.put("fieldLabel", "Item "+i);
+                        if(i>0){
+                            objectField.put("hidden", true);
+                            objectField.put("disabled", true);
+                        }
+                        switch (childClass.getName()) {
+                            case "java.util.Date":
+                                objectField.put("xtype", "datefield");
+                                objectField.put("format", dateFormat);
+                                objectField.put("tooltip", "Seleccione la fecha");
+                                break;
+                            case "java.sql.Time":
+                                objectField.put("xtype", "timefield");
+                                objectField.put("format", "h:i:s A");
+                                objectField.put("tooltip", "Seleccione la hora");
+                                break;
+                            case "int":
+                            case "java.lang.Integer":
+                            case "java.lang.Long":
+                            case "java.math.BigInteger":
+                            case "double":
+                            case "java.lang.Double":
+                            case "float":
+                            case "java.lang.Float":
+                                objectField.put("xtype", "numberfield");
+                                break;
+                            case "boolean":
+                            case "java.lang.Boolean":
+                                objectField.put("xtype", "checkbox");
+                                objectField.put("inputValue", "true");
+                                objectField.put("uncheckedValue", "false");
+                                break;
+                        }
+                    }
+                    
+                    jsonList.put(objectField);
+                }
+                
+                JSONObject buttonAdd= new JSONObject();
+                buttonAdd.put("xtype", "button");
+                buttonAdd.put("text", "Agregar");
+                buttonAdd.put("style", "margin:5px");
+                buttonAdd.put("width", 100);
+                buttonAdd.put("handler", "#function(){"
+                        + "                   var itemsGroup= Ext.getCmp('"+parent+fieldName+"');"
+                        + "                   if(itemsGroup.itemTop<9){"
+                        + "                       itemsGroup.itemTop+= 1;"
+                        + "                       var itemEntity= Ext.getCmp('"+parent+fieldName+"['+itemsGroup.itemTop+']');"
+                        + "                       itemEntity.setVisible(true);"
+                        + "                       itemEntity.setDisabled(false);"
+                        + "                       if(itemEntity.query){"
+                        + "                           itemEntity.query('.field').forEach(function(c){"
+                        + "                             c.setDisabled(false);"
+                        + "                           });"
+                        + "                       }"
+                        + "                   }"
+                        + "               }#");
+                jsonList.put(buttonAdd);
+                
+                
+                JSONObject buttonQuit= new JSONObject();
+                buttonQuit.put("xtype", "button");
+                buttonQuit.put("text", "Quitar");
+                buttonQuit.put("style", "margin:5px");
+                buttonQuit.put("width", 100);
+                buttonQuit.put("handler", "#function(){"
+                        + "                   var itemsGroup= Ext.getCmp('"+parent+fieldName+"');"
+                        + "                   if(itemsGroup.itemTop>=0){"
+                        + "                       var itemEntity= Ext.getCmp('"+parent+fieldName+"['+itemsGroup.itemTop+']');"
+                        + "                       itemsGroup.itemTop-= 1;"
+                        + "                       itemEntity.setVisible(false);"
+                        + "                       itemEntity.setDisabled(true);"
+                        + "                       if(itemEntity.query){"
+                        + "                           itemEntity.query('.field').forEach(function(c){"
+                        + "                               c.setDisabled(true);"
+                        + "                           });"
+                        + "                       }"
+                        + "                   }"
+                        + "               }#");
+                jsonList.put(buttonQuit);
+                
+                objectFieldGroup.put("items", jsonList);
+                jsonFormFields.put(objectFieldGroup);
+            }
+        }
+        
+        return jsonFormFields;
+    }
+    
+}
