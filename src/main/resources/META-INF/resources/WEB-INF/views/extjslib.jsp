@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="ExtJSLib4" value="http://186.83.137.240/ext-4.2.1" />
-<c:set var="ExtJSLib6" value="/ext-6.2.0/build" />
+<c:set var="ExtJSLib4" value="${pageContext.request.scheme}://${pageContext.request.serverName}/ext-4.2.1" />
+<c:set var="ExtJSLib6" value="${pageContext.request.scheme}://${pageContext.request.serverName}/ext-6.2.0/build" />
 <c:if test="${extViewConfig.extJsVersion==4}">
     <script type="text/javascript">
         var ExtJSVersion=4;
