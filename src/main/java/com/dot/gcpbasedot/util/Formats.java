@@ -332,11 +332,6 @@ public class Formats {
         return Time.valueOf(time);
     }
     
-    public static void main(String[] args){
-        String timeIn="17:45:00 PM";
-        System.out.println(stringToTime(timeIn));
-    }
-    
     /**
      * 
      * @param value
