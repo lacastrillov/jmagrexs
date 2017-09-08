@@ -57,6 +57,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -104,6 +105,14 @@ public abstract class RestController {
     
     @Autowired
     private VelocityEngine velocityEngine;
+    
+    @Autowired
+    @Value("${static.domain.url}")
+    public String LOCAL_DOMAIN;
+    
+    @Autowired
+    @Value("${static.folder}")
+    public String LOCAL_DIR;
     
     protected Long maxFileSizeToUpload=1024L;
     
@@ -727,7 +736,7 @@ public abstract class RestController {
     public byte[] getContentFile(@RequestParam(required = true) String fileUrl) {
         String content="";
         try {
-            String pathFile= fileUrl.replace(getLocalDomain(), getLocalDir());
+            String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
             content= FileService.getTextFile(pathFile);
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
@@ -739,7 +748,7 @@ public abstract class RestController {
     @ResponseBody
     public String setContentFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
         try {
-            String pathFile= fileUrl.replace(getLocalDomain(), getLocalDir());
+            String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
             FileService.setTextFile(content, pathFile);
             return "Contenido guardado";
         } catch (IOException ex) {
@@ -756,14 +765,6 @@ public abstract class RestController {
             LOGGER.error("getStringBytes", ex);
             return null;
         }
-    }
-    
-    protected String getLocalDomain(){
-        return "http://localhost/";
-    }
-    
-    protected String getLocalDir(){
-        return "/var/www/html/";
     }
     
     @Async
