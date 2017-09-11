@@ -164,11 +164,11 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
 
     @Override
     @Transactional(readOnly = true)
-    public List<T> findByJSONFilters(String filters, Long page, Long limit, String sort, String dir) {
+    public List<T> findByJSONFilters(String jsonfilters, Long page, Long limit, String sort, String dir) {
         Parameters parameters= new Parameters();
 
-        if (filters != null && !filters.equals("")) {
-            parameters = FilterQueryJSON.processFilters(filters, entityClass);
+        if (jsonfilters != null && !jsonfilters.equals("")) {
+            parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
         }
         
         if(page!=null){
