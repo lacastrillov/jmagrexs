@@ -22,7 +22,12 @@ import org.json.JSONObject;
 public class FilterQueryJSON {
 
     public static Parameters processFilters(String queryJson, Class<?> entityClass) {
-        JSONObject filtersJson = new JSONObject(queryJson);
+        JSONObject filtersJson;
+        if(queryJson.startsWith("(")){
+            filtersJson = new JSONObject(queryJson.replaceAll("\\(", "{").replaceAll("\\)", "}"));
+        }else{
+            filtersJson = new JSONObject(queryJson);
+        }
         Parameters parameters = new Parameters();
         PropertyDescriptor[] properties = EntityReflection.getPropertyDescriptors(entityClass);
 

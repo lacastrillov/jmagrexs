@@ -371,7 +371,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         }
                     },
                     export: function(typeReport){
-                        var data= "?filter="+JSON.stringify(parentExtController.filter);
+                        var filterData= JSON.stringify(parentExtController.filter);
+                        filterData= filterData.replaceAll("{","(").replaceAll("}",")");
+                        var data= "?filter="+filterData;
                         data+="&limit="+store.pageSize+"&page="+store.currentPage;
                         data+="&sort="+store.getOrderProperty()+"&dir="+store.getOrderDir();
                         
