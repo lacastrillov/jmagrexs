@@ -110,9 +110,8 @@ public interface GenericDao<T extends BaseEntity> {
      *
      * @param parameters
      * @return
-     * @throws java.lang.Exception
      */
-    T findUniqueByParameters(Parameters parameters) throws Exception;
+    T findUniqueByParameters(Parameters parameters);
 
     /**
      *

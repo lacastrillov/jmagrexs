@@ -16,7 +16,7 @@ public interface ConfigurationObjectService<T> {
      * 
      * @return 
      */
-    String getConfigurationObjectType();
+    Class<T> getConfigurationObjectClass();
     
     /**
      * Searchs the entity by id.

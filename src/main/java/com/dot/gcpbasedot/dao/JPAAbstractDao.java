@@ -165,15 +165,14 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      *
      * @param parameters
      * @return
-     * @throws java.lang.Exception
      */
     @Override
-    public T findUniqueByParameters(Parameters parameters) throws Exception {
+    public T findUniqueByParameters(Parameters parameters) {
         List<T> resultList = findByParameters(parameters);
         if (!resultList.isEmpty() && resultList.size() == 1) {
             return resultList.get(0);
         }
-        throw new Exception("NonUniqueResultException");
+        return null;
     }
 
     /**

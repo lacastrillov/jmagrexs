@@ -11,6 +11,8 @@ import com.dot.gcpbasedot.interfaces.JsonObjectInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.reflection.ReflectionUtils;
 import com.dot.gcpbasedot.util.Util;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -20,39 +22,44 @@ import com.dot.gcpbasedot.util.Util;
 public abstract class ConfigurationObjectServiceImpl<T> implements ConfigurationObjectService<T> {
     
     private final Class<T> coClass;
+    
+    protected final String TRANSACTION_MANAGER = "TRANSACTION_MANAGER_1";
+    
 
     public ConfigurationObjectServiceImpl() {
         coClass = ReflectionUtils.getParametrizedType(this.getClass());
     }
     
     @Override
-    public String getConfigurationObjectType() {
-        return this.coClass.getSimpleName();
+    public Class<T> getConfigurationObjectClass() {
+        return this.coClass;
     }
     
     public abstract GenericDao getJsonObjectDao();
 
     @Override
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public T load() {
         Parameters p= new Parameters();
-        p.whereEqual("type", getConfigurationObjectType());
+        p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
         p.whereIsNull("relatedEntity");
         
         return loadConfigurationObject(p);
     }
 
     @Override
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public T load(String relatedEntity, Integer relatedId) {
         Parameters p= new Parameters();
-        p.whereEqual("type", getConfigurationObjectType());
+        p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
         p.whereEqual("relatedEntity", relatedEntity);
         p.whereEqual("relatedId", relatedId);
         
         return loadConfigurationObject(p);
     }
     
-    private T loadConfigurationObject(Parameters p){
-        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().findByParameters(p);
+    private T loadConfigurationObject(Parameters p) {
+        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().findUniqueByParameters(p);
         String data="{}";
         if(jsonObject!=null){
             data= jsonObject.getData();
@@ -63,18 +70,20 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
 
     @Override
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public void save(T configurationObject) {
         Parameters p= new Parameters();
-        p.whereEqual("type", getConfigurationObjectType());
+        p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
         p.whereIsNull("relatedEntity");
         
         saveConfigurationObject(configurationObject, p);
     }
 
     @Override
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public void save(T configurationObject, String relatedEntity, Integer relatedId) {
         Parameters p= new Parameters();
-        p.whereEqual("type", getConfigurationObjectType());
+        p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
         p.whereEqual("relatedEntity", relatedEntity);
         p.whereEqual("relatedId", relatedId);
         
@@ -82,13 +91,13 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
     
     private void saveConfigurationObject(T configurationObject, Parameters p){
-        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().findByParameters(p);
+        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().findUniqueByParameters(p);
         if(jsonObject!=null){
             jsonObject.setData(Util.objectToJson(configurationObject));
             getJsonObjectDao().update(jsonObject);
         }else{
             jsonObject= (JsonObjectInterface) EntityReflection.getObjectForClass(getJsonObjectDao().getPersistentClass());
-            jsonObject.setType(getConfigurationObjectType());
+            jsonObject.setType(getConfigurationObjectClass().getSimpleName());
             jsonObject.setData(Util.objectToJson(configurationObject));
             
             getJsonObjectDao().create(jsonObject);

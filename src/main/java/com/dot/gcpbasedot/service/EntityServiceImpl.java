@@ -105,11 +105,10 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
      *
      * @param parameters
      * @return
-     * @throws Exception
      */
     @Override
     @Transactional(readOnly = true)
-    public T findUniqueByParameters(Parameters parameters) throws Exception {
+    public T findUniqueByParameters(Parameters parameters) {
         return (T) getGenericDao().findUniqueByParameters(parameters);
     }
     
@@ -123,11 +122,7 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     public T findUniqueByParameter(String parameter, Object value) {
         Parameters parameters= new Parameters();
         parameters.whereEqual(parameter, value);
-        try{
-            return (T) getGenericDao().findUniqueByParameters(parameters);
-        }catch(Exception e){
-            return null;
-        }
+        return (T) getGenericDao().findUniqueByParameters(parameters);
     }
 
     @Override

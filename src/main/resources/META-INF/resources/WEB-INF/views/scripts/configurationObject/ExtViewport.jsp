@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script>
 
-function ${entityName}ViewportExtView(){
+function ${entityName}ExtViewport(){
     
     Ext.context= "<%=request.getContextPath()%>";
     
@@ -47,14 +47,6 @@ function ${entityName}ViewportExtView(){
         
     };
     
-    /*mvcExt.loadView= function(idView){
-        console.log(idView);
-        Ext.getCmp('content-panel').layout.setActiveItem(idView);
-        var record = Instance.treePanel.getStore().getNodeById(idView);
-        if(typeof(record)!=='undefined'){
-            Instance.treePanel.getSelectionModel().select(record);
-        }
-    };*/
     
     Instance.renderViewport= function(){
         Ext.create('Ext.Viewport', {
@@ -72,9 +64,6 @@ function ${entityName}ViewportExtView(){
             </c:if>
             <c:if test="${viewConfig.visibleMenu}">
             Instance.menuBar,
-            </c:if>
-            <c:if test="${viewConfig.visibleFilters}">
-            Instance.filters,
             </c:if>
             Instance.border
             ],

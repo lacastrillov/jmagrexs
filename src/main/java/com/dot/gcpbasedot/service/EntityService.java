@@ -106,9 +106,8 @@ public interface EntityService<T> {
      *
      * @param parameters
      * @return
-     * @throws java.lang.Exception
      */
-    T findUniqueByParameters(Parameters parameters) throws Exception;
+    T findUniqueByParameters(Parameters parameters);
     
     /**
      *

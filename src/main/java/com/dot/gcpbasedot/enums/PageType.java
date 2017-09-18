@@ -19,7 +19,9 @@ public enum PageType {
     
     PROCESS("process"),
     
-    FILE_EXPLORER("fileExplorer");
+    FILE_EXPLORER("fileExplorer"),
+    
+    CONFIGURATION_OBJECT("configurationObject");
     
     
     private final String pageRef;

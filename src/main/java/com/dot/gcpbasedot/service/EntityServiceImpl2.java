@@ -105,7 +105,7 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public T findUniqueByParameters(Parameters parameters) throws Exception {
+    public T findUniqueByParameters(Parameters parameters) {
         return (T) getGenericDao().findUniqueByParameters(parameters);
     }
     
@@ -114,11 +114,7 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
     public T findUniqueByParameter(String parameter, Object value) {
         Parameters parameters= new Parameters();
         parameters.whereEqual(parameter, value);
-        try{
-            return (T) getGenericDao().findUniqueByParameters(parameters);
-        }catch(Exception e){
-            return null;
-        }
+        return (T) getGenericDao().findUniqueByParameters(parameters);
     }
 
     @Override
