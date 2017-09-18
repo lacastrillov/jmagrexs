@@ -48,7 +48,7 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
      *
      * @return 
      */
-    protected Class<T> getPersistentClass() {
+    public Class<T> getPersistentClass() {
         return persistentClass;
     }
     

@@ -21,6 +21,12 @@ public interface GenericDao<T extends BaseEntity> {
      */
     
     /**
+     * 
+     * @return 
+     */
+    Class<T> getPersistentClass();
+    
+    /**
      * Searchs the entity by id.
      *
      * @param id entity id.
