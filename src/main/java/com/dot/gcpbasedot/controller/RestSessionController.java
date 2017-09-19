@@ -149,7 +149,7 @@ public abstract class RestSessionController extends RestController {
             JSONObject jsonObject= new JSONObject(jsonData);
             
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(entity!=null){
                 EntityReflection.updateEntity(jsonData, entity);
                 entity.setId(id);
@@ -202,7 +202,7 @@ public abstract class RestSessionController extends RestController {
         String resultData;
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canLoad(entity)){
                 dto = mapper.entityToDto(entity);
                 resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
@@ -223,7 +223,7 @@ public abstract class RestSessionController extends RestController {
 
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canDelete(entity)){
                 dto = mapper.entityToDto(entity);
                 service.remove(entity);
@@ -254,7 +254,7 @@ public abstract class RestSessionController extends RestController {
     public byte[] sessionUpload(HttpServletRequest request, @PathVariable String idEntity) {
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canUpdate(entity)){
                 return super.upload(request, idEntity);
             }
@@ -269,7 +269,7 @@ public abstract class RestSessionController extends RestController {
     public byte[] sessionDiskupload(HttpServletRequest request, @PathVariable String idEntity) {
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canUpdate(entity)){
                 return super.diskupload(request, idEntity);
             }
@@ -284,7 +284,7 @@ public abstract class RestSessionController extends RestController {
     public String sessionMultipartupload(HttpServletRequest request, @PathVariable String idParent) {
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idParent);
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canUpdate(entity)){
                 return super.multipartupload(request, idParent);
             }

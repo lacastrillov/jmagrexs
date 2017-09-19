@@ -77,10 +77,10 @@ public abstract class JdbcDirectAbstractService implements JdbcDirectService {
      * @return 
      */
     @Override
-    public Map<String, Object> findUniqueByParameter(String tableName, String parameter, Object value){
+    public Map<String, Object> loadByParameter(String tableName, String parameter, Object value){
         Parameters parameters= new Parameters();
         parameters.whereEqual(parameter, value);
-        return jdbcDirectRepository.findUniqueByParameters(tableName, parameters);
+        return jdbcDirectRepository.loadByParameters(tableName, parameters);
     }
 
     /**
@@ -91,8 +91,8 @@ public abstract class JdbcDirectAbstractService implements JdbcDirectService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> findUniqueByParameters(String tableName, Parameters parameters) {
-        return jdbcDirectRepository.findUniqueByParameters(tableName, parameters);
+    public Map<String, Object> loadByParameters(String tableName, Parameters parameters) {
+        return jdbcDirectRepository.loadByParameters(tableName, parameters);
     }
 
     /**
@@ -104,8 +104,8 @@ public abstract class JdbcDirectAbstractService implements JdbcDirectService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Object findUniqueByParameters(String tableName, Parameters parameters, Class c) {
-        return jdbcDirectRepository.findUniqueByParameters(tableName, parameters, c);
+    public Object loadByParameters(String tableName, Parameters parameters, Class c) {
+        return jdbcDirectRepository.loadByParameters(tableName, parameters, c);
     }
     
     /**

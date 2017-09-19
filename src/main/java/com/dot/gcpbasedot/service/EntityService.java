@@ -28,7 +28,7 @@ public interface EntityService<T> {
      * @param id entity id.
      * @return the entiy or null in case it doesn't exists.
      */
-    T findById(Object id);
+    T loadById(Object id);
 
     /**
      * Persists a new entity.
@@ -107,7 +107,7 @@ public interface EntityService<T> {
      * @param parameters
      * @return
      */
-    T findUniqueByParameters(Parameters parameters);
+    T loadByParameters(Parameters parameters);
     
     /**
      *
@@ -115,7 +115,7 @@ public interface EntityService<T> {
      * @param value
      * @return
      */
-    T findUniqueByParameter(String parameter, Object value);
+    T loadByParameter(String parameter, Object value);
 
     /**
      *
@@ -190,7 +190,7 @@ public interface EntityService<T> {
      * @param c
      * @return 
      */
-    Object findUniqueByParameters(String nameQuerySource, Parameters parameters, Class c);
+    Object loadByParameters(String nameQuerySource, Parameters parameters, Class c);
     
     /**
      *
@@ -238,7 +238,7 @@ public interface EntityService<T> {
      * @param valueParameters
      * @return
      */
-    Map<String, Object> findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters);
+    Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters);
     
     /**
      *
@@ -248,7 +248,7 @@ public interface EntityService<T> {
      * @param c
      * @return
      */
-    Object findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c);
+    Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c);
     
     /**
      *

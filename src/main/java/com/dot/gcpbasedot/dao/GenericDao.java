@@ -32,7 +32,7 @@ public interface GenericDao<T extends BaseEntity> {
      * @param id entity id.
      * @return the entiy or null in case it doesn't exists.
      */
-    T findById(Object id);
+    T loadById(Object id);
 
     /**
      * Persists a new entity.
@@ -111,7 +111,7 @@ public interface GenericDao<T extends BaseEntity> {
      * @param parameters
      * @return
      */
-    T findUniqueByParameters(Parameters parameters);
+    T loadByParameters(Parameters parameters);
 
     /**
      *
@@ -154,7 +154,7 @@ public interface GenericDao<T extends BaseEntity> {
      * @param c
      * @return 
      */
-    Object findUniqueByParameters(String nameQuerySource, Parameters parameters, Class c);
+    Object loadByParameters(String nameQuerySource, Parameters parameters, Class c);
     
     /**
      *
@@ -180,7 +180,7 @@ public interface GenericDao<T extends BaseEntity> {
      * @param valueParameters
      * @return
      */
-    Map<String, Object> findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters);
+    Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters);
     
     /**
      *
@@ -190,7 +190,7 @@ public interface GenericDao<T extends BaseEntity> {
      * @param c
      * @return
      */
-    Object findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c);
+    Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c);
     
     /**
      *

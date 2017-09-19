@@ -162,7 +162,7 @@ public abstract class RestDirectController {
             }
             JSONObject jsonObject= new JSONObject(jsonData);
             
-            Map<String, Object> entity = directService.findUniqueByParameter(tableName, "id", jsonObject.getInt("id"));
+            Map<String, Object> entity = directService.loadByParameter(tableName, "id", jsonObject.getInt("id"));
             if(entity!=null){
                 EntityReflection.updateEntity(jsonData, entity, columns);
 
@@ -203,7 +203,7 @@ public abstract class RestDirectController {
 
         String resultData;
         try {
-            Map<String, Object> entity = directService.findUniqueByParameter(tableName, "id", jsonObject.getInt("id"));
+            Map<String, Object> entity = directService.loadByParameter(tableName, "id", jsonObject.getInt("id"));
             
             resultData= Util.getOperationCallback(entity, "Carga de " + tableName + " realizada...", true);
         } catch (Exception e) {
@@ -217,7 +217,7 @@ public abstract class RestDirectController {
     @ResponseBody
     public String delete(@PathVariable String tableName, @RequestParam String idEntity) {
         try {
-            Map<String, Object> entity = directService.findUniqueByParameter(tableName, "id", idEntity);
+            Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
             
             directService.removeByParameter(tableName, "id", idEntity);
             return Util.getOperationCallback(entity, "Eliminaci&oacute;n de " + tableName + " realizada...", true);
@@ -268,7 +268,7 @@ public abstract class RestDirectController {
                 }
             }
             
-            Map<String, Object> entity = directService.findUniqueByParameter(tableName, "id", id);
+            Map<String, Object> entity = directService.loadByParameter(tableName, "id", id);
             
             resultData= Util.getOperationCallback(entity, result, true);
         } catch (Exception e) {
@@ -303,7 +303,7 @@ public abstract class RestDirectController {
                 }
             }
             
-            Map<String, Object> entity = directService.findUniqueByParameter(tableName, "id", id);
+            Map<String, Object> entity = directService.loadByParameter(tableName, "id", id);
             
             resultData= Util.getOperationCallback(entity, result, true);
         } catch (Exception e) {

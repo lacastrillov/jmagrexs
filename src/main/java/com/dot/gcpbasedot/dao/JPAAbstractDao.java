@@ -92,7 +92,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      * @return
      */
     @Override
-    public T findById(Object id) {
+    public T loadById(Object id) {
         return this.getEntityManager().find(getPersistentClass(), id);
     }
 
@@ -167,7 +167,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      * @return
      */
     @Override
-    public T findUniqueByParameters(Parameters parameters) {
+    public T loadByParameters(Parameters parameters) {
         List<T> resultList = findByParameters(parameters);
         if (!resultList.isEmpty() && resultList.size() == 1) {
             return resultList.get(0);

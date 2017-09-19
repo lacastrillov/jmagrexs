@@ -49,7 +49,7 @@ public interface JdbcDirectService {
      * @param value
      * @return 
      */
-    Map<String, Object> findUniqueByParameter(String tableName, String parameter, Object value);
+    Map<String, Object> loadByParameter(String tableName, String parameter, Object value);
     
     /**
      * 
@@ -57,7 +57,7 @@ public interface JdbcDirectService {
      * @param parameters
      * @return 
      */
-    Map<String, Object> findUniqueByParameters(String tableName, Parameters parameters);
+    Map<String, Object> loadByParameters(String tableName, Parameters parameters);
     
     /**
      * 
@@ -66,7 +66,7 @@ public interface JdbcDirectService {
      * @param c
      * @return 
      */
-    Object findUniqueByParameters(String tableName, Parameters parameters, Class c);
+    Object loadByParameters(String tableName, Parameters parameters, Class c);
     
     
     /**

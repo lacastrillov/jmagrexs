@@ -40,8 +40,8 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public T findById(Object id) {
-        return (T) this.getGenericDao().findById(id);
+    public T loadById(Object id) {
+        return (T) this.getGenericDao().loadById(id);
     }
 
     @Override
@@ -105,16 +105,16 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public T findUniqueByParameters(Parameters parameters) {
-        return (T) getGenericDao().findUniqueByParameters(parameters);
+    public T loadByParameters(Parameters parameters) {
+        return (T) getGenericDao().loadByParameters(parameters);
     }
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public T findUniqueByParameter(String parameter, Object value) {
+    public T loadByParameter(String parameter, Object value) {
         Parameters parameters= new Parameters();
         parameters.whereEqual(parameter, value);
-        return (T) getGenericDao().findUniqueByParameters(parameters);
+        return (T) getGenericDao().loadByParameters(parameters);
     }
 
     @Override
@@ -212,8 +212,8 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Object findUniqueByParameters(String nameQuerySource, Parameters parameters, Class c){
-        return this.getGenericDao().findUniqueByParameters(nameQuerySource, parameters, c);
+    public Object loadByParameters(String nameQuerySource, Parameters parameters, Class c){
+        return this.getGenericDao().loadByParameters(nameQuerySource, parameters, c);
     }
     
     /**
@@ -305,8 +305,8 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Map<String, Object> findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters){
-        return this.getGenericDao().findUniqueByNameQuery(nameQuery, nameParameters, valueParameters);
+    public Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters){
+        return this.getGenericDao().loadByNameQuery(nameQuery, nameParameters, valueParameters);
     }
     
     /**
@@ -319,8 +319,8 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Object findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c){
-        return this.getGenericDao().findUniqueByNameQuery(nameQuery, nameParameters, valueParameters, c);
+    public Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c){
+        return this.getGenericDao().loadByNameQuery(nameQuery, nameParameters, valueParameters, c);
     }
     
     /**

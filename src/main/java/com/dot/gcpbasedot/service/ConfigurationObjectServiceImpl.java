@@ -59,7 +59,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
     
     private T loadConfigurationObject(Parameters p) {
-        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().findUniqueByParameters(p);
+        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().loadByParameters(p);
         String data="{}";
         if(jsonObject!=null){
             data= jsonObject.getData();
@@ -91,7 +91,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
     
     private void saveConfigurationObject(T configurationObject, Parameters p){
-        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().findUniqueByParameters(p);
+        JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().loadByParameters(p);
         if(jsonObject!=null){
             jsonObject.setData(Util.objectToJson(configurationObject));
             getJsonObjectDao().update(jsonObject);

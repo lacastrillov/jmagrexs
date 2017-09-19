@@ -136,7 +136,7 @@ public class JdbcDirectRepository {
      * @param parameters
      * @return
      */
-    public Map<String, Object> findUniqueByParameters(String tableName, Parameters parameters) {
+    public Map<String, Object> loadByParameters(String tableName, Parameters parameters) {
         List<Map<String, Object>> resultList = findByParameters(tableName, parameters);
         if (!resultList.isEmpty() && resultList.size() == 1) {
             return resultList.get(0);
@@ -151,7 +151,7 @@ public class JdbcDirectRepository {
      * @param c
      * @return
      */
-    public Object findUniqueByParameters(String tableName, Parameters parameters, Class c) {
+    public Object loadByParameters(String tableName, Parameters parameters, Class c) {
         List<Object> resultList = findByParameters(tableName, parameters, c);
         if (!resultList.isEmpty() && resultList.size() == 1) {
             return resultList.get(0);

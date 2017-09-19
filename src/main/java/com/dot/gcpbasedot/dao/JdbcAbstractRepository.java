@@ -85,7 +85,7 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
      * @param c
      * @return 
      */
-    public Object findUniqueByParameters(String nameQuerySource, Parameters parameters, Class c) {
+    public Object loadByParameters(String nameQuerySource, Parameters parameters, Class c) {
         String querySource = queryMap.get(nameQuerySource);
         
         return jdbcDirectRepository.findByParameters("("+querySource+")", parameters, c);
@@ -128,7 +128,7 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
      * @param valueParameters
      * @return 
      */
-    public Map<String, Object> findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters) {
+    public Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters) {
         String query = String.format(queryMap.get(nameQuery));
 
         List<Map<String, Object>> rows = namedParameterJdbcTemplate.queryForList(query,
@@ -148,7 +148,7 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
      * @param c
      * @return 
      */
-    public Object findUniqueByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c) {
+    public Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c) {
         String query = String.format(queryMap.get(nameQuery));
 
         List<Object> rows = namedParameterJdbcTemplate.query(query, getMapSqlParameterSource(nameParameters, valueParameters),

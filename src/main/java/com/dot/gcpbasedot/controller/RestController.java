@@ -307,7 +307,7 @@ public abstract class RestController {
             JSONObject jsonObject= new JSONObject(jsonData);
             
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             if(entity!=null){
                 EntityReflection.updateEntity(jsonData, entity);
 
@@ -351,7 +351,7 @@ public abstract class RestController {
         String resultData;
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
         } catch (Exception e) {
@@ -368,7 +368,7 @@ public abstract class RestController {
 
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             service.remove(entity);
             return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
@@ -420,7 +420,7 @@ public abstract class RestController {
                 }
             }
             
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             
             resultData= Util.getOperationCallback(dto, result, true);
@@ -460,7 +460,7 @@ public abstract class RestController {
                 }
             }
             
-            BaseEntity entity = (BaseEntity) service.findById(id);
+            BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             
             resultData= Util.getOperationCallback(dto, result, true);

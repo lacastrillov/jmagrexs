@@ -118,7 +118,7 @@ public abstract class GenericWebService {
         try {
             Class entityClass= entityService.getClass();
             Object id= EntityReflection.getParsedFieldValue(entityClass, "id", mapData.get("id").toString());
-            BaseEntity entity = (BaseEntity) entityService.findById(id);
+            BaseEntity entity = (BaseEntity) entityService.loadById(id);
             EntityReflection.updateEntity(mapData, entity);
 
             entityService.update(entity);
@@ -149,7 +149,7 @@ public abstract class GenericWebService {
         try {
             Class entityClass= entityService.getClass();
             Object id= EntityReflection.getParsedFieldValue(entityClass, "id", mapData.get("id").toString());
-            BaseEntity entitie = (BaseEntity) entityService.findById(id);
+            BaseEntity entitie = (BaseEntity) entityService.loadById(id);
             dto = entityMapper.entityToDto(entitie);
             return Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public abstract class GenericWebService {
         try {
             Class entityClass= entityService.getClass();
             Object id= EntityReflection.getParsedFieldValue(entityClass, "id", mapData.get("id").toString());
-            BaseEntity entity = (BaseEntity) entityService.findById(id);
+            BaseEntity entity = (BaseEntity) entityService.loadById(id);
             dto = entityMapper.entityToDto(entity);
             entityService.remove(entity);
             return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
