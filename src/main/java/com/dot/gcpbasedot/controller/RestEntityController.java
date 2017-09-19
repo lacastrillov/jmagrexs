@@ -53,9 +53,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public abstract class RestController {
+public abstract class RestEntityController {
 
-    protected static final Logger LOGGER = Logger.getLogger(RestController.class);
+    protected static final Logger LOGGER = Logger.getLogger(RestEntityController.class);
     
     protected String entityRef= null;
 

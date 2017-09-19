@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public abstract class RestSessionController extends RestController {
+public abstract class RestSessionController extends RestEntityController {
     
 
     @RequestMapping(value = "/session_find.htm", method = {RequestMethod.GET, RequestMethod.POST})
