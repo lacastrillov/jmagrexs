@@ -74,9 +74,9 @@ public abstract class ExtReportController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/reportViewportExtView/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/reportExtViewport/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView reportViewportExtView(@PathVariable String reportName, HttpSession session) {
-        ModelAndView mav= new ModelAndView("scripts/report/EntityViewportExtView");
+        ModelAndView mav= new ModelAndView("scripts/report/ExtViewport");
         
         mav.addObject("reportConfig", reportsConfig.get(reportName));
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
@@ -96,7 +96,7 @@ public abstract class ExtReportController extends ExtController {
     
     @RequestMapping(value = "/reportExtInit/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView reportExtInit(@PathVariable String reportName) {
-        ModelAndView mav= new ModelAndView("scripts/report/EntityExtInit");
+        ModelAndView mav= new ModelAndView("scripts/report/ExtInit");
         
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
         mav.addObject("reportName",reportName);
@@ -106,7 +106,7 @@ public abstract class ExtReportController extends ExtController {
     
     @RequestMapping(value = "/reportExtModel/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView reportExtModel(@PathVariable String reportName) {
-        ModelAndView mav= new ModelAndView("scripts/report/EntityExtModel");
+        ModelAndView mav= new ModelAndView("scripts/report/ExtModel");
         
         JSONArray jsonModel = jm.getJSONModel(reportsConfig.get(reportName).getDtoClass(), reportsConfig.get(reportName).getDateFormat());
         JSONArray jsonTemplateModel = new JSONArray();
@@ -132,7 +132,7 @@ public abstract class ExtReportController extends ExtController {
     
     @RequestMapping(value = "/reportExtStore/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView reportExtStore(@PathVariable String reportName, @RequestParam(required = false) Boolean restSession) {
-        ModelAndView mav= new ModelAndView("scripts/report/EntityExtStore");
+        ModelAndView mav= new ModelAndView("scripts/report/ExtStore");
         
         mav.addObject("reportConfig", reportsConfig.get(reportName));
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
@@ -148,7 +148,7 @@ public abstract class ExtReportController extends ExtController {
     
     @RequestMapping(value = "/reportExtView/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView reportExtView(@PathVariable String reportName, @RequestParam(required = true) String typeView) {
-        ModelAndView mav= new ModelAndView("scripts/report/EntityExtView");
+        ModelAndView mav= new ModelAndView("scripts/report/ExtView");
         
         if(typeView.equals("Parent")){
             reportsConfig.get(reportName).setActiveGridTemplate(reportsConfig.get(reportName).isActiveGridTemplateAsParent());
@@ -167,7 +167,7 @@ public abstract class ExtReportController extends ExtController {
     
     @RequestMapping(value = "/reportExtController/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView reportExtController(@PathVariable String reportName, @RequestParam(required = true) String typeController) {
-        ModelAndView mav= new ModelAndView("scripts/report/EntityExtController");
+        ModelAndView mav= new ModelAndView("scripts/report/ExtController");
         
         mav.addObject("typeController", typeController);
         mav.addObject("reportConfig", reportsConfig.get(reportName));

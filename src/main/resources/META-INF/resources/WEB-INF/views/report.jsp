@@ -55,7 +55,7 @@
             </c:import>
         </c:forEach>
         
-        <c:import url="${basePath}/${entityRef}/reportViewportExtView/${reportName}.htm"/>
+        <c:import url="${basePath}/${entityRef}/reportExtViewport/${reportName}.htm"/>
         
         <c:import url="${basePath}/${entityRef}/reportExtInit/${reportName}.htm"/>
         

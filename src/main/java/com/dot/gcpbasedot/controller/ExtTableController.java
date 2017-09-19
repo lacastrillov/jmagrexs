@@ -80,9 +80,9 @@ public abstract class ExtTableController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/{tableName}/entityViewportExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/{tableName}/ExtViewport.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView homeViewportExtView(HttpSession session, @PathVariable String tableName) {
-        ModelAndView mav= new ModelAndView("scripts/table/EntityViewportExtView");
+        ModelAndView mav= new ModelAndView("scripts/table/ExtViewport");
         
         List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
         
@@ -100,18 +100,18 @@ public abstract class ExtTableController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/{tableName}/entityExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView configExtInit(@PathVariable String tableName) {
-        ModelAndView mav= new ModelAndView("scripts/table/EntityExtInit");
+    @RequestMapping(value = "/{tableName}/ExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extInit(@PathVariable String tableName) {
+        ModelAndView mav= new ModelAndView("scripts/table/ExtInit");
         
         addGeneralObjects(mav, tableName);
         
         return mav;
     }
     
-    @RequestMapping(value = "/{tableName}/entityExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtModel(@PathVariable String tableName) {
-        ModelAndView mav= new ModelAndView("scripts/table/EntityExtModel");
+    @RequestMapping(value = "/{tableName}/ExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extModel(@PathVariable String tableName) {
+        ModelAndView mav= new ModelAndView("scripts/table/ExtModel");
         
         List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
         JSONArray jsonModel = jm.getJSONModel(columns, viewConfig.getDateFormat());
@@ -125,18 +125,18 @@ public abstract class ExtTableController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/{tableName}/entityExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtStore(@PathVariable String tableName) {
-        ModelAndView mav= new ModelAndView("scripts/table/EntityExtStore");
+    @RequestMapping(value = "/{tableName}/ExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extStore(@PathVariable String tableName) {
+        ModelAndView mav= new ModelAndView("scripts/table/ExtStore");
         
         addGeneralObjects(mav, tableName);
         
         return mav;
     }
     
-    @RequestMapping(value = "/{tableName}/entityExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtView(@PathVariable String tableName) {
-        ModelAndView mav= new ModelAndView("scripts/table/EntityExtView");
+    @RequestMapping(value = "/{tableName}/ExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extView(@PathVariable String tableName) {
+        ModelAndView mav= new ModelAndView("scripts/table/ExtView");
         
         addEntityExtViewConfiguration(mav, tableName);
         
@@ -145,9 +145,9 @@ public abstract class ExtTableController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/{tableName}/entityExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtController(@PathVariable String tableName) {
-        ModelAndView mav= new ModelAndView("scripts/table/EntityExtController");
+    @RequestMapping(value = "/{tableName}/ExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extController(@PathVariable String tableName) {
+        ModelAndView mav= new ModelAndView("scripts/table/ExtController");
         
         addGeneralObjects(mav, tableName);
         

@@ -43,7 +43,7 @@ public abstract class ExtEntityController extends ExtReportController {
     }
 
     @RequestMapping(value = "/entity.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView table() {
+    public ModelAndView entity() {
         ModelAndView mav= new ModelAndView("entity");
         
         mav.addObject("extViewConfig", extViewConfig);
@@ -52,9 +52,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityViewportExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView homeViewportExtView(HttpSession session) {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityViewportExtView");
+    @RequestMapping(value = "/ExtViewport.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extViewport(HttpSession session) {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtViewport");
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
@@ -72,9 +72,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView configExtInit() {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityExtInit");
+    @RequestMapping(value = "/ExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extInit() {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtInit");
         
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());
@@ -82,9 +82,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtModel() {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityExtModel");
+    @RequestMapping(value = "/ExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extModel() {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtModel");
         
         JSONArray jsonModel = jm.getJSONModel(viewConfig.getDtoClass(), viewConfig.getDateFormat());
         JSONArray jsonTemplateModel = new JSONArray();
@@ -124,9 +124,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtStore(@RequestParam(required = false) Boolean restSession) {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityExtStore");
+    @RequestMapping(value = "/ExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extStore(@RequestParam(required = false) Boolean restSession) {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtStore");
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
@@ -140,9 +140,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtView(@RequestParam(required = true) String typeView) {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityExtView");
+    @RequestMapping(value = "/ExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extView(@RequestParam(required = true) String typeView) {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtView");
         
         if(typeView.equals("Parent")){
             viewConfig.setActiveGridTemplate(viewConfig.isActiveGridTemplateAsParent());
@@ -157,9 +157,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtController(@RequestParam(required = true) String typeController) {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityExtController");
+    @RequestMapping(value = "/ExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extController(@RequestParam(required = true) String typeController) {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtController");
         
         mav.addObject("typeController", typeController);
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
@@ -168,9 +168,9 @@ public abstract class ExtEntityController extends ExtReportController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtInterfaces.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtInterfaces() {
-        ModelAndView mav= new ModelAndView("scripts/entity/EntityExtInterfaces");
+    @RequestMapping(value = "/ExtInterfaces.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extInterfaces() {
+        ModelAndView mav= new ModelAndView("scripts/entity/ExtInterfaces");
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());

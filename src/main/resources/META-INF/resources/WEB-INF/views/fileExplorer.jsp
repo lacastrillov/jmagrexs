@@ -26,33 +26,33 @@
         <!-- ############################ IMPORT MODELS ################################### -->
         
         <c:forEach var="modelER" items="${modelsEntityRef}">
-            <c:import url="${basePath}/${modelER}/entityExtModel.htm"/>
+            <c:import url="${basePath}/${modelER}/ExtModel.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT STORES ################################### -->
         
         <c:forEach var="modelER" items="${modelsEntityRef}">
-            <c:import url="${basePath}/${modelER}/entityExtStore.htm"/>
+            <c:import url="${basePath}/${modelER}/ExtStore.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/entityExtView.htm">
+        <c:import url="${basePath}/${entityRef}/ExtView.htm">
              <c:param name="typeView" value="Parent"/>
         </c:import>
         <c:forEach var="viewsChildER" items="${viewsChildEntityRef}">
-            <c:import url="${basePath}/${viewsChildER}/entityExtView.htm">
+            <c:import url="${basePath}/${viewsChildER}/ExtView.htm">
                 <c:param name="typeView" value="Child"/>
             </c:import>
         </c:forEach>
         
         <!-- ############################ IMPORT CONTROLLERS ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/entityExtController.htm">
+        <c:import url="${basePath}/${entityRef}/ExtController.htm">
             <c:param name="typeController" value="Parent"/>
         </c:import>
         <c:forEach var="controllerChildER" items="${viewsChildEntityRef}">
-            <c:import url="${basePath}/${controllerChildER}/entityExtController.htm">
+            <c:import url="${basePath}/${controllerChildER}/ExtController.htm">
                 <c:param name="typeController" value="Child"/>
             </c:import>
         </c:forEach>
@@ -60,18 +60,18 @@
         <!-- ############################ IMPORT INTERFACES ################################### -->
         
         <c:forEach var="interfacesER" items="${interfacesEntityRef}">
-            <c:import url="${basePath}/${interfacesER}/entityExtInterfaces.htm"/>
+            <c:import url="${basePath}/${interfacesER}/ExtInterfaces.htm"/>
         </c:forEach>
         
         <c:forEach var="interfacesChildER" items="${interfacesChildEntityRef}">
-            <c:import url="${basePath}/${interfacesChildER}/entityExtInterfaces.htm"/>
+            <c:import url="${basePath}/${interfacesChildER}/ExtInterfaces.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT BASE ELEMENTES ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/entityViewportExtView.htm"/>
+        <c:import url="${basePath}/${entityRef}/ExtViewport.htm"/>
         
-        <c:import url="${basePath}/${entityRef}/entityExtInit.htm"/>
+        <c:import url="${basePath}/${entityRef}/ExtInit.htm"/>
         
         <!-- ############################ IMPORT COMPONENTS ################################### -->
         

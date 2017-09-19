@@ -58,7 +58,7 @@ public abstract class ExtProcessController extends ExtController {
     }
 
     @RequestMapping(value = "/process.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView table() {
+    public ModelAndView process() {
         ModelAndView mav= new ModelAndView("process");
         
         mav.addObject("extViewConfig", extViewConfig);
@@ -67,9 +67,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityViewportExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView homeViewportExtView(HttpSession session) {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityViewportExtView");
+    @RequestMapping(value = "/ExtViewport.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extViewport(HttpSession session) {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtViewport");
         
         mav.addObject("viewConfig", processConfig);
         mav.addObject("entityRef", processConfig.getMainProcessRef());
@@ -82,9 +82,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView configExtInit() {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityExtInit");
+    @RequestMapping(value = "/ExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extInit() {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtInit");
         
         mav.addObject("entityRef", processConfig.getMainProcessRef());
         mav.addObject("entityName", processConfig.getMainProcessName());
@@ -92,9 +92,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtModel() {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityExtModel");
+    @RequestMapping(value = "/ExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extModel() {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtModel");
         
         Map<String, String> nameProcesses= processConfig.getNameProcesses();
         Map<String, Class> inDtos= processConfig.getInDtos();
@@ -125,9 +125,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtStore() {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityExtStore");
+    @RequestMapping(value = "/ExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extStore() {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtStore");
         
         mav.addObject("viewConfig", processConfig);
         mav.addObject("entityRef", processConfig.getMainProcessRef());
@@ -138,9 +138,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtView(@RequestParam(required = true) String typeView) {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityExtView");
+    @RequestMapping(value = "/ExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extView(@RequestParam(required = true) String typeView) {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtView");
         
         if(typeView.equals("Parent")){
             processConfig.setActiveGridTemplate(processConfig.isActiveGridTemplateAsParent());
@@ -173,9 +173,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtController(@RequestParam(required = true) String typeController) {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityExtController");
+    @RequestMapping(value = "/ExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extController(@RequestParam(required = true) String typeController) {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtController");
         
         mav.addObject("typeController", typeController);
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(processConfig.getTypeChildExtViews()));
@@ -184,9 +184,9 @@ public abstract class ExtProcessController extends ExtController {
         return mav;
     }
     
-    @RequestMapping(value = "/entityExtInterfaces.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView entityExtInterfaces() {
-        ModelAndView mav= new ModelAndView("scripts/process/EntityExtInterfaces");
+    @RequestMapping(value = "/ExtInterfaces.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView extInterfaces() {
+        ModelAndView mav= new ModelAndView("scripts/process/ExtInterfaces");
         
         mav.addObject("viewConfig", processConfig);
         mav.addObject("entityRef", processConfig.getMainProcessRef());

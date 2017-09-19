@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script>
 
-function ${entityName}ViewportExtView(){
+function ${entityName}ExtViewport(){
     
     Ext.context= "<%=request.getContextPath()%>";
     
