@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JSONForms {
     
+    public final int MAX_LIST_ITEMS= 20;
+    
     @Autowired
     private FieldConfigurationByAnnotations fcba;
     
@@ -239,7 +241,7 @@ public class JSONForms {
                 objectFieldGroup.put("fieldDefaults", fieldDefaults);
                 
                 JSONArray jsonList= new JSONArray();
-                for(int i=0; i<10; i++){
+                for(int i=0; i<MAX_LIST_ITEMS; i++){
                     JSONObject objectField= new JSONObject();
                     objectField.put("id", parent+fieldName+"["+i+"]");
                     if(!Formats.TYPES_LIST.contains(childClass.getName())){
@@ -304,7 +306,7 @@ public class JSONForms {
                 buttonAdd.put("width", 100);
                 buttonAdd.put("handler", "#function(){"
                         + "                   var itemsGroup= Ext.getCmp('"+parent+fieldName+"');"
-                        + "                   if(itemsGroup.itemTop<9){"
+                        + "                   if(itemsGroup.itemTop<"+(MAX_LIST_ITEMS-1)+"){"
                         + "                       itemsGroup.itemTop+= 1;"
                         + "                       var itemEntity= Ext.getCmp('"+parent+fieldName+"['+itemsGroup.itemTop+']');"
                         + "                       itemEntity.setVisible(true);"

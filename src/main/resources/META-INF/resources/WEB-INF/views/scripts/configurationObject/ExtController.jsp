@@ -14,6 +14,8 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     var util= new Util();
     
+    Instance.MAX_LIST_ITEMS= 20;
+    
     // VIEWS *******************************************
     
     Instance.entityExtView= new ${entityName}ExtView(Instance, null);
@@ -48,12 +50,47 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 record.data= util.unremakeJSONObject(data);
                 var formComponent= Ext.getCmp('form-'+configObj).child('#form'+configObj+'Item');
                 formComponent.setActiveRecord(record);
+                
+                Instance.showListItems(formComponent);
             });
         }
     };
     
     Instance.formSavedResponse= function(result){
         Ext.MessageBox.alert('Status', result.message);
+    };
+    
+    Instance.showListItems= function(formComponent){
+        formComponent.query('.fieldset').forEach(function(c){
+            if(c.itemTop!==undefined){
+                var itemsGroup=Ext.getCmp(c.id);
+                for(var i=1; i<Instance.MAX_LIST_ITEMS; i++){
+                    var itemEntity=Ext.getCmp(c.id+'['+i+']');
+                    var filled= false;
+                    if(itemEntity.query){
+                        itemEntity.query('.field').forEach(function(c){
+                            var text=c.getValue();
+                            if(text!==null && text!=="" && text!==false){
+                                filled=true;
+                            }
+                        });
+                    }else{
+                        var text=itemEntity.getValue();
+                        if(text!==null && text!=="" && text!==false){
+                            filled=true;
+                        }
+                    }
+                    if(filled){
+                        itemEntity.setVisible(true);
+                        itemEntity.setDisabled(false);
+                        itemsGroup.itemTop=i;
+                    }else{
+                        itemEntity.setVisible(false);
+                        itemEntity.setDisabled(true);
+                    }
+                }
+            }
+        });
     };
 
     Instance.init();
