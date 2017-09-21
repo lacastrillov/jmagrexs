@@ -353,16 +353,18 @@ public final class EntityReflection {
                     JSONArray itemList= source.getJSONArray(fieldName);
                     List itemsObject= new ArrayList();
                     for(int i=0; i<itemList.length(); i++){
-                        try {
-                            Object parseValue = Formats.castParameter(childClass.getName(), itemList.get(i).toString());
-                            if(parseValue!=null){
-                                itemsObject.add(parseValue);
-                            }else{
-                                Object childObject= jsonToObject(itemList.get(i).toString(), childClass, hideLogFields);
-                                itemsObject.add(childObject);
+                        if(!itemList.isNull(i)){
+                            try {
+                                Object parseValue = Formats.castParameter(childClass.getName(), itemList.get(i).toString());
+                                if(parseValue!=null){
+                                    itemsObject.add(parseValue);
+                                }else{
+                                    Object childObject= jsonToObject(itemList.get(i).toString(), childClass, hideLogFields);
+                                    itemsObject.add(childObject);
+                                }
+                            } catch (ClassNotFoundException | NumberFormatException ex) {
+                                Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        } catch (ClassNotFoundException | NumberFormatException ex) {
-                            Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                     targetWrapper.setPropertyValue(fieldName, itemsObject);
