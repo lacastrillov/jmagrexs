@@ -64,11 +64,11 @@ public abstract class RestSessionController extends RestEntityController {
     public byte[] sessionFindYalm(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
+            @RequestParam(required = true) Boolean yalmFormat) {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return super.findYalm(sessionFilter, start, limit, page, sort, dir, templateName, numColumns);
+        return super.findYalm(sessionFilter, start, limit, page, sort, dir, yalmFormat);
     }
     
     @RequestMapping(value = "/session_report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})

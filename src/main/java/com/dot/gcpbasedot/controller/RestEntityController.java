@@ -172,7 +172,7 @@ public abstract class RestEntityController {
     public byte[] findYalm(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
+            @RequestParam(required = true) Boolean yalmFormat) {
 
         String resultData;
         try {
@@ -180,17 +180,19 @@ public abstract class RestEntityController {
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter);
             
-            if(templateName!=null){
-                resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
-            }else{
-                resultData=Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-            }
+            resultData=Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
             resultData=Util.getResultListCallback(new ArrayList(), "Error buscando " + entityRef + ": " + e.getMessage(), false);
         }
         resultData= Util.jsonToYalm(resultData);
-        resultData= resultData.replaceAll("\n", "<br>").replaceAll("  ", "&nbsp;&nbsp;");
+        if(yalmFormat){
+            resultData= resultData.replaceAll(":", ":</span>");
+            resultData= resultData.replaceAll(", ", "<br><span style='color:blue'>  ");
+            resultData= resultData.replaceAll("\n", "<br><span style='color:blue'>");
+            resultData= resultData.replaceAll("  ", "&nbsp;&nbsp;");
+            resultData= "<span style='color:blue'>"+resultData.replaceAll("\\{", "").replaceAll("\\}", "");
+        }
         
         return getStringBytes(resultData);
     }
