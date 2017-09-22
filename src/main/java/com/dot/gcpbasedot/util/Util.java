@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,9 +93,9 @@ public class Util {
         return Time.valueOf(sdfTime.format(currentDate));
     }
     
-    public static String jsonToYalm(String prettyJSONString){
+    public static String jsonToYaml(Object object){
         Yaml yaml= new Yaml();
-        Map<String, Object> map = (Map<String, Object>) yaml.load(prettyJSONString);
+        Map<String, Object> map = jsonToHashMap(objectToJson(object));
         String output = yaml.dump(map);
         
         return output;
@@ -107,8 +108,26 @@ public class Util {
             Iterator fields = jsonObject.keys();
             while (fields.hasNext()) {
                 String field = fields.next().toString();
-                if (!jsonObject.get(field).toString().equals("null")) {
-                    data.put(field, jsonObject.get(field));
+                if (!jsonObject.isNull(field)) {
+                    Object fieldObj = jsonObject.get(field);
+                    if (fieldObj instanceof JSONArray) {
+                        JSONArray fieldJsonArray = (JSONArray)fieldObj;
+                        List array= new ArrayList();
+                        for(int i=0; i<fieldJsonArray.length(); i++){
+                            Object fieldChildObj = fieldJsonArray.get(i);
+                            if (fieldChildObj instanceof JSONObject) {
+                                array.add(jsonToHashMap(fieldChildObj.toString()));
+                            }else{
+                                array.add(fieldChildObj);
+                            }
+                        }
+                        data.put(field, array);
+                    }else if (fieldObj instanceof JSONObject) {
+                        JSONObject fieldJsonObject = (JSONObject)fieldObj;
+                        data.put(field, jsonToHashMap(fieldJsonObject.toString()));
+                    }else {
+                        data.put(field, jsonObject.get(field));
+                    }
                 } else {
                     data.put(field, null);
                 }

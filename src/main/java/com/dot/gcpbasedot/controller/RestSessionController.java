@@ -59,16 +59,16 @@ public abstract class RestSessionController extends RestEntityController {
         super.findXls(sessionFilter, start, limit, page, sort, dir, response);
     }
     
-    @RequestMapping(value = "/session_find/ylm.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/session_find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionFindYalm(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public byte[] sessionFindYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) Boolean yalmFormat) {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return super.findYalm(sessionFilter, start, limit, page, sort, dir, yalmFormat);
+        return super.findYaml(sessionFilter, start, limit, page, sort, dir, yalmFormat);
     }
     
     @RequestMapping(value = "/session_report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
