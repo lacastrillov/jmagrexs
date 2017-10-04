@@ -437,6 +437,37 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 i++;
             }
         }
+        
+        /********************************************************************************************
+         * [7] Agregando Parametros: query
+         ********************************************************************************************/
+        numParameters = parameters.getQueryParameters().entrySet().size();
+        if (numParameters > 0) {
+            if (parametersSet) {
+                sql.append(" AND ");
+            } else {
+                sql.append(" WHERE ");
+                parametersSet = true;
+            }
+            i = 0;
+            for (Map.Entry<String, String[]> entry : parameters.getQueryParameters().entrySet()) {
+                String query = entry.getKey();
+                String[] params= entry.getValue();
+
+                mapParameters.put("query_"+i, query);
+                
+                sql.append("concat(");
+                for(String parameter: params){
+                    sql.append("o.").append(parameter).append(", ' ', ");
+                }
+                sql.append("'')").append(" like :query_").append(i);
+
+                if (i < numParameters - 1) {
+                    sql.append(" AND ");
+                }
+                i++;
+            }
+        }
 
         return sql.toString();
     }

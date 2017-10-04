@@ -156,20 +156,22 @@ public interface EntityService<T> {
     /**
      *
      * @param jsonFilters
+     * @param query
      * @param page
      * @param limit
      * @param sort
      * @param dir
      * @return
      */
-    List<T> findByJSONFilters(String jsonFilters, Long page, Long limit, String sort, String dir);
+    List<T> findByJSONFilters(String jsonFilters, String query, Long page, Long limit, String sort, String dir);
     
     /**
      *
      * @param jsonFilters
+     * @param query
      * @return
      */
-    Long countByJSONFilters(String jsonFilters);
+    Long countByJSONFilters(String jsonFilters, String query);
     
     /**
      *

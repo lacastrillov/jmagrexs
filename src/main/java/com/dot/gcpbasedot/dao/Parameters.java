@@ -29,6 +29,8 @@ public class Parameters {
 
     private final Map<String, Object[]> betweenParameters;
     
+    private final Map<String, String[]> queryParameters;
+    
     private final Map<String, Object> valueMapParameters;
 
     private final Map<String, Object> updateValueParameters;
@@ -59,6 +61,7 @@ public class Parameters {
         inParameters = new HashMap<>();
         notInParameters = new HashMap<>();
         betweenParameters = new HashMap<>();
+        queryParameters = new HashMap<>();
         valueMapParameters = new HashMap<>();
         updateValueParameters = new HashMap<>();
         orderByParameters = new ArrayList<>();
@@ -112,6 +115,10 @@ public class Parameters {
 
     public void whereBetween(String parameter, Object start, Object end) {
         betweenParameters.put(parameter, new Object[] { start, end });
+    }
+    
+    public void whereQuery(String query, String[] params) {
+        queryParameters.put(query, params);
     }
     
     public void addValueMapParameter(String parameter, Object value) {
@@ -237,6 +244,10 @@ public class Parameters {
 
     public Map<String, Object[]> getBetweenParameters() {
         return betweenParameters;
+    }
+    
+    public Map<String, String[]> getQueryParameters() {
+        return queryParameters;
     }
     
     public Map<String, Object> getValueMapParameters() {

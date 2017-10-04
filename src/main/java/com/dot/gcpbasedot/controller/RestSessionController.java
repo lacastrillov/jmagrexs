@@ -26,49 +26,49 @@ public abstract class RestSessionController extends RestEntityController {
 
     @RequestMapping(value = "/session_find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionFind(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public byte[] sessionFind(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
 
         
         String sessionFilter= getSessionFilters(filter, null);
             
-        return super.find(sessionFilter, start, limit, page, sort, dir, templateName, numColumns);
+        return super.find(sessionFilter, query, start, limit, page, sort, dir, templateName, numColumns);
     }
 
     @RequestMapping(value = "/session_find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public HttpEntity<byte[]> sessionFindXml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public HttpEntity<byte[]> sessionFindXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return super.findXml(sessionFilter, start, limit, page, sort, dir);
+        return super.findXml(sessionFilter, query, start, limit, page, sort, dir);
     }
 
     @RequestMapping(value = "/session_find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void sessionFindXls(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public void sessionFindXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, null);
         
-        super.findXls(sessionFilter, start, limit, page, sort, dir, response);
+        super.findXls(sessionFilter, query, start, limit, page, sort, dir, response);
     }
     
     @RequestMapping(value = "/session_find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionFindYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public byte[] sessionFindYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) Boolean yalmFormat) {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return super.findYaml(sessionFilter, start, limit, page, sort, dir, yalmFormat);
+        return super.findYaml(sessionFilter, query, start, limit, page, sort, dir, yalmFormat);
     }
     
     @RequestMapping(value = "/session_report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -86,27 +86,27 @@ public abstract class RestSessionController extends RestEntityController {
     }
     
     @RequestMapping(value = "/session_report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public HttpEntity<byte[]> sessionReportXml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public HttpEntity<byte[]> sessionReportXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String callback, @RequestParam(required = true) String dtoName,
             @PathVariable String reportName) {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return super.findXml(sessionFilter, start, limit, page, sort, dir);
+        return super.findXml(sessionFilter, query, start, limit, page, sort, dir);
     }
     
     @RequestMapping(value = "/session_report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void sessionReportXls(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public void sessionReportXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        super.findXls(sessionFilter, start, limit, page, sort, dir, response);
+        super.findXls(sessionFilter, query, start, limit, page, sort, dir, response);
     }
 
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)

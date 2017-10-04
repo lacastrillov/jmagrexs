@@ -1,10 +1,14 @@
 package com.dot.gcpbasedot.service;
 
+import com.dot.gcpbasedot.annotation.QueryParam;
 import com.dot.gcpbasedot.dao.GenericDao;
 import com.dot.gcpbasedot.dao.Parameters;
 import com.dot.gcpbasedot.domain.BaseEntity;
+import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.reflection.ReflectionUtils;
 import com.dot.gcpbasedot.util.FilterQueryJSON;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
@@ -151,11 +155,14 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
 
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public List<T> findByJSONFilters(String jsonfilters, Long page, Long limit, String sort, String dir) {
+    public List<T> findByJSONFilters(String jsonfilters, String query, Long page, Long limit, String sort, String dir) {
         Parameters parameters= new Parameters();
 
         if (jsonfilters != null && !jsonfilters.equals("")) {
             parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
+        }
+        if(query!=null){
+            parameters.whereQuery(query, getQueryParams());
         }
         
         if(page!=null){
@@ -176,11 +183,14 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Long countByJSONFilters(String jsonfilters) {
+    public Long countByJSONFilters(String jsonfilters, String query) {
         Parameters parameters= new Parameters();
 
         if (jsonfilters != null && !jsonfilters.equals("")) {
             parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
+        }
+        if(query!=null){
+            parameters.whereQuery(query, getQueryParams());
         }
 
         return this.getGenericDao().countByParameters(parameters);
@@ -196,6 +206,16 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
         }
 
         return this.getGenericDao().updateByParameters(parameters);
+    }
+    
+    private String[] getQueryParams(){
+        List<String> queryParams= new ArrayList<>();
+        queryParams.add("id");
+        List<Field> queryFields= EntityReflection.getEntityAnnotatedFields(entityClass, QueryParam.class);
+        for(Field f: queryFields){
+            queryParams.add(f.getName());
+        }
+        return (String[])queryParams.toArray();
     }
     
     /**

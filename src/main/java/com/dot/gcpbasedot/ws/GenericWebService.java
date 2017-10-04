@@ -43,6 +43,7 @@ public abstract class GenericWebService {
      *
      * @param entityRef
      * @param filter
+     * @param query
      * @param page
      * @param limit
      * @param dir
@@ -50,7 +51,8 @@ public abstract class GenericWebService {
      * @return
      */
     @WebMethod(operationName = "find")
-    public String find(@WebParam(name = "entityRef") String entityRef, @WebParam(name = "filter") String filter,
+    public String find(@WebParam(name = "entityRef") String entityRef,
+            @WebParam(name = "filter") String filter, @WebParam(name = "query") String query,
             @WebParam(name = "page") Long page, @WebParam(name = "limit") Long limit, @WebParam(name = "sort") String sort,
             @WebParam(name = "dir") String dir) {
 
@@ -59,9 +61,9 @@ public abstract class GenericWebService {
         BasicEntityMapper entityMapper = (BasicEntityMapper) ctx.getBean(mappers.get(entityRef));
 
         try {
-            List<? extends BaseEntity> listEntities = entityService.findByJSONFilters(filter, page, limit, sort, dir);
+            List<? extends BaseEntity> listEntities = entityService.findByJSONFilters(filter, query, page, limit, sort, dir);
             List<? extends BaseEntity> listDtos = entityMapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = entityService.countByJSONFilters(filter);
+            Long totalCount = entityService.countByJSONFilters(filter, query);
 
             return Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
         } catch (Exception e) {

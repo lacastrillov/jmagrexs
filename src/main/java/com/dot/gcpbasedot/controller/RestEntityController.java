@@ -99,16 +99,16 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] find(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public byte[] find(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start,  @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
 
         String resultData;
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, page, limit, sort, dir);
+            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = service.countByJSONFilters(filter);
+            Long totalCount = service.countByJSONFilters(filter, query);
             
             if(templateName!=null){
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
@@ -124,14 +124,14 @@ public abstract class RestEntityController {
     }
 
     @RequestMapping(value = "/find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public HttpEntity<byte[]> findXml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public HttpEntity<byte[]> findXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
 
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, page, limit, sort, dir);
+            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List<? extends BaseEntity> listDtos = mapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = service.countByJSONFilters(filter);
+            Long totalCount = service.countByJSONFilters(filter, query);
 
             ResultListCallback resultListCallBack = Util.getResultList(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
             String xml = XMLMarshaller.convertObjectToXML(resultListCallBack);
@@ -150,8 +150,8 @@ public abstract class RestEntityController {
 
     @RequestMapping(value = "/find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void findXls(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public void findXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
         
@@ -159,7 +159,7 @@ public abstract class RestEntityController {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + "report.xls\"");
 
         try {
-            List<Object> listEntities = service.findByJSONFilters(filter, page, limit, sort, dir);
+            List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             
             ExcelService.generateExcelReport(listEntities, response.getOutputStream(), entityClass);
         } catch (Exception e) {
@@ -169,16 +169,16 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] findYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
-            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+    public byte[] findYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) Boolean yalmFormat) {
 
         String resultData;
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, page, limit, sort, dir);
+            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = service.countByJSONFilters(filter);
+            Long totalCount = service.countByJSONFilters(filter, query);
             
             resultData= Util.jsonToYaml(Util.getResultList(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true));
         } catch (Exception e) {
@@ -380,7 +380,7 @@ public abstract class RestEntityController {
     @ResponseBody
     public String deleteByFilter(@RequestParam String filter) {
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null);
+            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null, null);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             
             for(BaseEntity entity: listEntities){
