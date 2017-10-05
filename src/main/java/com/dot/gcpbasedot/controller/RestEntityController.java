@@ -225,7 +225,7 @@ public abstract class RestEntityController {
     public HttpEntity<byte[]> reportXml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) String callback, @RequestParam(required = true) String dtoName,
+            @RequestParam(required = true) String dtoName,
             @PathVariable String reportName) {
 
         try {

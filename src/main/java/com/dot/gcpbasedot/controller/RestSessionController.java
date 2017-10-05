@@ -86,27 +86,27 @@ public abstract class RestSessionController extends RestEntityController {
     }
     
     @RequestMapping(value = "/session_report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public HttpEntity<byte[]> sessionReportXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+    public HttpEntity<byte[]> sessionReportXml(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) String callback, @RequestParam(required = true) String dtoName,
+            @RequestParam(required = true) String dtoName,
             @PathVariable String reportName) {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return super.findXml(sessionFilter, query, start, limit, page, sort, dir);
+        return super.reportXml(sessionFilter, start, limit, page, sort, dir, dtoName, reportName);
     }
     
     @RequestMapping(value = "/session_report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void sessionReportXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+    public void sessionReportXls(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        super.findXls(sessionFilter, query, start, limit, page, sort, dir, response);
+        super.reportXls(sessionFilter, start, limit, page, sort, dir, dtoName, reportName, response);
     }
 
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)
