@@ -161,7 +161,7 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
         if (jsonfilters != null && !jsonfilters.equals("")) {
             parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
         }
-        if(query!=null){
+        if(query!=null && !query.equals("")){
             parameters.whereQuery(query, getQueryParams());
         }
         
@@ -189,7 +189,7 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
         if (jsonfilters != null && !jsonfilters.equals("")) {
             parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
         }
-        if(query!=null){
+        if(query!=null && !query.equals("")){
             parameters.whereQuery(query, getQueryParams());
         }
 
@@ -215,7 +215,7 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
         for(Field f: queryFields){
             queryParams.add(f.getName());
         }
-        return (String[])queryParams.toArray();
+        return queryParams.stream().toArray(String[]::new);
     }
     
     /**

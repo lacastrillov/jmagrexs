@@ -454,11 +454,11 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 String query = entry.getKey();
                 String[] params= entry.getValue();
 
-                mapParameters.put("query_"+i, query);
+                mapParameters.put("query_"+i, "%" + query + "%");
                 
                 sql.append("concat(");
                 for(String parameter: params){
-                    sql.append("o.").append(parameter).append(", ' ', ");
+                    sql.append("coalesce(").append("o.").append(parameter).append(",'')").append(",' ',");
                 }
                 sql.append("'')").append(" like :query_").append(i);
 
