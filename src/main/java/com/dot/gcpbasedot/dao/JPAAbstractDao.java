@@ -385,11 +385,11 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 for (Map.Entry<String, Object[]> entry : containParameter.entrySet()) {
                     String parameter = entry.getKey();
                     Object[] values = entry.getValue();
-                    
+
                     sql.append("o.").append(parameter);
-                    if(k==0){
+                    if( k == 0 ){
                         sql.append(" in (");
-                    }else{
+                    } else {
                         sql.append(" not in (");
                     }
                     for (int j = 0; j < values.length; j++) {
@@ -408,7 +408,6 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 }
             }
         }
-            
 
         /********************************************************************************************
          * [6] Agregando Parametros: between
@@ -429,7 +428,8 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 mapParameters.put(parameter + "_b0", range[0]);
                 mapParameters.put(parameter + "_b1", range[1]);
 
-                sql.append("o.").append(parameter).append(" between ").append(":").append(parameter).append("_b0").append(" and ").append(":").append(parameter).append("_b1");
+                sql.append("o.").append(parameter).append(" between ").append(":").append(parameter).append("_b0").append(" and ").append(":")
+                        .append(parameter).append("_b1");
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");

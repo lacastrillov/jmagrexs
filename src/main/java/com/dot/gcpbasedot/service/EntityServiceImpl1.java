@@ -162,7 +162,7 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
             parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
         }
         if(query!=null && !query.equals("")){
-            parameters.whereQuery(query, getQueryParams());
+            parameters.whereQuery(getQueryParams(), query);
         }
         
         if(page!=null){
@@ -190,7 +190,7 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
             parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
         }
         if(query!=null && !query.equals("")){
-            parameters.whereQuery(query, getQueryParams());
+            parameters.whereQuery(getQueryParams(), query);
         }
 
         return this.getGenericDao().countByParameters(parameters);

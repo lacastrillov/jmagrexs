@@ -427,7 +427,7 @@ public class JdbcDirectRepository {
                 sql.append(" AND ");
             } else {
                 sql.append(" WHERE ");
-                //parametersSet = true;
+                parametersSet = true;
             }
             i = 0;
             for (Map.Entry<String, Object[]> entry : parameters.getBetweenParameters().entrySet()) {
@@ -439,6 +439,37 @@ public class JdbcDirectRepository {
 
                 sql.append("o.").append(parameter).append(" between ").append(":").append(parameter).append("_b0").append(" and ").append(":")
                         .append(parameter).append("_b1");
+
+                if (i < numParameters - 1) {
+                    sql.append(" AND ");
+                }
+                i++;
+            }
+        }
+        
+        /********************************************************************************************
+         * [7] Agregando Parametros: query
+         ********************************************************************************************/
+        numParameters = parameters.getQueryParameters().entrySet().size();
+        if (numParameters > 0) {
+            if (parametersSet) {
+                sql.append(" AND ");
+            } else {
+                sql.append(" WHERE ");
+                parametersSet = true;
+            }
+            i = 0;
+            for (Map.Entry<String, String[]> entry : parameters.getQueryParameters().entrySet()) {
+                String query = entry.getKey();
+                String[] params= entry.getValue();
+
+                mapParameters.addValue("query_"+i, "%" + query + "%");
+                
+                sql.append("concat(");
+                for(String parameter: params){
+                    sql.append("coalesce(").append("o.").append(parameter).append(",'')").append(",' ',");
+                }
+                sql.append("'')").append(" like :query_").append(i);
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");

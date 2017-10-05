@@ -117,7 +117,7 @@ public class Parameters {
         betweenParameters.put(parameter, new Object[] { start, end });
     }
     
-    public void whereQuery(String query, String[] params) {
+    public void whereQuery(String[] params, String query) {
         queryParameters.put(query, params);
     }
     
