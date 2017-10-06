@@ -21,7 +21,7 @@
         
         <!-- ############################ IMPORT LAYOUTS ################################ -->
         
-        <c:set var="basePath" value="/vista" ></c:set>
+        <c:set var="basePath" value="" ></c:set>
         
         <!-- ############################ IMPORT MODELS ################################### -->
         

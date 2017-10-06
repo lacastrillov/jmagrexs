@@ -3,7 +3,7 @@
 
 function ${entityName}ExtViewport(){
     
-    Ext.context= "<%=request.getContextPath()%>";
+    Ext.context= "";
     
     var Instance= this;
     
