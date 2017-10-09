@@ -1,8 +1,10 @@
     
-    <script src="/themes/js/jquery.js" type="text/javascript"></script>
     <script src="http://maps.google.com/maps?file=api&amp;v=3&amp;key=AIzaSyD_IP-Js3_ETbJ9psH605u-4iqZihp_-Jg&sensor=true" type="text/javascript"></script>
+    
+    <script src="/js/libs/jquery/jquery-3.1.0.min.js" type="text/javascript"></script>
     <script src="/js/util/Util.js"></script>
     <script src="/js/web/usuario/UserAuthentication.js"></script>
+    
     <script src="<%=request.getContextPath()%>/js/util/FileUploader.js"></script>
     <script src="<%=request.getContextPath()%>/js/util/GoogleMaps.js"></script>
     <script src="<%=request.getContextPath()%>/js/util/vkbeautify.0.99.00.beta.js"></script>
