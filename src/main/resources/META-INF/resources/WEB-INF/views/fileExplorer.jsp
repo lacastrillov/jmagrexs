@@ -13,6 +13,8 @@
         <title>${viewConfig.pluralEntityTitle} - Administraci&oacute;n ${extViewConfig.appName}</title>
         <link rel="icon" type="image/icon" href="${extViewConfig.favicon}" /> 
         
+        <jsp:include page="statics.jsp"></jsp:include>
+        
         <jsp:include page="extjslib.jsp"></jsp:include>
         
         <style>
@@ -80,14 +82,6 @@
         <!-- ############################ IMPORT CONFIG ################################### -->
         
         <jsp:include page="/WEB-INF/views/scripts/config/MVCExtController.jsp" />
-        
-        
-        <script src="<%=request.getContextPath()%>/js/util/Util.js"></script>
-        <script src="<%=request.getContextPath()%>/js/util/FileUploader.js"></script>
-        
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/navegador.css">
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/gridTemplateStyles.css">
         
     </head>
     <body>

@@ -13,6 +13,8 @@
         <title>${viewConfig.pluralEntityTitle} - Administraci&oacute;n ${extViewConfig.appName}</title>
         <link rel="icon" type="image/icon" href="${extViewConfig.favicon}" /> 
         
+        <jsp:include page="statics.jsp"></jsp:include>
+        
         <jsp:include page="extjslib.jsp"></jsp:include>
         
         <style>
@@ -84,15 +86,6 @@
         <!-- ############################ IMPORT CONFIG ################################### -->
         
         <jsp:include page="/WEB-INF/views/scripts/config/MVCExtController.jsp" />
-        
-        
-        <script src="<%=request.getContextPath()%>/js/util/Util.js"></script>
-        <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=3&amp;key=AIzaSyD_IP-Js3_ETbJ9psH605u-4iqZihp_-Jg&sensor=true"></script>
-        <script src="<%=request.getContextPath()%>/js/util/GoogleMaps.js"></script>
-        
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/bootstrap.min2.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/navegador.css">
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/gridTemplateStyles.css">
         
     </head>
     <body>

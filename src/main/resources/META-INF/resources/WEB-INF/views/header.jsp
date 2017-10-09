@@ -7,16 +7,17 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
+<script type="text/javascript">
+    var navegadorExtInit= new EntityExtInit();
+    var userAuthentication = new UserAuthentication();
+</script>
 <div id="headerHtml" style="display:none;">
     <a href="/"><img src="${extViewConfig.favicon}" class="logoAdmin"></a>
     <h1>Administraci&oacute;n ${extViewConfig.appName}</h1>
     <sec:authentication var="user" property="principal" />
     <sec:authorize access="isAuthenticated()">
-        <a class="logout" href="<%=request.getContextPath()%>/security_logout">&nbsp;Cerrar sesi&oacute;n&nbsp;</a>
+        <a class="logout" onclick="userAuthentication.logout()" href="javascript:void(0)">&nbsp;Cerrar sesi&oacute;n&nbsp;</a>
         <a class="home" href="<%=request.getContextPath()%>/account/home?redirect=user">&nbsp;Inicio&nbsp;</a>
         <p class="userSession"><b>${user.username}</b> - ${user.nombre} ${user.apellidos}</p>
     </sec:authorize>
 </div>
-<script type="text/javascript">
-    var navegadorExtInit= new EntityExtInit();
-</script>
