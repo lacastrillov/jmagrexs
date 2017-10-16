@@ -168,7 +168,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.textEditorRender= function(value, field){
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
-                   '<iframe src="/vista/webFile/ajax/plainTextEditor.htm?fileUrl='+value+'" frameborder="0" width="100%" height="100%"></iframe>';
+                   '<iframe src="<%=request.getContextPath()%>/webFile/ajax/plainTextEditor.htm?fileUrl='+value+'" frameborder="0" width="100%" height="100%"></iframe>';
         }else{
             return value;
         }
