@@ -6,6 +6,7 @@ import com.dot.gcpbasedot.dto.GenericTableColumn;
 import com.dot.gcpbasedot.enums.HideView;
 import com.dot.gcpbasedot.util.Formats;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -528,6 +529,21 @@ public final class EntityReflection {
         }
 
         return filtered;
+    }
+    
+    /**
+     * Get Annotation from a Class of specific type.
+     *
+     * @param entityClass the entity class
+     * @param annotationClass
+     * @return an Annotation.
+     */
+    public static Annotation getClassAnnotation(Class<?> entityClass, Class<?> annotationClass) {
+        Annotation ann= entityClass.getAnnotation((Class) annotationClass);
+        if (entityClass.getAnnotation((Class) annotationClass) != null) {
+            return ann;
+        }
+        return null;
     }
 
     /**
