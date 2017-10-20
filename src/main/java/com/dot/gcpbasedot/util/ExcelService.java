@@ -1,5 +1,6 @@
 package com.dot.gcpbasedot.util;
 
+import com.dot.gcpbasedot.annotation.LabelField;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import java.beans.PropertyDescriptor;
@@ -23,14 +24,14 @@ public class ExcelService {
     
     private static final String TEMPLATES = "/excel/";
 
-    public static void generateExcelReport(List<Object> list, OutputStream outputStream, Class entityClass) throws Exception {
+    public static void generateExcelReport(List<Object> list, OutputStream outputStream, Class dtoClass) throws Exception {
         try (InputStream inputStream = ExcelService.class.getResourceAsStream(TEMPLATES + "report.xls")) {
             HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
             HSSFSheet sheet1 = workbook.getSheetAt(0);
             int colIndex = 0;
             int rowIndex = 0;
             
-            PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
+            PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
             
             HSSFCellStyle style = workbook.createCellStyle();
             style.setBorderTop((short) 6);
@@ -64,14 +65,25 @@ public class ExcelService {
                     if(typeWrapper.getName().equals("java.util.List")==false && typeWrapper.getName().equals("java.lang.Class")==false){
                         if (value != null) {
                             try{
-                                Object parseValue = typeWrapper.cast(value);
+                                Object parseValue = Formats.castParameter(typeWrapper.getName(), value.toString());
                                 if (parseValue != null) {
                                     if(typeWrapper.getName().equals("java.util.Date")){
                                         DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(format.format(parseValue)));
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(format.format(typeWrapper.cast(value))));
                                     }else{
-                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(parseValue.toString()));
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(value.toString()));
                                     }
+                                }else{
+                                    BeanWrapperImpl internalWrapper = new BeanWrapperImpl(value);
+                                    String textValue= "";
+                                    if(internalWrapper.getPropertyValue("id")!=null){
+                                        textValue= internalWrapper.getPropertyValue("id").toString();
+                                    }
+                                    LabelField ann= (LabelField) EntityReflection.getClassAnnotation(typeWrapper, LabelField.class);
+                                    if(ann!=null && internalWrapper.getPropertyValue(ann.value())!=null){
+                                        textValue+= " - " + internalWrapper.getPropertyValue(ann.value()).toString();
+                                    }
+                                    row.createCell(colIndex++).setCellValue(new HSSFRichTextString(textValue));
                                 }
                             }catch(Exception e){
                                 row.createCell(colIndex++).setCellValue(new HSSFRichTextString(""));

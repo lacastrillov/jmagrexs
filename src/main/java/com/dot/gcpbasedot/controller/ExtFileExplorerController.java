@@ -52,8 +52,8 @@ public abstract class ExtFileExplorerController extends ExtController {
         this.viewConfig= viewConfig;
     }
 
-    protected void addControlMapping(String entityRef, String labelField, EntityService entityService, Class dtoClass) {
-        viewConfig= new FileExplorerConfig(entityRef, labelField, entityService, dtoClass);
+    protected void addControlMapping(String entityRef, EntityService entityService, Class dtoClass) {
+        viewConfig= new FileExplorerConfig(entityRef, entityService, dtoClass);
     }
 
     @RequestMapping(value = "/fileExplorer.htm", method = {RequestMethod.GET, RequestMethod.POST})

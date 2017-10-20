@@ -38,8 +38,8 @@ public abstract class ExtEntityController extends ExtReportController {
         this.viewConfig= viewConfig;
     }
 
-    protected void addControlMapping(String entityRef, String labelField, EntityService entityService, Class dtoClass) {
-        viewConfig= new EntityConfig(entityRef, labelField, entityService, dtoClass);
+    protected void addControlMapping(String entityRef, EntityService entityService, Class dtoClass) {
+        viewConfig= new EntityConfig(entityRef, entityService, dtoClass);
     }
 
     @RequestMapping(value = "/entity.htm", method = {RequestMethod.GET, RequestMethod.POST})

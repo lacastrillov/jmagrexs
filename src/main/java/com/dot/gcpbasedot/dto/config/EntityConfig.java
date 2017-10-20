@@ -5,8 +5,10 @@
  */
 package com.dot.gcpbasedot.dto.config;
 
+import com.dot.gcpbasedot.annotation.LabelField;
 import com.dot.gcpbasedot.dto.GridTemplate;
 import com.dot.gcpbasedot.dto.ProcessButton;
+import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,11 +107,11 @@ public class EntityConfig {
     private GridTemplate gridTemplate;
     
     
-    public EntityConfig(String entityRef, String labelField, EntityService entityService, Class dtoClass) {
+    public EntityConfig(String entityRef, EntityService entityService, Class dtoClass) {
         this.entityRef= entityRef;
         this.pathRef= entityRef;
         this.entityName= entityService.getEntityClass().getSimpleName();
-        this.labelField= labelField;
+        this.labelField= "id";
         this.entityService= entityService;
         this.dtoClass= dtoClass;
         this.pluralEntityTitle= this.entityName + "s";
@@ -146,6 +148,10 @@ public class EntityConfig {
         this.comboboxChildDependent= new HashMap<>();
         this.processButtons= new ArrayList<>();
         this.gridTemplate= new GridTemplate("");
+        LabelField ann= (LabelField) EntityReflection.getClassAnnotation(dtoClass, LabelField.class);
+        if(ann!=null){
+            this.labelField= ann.value();
+        }
     }
     
     /**

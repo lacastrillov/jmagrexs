@@ -6,15 +6,8 @@
 package com.dot.gcpbasedot.mapper;
 
 import com.dot.gcpbasedot.domain.BaseEntity;
-import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.reflection.ReflectionUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -22,22 +15,31 @@ import java.util.logging.Logger;
  * @param <T>
  * @param <F>
  */
-public abstract class EntityMapperImpl<T extends BaseEntity, F extends BaseEntity> implements EntityMapper {
+public abstract class EntityMapperImpl<T extends BaseEntity, F extends BaseEntity> {
 
-    private final Class<T> classT;
+    private final Class<T> entityClass;
 
-    // private final Class<F> classF;
+    private final Class<F> dtoClass;
+    
+    
     public EntityMapperImpl() {
-        classT = ReflectionUtils.getParametrizedType(this.getClass(), 0);
-        // classF= ReflectionUtils.getParametrizedType(this.getClass(),1);
+        entityClass = ReflectionUtils.getParametrizedType(this.getClass(), 0);
+        dtoClass = ReflectionUtils.getParametrizedType(this.getClass(),1);
+    }
+    
+    public Class getEntityClass(){
+        return entityClass;
+    }
+    
+    public Class getDtoClass(){
+        return dtoClass;
     }
 
     /**
      *
      * @param baseEntityF
      * @return
-     */
-    @Override
+     *
     public T entityToDto(BaseEntity baseEntityF) {
         Constructor<?> ctor;
         try {
@@ -52,14 +54,13 @@ public abstract class EntityMapperImpl<T extends BaseEntity, F extends BaseEntit
         }
 
         return null;
-    }
+    }*/
 
     /**
      *
      * @param entities
      * @return
-     */
-    @Override
+     *
     public List<T> listEntitiesToListDtos(List entities) {
         ArrayList<T> dtos = new ArrayList<>();
         if (entities != null) {
@@ -68,6 +69,6 @@ public abstract class EntityMapperImpl<T extends BaseEntity, F extends BaseEntit
             }
         }
         return dtos;
-    }
+    }*/
 
 }

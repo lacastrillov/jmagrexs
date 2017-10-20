@@ -75,10 +75,10 @@ public class FileExplorerConfig {
     private GridTemplate gridTemplate;
     
     
-    public FileExplorerConfig(String entityRef, String labelField, EntityService entityService, Class dtoClass) {
+    public FileExplorerConfig(String entityRef, EntityService entityService, Class dtoClass) {
         this.entityRef= entityRef;
         this.entityName= entityService.getEntityClass().getSimpleName();
-        this.labelField= labelField;
+        this.labelField= "name";
         this.entityService= entityService;
         this.dtoClass= dtoClass;
         this.pluralEntityTitle= this.entityName + "s";

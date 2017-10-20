@@ -17,17 +17,28 @@ import java.util.List;
 public interface EntityMapper<T extends BaseEntity, F extends BaseEntity> {
 
     /**
+     * 
+     * @return 
+     */
+    Class getEntityClass();
+    
+    /**
+     * 
+     * @return 
+     */
+    Class getDtoClass();
+    /**
      *
      * @param entity
      * @return
      */
-    T entityToDto(F entity);
+    F entityToDto(T entity);
 
     /**
      *
      * @param entities
      * @return
      */
-    List<T> listEntitiesToListDtos(List<F> entities);
+    List<F> listEntitiesToListDtos(List<T> entities);
 
 }

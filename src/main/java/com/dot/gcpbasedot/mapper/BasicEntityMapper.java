@@ -13,7 +13,7 @@ import java.util.List;
  * @author lacastrillov
  */
 public interface BasicEntityMapper {
-
+    
     /**
      *
      * @param entity
@@ -27,5 +27,5 @@ public interface BasicEntityMapper {
      * @return
      */
     List<? extends BaseEntity> listEntitiesToListDtos(List<? extends BaseEntity> entities);
-
+    
 }

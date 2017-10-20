@@ -3,12 +3,12 @@ package com.dot.gcpbasedot.controller;
 import com.dot.gcpbasedot.annotation.ImageResize;
 import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.dto.ItemTemplate;
-import com.dot.gcpbasedot.mapper.BasicEntityMapper;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
 import com.dot.gcpbasedot.util.Util;
 import com.dot.gcpbasedot.util.XMLMarshaller;
 import com.dot.gcpbasedot.dto.ResultListCallback;
+import com.dot.gcpbasedot.mapper.EntityMapper;
 import com.dot.gcpbasedot.util.ExcelService;
 import com.dot.gcpbasedot.util.FileService;
 import java.awt.image.BufferedImage;
@@ -61,7 +61,7 @@ public abstract class RestEntityController {
 
     protected EntityService service;
 
-    protected BasicEntityMapper mapper;
+    protected EntityMapper mapper;
     
     protected Class entityClass;
     
@@ -86,15 +86,12 @@ public abstract class RestEntityController {
     protected Long maxFileSizeToUpload=1024L;
     
 
-    protected void addControlMapping(String entityRef, EntityService entityService, BasicEntityMapper entityMapper) {
+    protected void addControlMapping(String entityRef, EntityService entityService, EntityMapper entityMapper) {
         this.entityRef= entityRef;
         this.service=  entityService;
         this.mapper= entityMapper;
         this.entityClass= service.getEntityClass();
-    }
-
-    public void setDtoClass(Class dtoClass) {
-        this.dtoClass = dtoClass;
+        this.dtoClass= mapper.getDtoClass();
     }
     
     @RequestMapping(value = "/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -161,7 +158,7 @@ public abstract class RestEntityController {
         try {
             List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             
-            ExcelService.generateExcelReport(listEntities, response.getOutputStream(), entityClass);
+            ExcelService.generateExcelReport(listEntities, response.getOutputStream(), dtoClass);
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
         }
