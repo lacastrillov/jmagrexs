@@ -30,7 +30,7 @@ public class ExcelService {
     
     private static final String TEMPLATES = "/excel/";
     
-    private static final FieldConfigurationByAnnotations fcba= new FieldConfigurationByAnnotations();
+    private static final FieldConfigurationByAnnotations FCBA= new FieldConfigurationByAnnotations();
     
 
     public static void generateExcelReport(List<Object> list, OutputStream outputStream, Class dtoClass) throws Exception {
@@ -41,10 +41,10 @@ public class ExcelService {
             int rowIndex = 0;
             
             PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
-            fcba.orderPropertyDescriptor(propertyDescriptors, dtoClass, "name");
+            FCBA.orderPropertyDescriptor(propertyDescriptors, dtoClass, "name");
             
-            HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, dtoClass);
-            HashSet<String> hideFields= fcba.getHideFields(dtoClass);
+            HashMap<String, String> titledFieldsMap= FCBA.getTitledFieldsMap(propertyDescriptors, dtoClass);
+            HashSet<String> hideFields= FCBA.getHideFields(dtoClass);
             
             HSSFCellStyle style = workbook.createCellStyle();
             style.setBorderTop((short) 6);
