@@ -2,6 +2,7 @@ package com.dot.gcpbasedot.util;
 
 import java.math.BigInteger;
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -264,6 +265,19 @@ public class Formats {
             rst += (char) ((int) (Math.random() * (letras[fila][1] - letras[fila][0])) + letras[fila][0]);
         }
         return rst;
+    }
+    
+    /**
+     * Metodo que convierte un Date en String
+     *
+     * @param date
+     * @param format
+     * @return
+     * @throws ParseException
+     */
+    public static String dateToString(Date date, String format) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(format);
+        return dateFormat.format(date);
     }
 
     /**

@@ -1,13 +1,18 @@
 package com.dot.gcpbasedot.util;
 
 import com.dot.gcpbasedot.annotation.LabelField;
+import com.dot.gcpbasedot.components.FieldConfigurationByAnnotations;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
+import com.dot.gcpbasedot.enums.HideView;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -19,10 +24,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.web.util.HtmlUtils;
 
 public class ExcelService {
     
     private static final String TEMPLATES = "/excel/";
+    
+    private static final FieldConfigurationByAnnotations fcba= new FieldConfigurationByAnnotations();
+    
 
     public static void generateExcelReport(List<Object> list, OutputStream outputStream, Class dtoClass) throws Exception {
         try (InputStream inputStream = ExcelService.class.getResourceAsStream(TEMPLATES + "report.xls")) {
@@ -32,6 +41,10 @@ public class ExcelService {
             int rowIndex = 0;
             
             PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
+            fcba.orderPropertyDescriptor(propertyDescriptors, dtoClass, "name");
+            
+            HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, dtoClass);
+            HashSet<String> hideFields= fcba.getHideFields(dtoClass);
             
             HSSFCellStyle style = workbook.createCellStyle();
             style.setBorderTop((short) 6);
@@ -44,10 +57,11 @@ public class ExcelService {
             HSSFRow row = sheet1.createRow(rowIndex);
             
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                String fieldName= propertyDescriptor.getName();
                 String type = propertyDescriptor.getPropertyType().getName();
-                if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
+                if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false && !hideFields.contains(fieldName + HideView.GRID.name())){
                     Cell cell = row.createCell(colIndex++);
-                    cell.setCellValue(new HSSFRichTextString(propertyDescriptor.getName()));
+                    cell.setCellValue(new HSSFRichTextString(HtmlUtils.htmlUnescape(titledFieldsMap.get(fieldName))));
                     cell.setCellStyle(style);
                 }
             }
@@ -60,18 +74,18 @@ public class ExcelService {
                 BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(object);
 
                 for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-                    Object value = sourceWrapper.getPropertyValue(propertyDescriptor.getName());
+                    String fieldName= propertyDescriptor.getName();
+                    Object value = sourceWrapper.getPropertyValue(fieldName);
                     Class<?> typeWrapper = propertyDescriptor.getPropertyType();
-                    if(typeWrapper.getName().equals("java.util.List")==false && typeWrapper.getName().equals("java.lang.Class")==false){
+                    if(typeWrapper.getName().equals("java.util.List")==false && typeWrapper.getName().equals("java.lang.Class")==false && !hideFields.contains(fieldName + HideView.GRID.name())){
                         if (value != null) {
                             try{
-                                Object parseValue = Formats.castParameter(typeWrapper.getName(), value.toString());
-                                if (parseValue != null) {
+                                if(Formats.TYPES_LIST.contains(typeWrapper.getName())){
+                                    Object parseValue = typeWrapper.cast(value);
                                     if(typeWrapper.getName().equals("java.util.Date")){
-                                        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(format.format(typeWrapper.cast(value))));
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(Formats.dateToString((Date)parseValue, "dd-MM-yyyy")));
                                     }else{
-                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(value.toString()));
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(parseValue.toString()));
                                     }
                                 }else{
                                     BeanWrapperImpl internalWrapper = new BeanWrapperImpl(value);
