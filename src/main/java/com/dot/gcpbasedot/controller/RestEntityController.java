@@ -153,7 +153,7 @@ public abstract class RestEntityController {
             HttpServletResponse response) {
         
         response.setContentType("application/xls");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + "report.xls\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + entityRef + "_report.xls\"");
 
         try {
             List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
@@ -253,7 +253,7 @@ public abstract class RestEntityController {
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
         
         response.setContentType("application/xls");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + "report.xls\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.xls\"");
 
         try {
             Class dtoReportClass= Class.forName(dtoName);
