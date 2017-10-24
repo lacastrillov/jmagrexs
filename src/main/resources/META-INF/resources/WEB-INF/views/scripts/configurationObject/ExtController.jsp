@@ -72,6 +72,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                             var text=c.getValue();
                             if(text!==null && text!=="" && text!==false){
                                 filled=true;
+                                c.setDisabled(false);
                             }
                         });
                     }else{
