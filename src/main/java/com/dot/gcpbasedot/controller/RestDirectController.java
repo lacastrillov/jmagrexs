@@ -106,7 +106,7 @@ public abstract class RestDirectController {
             HttpServletResponse response) {
         
         response.setContentType("application/xls");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + "report.xls\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.xls\"");
 
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
