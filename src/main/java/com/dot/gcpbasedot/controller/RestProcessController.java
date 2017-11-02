@@ -3,6 +3,7 @@ package com.dot.gcpbasedot.controller;
 import com.dot.gcpbasedot.annotation.DoProcess;
 import com.dot.gcpbasedot.annotation.HttpHeader;
 import com.dot.gcpbasedot.annotation.PathVar;
+import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.dto.ExternalServiceDto;
 import com.dot.gcpbasedot.interfaces.LogProcesInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
@@ -10,6 +11,7 @@ import com.dot.gcpbasedot.service.EntityService;
 import com.dot.gcpbasedot.util.Util;
 import com.dot.gcpbasedot.util.ExternalServiceConnection;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,12 +21,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -40,6 +47,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public abstract class RestProcessController {
 
     protected static final Logger LOGGER = Logger.getLogger(RestProcessController.class);
+    
+    protected Long maxFileSizeToUpload=1024L;
     
     protected HashSet<String> nameProcesses= null;
     
@@ -203,6 +212,38 @@ public abstract class RestProcessController {
         return jsonOut;
     }
     
+    @RequestMapping(value = "/diskupload/{processName}/{processId}.htm")
+    @ResponseBody
+    public byte[] diskupload(HttpServletRequest request, @PathVariable String processName, @PathVariable String processId) {
+        Map<String,String> result=new HashMap();
+        //50MB
+        long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
+
+        String resultData;
+        try {
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setSizeMax(maxFileSize);
+            
+            List items = upload.parseRequest(request);
+            Iterator iterator = items.iterator();
+            while (iterator.hasNext()) {
+                FileItem item = (FileItem) iterator.next();
+                InputStream is= item.getInputStream();
+                if(!item.isFormField() && !item.getName().equals("")){
+                    String fileUrl= saveFilePart(0, item.getName(), item.getContentType(), (int)item.getSize(), is, processName, processId);
+                    result.put(item.getName(), fileUrl);
+                }
+            }
+            
+            resultData= Util.getOperationCallback(result, "Carga de archivos en el proceso "+processName+" realizada...", true);
+        } catch (Exception e) {
+            LOGGER.error("upload " + processName, e);
+            resultData= Util.getOperationCallback(null, "Error al cargar archivos en el proceso " + processName + ": " + e.getMessage(), false);
+        }
+        return getStringBytes(resultData);
+    }
+    
     protected byte[] getStringBytes(String data){
         try {
             return data.getBytes("UTF-8");
@@ -261,6 +302,11 @@ public abstract class RestProcessController {
         }catch(Exception e){
             LOGGER.error("ERROR doProcess", e);
         }
+    }
+    
+    protected String saveFilePart(int slice, String fileName, String fileType, int fileSize, InputStream is, String processName, String processId){
+        // ABSTRACT CODE HERE
+        return "Almacenamiento de archivo no implementado!!";
     }
     
 }
