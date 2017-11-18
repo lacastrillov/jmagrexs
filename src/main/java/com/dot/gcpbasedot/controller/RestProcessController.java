@@ -3,7 +3,6 @@ package com.dot.gcpbasedot.controller;
 import com.dot.gcpbasedot.annotation.DoProcess;
 import com.dot.gcpbasedot.annotation.HttpHeader;
 import com.dot.gcpbasedot.annotation.PathVar;
-import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.dto.ExternalServiceDto;
 import com.dot.gcpbasedot.interfaces.LogProcesInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
@@ -151,8 +150,9 @@ public abstract class RestProcessController {
         }    
         
         if(logProcessClass!=null && logProcessService!=null){
-            this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
+            Integer processId= this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
                     jsonResult.getString("message"), jsonResult.getBoolean("success"));
+            response.addHeader("ProcessID", processId.toString());
         }
         
         return getStringBytes(jsonOut);
@@ -214,12 +214,13 @@ public abstract class RestProcessController {
     
     @RequestMapping(value = "/diskupload/{processName}/{processId}.htm")
     @ResponseBody
-    public byte[] diskupload(HttpServletRequest request, @PathVariable String processName, @PathVariable String processId) {
-        Map<String,String> result=new HashMap();
+    public byte[] diskupload(HttpServletRequest request, @PathVariable String processName, @PathVariable Integer processId) {
         //50MB
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
         String resultData;
+        LogProcesInterface logProcess= (LogProcesInterface) logProcessService.loadById(processId);
+        JSONObject unremakeDataIn= Util.unremakeJSONObject(logProcess.getDataIn());
         try {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
@@ -231,12 +232,15 @@ public abstract class RestProcessController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && !item.getName().equals("")){
-                    String fileUrl= saveFilePart(0, item.getName(), item.getContentType(), (int)item.getSize(), is, processName, processId);
-                    result.put(item.getName(), fileUrl);
+                    String fileUrl= saveFilePart(0, item.getName(), item.getContentType(), (int)item.getSize(), is, processName, logProcess.getDataIn());
+                    unremakeDataIn.put(item.getName(), fileUrl);
                 }
             }
+            String dataIn= Util.remakeJSONObject(unremakeDataIn.toString());
+            logProcess.setDataIn(dataIn);
+            logProcessService.update(logProcess);
             
-            resultData= Util.getOperationCallback(result, "Carga de archivos en el proceso "+processName+" realizada...", true);
+            resultData= Util.getOperationCallback(dataIn, "Carga de archivos en el proceso "+processName+" realizada...", true);
         } catch (Exception e) {
             LOGGER.error("upload " + processName, e);
             resultData= Util.getOperationCallback(null, "Error al cargar archivos en el proceso " + processName + ": " + e.getMessage(), false);
@@ -254,7 +258,7 @@ public abstract class RestProcessController {
     }
     
     @Async
-    private void createLogProcess(String processName, String dataIn, String dataOut,
+    private Integer createLogProcess(String processName, String dataIn, String dataOut,
             Date initDate, long initTime, String message, boolean success){
         
         try{
@@ -299,12 +303,15 @@ public abstract class RestProcessController {
             }
             
             logProcessService.create(logProcess);
+            
+            return (Integer) logProcess.getId();
         }catch(Exception e){
             LOGGER.error("ERROR doProcess", e);
         }
+        return null;
     }
     
-    protected String saveFilePart(int slice, String fileName, String fileType, int fileSize, InputStream is, String processName, String processId){
+    protected String saveFilePart(int slice, String fileName, String fileType, int fileSize, InputStream is, String processName, String inObject){
         // ABSTRACT CODE HERE
         return "Almacenamiento de archivo no implementado!!";
     }

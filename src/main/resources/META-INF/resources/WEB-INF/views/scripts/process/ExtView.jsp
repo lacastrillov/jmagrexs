@@ -115,7 +115,21 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             minWidth: 300,
             listeners: {
                 doProcess: function(form, data){
-                    Instance.entityExtStore.doProcess('${processName.key}', data, parentExtController.formSavedResponse);
+                    Instance.entityExtStore.doProcess('${processName.key}', data, function(processName, processId, dataOut, outputDataFormat){
+                        <c:if test="${viewConfig.multipartFormData}">
+                        var formComponent= Ext.getCmp('formContainer'+processName+'Model').child('#form'+processName+'Model');
+                        Instance.entityExtView.entityExtStore.upload(formComponent, processName, processId, function(responseUpload){
+                            Ext.MessageBox.alert('Status', responseUpload.message);
+                            if(responseUpload.success){
+                                //Aqui se llena el form con los archivos
+                                parentExtController.formSavedResponse(processName, dataOut, outputDataFormat);
+                            }
+                        });
+                        </c:if>
+                        <c:if test="${viewConfig.multipartFormData}">
+                        parentExtController.formSavedResponse(processName, dataOut, outputDataFormat);
+                        </c:if>
+                    });
                 },
                 render: function(panel) {
                     Instance.commonExtView.enableManagementTabHTMLEditor();

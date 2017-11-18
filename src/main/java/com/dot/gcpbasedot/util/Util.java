@@ -144,9 +144,13 @@ public class Util {
         JSONObject source= new JSONObject(json);
         JSONObject finalObject= new JSONObject();
         
-        for (Object key : source.keySet()) {
-            JSONArray value = (JSONArray) source.get((String)key);
-            assignValue(finalObject, (String)key, value.get(0));
+        for (String key : source.keySet()) {
+            if(source.get(key).toString().startsWith("[")){
+                JSONArray value = source.getJSONArray(key);
+                assignValue(finalObject, key, value.get(0));
+            }else{
+                assignValue(finalObject, key, source.get(key).toString());
+            }
         }
         
         return finalObject.toString();
@@ -182,6 +186,33 @@ public class Util {
             ((JSONArray) obj.get(firstKey)).put(index, value);
         }else{
             obj.put(key, value);
+        }
+    };
+    
+    public static JSONObject unremakeJSONObject(String json){
+        JSONObject source= new JSONObject(json);
+        JSONObject finalObject= new JSONObject();
+        
+        for (String key : source.keySet()) {
+            assignSingleLevelValue(key, finalObject, source.get(key));
+        }
+        
+        return finalObject;
+    };
+    
+    public static void assignSingleLevelValue(String level, JSONObject finalObject, Object object){
+        if(object.getClass()==JSONArray.class ){
+            JSONArray jsonArray= (JSONArray) object;
+            for(int i=0; i<jsonArray.length(); i++){
+                assignSingleLevelValue(level+"["+i+"]", finalObject, jsonArray.get(i));
+            }
+        }else if(object.getClass()==JSONObject.class){
+            JSONObject jsonObject= (JSONObject) object;
+            for(String key : jsonObject.keySet()) {
+                assignSingleLevelValue(level+"."+key, finalObject, jsonObject.get(key));
+            }
+        }else{
+            finalObject.put(level, object);
         }
     };
     

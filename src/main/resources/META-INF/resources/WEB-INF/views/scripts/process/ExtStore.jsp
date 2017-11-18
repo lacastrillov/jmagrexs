@@ -130,7 +130,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.context+"/rest/${entityRef}/doProcess.htm",
+            url: Ext.context+"/rest/${viewConfig.mainProcessRef}/doProcess.htm",
             method: "POST",
             headers: {
                 'Content-Type' : 'application/json'
@@ -139,7 +139,21 @@ function ${entityName}ExtStore(){
             success: function(response){
                 Ext.MessageBox.hide();
                 var responseDataFormat= response.getAllResponseHeaders()['response-data-format'];
-                func(processName, response.responseText, responseDataFormat);
+                var processId= response.getAllResponseHeaders()['ProcessID'];
+                func(processName, processId, response.responseText, responseDataFormat);
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
+    Instance.upload= function(form, processName, processId, func){
+        form.submit({
+            url: Ext.context+'/rest/${viewConfig.mainProcessRef}/diskupload/'+processName+'/'+processId+'.htm',
+            waitMsg: 'Subiendo archivo...',
+            success: function(form, action) {
+                func(action.result);
             },
             failure: function(response){
                 commonExtView.processFailure(response);
