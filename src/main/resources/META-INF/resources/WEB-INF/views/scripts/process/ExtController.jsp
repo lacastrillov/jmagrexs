@@ -87,17 +87,21 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 Ext.getCmp('content-processes').layout.setActiveItem('formContainer'+data.processName+'Model');
                 
                 //Populate Form
-                var record= Ext.create(data.processName+"Model");
-                record.data= util.unremakeJSONObject(JSON.parse(data.dataIn));
-                var formComponent= Ext.getCmp('formContainer'+data.processName+'Model').child('#form'+data.processName+'Model');
-                formComponent.setActiveRecord(record);
-                
-                Instance.showListItems(formComponent);
+                Instance.populateForm(data.processName, data.dataIn);
                 
                 //Populate tree result
                 Instance.formSavedResponse(data.processName, data.dataOut, data.outputDataFormat);
             });
         }
+    };
+    
+    Instance.populateForm= function(processName, dataIn){
+        var record= Ext.create(processName+"Model");
+        record.data= util.unremakeJSONObject(JSON.parse(dataIn));
+        var formComponent= Ext.getCmp('formContainer'+processName+'Model').child('#form'+processName+'Model');
+        formComponent.setActiveRecord(record);
+
+        Instance.showListItems(formComponent);
     };
     
     Instance.formSavedResponse= function(processName, dataOut, outputDataFormat){

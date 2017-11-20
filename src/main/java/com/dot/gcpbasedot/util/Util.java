@@ -201,12 +201,12 @@ public class Util {
     };
     
     public static void assignSingleLevelValue(String level, JSONObject finalObject, Object object){
-        if(object.getClass()==JSONArray.class ){
+        if(object instanceof JSONArray){
             JSONArray jsonArray= (JSONArray) object;
             for(int i=0; i<jsonArray.length(); i++){
                 assignSingleLevelValue(level+"["+i+"]", finalObject, jsonArray.get(i));
             }
-        }else if(object.getClass()==JSONObject.class){
+        }else if(object instanceof JSONObject){
             JSONObject jsonObject= (JSONObject) object;
             for(String key : jsonObject.keySet()) {
                 assignSingleLevelValue(level+"."+key, finalObject, jsonObject.get(key));

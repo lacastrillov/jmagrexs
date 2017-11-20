@@ -152,7 +152,7 @@ public abstract class RestProcessController {
         if(logProcessClass!=null && logProcessService!=null){
             Integer processId= this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
                     jsonResult.getString("message"), jsonResult.getBoolean("success"));
-            response.addHeader("ProcessID", processId.toString());
+            response.addHeader("Process-Id", processId.toString());
         }
         
         return getStringBytes(jsonOut);
@@ -220,6 +220,7 @@ public abstract class RestProcessController {
 
         String resultData;
         LogProcesInterface logProcess= (LogProcesInterface) logProcessService.loadById(processId);
+        Object inObject= EntityReflection.jsonToObject(logProcess.getDataIn(), inDtos.get(processName));
         JSONObject unremakeDataIn= Util.unremakeJSONObject(logProcess.getDataIn());
         try {
             FileItemFactory factory = new DiskFileItemFactory();
@@ -232,8 +233,12 @@ public abstract class RestProcessController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && !item.getName().equals("")){
-                    String fileUrl= saveFilePart(0, item.getName(), item.getContentType(), (int)item.getSize(), is, processName, logProcess.getDataIn());
-                    unremakeDataIn.put(item.getName(), fileUrl);
+                    //ObjectIn, FieldName, FileName, ContentType, Size, InputStream
+                    Method method = this.getClass().getMethod(processName+"Files", inDtos.get(processName), String.class, String.class, String.class, int.class, InputStream.class);
+                    if(method!=null){
+                        String fileUrl = (String)method.invoke(this, inObject, item.getFieldName(), item.getName(), item.getContentType(), (int)item.getSize(), is);
+                        unremakeDataIn.put(item.getFieldName(), fileUrl);
+                    }
                 }
             }
             String dataIn= Util.remakeJSONObject(unremakeDataIn.toString());
@@ -309,11 +314,6 @@ public abstract class RestProcessController {
             LOGGER.error("ERROR doProcess", e);
         }
         return null;
-    }
-    
-    protected String saveFilePart(int slice, String fileName, String fileType, int fileSize, InputStream is, String processName, String inObject){
-        // ABSTRACT CODE HERE
-        return "Almacenamiento de archivo no implementado!!";
     }
     
 }

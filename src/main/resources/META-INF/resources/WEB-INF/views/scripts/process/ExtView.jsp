@@ -116,17 +116,17 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             listeners: {
                 doProcess: function(form, data){
                     Instance.entityExtStore.doProcess('${processName.key}', data, function(processName, processId, dataOut, outputDataFormat){
-                        <c:if test="${viewConfig.multipartFormData}">
+                        <c:if test="${fn:contains(viewConfig.multipartFormProcess, processName.key)}">
                         var formComponent= Ext.getCmp('formContainer'+processName+'Model').child('#form'+processName+'Model');
-                        Instance.entityExtView.entityExtStore.upload(formComponent, processName, processId, function(responseUpload){
+                        Instance.entityExtStore.upload(formComponent, processName, processId, function(responseUpload){
                             Ext.MessageBox.alert('Status', responseUpload.message);
                             if(responseUpload.success){
-                                //Aqui se llena el form con los archivos
+                                parentExtController.populateForm(processName, responseUpload.data);
                                 parentExtController.formSavedResponse(processName, dataOut, outputDataFormat);
                             }
                         });
                         </c:if>
-                        <c:if test="${viewConfig.multipartFormData}">
+                        <c:if test="${!fn:contains(viewConfig.multipartFormProcess, processName.key)}">
                         parentExtController.formSavedResponse(processName, dataOut, outputDataFormat);
                         </c:if>
                     });

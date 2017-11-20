@@ -139,7 +139,7 @@ function ${entityName}ExtStore(){
             success: function(response){
                 Ext.MessageBox.hide();
                 var responseDataFormat= response.getAllResponseHeaders()['response-data-format'];
-                var processId= response.getAllResponseHeaders()['ProcessID'];
+                var processId= response.getAllResponseHeaders()['process-id'];
                 func(processName, processId, response.responseText, responseDataFormat);
             },
             failure: function(response){

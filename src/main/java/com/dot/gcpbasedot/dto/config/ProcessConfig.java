@@ -8,9 +8,11 @@ package com.dot.gcpbasedot.dto.config;
 import com.dot.gcpbasedot.dto.GridTemplate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -68,8 +70,6 @@ public class ProcessConfig {
     
     private boolean defaultAutoSave;
     
-    private boolean multipartFormData;
-    
     private boolean hideHeadersGrid;
     
     private boolean activeGridTemplate;
@@ -89,6 +89,8 @@ public class ProcessConfig {
     private String defaultOrderDir;
     
     private Long maxResultsPerPage;
+    
+    private final Set<String> multipartFormProcess;
     
     private final Map<String, String> internalViewButton;
     
@@ -122,7 +124,6 @@ public class ProcessConfig {
         this.editableForm= true;
         this.collapsedFilters= true;
         this.defaultAutoSave= true;
-        this.multipartFormData= false;
         this.hideHeadersGrid= false;
         this.activeGridTemplate= false;
         this.activeGridTemplateAsParent= false;
@@ -136,6 +137,7 @@ public class ProcessConfig {
         this.nameProcesses= new LinkedHashMap<>();
         this.inDtos = new HashMap<>();
         this.outDtos = new HashMap<>();
+        this.multipartFormProcess= new HashSet<>();
         this.internalViewButton= new HashMap<>();
         this.childExtViews= new HashMap<>();
         this.typeChildExtViews= new HashMap<>();
@@ -426,15 +428,15 @@ public class ProcessConfig {
     /**
      * @return the multipartFormData
      */
-    public boolean isMultipartFormData() {
-        return multipartFormData;
+    public Set getMultipartFormProcess() {
+        return multipartFormProcess;
     }
 
     /**
-     * @param multipartFormData the multipartFormData to set
+     * @param processName
      */
-    public void setMultipartFormData(boolean multipartFormData) {
-        this.multipartFormData = multipartFormData;
+    public void addMultipartFormProcess(String processName) {
+        this.multipartFormProcess.add(processName);
     }
     
     /**
