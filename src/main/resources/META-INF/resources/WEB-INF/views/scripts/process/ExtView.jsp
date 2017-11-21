@@ -199,12 +199,16 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     itemId: 'save'+modelName,
                     text: 'Ejecutar',
                     scope: this,
-                    handler: this.onSave
+                    handler: this.onDoProcess
                 }, {
                     //iconCls: 'icon-reset',
                     text: 'Limpiar',
                     scope: this,
                     handler: this.onReset
+                },{
+                    text: '&#x25BC; Ver todo',
+                    scope: this,
+                    handler: this.onSeeAll
                 },'|'];
                 </c:if>
                 Ext.apply(this, {
@@ -241,7 +245,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 return this.activeRecord;
             },
             
-            onSave: function(){
+            onDoProcess: function(){
                 var form = this.getForm();
                 
                 if (form.isValid()) {
@@ -252,6 +256,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             onReset: function(){
                 this.setActiveRecord(null);
                 this.getForm().reset();
+            },
+                    
+            onSeeAll: function(){
+                this.doLayout();
             }
     
         });

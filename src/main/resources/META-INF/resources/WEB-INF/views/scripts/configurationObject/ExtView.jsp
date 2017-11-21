@@ -136,6 +136,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     text: 'Cancelar',
                     scope: this,
                     handler: this.onCancel
+                },{
+                    text: '&#x25BC; Ver todo',
+                    scope: this,
+                    handler: this.onSeeAll
                 },'|'];
                 </c:if>
                 Ext.apply(this, {
@@ -182,6 +186,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             
             onCancel: function(){
                 this.fireEvent('cancelConfig', this);
+            },
+                    
+            onSeeAll: function(){
+                this.doLayout();
             }
     
         });

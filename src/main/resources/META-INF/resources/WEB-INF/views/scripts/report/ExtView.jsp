@@ -146,7 +146,12 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             initComponent: function(){
                 //this.addEvents('create');
                 
-                var buttons= [];
+                var buttons= [{
+                    text: '&#x25BC; Ver todo',
+                    scope: this,
+                    handler: this.onSeeAll
+                },'|'
+                ];
                 if(additionalButtons){
                     for(var i=0; i<additionalButtons.length; i++){
                         buttons.push(additionalButtons[i]);
@@ -194,28 +199,8 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 return this.activeRecord;
             },
             
-            onSave: function(){
-                var active = this.activeRecord,
-                    form = this.getForm();
-            
-                if (!active) {
-                    return;
-                }
-                if (form.isValid()) {
-                    this.fireEvent('update', this, form.getValues());
-                    //form.updateRecord(active);
-                    //this.onReset();
-                }
-            },
-
-            onCreate: function(){
-                var form = this.getForm();
-
-                if (form.isValid()) {
-                    this.fireEvent('create', this, form.getValues());
-                    //form.reset();
-                }
-
+            onSeeAll: function(){
+                this.doLayout();
             },
 
             onReset: function(){

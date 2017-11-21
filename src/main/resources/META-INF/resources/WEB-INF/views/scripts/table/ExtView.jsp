@@ -114,6 +114,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     text: 'Limpiar',
                     scope: this,
                     handler: this.onReset
+                },{
+                    text: '&#x25BC; Ver todo',
+                    scope: this,
+                    handler: this.onSeeAll
                 },'|'];
                 </c:if>
                 if(additionalButtons){
@@ -190,6 +194,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             onReset: function(){
                 this.getForm().reset();
                 parentExtController.loadFormData("");
+            },
+                    
+            onSeeAll: function(){
+                this.doLayout();
             },
             
             renderReplaceActiveRecord: function(record){
