@@ -451,7 +451,7 @@ public abstract class RestEntityController {
                     if(dtoClass!=null){
                         is= generateResizedImages(item.getFieldName(), item.getName(), item.getContentType(), is, id);
                     }
-                    result+= saveFilePart(0, item.getName(), item.getContentType(), (int)item.getSize(), is, id);
+                    result+= saveFilePart(0, item.getFieldName(), item.getName(), item.getContentType(), (int)item.getSize(), is, id);
                 }
             }
             
@@ -481,7 +481,7 @@ public abstract class RestEntityController {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     ImageIO.write(imageR, contentType.split("/")[1], os);
                     InputStream resizedIs = new ByteArrayInputStream(os.toByteArray());
-                    saveResizedImage(fileName, contentType, width, height, os.size(), resizedIs, idParent);
+                    saveResizedImage(fieldName, fileName, contentType, width, height, os.size(), resizedIs, idParent);
                 }
                 return FileService.bufferedImageToInputStream(original, contentType);
             }
@@ -501,6 +501,7 @@ public abstract class RestEntityController {
             upload.setSizeMax(maxFileSize);
 
             int slice = 0;
+            String fieldName="";
             String fileName="";
             String fileType="";
             int fileSize = 0;
@@ -528,12 +529,13 @@ public abstract class RestEntityController {
                             break;
                     }
                 }else{
+                    fieldName= item.getFieldName();
                     filePart= is;
                 }
             }
 
             LOGGER.info("IN MULTIPARTDATA: "+slice+" "+fileName+" "+fileType+" "+fileSize);
-            String message= saveFilePart(slice, fileName, fileType, fileSize, filePart, idParent);
+            String message= saveFilePart(slice, fieldName, fileName, fileType, fileSize, filePart, idParent);
             
             result.put("slice", slice);
             result.put("fileName", fileName);
@@ -589,12 +591,12 @@ public abstract class RestEntityController {
         return "Almacenamiento de archivo no implementado!!";
     }
     
-    protected String saveFilePart(int slice, String fileName, String fileType, int fileSize, InputStream is, Object idParent){
+    protected String saveFilePart(int slice, String fieldName, String fileName, String fileType, int fileSize, InputStream is, Object idParent){
         // ABSTRACT CODE HERE
         return "Almacenamiento de archivo no implementado!!";
     }
     
-    protected String saveResizedImage(String fileName, String fileType, int width, int height, int fileSize, InputStream is, Object idParent){
+    protected String saveResizedImage(String fieldName, String fileName, String fileType, int width, int height, int fileSize, InputStream is, Object idParent){
         // ABSTRACT CODE HERE
         return "Almacenamiento de archivo no implementado!!";
     }
