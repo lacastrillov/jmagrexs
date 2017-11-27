@@ -90,7 +90,7 @@ public class JSONForms {
 
                                 //Add Url File
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.fileRender#");
@@ -102,7 +102,7 @@ public class JSONForms {
 
                                 //Add Image
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.imageRender#");
@@ -113,7 +113,7 @@ public class JSONForms {
                                 
                                 //Add Video Youtube
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
@@ -125,7 +125,7 @@ public class JSONForms {
                                 
                                 //Add Video
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
@@ -137,7 +137,7 @@ public class JSONForms {
                                 
                                 //Add Video
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
@@ -148,7 +148,7 @@ public class JSONForms {
                                 
                                 //Add GoogleMap
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
@@ -160,7 +160,7 @@ public class JSONForms {
                                 
                                 //Add Video
                                 JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
+                                imageField.put("name", parent + fieldName);
                                 imageField.put("fieldLabel", fieldTitle);
                                 imageField.put("xtype", "displayfield");
                                 imageField.put("renderer", "#Instance.commonExtView.multiFileRender#");
