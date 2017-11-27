@@ -46,14 +46,18 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 Ext.getCmp('content-configurationObjects').layout.setActiveItem('form-'+configObj);
                 
                 //Populate Form
-                var record= Ext.create(configObj+"Model");
-                record.data= util.unremakeJSONObject(data);
-                var formComponent= Ext.getCmp('form-'+configObj).child('#form'+configObj+'Item');
-                formComponent.setActiveRecord(record);
-                
-                Instance.showListItems(formComponent);
+                Instance.populateForm(configObj, data);
             });
         }
+    };
+    
+    Instance.populateForm= function(configObj, data){
+        var record= Ext.create(configObj+"Model");
+        record.data= util.unremakeJSONObject(data);
+        var formComponent= Ext.getCmp('form-'+configObj).child('#form'+configObj+'Item');
+        formComponent.setActiveRecord(record);
+
+        Instance.showListItems(formComponent);
     };
     
     Instance.formSavedResponse= function(result){

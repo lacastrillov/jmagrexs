@@ -6,8 +6,10 @@
 package com.dot.gcpbasedot.dto.config;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -37,7 +39,7 @@ public class ConfigurationObjectConfig {
     
     private boolean editableForm;
     
-    private boolean multipartFormData;
+    private final Set<String> multipartFormConfig;
     
     
     public ConfigurationObjectConfig(String mainConfigurationRef) {
@@ -50,7 +52,7 @@ public class ConfigurationObjectConfig {
         this.visibleMenu= true;
         this.visibleHeader= true;
         this.editableForm= true;
-        this.multipartFormData= false;
+        this.multipartFormConfig= new HashSet<>();
         this.nameConfigurationObjects= new LinkedHashMap<>();
         this.configurationObjects = new HashMap<>();
     }
@@ -191,15 +193,15 @@ public class ConfigurationObjectConfig {
     /**
      * @return the multipartFormData
      */
-    public boolean isMultipartFormData() {
-        return multipartFormData;
+    public Set getMultipartFormConfig() {
+        return multipartFormConfig;
     }
 
     /**
-     * @param multipartFormData the multipartFormData to set
+     * @param configurationObjectRef
      */
-    public void setMultipartFormData(boolean multipartFormData) {
-        this.multipartFormData = multipartFormData;
+    public void addMultipartFormConfig(String configurationObjectRef) {
+        this.multipartFormConfig.add(configurationObjectRef);
     }
     
 }

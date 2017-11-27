@@ -95,7 +95,21 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 minWidth: 300,
                 listeners: {
                     saveConfig: function(form, data){
-                        Instance.entityExtStore.saveConfig('${configurationObjectName.key}', data, parentExtController.formSavedResponse);
+                        Instance.entityExtStore.saveConfig('${configurationObjectName.key}', data, function(configurationObjectRef, result){
+                            <c:if test="${fn:contains(viewConfig.multipartFormConfig, configurationObjectName.key)}">
+                            var formComponent= Ext.getCmp('form-'+configurationObjectRef).child('#form'+configurationObjectRef+'Item');
+                            Instance.entityExtStore.upload(formComponent, configurationObjectRef, function(responseUpload){
+                                Ext.MessageBox.alert('Status', responseUpload.message);
+                                if(responseUpload.success){
+                                    parentExtController.populateForm(configurationObjectRef, JSON.parse(responseUpload.data));
+                                    parentExtController.formSavedResponse(result);
+                                }
+                            });
+                            </c:if>
+                            <c:if test="${!fn:contains(viewConfig.multipartFormConfig, configurationObjectName.key)}">
+                            parentExtController.formSavedResponse(result);
+                            </c:if>
+                        });
                     },
                     cancelConfig: function(form){
                         parentExtController.loadFormData('${configurationObjectName.key}');

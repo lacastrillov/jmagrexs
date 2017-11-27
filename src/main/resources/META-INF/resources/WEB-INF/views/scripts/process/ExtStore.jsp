@@ -148,19 +148,6 @@ function ${entityName}ExtStore(){
         });
     };
     
-    Instance.upload= function(form, processName, processId, func){
-        form.submit({
-            url: Ext.context+'/rest/${viewConfig.mainProcessRef}/diskupload/'+processName+'/'+processId+'.htm',
-            waitMsg: 'Subiendo archivo...',
-            success: function(form, action) {
-                func(action.result);
-            },
-            failure: function(response){
-                commonExtView.processFailure(response);
-            }
-        });
-    };
-    
     Instance.load= function(idEntity, func){
         Ext.MessageBox.show({
             msg: 'Cargando...',
@@ -176,6 +163,19 @@ function ${entityName}ExtStore(){
                 var responseText= Ext.decode(response.responseText);
                 func(responseText.data);
                 Ext.MessageBox.hide();
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
+    Instance.upload= function(form, processName, processId, func){
+        form.submit({
+            url: Ext.context+'/rest/${viewConfig.mainProcessRef}/diskupload/'+processName+'/'+processId+'.htm',
+            waitMsg: 'Subiendo archivo...',
+            success: function(form, action) {
+                func(action.result);
             },
             failure: function(response){
                 commonExtView.processFailure(response);

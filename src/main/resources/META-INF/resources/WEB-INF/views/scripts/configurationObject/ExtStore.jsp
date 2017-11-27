@@ -25,7 +25,7 @@ function ${entityName}ExtStore(){
             success: function(response){
                 Ext.MessageBox.hide();
                 var result= Ext.decode(response.responseText);
-                func(result);
+                func(configurationObjectRef, result);
             },
             failure: function(response){
                 commonExtView.processFailure(response);
@@ -47,6 +47,19 @@ function ${entityName}ExtStore(){
                 var result= Ext.decode(response.responseText);
                 func(result.data);
                 Ext.MessageBox.hide();
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
+    Instance.upload= function(form, configurationObjectRef, func){
+        form.submit({
+            url: Ext.context+'/rest/${entityRef}/diskupload/'+configurationObjectRef+'.htm',
+            waitMsg: 'Subiendo archivo...',
+            success: function(form, action) {
+                func(action.result);
             },
             failure: function(response){
                 commonExtView.processFailure(response);
