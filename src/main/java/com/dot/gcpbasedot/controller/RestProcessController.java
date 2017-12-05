@@ -236,8 +236,9 @@ public abstract class RestProcessController {
                     //ObjectIn, FieldName, FileName, ContentType, Size, InputStream
                     Method method = this.getClass().getMethod(processName+"Files", inDtos.get(processName), String.class, String.class, String.class, int.class, InputStream.class);
                     if(method!=null){
-                        String fileUrl = (String)method.invoke(this, inObject, item.getFieldName(), item.getName(), item.getContentType(), (int)item.getSize(), is);
-                        unremakeDataIn.put(item.getFieldName(), fileUrl);
+                        String fieldName= item.getFieldName().replaceAll("_File", "");
+                        String fileUrl = (String)method.invoke(this, inObject, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is);
+                        unremakeDataIn.put(fieldName, fileUrl);
                     }
                 }
             }

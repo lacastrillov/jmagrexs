@@ -83,88 +83,113 @@ public class JSONForms {
                                     dataArray.put(data[i]);
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
-                            }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "&nbsp;");
-                                formField.put("emptyText", "Seleccione un archivo");
-
-                                //Add Url File
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.fileRender#");
-                                jsonFormFields.put(imageField);
-                            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "&nbsp;");
-                                formField.put("emptyText", "Seleccione una imagen");
-
-                                //Add Image
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.imageRender#");
-                                jsonFormFields.put(imageField);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Url Youtube");
                                 
                                 //Add Video Youtube
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                                jsonFormFields.put(imageField);
-                            }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "&nbsp;");
-                                formField.put("emptyText", "Seleccione un video");
-                                
-                                //Add Video
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                                jsonFormFields.put(imageField);
-                            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "&nbsp;");
-                                formField.put("emptyText", "Seleccione un audio");
-                                
-                                //Add Video
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Google Maps Point");
                                 
                                 //Add GoogleMap
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                                jsonFormFields.put(imageField);
-                            }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
+                                jsonFormFields.put(renderField);
+                            }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
+                                formField.put("name", parent + fieldName + "_File");
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un archivo");
-                                
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("name", parent + fieldName);
+                                linkField.put("fieldLabel", fieldTitle);
+                                jsonFormFields.put(linkField);
+                                //Add Url File
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.fileRender#");
+                                jsonFormFields.put(renderField);
+                            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
+                                formField.put("name", parent + fieldName + "_File");
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione una imagen");
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("name", parent + fieldName);
+                                linkField.put("fieldLabel", fieldTitle);
+                                jsonFormFields.put(linkField);
+                                //Add Image
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.imageRender#");
+                                jsonFormFields.put(renderField);
+                            }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
+                                formField.put("name", parent + fieldName + "_File");
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un video");
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("name", parent + fieldName);
+                                linkField.put("fieldLabel", fieldTitle);
+                                jsonFormFields.put(linkField);
                                 //Add Video
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", parent + fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
+                                jsonFormFields.put(renderField);
+                            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
+                                formField.put("name", parent + fieldName + "_File");
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un audio");
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("name", parent + fieldName);
+                                linkField.put("fieldLabel", fieldTitle);
+                                jsonFormFields.put(linkField);
+                                //Add Audio
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
+                                jsonFormFields.put(renderField);
+                            }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                                formField.put("name", parent + fieldName + "_File");
+                                formField.put("xtype", "filefield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("emptyText", "Seleccione un archivo");
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("name", parent + fieldName);
+                                linkField.put("fieldLabel", fieldTitle);
+                                jsonFormFields.put(linkField);
+                                //Add MultiFile
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", parent + fieldName);
+                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
+                                jsonFormFields.put(renderField);
                             }
                         }else{
                             switch (type) {

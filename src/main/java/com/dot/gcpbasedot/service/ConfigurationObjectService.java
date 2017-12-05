@@ -26,12 +26,27 @@ public interface ConfigurationObjectService<T> {
     T load();
     
     /**
+     * Searchs the entity by id.
+     *
+     * @return the entiy or null in case it doesn't exists.
+     */
+    String loadJson();
+    
+    /**
      * 
      * @param relatedEntity
      * @param relatedId
      * @return 
      */
     T load(String relatedEntity, Integer relatedId);
+    
+    /**
+     * 
+     * @param relatedEntity
+     * @param relatedId
+     * @return 
+     */
+    String loadJson(String relatedEntity, Integer relatedId);
     
     /**
      * 

@@ -93,9 +93,10 @@ public abstract class RestConfigurationController {
         }
             
         try {
-            Class coClass= configurationObjectServices.get(configurationObjectRef).getConfigurationObjectClass();
+            ConfigurationObjectService configurationObjectService= configurationObjectServices.get(configurationObjectRef);
+            Class coClass= configurationObjectService.getConfigurationObjectClass();
             Object configurationObject= EntityReflection.jsonToObject(jsonIn, coClass);
-            configurationObjectServices.get(configurationObjectRef).save(configurationObject);
+            configurationObjectService.save(configurationObject);
             jsonOut= Util.getOperationCallback(configurationObject, "Actualización de " + configurationObjectRef + " realizada...", true);
         } catch (Exception e) {
             jsonOut= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + configurationObjectRef + ": " + e.getMessage(), false);
@@ -112,8 +113,9 @@ public abstract class RestConfigurationController {
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
         String resultData;
-        Class coClass= configurationObjectServices.get(configurationObjectRef).getConfigurationObjectClass();
-        Object configurationObject = configurationObjectServices.get(configurationObjectRef).load();
+        ConfigurationObjectService configurationObjectService= configurationObjectServices.get(configurationObjectRef);
+        Class coClass= configurationObjectService.getConfigurationObjectClass();
+        Object configurationObject = configurationObjectService.load();
         String configurationObjectJson= Util.objectToJson(configurationObject);
         JSONObject unremakeConfigurationObject= Util.unremakeJSONObject(configurationObjectJson);
         try {
@@ -130,14 +132,15 @@ public abstract class RestConfigurationController {
                     //ObjectIn, FieldName, FileName, ContentType, Size, InputStream
                     Method method = this.getClass().getMethod(configurationObjectRef+"Files", coClass, String.class, String.class, String.class, int.class, InputStream.class);
                     if(method!=null){
-                        String fileUrl = (String)method.invoke(this, configurationObject, item.getFieldName(), item.getName(), item.getContentType(), (int)item.getSize(), is);
-                        unremakeConfigurationObject.put(item.getFieldName(), fileUrl);
+                        String fieldName= item.getFieldName().replaceAll("_File", "");
+                        String fileUrl = (String)method.invoke(this, configurationObject, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is);
+                        unremakeConfigurationObject.put(fieldName, fileUrl);
                     }
                 }
             }
             configurationObjectJson= Util.remakeJSONObject(unremakeConfigurationObject.toString());
             configurationObject= EntityReflection.jsonToObject(configurationObjectJson, coClass);
-            configurationObjectServices.get(configurationObjectRef).save(configurationObject);
+            configurationObjectService.save(configurationObject);
             
             resultData= Util.getOperationCallback(configurationObjectJson, "Carga de archivos en el configurationObject "+configurationObjectRef+" realizada...", true);
         } catch (Exception e) {

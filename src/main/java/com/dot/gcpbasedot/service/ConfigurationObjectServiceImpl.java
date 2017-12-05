@@ -46,6 +46,16 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
         
         return loadConfigurationObject(p);
     }
+    
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
+    public String loadJson() {
+        Parameters p= new Parameters();
+        p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
+        p.whereIsNull("relatedEntity");
+        
+        return loadConfigurationObjectJson(p);
+    }
 
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
@@ -58,15 +68,31 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
         return loadConfigurationObject(p);
     }
     
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
+    public String loadJson(String relatedEntity, Integer relatedId) {
+        Parameters p= new Parameters();
+        p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
+        p.whereEqual("relatedEntity", relatedEntity);
+        p.whereEqual("relatedId", relatedId);
+        
+        return loadConfigurationObjectJson(p);
+    }
+    
     private T loadConfigurationObject(Parameters p) {
+        Object configurationObject= EntityReflection.jsonToObject(loadConfigurationObjectJson(p), coClass);
+        
+        return (T) configurationObject;
+    }
+    
+    private String loadConfigurationObjectJson(Parameters p) {
         JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().loadByParameters(p);
         String data="{}";
         if(jsonObject!=null){
             data= jsonObject.getData();
         }
-        Object configurationObject= EntityReflection.jsonToObject(data, coClass);
         
-        return (T) configurationObject;
+        return data;
     }
 
     @Override
