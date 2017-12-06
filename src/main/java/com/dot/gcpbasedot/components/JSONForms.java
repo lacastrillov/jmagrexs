@@ -84,6 +84,7 @@ public class JSONForms {
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
+                                formField.put("id", parent + fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Url Youtube");
                                 
@@ -176,6 +177,7 @@ public class JSONForms {
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 //Add link Field
                                 JSONObject linkField= new JSONObject();
+                                linkField.put("id", parent + fieldName + "LinkField");
                                 linkField.put("name", parent + fieldName);
                                 linkField.put("fieldLabel", "&nbsp;");
                                 jsonFormFields.put(linkField);

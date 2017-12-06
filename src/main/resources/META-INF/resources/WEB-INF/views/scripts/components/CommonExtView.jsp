@@ -149,14 +149,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.fileRender= function(value, field){
+        Instance.setLinkFieldValue(field.name, value);
         if(value){
-            try{
-                setTimeout(function(){
-                    document.getElementsByName(field.name)[0].value= value;
-                },1000);
-            }catch(e){
-                console.log(e);
-            }
             return "<a target='_blank' href='"+value+"'>"+value+"</a>";
         }else{
             return value;
@@ -164,14 +158,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.pdfRender= function(value, field){
+        Instance.setLinkFieldValue(field.name, value);
         if(value){
-            try{
-                setTimeout(function(){
-                    document.getElementsByName(field.name)[0].value= value;
-                },1000);
-            }catch(e){
-                console.log(e);
-            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<iframe src="'+value+'" frameborder="0" width="100%" height="100%"></iframe>';
         }else{
@@ -189,14 +177,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.imageRender= function(value, field) {
+        Instance.setLinkFieldValue(field.name, value);
         if(value){
-            try{
-                setTimeout(function(){
-                    document.getElementsByName(field.name)[0].value= value;
-                },1000);
-            }catch(e){
-                console.log(e);
-            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a><br>'+
                    '<img style="max-width:150%" src="'+value+'">';
         }else{
@@ -217,15 +199,9 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.videoYoutubeRender= function(value, field) {
+        Instance.setLinkFieldValue(field.name, value);
         var videoId= util.getParameter(value, "v");
         if(videoId!==""){
-            try{
-                setTimeout(function(){
-                    document.getElementsByName(field.name)[0].value= value;
-                },1000);
-            }catch(e){
-                console.log(e);
-            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<iframe width="528" height="287" src="https://www.youtube.com/embed/'+videoId+'" frameborder="0" allowfullscreen></iframe>';
         }else{
@@ -234,14 +210,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.videoFileUploadRender= function(value, field) {
+        Instance.setLinkFieldValue(field.name, value);
         if(value){
-            try{
-                setTimeout(function(){
-                    document.getElementsByName(field.name)[0].value= value;
-                },1000);
-            }catch(e){
-                console.log(e);
-            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<video style="width:528px;height:297px" controls>'+
                    '    <source src="'+value+'" type="video/'+value.split('.').pop()+'">'+
@@ -253,14 +223,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.audioFileUploadRender= function(value, field) {
+        Instance.setLinkFieldValue(field.name, value);
         if(value){
-            try{
-                setTimeout(function(){
-                    document.getElementsByName(field.name)[0].value= value;
-                },1000);
-            }catch(e){
-                console.log(e);
-            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<audio style="width:500px" src="'+value+'" preload="auto" controls>'+
                    '    Your browser does not support the video tag.'+
@@ -271,18 +235,28 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.googleMapsRender= function(value, field) {
-        try{
-            setTimeout(function(){
+        setTimeout(function(){
+            try{
                 googleMaps.load(field.name, value);
-            },1000);
-        }catch(e){
-            console.log(e);
-        }
+            }catch(e){
+                console.log(e);
+            }
+        },1000);
         return '<div class="googleMaps">'+
                '    <input id="'+field.name+'Address" type="text" size="50" placeholder="Bogot&aacute; Colombia" />'+
                '    <input type="button" value="Buscar" onclick="googleMaps.showAddress(\''+field.name+'\')" />'+
                '    <div id="'+field.name+'Map" style="width: 100%; height: 400px"></div>'+
                '</div>';
+    };
+    
+    Instance.setLinkFieldValue= function(fieldName, value){
+        setTimeout(function(){
+            try{
+                Ext.getCmp(fieldName+"LinkField").setValue((value)?value:"");
+            }catch(e){
+                console.log(e);
+            }
+        },1000);
     };
     
     Instance.multiFileRender= function(value, field) {
