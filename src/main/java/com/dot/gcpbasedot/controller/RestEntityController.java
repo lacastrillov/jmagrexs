@@ -448,10 +448,11 @@ public abstract class RestEntityController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && !item.getName().equals("")){
+                    String fieldName= item.getFieldName().replaceAll("_File", "");
                     if(dtoClass!=null){
-                        is= generateResizedImages(item.getFieldName(), item.getName(), item.getContentType(), is, id);
+                        is= generateResizedImages(fieldName, item.getName(), item.getContentType(), is, id);
                     }
-                    result+= saveFilePart(0, item.getFieldName(), item.getName(), item.getContentType(), (int)item.getSize(), is, id);
+                    result+= saveFilePart(0, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id);
                 }
             }
             

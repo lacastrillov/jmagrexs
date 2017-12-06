@@ -110,15 +110,11 @@ public class JSONForms {
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un archivo");
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("name", parent + fieldName);
-                                linkField.put("fieldLabel", fieldTitle);
-                                jsonFormFields.put(linkField);
+                                
                                 //Add Url File
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", parent + fieldName);
-                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.fileRender#");
                                 jsonFormFields.put(renderField);
@@ -127,15 +123,11 @@ public class JSONForms {
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione una imagen");
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("name", parent + fieldName);
-                                linkField.put("fieldLabel", fieldTitle);
-                                jsonFormFields.put(linkField);
+                                
                                 //Add Image
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", parent + fieldName);
-                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.imageRender#");
                                 jsonFormFields.put(renderField);
@@ -144,15 +136,11 @@ public class JSONForms {
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un video");
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("name", parent + fieldName);
-                                linkField.put("fieldLabel", fieldTitle);
-                                jsonFormFields.put(linkField);
+                                
                                 //Add Video
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", parent + fieldName);
-                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
                                 jsonFormFields.put(renderField);
@@ -161,15 +149,11 @@ public class JSONForms {
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un audio");
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("name", parent + fieldName);
-                                linkField.put("fieldLabel", fieldTitle);
-                                jsonFormFields.put(linkField);
+                                
                                 //Add Audio
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", parent + fieldName);
-                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
                                 jsonFormFields.put(renderField);
@@ -178,18 +162,23 @@ public class JSONForms {
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un archivo");
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("name", parent + fieldName);
-                                linkField.put("fieldLabel", fieldTitle);
-                                jsonFormFields.put(linkField);
+                                
                                 //Add MultiFile
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", parent + fieldName);
-                                renderField.put("fieldLabel", "&nbsp;");
+                                renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
                                 jsonFormFields.put(renderField);
+                            }
+                            if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
+                                    typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
+                                    typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("name", parent + fieldName);
+                                linkField.put("fieldLabel", "&nbsp;");
+                                jsonFormFields.put(linkField);
                             }
                         }else{
                             switch (type) {

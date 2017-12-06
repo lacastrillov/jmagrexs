@@ -150,6 +150,13 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.fileRender= function(value, field){
         if(value){
+            try{
+                setTimeout(function(){
+                    document.getElementsByName(field.name)[0].value= value;
+                },1000);
+            }catch(e){
+                console.log(e);
+            }
             return "<a target='_blank' href='"+value+"'>"+value+"</a>";
         }else{
             return value;
@@ -158,6 +165,13 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.pdfRender= function(value, field){
         if(value){
+            try{
+                setTimeout(function(){
+                    document.getElementsByName(field.name)[0].value= value;
+                },1000);
+            }catch(e){
+                console.log(e);
+            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<iframe src="'+value+'" frameborder="0" width="100%" height="100%"></iframe>';
         }else{
@@ -176,6 +190,13 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.imageRender= function(value, field) {
         if(value){
+            try{
+                setTimeout(function(){
+                    document.getElementsByName(field.name)[0].value= value;
+                },1000);
+            }catch(e){
+                console.log(e);
+            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a><br>'+
                    '<img style="max-width:150%" src="'+value+'">';
         }else{
@@ -214,6 +235,13 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.videoFileUploadRender= function(value, field) {
         if(value){
+            try{
+                setTimeout(function(){
+                    document.getElementsByName(field.name)[0].value= value;
+                },1000);
+            }catch(e){
+                console.log(e);
+            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<video style="width:528px;height:297px" controls>'+
                    '    <source src="'+value+'" type="video/'+value.split('.').pop()+'">'+
@@ -226,6 +254,13 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.audioFileUploadRender= function(value, field) {
         if(value){
+            try{
+                setTimeout(function(){
+                    document.getElementsByName(field.name)[0].value= value;
+                },1000);
+            }catch(e){
+                console.log(e);
+            }
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<audio style="width:500px" src="'+value+'" preload="auto" controls>'+
                    '    Your browser does not support the video tag.'+
