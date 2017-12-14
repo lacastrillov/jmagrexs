@@ -4,11 +4,14 @@ import com.dot.gcpbasedot.annotation.DoProcess;
 import com.dot.gcpbasedot.annotation.HttpHeader;
 import com.dot.gcpbasedot.annotation.PathVar;
 import com.dot.gcpbasedot.dto.ExternalServiceDto;
+import com.dot.gcpbasedot.dto.SOAPServiceDto;
 import com.dot.gcpbasedot.interfaces.LogProcesInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
 import com.dot.gcpbasedot.util.Util;
 import com.dot.gcpbasedot.util.ExternalServiceConnection;
+import com.dot.gcpbasedot.util.FileService;
+import com.dot.gcpbasedot.util.SimpleSOAPClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +30,7 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.soap.SOAPException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -57,11 +61,15 @@ public abstract class RestProcessController {
     
     protected final Map<String, ExternalServiceConnection> externalServiceConnections = new HashMap<>();
     
+    protected final Map<String, SimpleSOAPClient> simpleSOAPClients = new HashMap<>();
+    
     private String mainProcessRef;
     
     private Class logProcessClass;
     
     private EntityService logProcessService;
+    
+    protected Map<String, String> envelopeMap= new HashMap<>();
     
     
     protected void addControlProcess(String mainProcessRef, Class logProcessClass, EntityService logProcessService){
@@ -75,6 +83,12 @@ public abstract class RestProcessController {
         externalServiceConnections.put(externalService.getProcessName(), externalServiceConnection);
         inDtos.put(externalService.getProcessName(), externalService.getInClass());
         outDtos.put(externalService.getProcessName(), externalService.getOutClass());
+    }
+    
+    protected void enableSOAPService(SOAPServiceDto soapService){
+        SimpleSOAPClient simpleSOATClient= new SimpleSOAPClient(soapService);
+        simpleSOAPClients.put(soapService.getProcessName(), simpleSOATClient);
+        inDtos.put(soapService.getProcessName(), soapService.getInClass());
     }
     
     protected String getClientId(){
@@ -133,6 +147,8 @@ public abstract class RestProcessController {
         try {
             if(externalServiceConnections.get(processName)!=null){
                 jsonOut= callExternalService(processName, jsonIn, response);
+            }else if(simpleSOAPClients.get(processName)!=null){
+                jsonOut= callSOAPService(processName, jsonIn, response);
             }else{
                 Method method = this.getClass().getMethod(processName, inDtos.get(processName));
                 Object inObject= EntityReflection.jsonToObject(jsonIn, inDtos.get(processName));
@@ -208,6 +224,22 @@ public abstract class RestProcessController {
         }else{
             jsonOut= externalServiceConnection.getStringResult(headers, pathVars, parameters);
         }
+        
+        return jsonOut;
+    }
+    
+    private String callSOAPService(String processName, String data, HttpServletResponse response) throws SOAPException, IOException{
+        SimpleSOAPClient simpleSOAPClient= simpleSOAPClients.get(processName);
+        JSONObject jsonData= new JSONObject(data);
+        response.addHeader("response-data-format", "JSON");
+        String xmlRequestBody= null;
+        if(!envelopeMap.containsKey(processName)){
+            InputStream is= this.getClass().getClassLoader().getResourceAsStream("soap_envelopes/"+mainProcessRef+"-"+processName+".xml");
+            envelopeMap.put(processName, FileService.getStringFromInputStream(is));
+            xmlRequestBody= envelopeMap.get(processName);
+        }
+        xmlRequestBody= simpleSOAPClient.mergeDataInEnvelope(jsonData, envelopeMap.get(processName));
+        String jsonOut= simpleSOAPClient.sendMessageGetJSON(xmlRequestBody).toString();
         
         return jsonOut;
     }

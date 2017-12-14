@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -189,5 +190,16 @@ public class FileService {
         return new ByteArrayInputStream(os.toByteArray());
     }
     
+    public static String getStringFromInputStream(InputStream is) throws IOException {
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+		String line;
+        br = new BufferedReader(new InputStreamReader(is));
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+		br.close();
+		return sb.toString();
+	}
     
 }
