@@ -164,32 +164,5 @@ public class SimpleSOAPClient {
         }
         return mergedEnvelope;
     }
-    
-    
-    /*public static void main(String[] args){
-        SimpleSOAPClient soap_cli= new SimpleSOAPClient("http://0.0.0.0:9999/training-server/PlayerManager");
-        String reqBody1="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://webservice.services.training.expert.backbase.com/\">" +
-                        "<soapenv:Header/>" +
-                        "<soapenv:Body>" +
-                        "<web:getBestScore>" +
-                        "<username>lcastrillo</username>" +
-                        "</web:getBestScore>" +
-                        "</soapenv:Body>" +
-                        "</soapenv:Envelope>";
-        
-        String reqBody2="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://webservice.services.training.expert.backbase.com/\">" +
-                        "   <soapenv:Header/>" +
-                        "   <soapenv:Body>" +
-                        "      <web:getAllPlayers/>" +
-                        "   </soapenv:Body>" +
-                        "</soapenv:Envelope>";
-        try {
-            System.out.println("############# JSONObject");
-            String result2= soap_cli.sendMessageGetJSON(reqBody1).toString();
-            System.out.println(result2);
-        } catch (SOAPException | IOException ex) {
-            java.util.logging.Logger.getLogger(SimpleSOAPClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
 
 }

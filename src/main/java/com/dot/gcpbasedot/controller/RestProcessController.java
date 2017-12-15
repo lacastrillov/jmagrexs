@@ -85,7 +85,7 @@ public abstract class RestProcessController {
         outDtos.put(externalService.getProcessName(), externalService.getOutClass());
     }
     
-    protected void enableSOAPService(SOAPServiceDto soapService){
+    protected void enableSOAPClient(SOAPServiceDto soapService){
         SimpleSOAPClient simpleSOATClient= new SimpleSOAPClient(soapService);
         simpleSOAPClients.put(soapService.getProcessName(), simpleSOATClient);
         inDtos.put(soapService.getProcessName(), soapService.getInClass());
