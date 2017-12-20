@@ -373,6 +373,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
 
             requires: [
                 'Ext.grid.plugin.CellEditing',
+                'Ext.selection.CheckboxModel',
                 'Ext.form.field.Text',
                 'Ext.toolbar.TextItem'
             ],
@@ -386,6 +387,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     //iconCls: 'icon-grid',
                     hideHeaders:${viewConfig.hideHeadersGrid},
                     frame: false,
+                    selType: 'checkboxmodel',
                     plugins: [this.editing],
                     dockedItems: [{
                         weight: 2,
@@ -472,11 +474,21 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onDeleteClick: function(){
-                var selection = this.getView().getSelectionModel().getSelection()[0];
-                if (selection) {
-                    this.store.getProxy().extraParams.idEntity= selection.data.id;
-                    this.store.remove(selection);
-                    parentExtController.loadFormData("");
+                var selection = this.getView().getSelectionModel().getSelection();
+                if (selection.length>0) {
+                    if(selection.length===1){
+                        this.store.getProxy().extraParams.idEntity= selection[0].data.id;
+                        this.store.remove(selection[0]);
+                        parentExtController.loadFormData("");
+                    }else{
+                        var filter={"in":{"id":[]}};
+                        for(var i=0; i<selection.length; i++){
+                            filter.in.id.push(selection[i].data.id);
+                        }
+                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                            Instance.reloadPageStore(Instance.store.currentPage);
+                        });
+                    }
                 }else{
                     var check_items= document.getElementsByClassName("item_check");
                     var filter={"in":{"id":[]}};

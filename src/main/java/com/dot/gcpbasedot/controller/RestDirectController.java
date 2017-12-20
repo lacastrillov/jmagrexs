@@ -227,22 +227,22 @@ public abstract class RestDirectController {
         }
     }
     
-    /*@RequestMapping(value = "/{tableName}/delete/byfilter.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @RequestMapping(value = "/{tableName}/delete/byfilter.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
     public String deleteByFilter(@PathVariable String tableName, @RequestParam String filter) {
         try {
-            List<? extends BaseEntity> listEntities = directService.findByJSONFilters(filter, null, null, null, null);
-            List listDtos = mapper.listEntitiesToListDtos(listEntities);
+            List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
+            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, null, null);
             
-            for(BaseEntity entity: listEntities){
-                directService.remove(entity);
+            for(Map<String, Object> entity: listItems){
+                directService.removeByParameter(tableName, "id", entity.get("id"));
             }
-            return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+            return Util.getResultListCallback(listItems, (long)listItems.size(),"Eliminaci&oacute;n de " + tableName + " realizada...", true);
         } catch (Exception e) {
-            LOGGER.error("delete " + entityRef, e);
-            return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
+            LOGGER.error("delete " + tableName, e);
+            return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + tableName + ": " + e.getMessage(), true);
         }
-    }*/
+    }
     
     @RequestMapping(value = "/{tableName}/upload/{idEntity}.htm")
     @ResponseBody
