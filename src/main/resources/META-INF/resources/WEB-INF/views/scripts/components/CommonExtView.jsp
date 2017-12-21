@@ -177,6 +177,12 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.imageRender= function(value, field) {
+        console.log("field.up('form')");
+        try{
+            console.log(field.up('form'));
+        }catch(e){
+            console.error(e);
+        }
         Instance.setLinkFieldValue(field.name, value);
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a><br>'+

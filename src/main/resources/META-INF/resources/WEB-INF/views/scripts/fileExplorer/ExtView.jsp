@@ -61,18 +61,16 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     <c:if test="${viewConfig.visibleForm}">
-    function getFormContainer(modelName, store, childExtControllers){
+    function getFormContainer(){
         var formFields= ${jsonFormFields};
 
         var renderReplacements= ${jsonRenderReplacements};
 
-        var additionalButtons= [];
-
-        Instance.defineWriterForm(Instance.modelName, formFields, renderReplacements, additionalButtons, childExtControllers, Instance.typeView);
+        Instance.defineWriterForm(formFields, renderReplacements);
         
         var itemsForm= [{
-            itemId: 'form'+modelName,
-            xtype: 'writerform'+modelName,
+            itemId: 'form${entityName}',
+            xtype: 'writerform${entityName}',
             border: false,
             width: '100%',
             listeners: {
@@ -86,7 +84,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         }];
         
         return Ext.create('Ext.container.Container', {
-            id: 'formContainer'+modelName,
+            id: 'formContainer${entityName}',
             region: 'center',
             type: 'fit',
             align: 'stretch',
@@ -95,14 +93,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.setFormActiveRecord= function(record){
-        var formComponent= Instance.formContainer.child('#form'+Instance.modelName);
-        formComponent.setActiveRecord(record || null);
+        Instance.formComponent.setActiveRecord(record || null);
     };
     
-    Instance.defineWriterForm= function(modelName, fields, renderReplacements, additionalButtons){
-        Ext.define('WriterForm'+modelName, {
+    Instance.defineWriterForm= function(fields, renderReplacements){
+        Ext.define('WriterForm${entityName}', {
             extend: 'Ext.form.Panel',
-            alias: 'widget.writerform'+modelName,
+            alias: 'widget.writerform${entityName}',
 
             requires: ['Ext.form.field.Text'],
 
@@ -113,18 +110,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 <c:if test="${viewConfig.editableForm}">
                 buttons= [{
                     iconCls: 'icon-save',
-                    itemId: 'save'+modelName,
+                    itemId: 'save${entityName}',
                     text: 'Actualizar',
                     disabled: true,
                     scope: this,
                     handler: this.onSave
                 }];
                 </c:if>
-                if(additionalButtons){
-                    for(var i=0; i<additionalButtons.length; i++){
-                        buttons.push(additionalButtons[i]);
-                    }
-                }
                 Ext.apply(this, {
                     activeRecord: null,
                     //iconCls: 'icon-user',
@@ -150,14 +142,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             setActiveRecord: function(record){
                 this.activeRecord = record;
                 if (this.activeRecord) {
-                    if(this.down('#save'+modelName)!==null){
-                        this.down('#save'+modelName).enable();
+                    if(this.down('#save${entityName}')!==null){
+                        this.down('#save${entityName}').enable();
                     }
                     this.getForm().loadRecord(this.activeRecord);
                     this.renderReplaceActiveRecord(this.activeRecord);
                 } else {
-                    if(this.down('#save'+modelName)!==null){
-                        this.down('#save'+modelName).disable();
+                    if(this.down('#save${entityName}')!==null){
+                        this.down('#save${entityName}').disable();
                     }
                     this.getForm().reset();
                 }
@@ -229,8 +221,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     
     </c:if>
     
-    function getGridContainer(modelName, store, formContainer){
-        var idGrid= 'grid'+modelName;
+    function getGridContainer(store){
+        var idGrid= 'grid${entityName}';
         var gridColumns= ${jsonGridColumns};
         
         var getEmptyRec= function(){
@@ -238,14 +230,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         };
         
         <c:if test="${viewConfig.activeGridTemplate}">
-        modelName= Instance.gridModelName;
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineWriterGrid(modelName, '${viewConfig.pluralEntityTitle}', gridColumns, getEmptyRec, Instance.typeView);
+        Instance.defineWriterGrid('${viewConfig.pluralEntityTitle}', gridColumns, getEmptyRec, Instance.typeView);
         
         return Ext.create('Ext.container.Container', {
-            id: 'gridContainer'+modelName,
+            id: 'gridContainer${entityName}',
             title: 'Listado',
             <c:if test="${viewConfig.gridHeightChildView != 0}">
             height: ${viewConfig.gridHeightChildView},
@@ -256,7 +247,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
             items: [{
                 itemId: idGrid,
-                xtype: 'writergrid'+modelName,
+                xtype: 'writergrid${entityName}',
                 style: 'border: 0px',
                 flex: 1,
                 store: store,
@@ -264,8 +255,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 trackMouseOver: !${viewConfig.activeGridTemplate},
                 listeners: {
                     selectionchange: function(selModel, selected) {
-                        if(formContainer!==null){
-                            formContainer.child('#form'+modelName).setActiveRecord(selected[0] || null);
+                        if(selected[0]){
+                            Instance.setFormActiveRecord(selected[0]);
                         }
                     },
                     export: function(typeReport){
@@ -302,8 +293,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.setGridEmptyRec= function(obj){
-        var gridComponent= Instance.gridContainer.child('#grid'+Instance.modelName);
-        gridComponent.getEmptyRec= function(){
+        Instance.gridComponent.getEmptyRec= function(){
             return new ${entityName}Model(obj);
         };
     };
@@ -355,10 +345,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         return combobox;
     }
     
-    Instance.defineWriterGrid= function(modelName, modelText, columns, getEmptyRec, typeView){
-        Ext.define('WriterGrid'+modelName, {
+    Instance.defineWriterGrid= function(modelText, columns, getEmptyRec, typeView){
+        Ext.define('WriterGrid${entityName}', {
             extend: 'Ext.grid.Panel',
-            alias: 'widget.writergrid'+modelName,
+            alias: 'widget.writergrid${entityName}',
 
             requires: [
                 'Ext.grid.plugin.CellEditing',
@@ -777,17 +767,17 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.filterCombobox${associatedEntityName}= Instance.${associatedER}ExtInterfaces.getCombobox('filter', '${entityName}', '${associatedER}', '${associatedEntityTitle}');
         Instance.combobox${associatedEntityName}Render= Instance.${associatedER}ExtInterfaces.getComboboxRender('grid');
         </c:forEach>
-            
-        Instance.childExtControllers= [];
         
-        Instance.formContainer= null;
+        Instance.formComponent= null;
         <c:if test="${viewConfig.visibleForm}">
-        Instance.formContainer = getFormContainer(Instance.modelName, Instance.store, Instance.childExtControllers);
-        Instance.store.formContainer= Instance.formContainer;
+        Instance.formContainer = getFormContainer();
+        Instance.formComponent= Instance.formContainer.child('#form${entityName}');
+        Instance.store.formComponent= Instance.formComponent;
         </c:if>
         
-        Instance.gridContainer = getGridContainer(Instance.modelName, Instance.store, Instance.formContainer);
-        Instance.store.gridContainer= Instance.gridContainer;
+        Instance.gridContainer = getGridContainer(Instance.store);
+        Instance.gridComponent = Instance.gridContainer.child('#grid${entityName}');
+        Instance.store.gridComponent= Instance.gridComponent;
         
         Instance.propertyGrid= getPropertyGrid();
         

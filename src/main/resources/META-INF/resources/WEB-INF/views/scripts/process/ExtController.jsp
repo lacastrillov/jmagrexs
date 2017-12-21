@@ -84,7 +84,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         if(id!==""){
             Instance.entityExtView.entityExtStore.load(id, function(data){
                 //Show Process
-                Ext.getCmp('content-processes').layout.setActiveItem('formContainer'+data.processName+'Model');
+                Ext.getCmp('content-processes').layout.setActiveItem('formContainer'+data.processName);
                 
                 //Populate Form
                 Instance.populateForm(data.processName, data.dataIn);
@@ -98,7 +98,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     Instance.populateForm= function(processName, dataIn){
         var record= Ext.create(processName+"Model");
         record.data= util.unremakeJSONObject(JSON.parse(dataIn));
-        var formComponent= Ext.getCmp('formContainer'+processName+'Model').child('#form'+processName+'Model');
+        var formComponent= Ext.getCmp('formContainer'+processName).child('#form'+processName);
         formComponent.setActiveRecord(record);
 
         Instance.showListItems(formComponent);

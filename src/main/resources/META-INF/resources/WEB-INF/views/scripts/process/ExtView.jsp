@@ -68,7 +68,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 children: [
                     <c:forEach var="processName" items="${nameProcesses}">
                     {
-                        id: 'formContainer${processName.key}Model',
+                        id: 'formContainer${processName.key}',
                         text: '${processName.value}',
                         leaf: true
                     },
@@ -101,14 +101,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     }
     
     <c:forEach var="processName" items="${nameProcesses}">
-    function getFormContainer${processName.key}(modelName, store){
+    function getFormContainer${processName.key}(){
         var formFields= ${jsonFormFieldsMap[processName.key]};
 
-        Instance.defineWriterForm("${processName.key}Model", formFields);
+        Instance.defineWriterForm("${processName.key}", formFields);
         
         var itemsForm= [{
-            itemId: 'form${processName.key}Model',
-            xtype: 'writerform${processName.key}Model',
+            itemId: 'form${processName.key}',
+            xtype: 'writerform${processName.key}',
             title: '${processName.value}',
             border: false,
             width: '60%',
@@ -117,7 +117,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 doProcess: function(form, data){
                     Instance.entityExtStore.doProcess('${processName.key}', data, function(processName, processId, dataOut, outputDataFormat){
                         <c:if test="${fn:contains(viewConfig.multipartFormProcess, processName.key)}">
-                        var formComponent= Ext.getCmp('formContainer'+processName+'Model').child('#form'+processName+'Model');
+                        var formComponent= Ext.getCmp('formContainer'+processName).child('#form'+processName);
                         Instance.entityExtStore.upload(formComponent, processName, processId, function(responseUpload){
                             Ext.MessageBox.alert('Status', responseUpload.message);
                             if(responseUpload.success){
@@ -142,7 +142,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         itemsForm.push({id: 'div-result-${processName.key}', xtype: "panel", html: ""});
         
         return Ext.create('Ext.container.Container', {
-            id: 'formContainer${processName.key}Model',
+            id: 'formContainer${processName.key}',
             type: 'fit',
             align: 'stretch',
             items: itemsForm
@@ -177,11 +177,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         
         return treePanel;
     }
-    
-    Instance.setFormActiveRecord= function(record){
-        var formComponent= Instance.formContainer.child('#form'+Instance.modelName);
-        formComponent.setActiveRecord(record || null);
-    };
     
     Instance.defineWriterForm= function(modelName, fields){
         Ext.define('WriterForm'+modelName, {
@@ -263,7 +258,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             }
     
         });
-        
     };
     
     </c:if>
@@ -323,8 +317,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         });
     }
         
-    function getGridContainer(modelName, store, formContainer){
-        var idGrid= 'grid'+modelName;
+    function getGridContainer(store){
+        var idGrid= 'grid${viewConfig.entityNameLogProcess}';
         var gridColumns= ${jsonGridColumns};
         
         var getEmptyRec= function(){
@@ -336,10 +330,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineWriterGrid(modelName, '${viewConfig.entityNameLogProcess}', gridColumns, getEmptyRec, Instance.typeView);
+        Instance.defineWriterGrid('${viewConfig.entityNameLogProcess}', gridColumns, getEmptyRec, Instance.typeView);
         
         return Ext.create('Ext.container.Container', {
-            id: 'gridContainer'+modelName,
+            id: 'gridContainer${viewConfig.entityNameLogProcess}',
             region: 'center',
             margins: '0 0 0 0',
             <c:if test="${viewConfig.gridHeightChildView != 0}">
@@ -351,18 +345,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
             items: [{
                 itemId: idGrid,
-                xtype: 'writergrid'+modelName,
+                xtype: 'writergrid${viewConfig.entityNameLogProcess}',
                 style: 'border: 0px',
                 flex: 1,
                 store: store,
                 disableSelection: ${viewConfig.activeGridTemplate},
                 trackMouseOver: !${viewConfig.activeGridTemplate},
                 listeners: {
-                    selectionchange: function(selModel, selected) {
-                        if(formContainer!==null){
-                            formContainer.child('#form'+modelName).setActiveRecord(selected[0] || null);
-                        }
-                    },
                     export: function(typeReport){
                         var filterData= JSON.stringify(parentExtController.filter);
                         filterData= filterData.replaceAll("{","(").replaceAll("}",")");
@@ -397,16 +386,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.setGridEmptyRec= function(obj){
-        var gridComponent= Instance.gridContainer.child('#grid'+Instance.modelName);
-        gridComponent.getEmptyRec= function(){
+        Instance.gridComponent.getEmptyRec= function(){
             return new ${entityName}Model(obj);
         };
     };
     
-    Instance.defineWriterGrid= function(modelName, modelText, columns, getEmptyRec, typeView){
-        Ext.define('WriterGrid'+modelName, {
+    Instance.defineWriterGrid= function(modelText, columns, getEmptyRec, typeView){
+        Ext.define('WriterGrid${viewConfig.entityNameLogProcess}', {
             extend: 'Ext.grid.Panel',
-            alias: 'widget.writergrid'+modelName,
+            alias: 'widget.writergrid${viewConfig.entityNameLogProcess}',
 
             requires: [
                 'Ext.grid.plugin.CellEditing',
@@ -443,17 +431,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: '<b>@lacv</b>'
                         }, '|',
                         comboboxLimit
-                        <c:if test="${viewConfig.editableGrid && viewConfig.visibleAddButtonInGrid}">
-                        ,{
-                        //iconCls: 'icon-add',
-                        text: 'Agregar',
-                        scope: this,
-                        hidden: (typeView==="Child"),
-                        handler: this.onAddClick
-                        },
-                        </c:if>
                         <c:if test="${viewConfig.editableGrid && viewConfig.visibleRemoveButtonInGrid}">
-                        {
+                        ,{
                             //iconCls: 'icon-delete',
                             text: 'Eliminar',
                             disabled: true,
@@ -528,16 +507,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     parentExtController.loadFormData("");
                 }
             },
-
-            onAddClick: function(){
-                var rec = this.getEmptyRec(), edit = this.editing;
-                edit.cancelEdit();
-                this.store.insert(0, rec);
-                edit.startEditByPosition({
-                    row: 0,
-                    column: 0
-                });
-            },
             
             exportTo: function(type){
                 this.fireEvent('export', type);
@@ -560,14 +529,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.createMainView= function(){
-        Instance.formContainer= null;
         <c:if test="${viewConfig.visibleForm}">
         Instance.menuProcesses= getTreeMenuProcesses();
         </c:if>
         
         <c:if test="${viewConfig.visibleGrid}">
-        Instance.gridContainer = getGridContainer(Instance.modelName, Instance.store, Instance.formContainer);
-        Instance.store.gridContainer= Instance.gridContainer;
+        Instance.gridContainer = getGridContainer(Instance.store);
+        Instance.gridComponent= Instance.gridContainer.child('#grid${viewConfig.entityNameLogProcess}');
+        Instance.store.gridComponent= Instance.gridComponent;
         Instance.filters= getFiltersPanel();
         </c:if>
 
@@ -594,7 +563,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             border: false,
                             items: [
                                 <c:forEach var="processName" items="${nameProcesses}">
-                                getFormContainer${processName.key}("${processName.key}Model", Instance.store, Instance.childExtControllers),
+                                getFormContainer${processName.key}(),
                                 </c:forEach>
                             ]
                        }

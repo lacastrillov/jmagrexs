@@ -43,7 +43,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         if(configObj!==""){
             Instance.entityExtView.entityExtStore.loadConfig(configObj, function(data){
                 //Show Process
-                Ext.getCmp('content-configurationObjects').layout.setActiveItem('form-'+configObj);
+                Ext.getCmp('content-configurationObjects').layout.setActiveItem('formContainer'+configObj);
                 
                 //Populate Form
                 Instance.populateForm(configObj, data);
@@ -54,7 +54,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     Instance.populateForm= function(configObj, data){
         var record= Ext.create(configObj+"Model");
         record.data= util.unremakeJSONObject(data);
-        var formComponent= Ext.getCmp('form-'+configObj).child('#form'+configObj+'Item');
+        var formComponent= Ext.getCmp('formContainer'+configObj).child('#form'+configObj);
         formComponent.setActiveRecord(record);
 
         Instance.showListItems(formComponent);

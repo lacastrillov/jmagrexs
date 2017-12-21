@@ -65,10 +65,8 @@ function ${entityName}ExtStore(){
             },
             listeners: {
                 load: function() {
-                    var gridComponent= null;
-                    if(this.gridContainer){
-                        gridComponent= this.gridContainer.child('#grid'+modelName);
-                        gridComponent.getSelectionModel().deselectAll();
+                    if(this.gridComponent!==null){
+                        this.gridComponent.getSelectionModel().deselectAll();
                     }
                 },
                 write: function(proxy, operation){
@@ -81,8 +79,8 @@ function ${entityName}ExtStore(){
                 property: '${viewConfig.defaultOrderBy}',
                 direction: '${viewConfig.defaultOrderDir}'
             }],
-            formContainer:null,
-            gridContainer:null
+            formComponent: null,
+            gridComponent: null
         });
         store.getOrderProperty= function(){
             if(ExtJSVersion===4){
@@ -153,10 +151,8 @@ function ${entityName}ExtStore(){
             },
             listeners: {
                 load: function() {
-                    var gridComponent= null;
-                    if(this.gridContainer){
-                        gridComponent= this.gridContainer.child('#grid'+modelName);
-                        gridComponent.getSelectionModel().deselectAll();
+                    if(this.gridComponent!==null){
+                        this.gridComponent.getSelectionModel().deselectAll();
                     }
                 }
             },
@@ -164,8 +160,8 @@ function ${entityName}ExtStore(){
                 property: '${viewConfig.defaultOrderBy}',
                 direction: '${viewConfig.defaultOrderDir}'
             }],
-            formContainer:null,
-            gridContainer:null
+            formComponent: null,
+            gridComponent: null
         });
         store.getOrderProperty= function(){
             if(ExtJSVersion===4){

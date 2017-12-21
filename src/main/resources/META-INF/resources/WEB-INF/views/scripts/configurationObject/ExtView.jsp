@@ -44,7 +44,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 children: [
                     <c:forEach var="configurationObjectName" items="${nameConfigurationObjects}">
                     {
-                        id: 'form-${configurationObjectName.key}',
+                        id: 'formContainer${configurationObjectName.key}',
                         text: '${configurationObjectName.value}',
                         leaf: true
                     },
@@ -80,15 +80,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     function getFormContainer${configurationObjectName.key}(){
         var formFields= ${jsonFormFieldsMap[configurationObjectName.key]};
 
-        Instance.defineWriterForm("${configurationObjectName.key}Model", formFields);
+        Instance.defineWriterForm("${configurationObjectName.key}", formFields);
         
         return Ext.create('Ext.container.Container', {
-            id: 'form-${configurationObjectName.key}',
+            id: 'formContainer${configurationObjectName.key}',
             type: 'fit',
             align: 'stretch',
             items: [{
-                itemId: 'form${configurationObjectName.key}Item',
-                xtype: 'writerform${configurationObjectName.key}Model',
+                itemId: 'form${configurationObjectName.key}',
+                xtype: 'writerform${configurationObjectName.key}',
                 title: '${configurationObjectName.value}',
                 border: false,
                 width: '60%',
@@ -97,7 +97,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     saveConfig: function(form, data){
                         Instance.entityExtStore.saveConfig('${configurationObjectName.key}', data, function(configurationObjectRef, result){
                             <c:if test="${fn:contains(viewConfig.multipartFormConfig, configurationObjectName.key)}">
-                            var formComponent= Ext.getCmp('form-'+configurationObjectRef).child('#form'+configurationObjectRef+'Item');
+                            var formComponent= Ext.getCmp('formContainer'+configurationObjectRef).child('#form'+configurationObjectRef);
                             Instance.entityExtStore.upload(formComponent, configurationObjectRef, function(responseUpload){
                                 Ext.MessageBox.alert('Status', responseUpload.message);
                                 if(responseUpload.success){

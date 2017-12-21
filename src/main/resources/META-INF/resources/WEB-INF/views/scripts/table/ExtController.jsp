@@ -69,17 +69,16 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.loadFormData= function(id){
-        if(Instance.entityExtView.formContainer!==null){
-            var formComponent= Instance.entityExtView.formContainer.child('#form'+Instance.modelName);
+        if(Instance.entityExtView.formComponent!==null){
             if(id!==""){
                 Instance.idEntitySelected= id;
-                var activeRecord= formComponent.getActiveRecord();
+                var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 
                 if(activeRecord===null){
                     Instance.entityExtView.entityExtStore.load(id, function(data){
                         var record= Ext.create(Instance.modelName);
                         record.data= data;
-                        formComponent.setActiveRecord(record || null);
+                        Instance.entityExtView.formComponent.setActiveRecord(record || null);
                     });
                 }
             }else{
@@ -89,7 +88,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     for (var key in Instance.filter.eq) {
                         record.data[key]= Instance.filter.eq[key];
                     }
-                    formComponent.setActiveRecord(record || null);
+                    Instance.entityExtView.formComponent.setActiveRecord(record || null);
                 }
             }
         }
@@ -97,21 +96,20 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.formSavedResponse= function(responseText){
         if(responseText.success){
-            var formComponent= Instance.entityExtView.formContainer.child('#form'+Instance.modelName);
             <c:if test="${viewConfig.multipartFormData}">
-            Instance.entityExtView.entityExtStore.upload(formComponent, responseText.data.id, function(responseUpload){
+            Instance.entityExtView.entityExtStore.upload(Instance.entityExtView.formComponent, responseText.data.id, function(responseUpload){
                 Ext.MessageBox.alert('Status', responseText.message+"<br>"+responseUpload.message);
                 if(responseUpload.success){
                     var record= Ext.create(Instance.modelName);
                     record.data= responseUpload.data;
-                    formComponent.setActiveRecord(record || null);
+                    Instance.entityExtView.formComponent.setActiveRecord(record || null);
                 }
             });
             </c:if>
             <c:if test="${not viewConfig.multipartFormData}">
             var record= Ext.create(Instance.modelName);
             record.data= responseText.data;
-            formComponent.setActiveRecord(record || null);
+            Instance.entityExtView.formComponent.setActiveRecord(record || null);
             Ext.MessageBox.alert('Status', responseText.message);
             </c:if>
         }else{

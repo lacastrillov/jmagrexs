@@ -86,18 +86,18 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     </c:if>
     
     <c:if test="${viewConfig.visibleForm}">
-    function getFormContainer(modelName, store, childExtControllers){
+    function getFormContainer(childExtControllers){
         var formFields= ${jsonFormFields};
 
         var renderReplacements= ${jsonRenderReplacements};
 
         var additionalButtons= ${jsonInternalViewButtons};
 
-        Instance.defineWriterForm(Instance.modelName, formFields, renderReplacements, additionalButtons, childExtControllers, Instance.typeView);
+        Instance.defineWriterForm(formFields, renderReplacements, additionalButtons, childExtControllers, Instance.typeView);
         
         var itemsForm= [{
-            itemId: 'form'+modelName,
-            xtype: 'writerform'+modelName,
+            itemId: 'form${entityName}',
+            xtype: 'writerform${entityName}',
             border: false,
             width: '100%',
             listeners: {
@@ -118,7 +118,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         }
         
         return Ext.create('Ext.container.Container', {
-            id: 'formContainer'+modelName,
+            id: 'formContainer${entityName}',
             title: 'Formulario',
             type: 'fit',
             align: 'stretch',
@@ -165,14 +165,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.setFormActiveRecord= function(record){
-        var formComponent= Instance.formContainer.child('#form'+Instance.modelName);
-        formComponent.setActiveRecord(record || null);
+        Instance.formComponent.setActiveRecord(record || null);
     };
     
-    Instance.defineWriterForm= function(modelName, fields, renderReplacements, additionalButtons){
-        Ext.define('WriterForm'+modelName, {
+    Instance.defineWriterForm= function(fields, renderReplacements, additionalButtons){
+        Ext.define('WriterForm${entityName}', {
             extend: 'Ext.form.Panel',
-            alias: 'widget.writerform'+modelName,
+            alias: 'widget.writerform${entityName}',
 
             requires: ['Ext.form.field.Text'],
 
@@ -183,7 +182,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 <c:if test="${viewConfig.editableForm}">
                 buttons= [{
                     iconCls: 'icon-save',
-                    itemId: 'save'+modelName,
+                    itemId: 'save${entityName}',
                     text: 'Actualizar',
                     disabled: true,
                     scope: this,
@@ -239,15 +238,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             setActiveRecord: function(record){
                 this.activeRecord = record;
                 if (this.activeRecord) {
-                    if(this.down('#save'+modelName)!==null){
-                        this.down('#save'+modelName).enable();
+                    if(this.down('#save${entityName}')!==null){
+                        this.down('#save${entityName}').enable();
                     }
                     this.getForm().loadRecord(this.activeRecord);
                     //this.getForm().setValues(this.activeRecord.data);
                     this.renderReplaceActiveRecord(this.activeRecord);
                 } else {
-                    if(this.down('#save'+modelName)!==null){
-                        this.down('#save'+modelName).disable();
+                    if(this.down('#save${entityName}')!==null){
+                        this.down('#save${entityName}').disable();
                     }
                     this.getForm().reset();
                 }
@@ -339,8 +338,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     </c:if>
     
     <c:if test="${viewConfig.visibleGrid}">
-    function getGridContainer(modelName, store, formContainer){
-        var idGrid= 'grid'+modelName;
+    function getGridContainer(){
+        var idGrid= 'grid${entityName}';
         var gridColumns= ${jsonGridColumns};
         
         Instance.emptyModel= ${jsonEmptyModel};
@@ -349,14 +348,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         };
         
         <c:if test="${viewConfig.activeGridTemplate}">
-        modelName= Instance.gridModelName;
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineWriterGrid(modelName, '${viewConfig.pluralEntityTitle}', gridColumns, Instance.typeView);
+        Instance.defineWriterGrid('${viewConfig.pluralEntityTitle}', gridColumns, Instance.typeView);
         
         return Ext.create('Ext.container.Container', {
-            id: 'gridContainer'+modelName,
+            id: 'gridContainer${entityName}',
             title: 'Listado',
             <c:if test="${viewConfig.gridHeightChildView != 0}">
             height: ${viewConfig.gridHeightChildView},
@@ -367,10 +365,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
             items: [{
                 itemId: idGrid,
-                xtype: 'writergrid'+modelName,
+                xtype: 'writergrid${entityName}',
                 style: 'border: 0px',
                 flex: 1,
-                store: store,
+                store: Instance.store,
                 disableSelection: ${viewConfig.activeGridTemplate},
                 trackMouseOver: !${viewConfig.activeGridTemplate},
                 listeners: {
@@ -466,10 +464,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         return combobox;
     }
     
-    Instance.defineWriterGrid= function(modelName, modelText, columns, typeView){
-        Ext.define('WriterGrid'+modelName, {
+    Instance.defineWriterGrid= function(modelText, columns, typeView){
+        Ext.define('WriterGrid${entityName}', {
             extend: 'Ext.grid.Panel',
-            alias: 'widget.writergrid'+modelName,
+            alias: 'widget.writergrid${entityName}',
 
             requires: [
                 'Ext.grid.plugin.CellEditing',
@@ -772,14 +770,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     Instance.showProcessForm= function(processName, sourceByDestinationFields, rowIndex){
         var initData={};
         if(rowIndex!==-1){
-            var rec = Instance.gridContainer.child('#grid'+Instance.modelName).getStore().getAt(rowIndex);
+            var rec = Instance.gridComponent.getStore().getAt(rowIndex);
             for (var source in sourceByDestinationFields) {
                 var destination = sourceByDestinationFields[source];
                 initData[destination]=rec.get(source);
             }
             
         }else{
-            var formData= Instance.formContainer.child('#form'+Instance.modelName).getForm().getValues();
+            var formData= Instance.formComponent.getForm().getValues();
             for (var source in sourceByDestinationFields) {
                 var destination = sourceByDestinationFields[source];
                 initData[destination]=formData[source];
@@ -805,8 +803,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.hideParentField= function(entityRef){
-        if(Instance.formContainer!==null){
-            var fieldsForm= Instance.formContainer.child('#form'+Instance.modelName).items.items;
+        if(Instance.formComponent!==null){
+            var fieldsForm= Instance.formComponent.items.items;
             fieldsForm.forEach(function(field) {
                 if(field.name===entityRef){
                     field.hidden= true;
@@ -814,7 +812,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             });
         }
         if(Instance.gridContainer!==null){
-            var columnsGrid= Instance.gridContainer.child('#grid'+Instance.modelName).columns;
+            var columnsGrid= Instance.gridComponent.columns;
             columnsGrid.forEach(function(column) {
                 if(column.dataIndex===entityRef){
                     column.hidden= true;
@@ -861,15 +859,18 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         </c:forEach>
         }
         
-        Instance.formContainer= null;
+        Instance.formComponent= null;
         <c:if test="${viewConfig.visibleForm}">
-        Instance.formContainer = getFormContainer(Instance.modelName, Instance.store, Instance.childExtControllers);
-        Instance.store.formContainer= Instance.formContainer;
+        Instance.formContainer = getFormContainer(Instance.childExtControllers);
+        Instance.formComponent= Instance.formContainer.child('#form${entityName}');
+        Instance.store.formComponent= Instance.formComponent;
         </c:if>
         
+        Instance.gridComponent = null;
         <c:if test="${viewConfig.visibleGrid}">
-        Instance.gridContainer = getGridContainer(Instance.modelName, Instance.store, Instance.formContainer);
-        Instance.store.gridContainer= Instance.gridContainer;
+        Instance.gridContainer = getGridContainer();
+        Instance.gridComponent = Instance.gridContainer.child('#grid${entityName}');
+        Instance.store.gridComponent= Instance.gridComponent;
         </c:if>
             
         <c:if test="${viewConfig.activeNNMulticheckChild}">
