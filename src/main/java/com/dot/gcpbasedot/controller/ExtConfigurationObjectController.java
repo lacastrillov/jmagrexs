@@ -119,7 +119,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         Map<String, String> jsonFormFieldsMap= new HashMap();
         
         for (Map.Entry<String, Class> entry : configurationObjects.entrySet()){
-            JSONArray jsonFormFields = jfo.getJSONProcessForm("", entry.getValue(), viewConfig.getDateFormat());
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue(), viewConfig.getDateFormat());
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         mav.addObject("nameConfigurationObjects", nameConfigurationObjects);

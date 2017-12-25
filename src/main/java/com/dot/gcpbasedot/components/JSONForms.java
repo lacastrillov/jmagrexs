@@ -31,7 +31,7 @@ public class JSONForms {
     private FieldConfigurationByAnnotations fcba;
     
     
-    public JSONArray getJSONProcessForm(String parent, Class dtoClass, String dateFormat){
+    public JSONArray getJSONProcessForm(String processName, String parent, Class dtoClass, String dateFormat){
         JSONArray jsonFormFields= new JSONArray();
         
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
@@ -84,7 +84,7 @@ public class JSONForms {
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
-                                formField.put("id", parent + fieldName + "LinkField");
+                                formField.put("id", "form" + processName+ "_" + parent + fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Url Youtube");
                                 
@@ -177,7 +177,7 @@ public class JSONForms {
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 //Add link Field
                                 JSONObject linkField= new JSONObject();
-                                linkField.put("id", parent + fieldName + "LinkField");
+                                linkField.put("id", "form" + processName+ "_" +parent + fieldName + "LinkField");
                                 linkField.put("name", parent + fieldName);
                                 linkField.put("fieldLabel", "&nbsp;");
                                 jsonFormFields.put(linkField);
@@ -233,7 +233,7 @@ public class JSONForms {
                         objectField.put("defaultType", "textfield");
                         objectField.put("minWidth", 300);
                         objectField.put("fieldDefaults", fieldDefaults);
-                        objectField.put("items", getJSONProcessForm(parent+fieldName+".", childClass, dateFormat));
+                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+".", childClass, dateFormat));
                         
                         jsonFormFields.put(objectField);
                     }
@@ -274,7 +274,7 @@ public class JSONForms {
                             fieldDefaultsChild.put("disabled", true);
                         }
                         objectField.put("fieldDefaults", fieldDefaultsChild);
-                        objectField.put("items", getJSONProcessForm(parent+fieldName+"["+i+"].", childClass, dateFormat));
+                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+"["+i+"].", childClass, dateFormat));
                     }else{
                         objectField.put("name", parent + fieldName + "["+i+"]");
                         objectField.put("fieldLabel", "Item "+i);

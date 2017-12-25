@@ -73,17 +73,16 @@ function ${reportName}ExtController(parentExtView){
     };
     
     Instance.loadFormData= function(id){
-        if(Instance.entityExtView.formContainer!==null){
-            var formComponent= Instance.entityExtView.formContainer.child('#form'+Instance.modelName);
+        if(Instance.entityExtView.formComponent!==null){
             if(id!==""){
                 Instance.idEntitySelected= id;
-                var activeRecord= formComponent.getActiveRecord();
+                var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 
                 if(activeRecord===null){
                     Instance.entityExtView.entityExtStore.load(id, function(data){
                         var record= Ext.create(Instance.modelName);
                         record.data= data;
-                        formComponent.setActiveRecord(record || null);
+                        Instance.entityExtView.formComponent.setActiveRecord(record || null);
                     });
                 }
                 Instance.loadChildExtControllers(Instance.idEntitySelected);
@@ -94,7 +93,7 @@ function ${reportName}ExtController(parentExtView){
                     for (var key in Instance.filter.eq) {
                         record.data[key]= Instance.filter.eq[key];
                     }
-                    formComponent.setActiveRecord(record || null);
+                    Instance.entityExtView.formComponent.setActiveRecord(record || null);
                 }
             }
         }

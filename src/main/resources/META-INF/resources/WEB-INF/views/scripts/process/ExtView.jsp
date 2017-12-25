@@ -317,20 +317,20 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         });
     }
         
-    function getGridContainer(store){
+    function getGridContainer(){
         var idGrid= 'grid${viewConfig.entityNameLogProcess}';
         var gridColumns= ${jsonGridColumns};
         
-        var getEmptyRec= function(){
+        Instance.getEmptyRec= function(){
             return new ${viewConfig.entityNameLogProcess}Model(${jsonEmptyModel});
         };
         
+        var store= Instance.store;
         <c:if test="${viewConfig.activeGridTemplate}">
-        modelName= Instance.gridModelName;
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineWriterGrid('${viewConfig.entityNameLogProcess}', gridColumns, getEmptyRec, Instance.typeView);
+        Instance.defineWriterGrid('${viewConfig.entityNameLogProcess}', gridColumns);
         
         return Ext.create('Ext.container.Container', {
             id: 'gridContainer${viewConfig.entityNameLogProcess}',
@@ -385,13 +385,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         });
     };
     
-    Instance.setGridEmptyRec= function(obj){
-        Instance.gridComponent.getEmptyRec= function(){
-            return new ${entityName}Model(obj);
-        };
-    };
-    
-    Instance.defineWriterGrid= function(modelText, columns, getEmptyRec, typeView){
+    Instance.defineWriterGrid= function(modelText, columns){
         Ext.define('WriterGrid${viewConfig.entityNameLogProcess}', {
             extend: 'Ext.grid.Panel',
             alias: 'widget.writergrid${viewConfig.entityNameLogProcess}',
@@ -445,7 +439,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         <c:if test="${viewConfig.visibleExportButton}">
                         ,{
                             text: 'Exportar',
-                            hidden: (typeView==="Child"),
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
@@ -457,7 +450,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         , {
                             text: 'Auto-Guardar',
                             enableToggle: ${viewConfig.defaultAutoSave},
-                            hidden: (typeView==="Child"),
                             pressed: true,
                             tooltip: 'When enabled, Store will execute Ajax requests as soon as a Record becomes dirty.',
                             scope: this,
@@ -482,8 +474,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         displayMsg: modelText+' {0} - {1} de {2}',
                         emptyMsg: "No hay "+modelText
                     }],
-                    columns: columns,
-                    getEmptyRec: getEmptyRec
+                    columns: columns
                 });
                 this.callParent();
                 this.getSelectionModel().on('selectionchange', this.onSelectChange, this);
@@ -534,7 +525,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         </c:if>
         
         <c:if test="${viewConfig.visibleGrid}">
-        Instance.gridContainer = getGridContainer(Instance.store);
+        Instance.gridContainer = getGridContainer();
         Instance.gridComponent= Instance.gridContainer.child('#grid${viewConfig.entityNameLogProcess}');
         Instance.store.gridComponent= Instance.gridComponent;
         Instance.filters= getFiltersPanel();

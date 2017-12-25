@@ -222,7 +222,7 @@ public abstract class ExtTableController extends ExtController {
                             }
                             jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
                         }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
-                            formField.put("id", fieldName + "LinkField");
+                            formField.put("id", "form" + viewConfig.getTableName() + "_" +fieldName + "LinkField");
                             formField.put("fieldLabel", "&nbsp;");
                             formField.put("emptyText", "Url Youtube");
 
@@ -313,13 +313,13 @@ public abstract class ExtTableController extends ExtController {
                         if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("id", fieldName + "LinkField");
-                                linkField.put("name", fieldName);
-                                linkField.put("fieldLabel", "&nbsp;");
-                                jsonFormFields.put(linkField);
-                            }
+                            //Add link Field
+                            JSONObject linkField= new JSONObject();
+                            linkField.put("id", "form" + viewConfig.getTableName() + "_" +fieldName + "LinkField");
+                            linkField.put("name", fieldName);
+                            linkField.put("fieldLabel", "&nbsp;");
+                            jsonFormFields.put(linkField);
+                        }
                     }else{
                         switch (type) {
                             case "java.util.Date":

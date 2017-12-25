@@ -58,18 +58,18 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     };
     
     <c:if test="${reportConfig.visibleForm}">
-    function getFormContainer(modelName, store, childExtControllers){
+    function getFormContainer(childExtControllers){
         var formFields= ${jsonFormFields};
 
         var renderReplacements= [];
 
         var additionalButtons= ${jsonInternalViewButtons};
 
-        Instance.defineWriterForm(Instance.modelName, formFields, renderReplacements, additionalButtons, childExtControllers, Instance.typeView);
+        Instance.defineWriterForm(formFields, renderReplacements, additionalButtons);
         
         var itemsForm= [{
-            itemId: 'form'+modelName,
-            xtype: 'writerform'+modelName,
+            itemId: 'form${reportName}',
+            xtype: 'writerform${reportName}',
             border: false,
             width: '100%',
             listeners: {
@@ -90,7 +90,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         }
         
         return Ext.create('Ext.container.Container', {
-            id: 'formContainer'+modelName,
+            id: 'formContainer${reportName}',
             title: 'Detalle',
             type: 'fit',
             align: 'stretch',
@@ -132,14 +132,13 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.setFormActiveRecord= function(record){
-        var formComponent= Instance.formContainer.child('#form'+Instance.modelName);
-        formComponent.setActiveRecord(record || null);
+        Instance.formComponent.setActiveRecord(record || null);
     };
     
-    Instance.defineWriterForm= function(modelName, fields, renderReplacements, additionalButtons){
-        Ext.define('WriterForm'+modelName, {
+    Instance.defineWriterForm= function(fields, renderReplacements, additionalButtons){
+        Ext.define('WriterForm${reportName}', {
             extend: 'Ext.form.Panel',
-            alias: 'widget.writerform'+modelName,
+            alias: 'widget.writerform${reportName}',
 
             requires: ['Ext.form.field.Text'],
 
@@ -181,18 +180,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
 
             setActiveRecord: function(record){
                 this.activeRecord = record;
-                if (this.activeRecord) {
-                    if(this.down('#save'+modelName)!==null){
-                        this.down('#save'+modelName).enable();
-                    }
-                    this.getForm().loadRecord(this.activeRecord);
-                    this.renderReplaceActiveRecord(this.activeRecord);
-                } else {
-                    if(this.down('#save'+modelName)!==null){
-                        this.down('#save'+modelName).disable();
-                    }
-                    this.getForm().reset();
-                }
+                this.getForm().loadRecord(this.activeRecord);
             },
                     
             getActiveRecord: function(){
@@ -263,7 +251,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             xtype: 'form',
             layout: 'form',
             title: 'Establecer variables',
-            id: 'simpleForm'+Instance.modelName,
+            id: 'simpleForm${reportName}',
             region: 'north',
             frame: false,
             collapsible: true,
@@ -273,7 +261,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 labelAlign: 'right'
             },
             defaultType: 'textfield',
-            items: ${jsonFormFields},
+            items: ${jsonFormMapFields},
 
             buttons: [{
                 text: 'Consultar',
@@ -292,23 +280,23 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     }
     </c:if>
     
-    function getGridContainer(modelName, store, formContainer){
-        var idGrid= 'grid'+modelName;
+    function getGridContainer(){
+        var idGrid= 'grid${reportName}';
         var gridColumns= ${jsonGridColumns};
 
-        var getEmptyRec= function(){
+        Instance.getEmptyRec= function(){
             return new ${reportName}Model(${jsonEmptyModel});
         };
         
+        var store= Instance.store;
         <c:if test="${reportConfig.activeGridTemplate}">
-        modelName= Instance.gridModelName;
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineGrid(modelName, '${reportConfig.pluralReportTitle}', gridColumns, getEmptyRec);
+        Instance.defineGrid('${reportConfig.pluralReportTitle}', gridColumns);
         
         return Ext.create('Ext.container.Container', {
-            id: 'gridContainer'+modelName,
+            id: 'gridContainer${reportName}',
             title: 'Listado',
             region: 'center',
             layout: {
@@ -317,7 +305,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             },
             items: [{
                 itemId: idGrid,
-                xtype: 'writergrid'+modelName,
+                xtype: 'writergrid${reportName}',
                 style: 'border: 0px',
                 flex: 1,
                 store: store,
@@ -325,11 +313,8 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 trackMouseOver: !${reportConfig.activeGridTemplate},
                 listeners: {
                     selectionchange: function(selModel, selected) {
-                        /*if(selected[0]){
-                            parentExtController.loadFormData(selected[0].data.id)
-                        }*/
-                        if(formContainer!==null && selected[0]){
-                            formContainer.child('#form'+modelName).setActiveRecord(selected[0]);
+                        if(selected[0]){
+                            Instance.setFormActiveRecord(selected[0]);
                         }
                     },
                     export: function(typeReport){
@@ -414,10 +399,10 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         return combobox;
     }
     
-    Instance.defineGrid= function(modelName, modelText, columns, getEmptyRec){
-        Ext.define('WriterGrid'+modelName, {
+    Instance.defineGrid= function(modelText, columns){
+        Ext.define('WriterGrid${reportName}', {
             extend: 'Ext.grid.Panel',
-            alias: 'widget.writergrid'+modelName,
+            alias: 'widget.writergrid${reportName}',
 
             requires: [
                 'Ext.grid.plugin.CellEditing',
@@ -467,8 +452,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                         displayMsg: modelText+' {0} - {1} de {2}',
                         emptyMsg: "No hay "+modelText
                     }],
-                    columns: columns,
-                    getEmptyRec: getEmptyRec
+                    columns: columns
                 });
                 this.callParent();
                 this.getSelectionModel().on('selectionchange', this.onSelectChange, this);
@@ -565,14 +549,14 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     Instance.showProcessForm= function(processName, sourceByDestinationFields, rowIndex){
         var initData={};
         if(rowIndex!==-1){
-            var rec = Instance.gridContainer.child('#grid'+Instance.modelName).getStore().getAt(rowIndex);
+            var rec = Instance.gridComponent.getStore().getAt(rowIndex);
             for (var source in sourceByDestinationFields) {
                 var destination = sourceByDestinationFields[source];
                 initData[destination]=rec.get(source);
             }
             
         }else{
-            var formData= Instance.formContainer.child('#form'+Instance.modelName).getForm().getValues();
+            var formData= Instance.formComponent.getForm().getValues();
             for (var source in sourceByDestinationFields) {
                 var destination = sourceByDestinationFields[source];
                 initData[destination]=formData[source];
@@ -599,7 +583,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     
     Instance.hideParentField= function(entityRef){
         if(Instance.formContainer!==null){
-            var fieldsForm= Instance.formContainer.child('#form'+Instance.modelName).items.items;
+            var fieldsForm= Instance.formComponent.items.items;
             fieldsForm.forEach(function(field) {
                 if(field.name===entityRef){
                     field.hidden= true;
@@ -607,7 +591,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             });
         }
         if(Instance.gridContainer!==null){
-            var columnsGrid= Instance.gridContainer.child('#grid'+Instance.modelName).columns;
+            var columnsGrid= Instance.gridComponent.columns;
             columnsGrid.forEach(function(column) {
                 if(column.dataIndex===entityRef){
                     column.hidden= true;
@@ -630,14 +614,16 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         Instance.valueMapformContainer = getValueMapFormContainer();
         </c:if>
             
-        Instance.formContainer= null;
+        Instance.formComponent= null;
         <c:if test="${reportConfig.visibleForm}">
-        Instance.formContainer = getFormContainer(Instance.modelName, Instance.store, Instance.childExtControllers);
-        Instance.store.formContainer= Instance.formContainer;
+        Instance.formContainer = getFormContainer(Instance.childExtControllers);
+        Instance.formComponent= Instance.formContainer.child('#form${reportName}');
+        Instance.store.formComponent= Instance.formComponent;
         </c:if>
             
-        Instance.gridContainer = getGridContainer(Instance.modelName, Instance.store, Instance.formContainer);
-        Instance.store.gridContainer= Instance.gridContainer;
+        Instance.gridContainer = getGridContainer();
+        Instance.gridComponent = Instance.gridContainer.child('#grid${reportName}');
+        Instance.store.gridComponent= Instance.gridComponent;
         
         Instance.processForms={};
         <c:forEach var="processButton" items="${reportConfig.processButtons}">

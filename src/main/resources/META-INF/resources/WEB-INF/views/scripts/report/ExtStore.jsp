@@ -50,6 +50,13 @@ function ${reportName}ExtStore(){
                     }
                 }
             },
+            listeners: {
+                load: function() {
+                    if(this.gridComponent!==null){
+                        this.gridComponent.getSelectionModel().deselectAll();
+                    }
+                }
+            },
             sorters: [
                 <c:if test="${not empty reportConfig.defaultOrderBy && not empty reportConfig.defaultOrderDir}">
                 {
@@ -58,7 +65,7 @@ function ${reportName}ExtStore(){
                 }
                 </c:if>
             ],
-            gridContainer:null
+            gridComponent:null
         });
         store.getOrderProperty= function(){
             if(ExtJSVersion===4){
@@ -130,10 +137,8 @@ function ${reportName}ExtStore(){
             },
             listeners: {
                 load: function() {
-                    var gridComponent= null;
-                    if(this.gridContainer){
-                        gridComponent= this.gridContainer.child('#grid'+modelName);
-                        gridComponent.getSelectionModel().deselectAll();
+                    if(this.gridComponent!==null){
+                        this.gridComponent.getSelectionModel().deselectAll();
                     }
                 }
             },
@@ -145,7 +150,7 @@ function ${reportName}ExtStore(){
                 }
                 </c:if>
             ],
-            gridContainer:null
+            gridComponent: null
         });
         store.getOrderProperty= function(){
             if(ExtJSVersion===4){

@@ -149,7 +149,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.fileRender= function(value, field){
-        Instance.setLinkFieldValue(field.name, value);
+        Instance.setLinkFieldValue(field, value);
         if(value){
             return "<a target='_blank' href='"+value+"'>"+value+"</a>";
         }else{
@@ -158,7 +158,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.pdfRender= function(value, field){
-        Instance.setLinkFieldValue(field.name, value);
+        Instance.setLinkFieldValue(field, value);
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<iframe src="'+value+'" frameborder="0" width="100%" height="100%"></iframe>';
@@ -177,13 +177,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.imageRender= function(value, field) {
-        console.log("field.up('form')");
-        try{
-            console.log(field.up('form'));
-        }catch(e){
-            console.error(e);
-        }
-        Instance.setLinkFieldValue(field.name, value);
+        Instance.setLinkFieldValue(field, value);
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a><br>'+
                    '<img style="max-width:150%" src="'+value+'">';
@@ -205,7 +199,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.videoYoutubeRender= function(value, field) {
-        Instance.setLinkFieldValue(field.name, value);
+        Instance.setLinkFieldValue(field, value);
         var videoId= util.getParameter(value, "v");
         if(videoId!==""){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
@@ -216,7 +210,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.videoFileUploadRender= function(value, field) {
-        Instance.setLinkFieldValue(field.name, value);
+        Instance.setLinkFieldValue(field, value);
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<video style="width:528px;height:297px" controls>'+
@@ -229,7 +223,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.audioFileUploadRender= function(value, field) {
-        Instance.setLinkFieldValue(field.name, value);
+        Instance.setLinkFieldValue(field, value);
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
                    '<audio style="width:500px" src="'+value+'" preload="auto" controls>'+
@@ -245,7 +239,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             try{
                 googleMaps.load(field.name, value);
             }catch(e){
-                console.log(e);
+                console.error(e);
             }
         },1000);
         return '<div class="googleMaps">'+
@@ -255,12 +249,14 @@ function CommonExtView(parentExtController, parentExtView, model){
                '</div>';
     };
     
-    Instance.setLinkFieldValue= function(fieldName, value){
+    Instance.setLinkFieldValue= function(field, value){
         setTimeout(function(){
             try{
-                Ext.getCmp(fieldName+"LinkField").setValue((value)?value:"");
+                var parentForm= field.up('form');
+                var linkFieldId= parentForm.itemId + "_" + field.name + "LinkField";
+                Ext.getCmp(linkFieldId).setValue((value)?value:"");
             }catch(e){
-                console.log(e);
+                console.error(e);
             }
         },1000);
     };

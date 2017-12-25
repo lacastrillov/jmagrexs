@@ -93,7 +93,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
 
         var additionalButtons= ${jsonInternalViewButtons};
 
-        Instance.defineWriterForm(formFields, renderReplacements, additionalButtons, childExtControllers, Instance.typeView);
+        Instance.defineWriterForm(formFields, renderReplacements, additionalButtons);
         
         var itemsForm= [{
             itemId: 'form${entityName}',
@@ -347,11 +347,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             return new ${entityName}Model(Instance.emptyModel);
         };
         
+        var store= Instance.store;
         <c:if test="${viewConfig.activeGridTemplate}">
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineWriterGrid('${viewConfig.pluralEntityTitle}', gridColumns, Instance.typeView);
+        Instance.defineWriterGrid('${viewConfig.pluralEntityTitle}', gridColumns);
         
         return Ext.create('Ext.container.Container', {
             id: 'gridContainer${entityName}',
@@ -368,7 +369,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 xtype: 'writergrid${entityName}',
                 style: 'border: 0px',
                 flex: 1,
-                store: Instance.store,
+                store: store,
                 disableSelection: ${viewConfig.activeGridTemplate},
                 trackMouseOver: !${viewConfig.activeGridTemplate},
                 listeners: {
@@ -464,7 +465,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         return combobox;
     }
     
-    Instance.defineWriterGrid= function(modelText, columns, typeView){
+    Instance.defineWriterGrid= function(modelText, columns){
         Ext.define('WriterGrid${entityName}', {
             extend: 'Ext.grid.Panel',
             alias: 'widget.writergrid${entityName}',

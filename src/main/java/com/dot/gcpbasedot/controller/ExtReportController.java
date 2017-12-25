@@ -181,6 +181,7 @@ public abstract class ExtReportController extends ExtController {
     private void addReportExtViewConfiguration(ModelAndView mav, String reportName){
         JSONArray jsonGridColumns= new JSONArray();
         JSONArray jsonFormFields= new JSONArray();
+        JSONArray jsonFormMapFields= new JSONArray();
         JSONArray jsonInternalViewButtons= new JSONArray();
         JSONArray sortColumns= new JSONArray();
         JSONObject jsonEmptyModel= new JSONObject();
@@ -208,7 +209,6 @@ public abstract class ExtReportController extends ExtController {
                 // ADD TO jsonFormFields
                 if(reportConfig.isVisibleForm() && !hideFields.contains(fieldName + HideView.FORM.name())){
                     if(Formats.TYPES_LIST.contains(type)){
-                        boolean addFormField= true;
                         JSONObject formField= new JSONObject();
                         formField.put("name", fieldName);
                         formField.put("fieldLabel", fieldTitle);
@@ -281,6 +281,17 @@ public abstract class ExtReportController extends ExtController {
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.multiFileRender#");
                             }
+                            jsonFormFields.put(formField);
+                            if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
+                                    typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
+                                    typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                                //Add link Field
+                                JSONObject linkField= new JSONObject();
+                                linkField.put("id", "form" + reportName + "_" +fieldName + "LinkField");
+                                linkField.put("name", fieldName);
+                                linkField.put("fieldLabel", "&nbsp;");
+                                jsonFormFields.put(linkField);
+                            }
                         }else{
                             switch (type) {
                                 case "java.util.Date":
@@ -310,9 +321,6 @@ public abstract class ExtReportController extends ExtController {
                                     formField.put("uncheckedValue", "false");
                                     break;
                             }
-                        }
-                        
-                        if(addFormField){
                             jsonFormFields.put(formField);
                         }
                     }
@@ -364,7 +372,7 @@ public abstract class ExtReportController extends ExtController {
                         for(int i=1; i<data.length; i++){
                             dataArray.put(data[i]);
                         }
-                        jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        jsonFormMapFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+")#");
                     }else if (type.equals("java.util.Date")) {
                         formField.put("xtype", "datefield");
                         formField.put("format", reportConfig.getDateFormat());
@@ -380,7 +388,7 @@ public abstract class ExtReportController extends ExtController {
                         formField.put("xtype", "checkbox");
                     }
                     if(addFormField){
-                        jsonFormFields.put(formField);
+                        jsonFormMapFields.put(formField);
                     }
                 }
                     
@@ -436,7 +444,7 @@ public abstract class ExtReportController extends ExtController {
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm("", processButton.getDtoClass(), processButton.getDateFormat());
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass(), processButton.getDateFormat());
                 jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
             }
             gridColumn.put("items", gridActions);
@@ -444,6 +452,7 @@ public abstract class ExtReportController extends ExtController {
         }
         
         mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonFormMapFields", jsonFormMapFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("sortColumns", sortColumns.toString());

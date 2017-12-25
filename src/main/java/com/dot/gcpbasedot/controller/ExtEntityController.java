@@ -306,28 +306,28 @@ public abstract class ExtEntityController extends ExtReportController {
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
-                                formField.put("id", fieldName + "LinkField");
+                                formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Url Youtube");
                                 
                                 //Add Video Youtube
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Google Maps Point");
                                 
                                 //Add GoogleMap
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -335,12 +335,12 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("emptyText", "Seleccione un archivo");
                                 
                                 //Add Url File
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.fileRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.fileRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -348,12 +348,12 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("emptyText", "Seleccione una imagen");
                                 
                                 //Add Image
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.imageRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.imageRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -361,12 +361,12 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("emptyText", "Seleccione un video");
                                 
                                 //Add Video
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -374,12 +374,12 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("emptyText", "Seleccione un audio");
                                 
                                 //Add Video
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -387,19 +387,19 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("emptyText", "Seleccione un archivo");
                                 
                                 //Add Video
-                                JSONObject imageField= new JSONObject();
-                                imageField.put("name", fieldName);
-                                imageField.put("fieldLabel", fieldTitle);
-                                imageField.put("xtype", "displayfield");
-                                imageField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                                jsonFormFields.put(imageField);
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
+                                jsonFormFields.put(renderField);
                             }
                             if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 //Add link Field
                                 JSONObject linkField= new JSONObject();
-                                linkField.put("id", fieldName + "LinkField");
+                                linkField.put("id", "form"+entityClass.getSimpleName()+"_"+fieldName + "LinkField");
                                 linkField.put("name", fieldName);
                                 linkField.put("fieldLabel", "&nbsp;");
                                 jsonFormFields.put(linkField);
@@ -677,7 +677,7 @@ public abstract class ExtEntityController extends ExtReportController {
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm("", processButton.getDtoClass(), processButton.getDateFormat());
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass(), processButton.getDateFormat());
                 jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
             }
             gridColumn.put("items", gridActions);

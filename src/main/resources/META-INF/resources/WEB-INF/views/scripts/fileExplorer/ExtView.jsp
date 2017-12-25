@@ -221,19 +221,20 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     
     </c:if>
     
-    function getGridContainer(store){
+    function getGridContainer(){
         var idGrid= 'grid${entityName}';
         var gridColumns= ${jsonGridColumns};
         
-        var getEmptyRec= function(){
+        Instance.getEmptyRec= function(){
             return new ${entityName}Model(${jsonEmptyModel});
         };
         
+        var store= Instance.store;
         <c:if test="${viewConfig.activeGridTemplate}">
         store= Instance.gridStore;
         </c:if>
 
-        Instance.defineWriterGrid('${viewConfig.pluralEntityTitle}', gridColumns, getEmptyRec, Instance.typeView);
+        Instance.defineWriterGrid('${viewConfig.pluralEntityTitle}', gridColumns);
         
         return Ext.create('Ext.container.Container', {
             id: 'gridContainer${entityName}',
@@ -292,12 +293,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         });
     };
     
-    Instance.setGridEmptyRec= function(obj){
-        Instance.gridComponent.getEmptyRec= function(){
-            return new ${entityName}Model(obj);
-        };
-    };
-    
     function getComboboxLimit(store){
         var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500]);
         combobox.addListener('change',function(record){
@@ -345,7 +340,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         return combobox;
     }
     
-    Instance.defineWriterGrid= function(modelText, columns, getEmptyRec, typeView){
+    Instance.defineWriterGrid= function(modelText, columns){
         Ext.define('WriterGrid${entityName}', {
             extend: 'Ext.grid.Panel',
             alias: 'widget.writergrid${entityName}',
@@ -390,7 +385,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         <c:if test="${viewConfig.visibleExportButton}">
                         {
                             text: 'Exportar',
-                            hidden: (typeView==="Child"),
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
@@ -422,8 +416,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         displayMsg: modelText+' {0} - {1} de {2}',
                         emptyMsg: "No hay "+modelText
                     }],
-                    columns: columns,
-                    getEmptyRec: getEmptyRec
+                    columns: columns
                 });
                 this.callParent();
                 this.getSelectionModel().on('selectionchange', this.onSelectChange, this);
@@ -462,7 +455,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onAddClick: function(){
-                var rec = this.getEmptyRec(), edit = this.editing;
+                var rec = Instance.getEmptyRec(), edit = this.editing;
                 edit.cancelEdit();
                 this.store.insert(0, rec);
                 edit.startEditByPosition({
@@ -775,7 +768,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.store.formComponent= Instance.formComponent;
         </c:if>
         
-        Instance.gridContainer = getGridContainer(Instance.store);
+        Instance.gridContainer = getGridContainer();
         Instance.gridComponent = Instance.gridContainer.child('#grid${entityName}');
         Instance.store.gridComponent= Instance.gridComponent;
         
