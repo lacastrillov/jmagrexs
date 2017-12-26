@@ -144,7 +144,8 @@ public class Util {
         JSONObject source= new JSONObject(json);
         JSONObject finalObject= new JSONObject();
         
-        for (String key : source.keySet()) {
+        for (Object keyObj : source.keySet()) {
+            String key= keyObj.toString();
             if(source.get(key).toString().startsWith("[")){
                 JSONArray value = source.getJSONArray(key);
                 assignValue(finalObject, key, value.get(0));
@@ -193,7 +194,8 @@ public class Util {
         JSONObject source= new JSONObject(json);
         JSONObject finalObject= new JSONObject();
         
-        for (String key : source.keySet()) {
+        for (Object keyObj : source.keySet()) {
+            String key= keyObj.toString();
             assignSingleLevelValue(key, finalObject, source.get(key));
         }
         
@@ -208,7 +210,8 @@ public class Util {
             }
         }else if(object instanceof JSONObject){
             JSONObject jsonObject= (JSONObject) object;
-            for(String key : jsonObject.keySet()) {
+            for(Object keyObj : jsonObject.keySet()) {
+                String key= keyObj.toString();
                 assignSingleLevelValue(level+"."+key, finalObject, jsonObject.get(key));
             }
         }else{

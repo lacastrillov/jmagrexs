@@ -379,6 +379,49 @@ public class ExternalServiceConnection {
 
         return response;
     }
+    
+    /**
+     * POSTs data to the provided-path relative to the base-url (ie: creates).
+     *
+     * NOTE: the Firebase API does not treat this method in the conventional
+     * way, but instead defines it as 'PUSH'; the API will insert this data
+     * under the provided path but associated with a Firebase- generated key;
+     * thus, every use of this method will result in a new insert even if the
+     * provided path and data already exist.
+     *
+     * @param headers
+     * @param pathVars
+     * @param parameters
+     * @return {@link HttpResponse}
+     * @throws UnsupportedEncodingException
+     */
+    public ConnectionResponse postUrlGet(Map<String, String> headers, Map<String, String> pathVars, Map<String, String> parameters) throws UnsupportedEncodingException, IOException {
+        // make the request
+        String url = this.buildFullUrl(pathVars);
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        if (parameters != null) {
+            for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+                map.add(parameter.getKey(), parameter.getValue());
+            }
+        }
+        url = UriComponentsBuilder.fromHttpUrl(url).queryParams(map).build().toUriString();
+        System.out.println("Url " + url);
+        HttpPost request = new HttpPost(url);
+        addHeaders(request, headers);
+        if (parameters != null) {
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+                urlParameters.add(new BasicNameValuePair(parameter.getKey(), parameter.getValue()));
+            }
+            request.setEntity(new UrlEncodedFormEntity(urlParameters));
+        }
+        HttpResponse httpResponse = client.execute(request);
+
+        // process the response
+        ConnectionResponse response = this.processResponse(HttpMethod.POST, httpResponse);
+
+        return response;
+    }
 
     /**
      * POSTs data to the provided-path relative to the base-url (ie: creates).

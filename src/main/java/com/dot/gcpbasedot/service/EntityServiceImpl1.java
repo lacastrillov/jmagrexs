@@ -215,7 +215,7 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
         for(Field f: queryFields){
             queryParams.add(f.getName());
         }
-        return queryParams.stream().toArray(String[]::new);
+        return queryParams.toArray(new String[queryParams.size()]);
     }
     
     /**
