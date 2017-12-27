@@ -405,7 +405,6 @@ public class ExternalServiceConnection {
             }
         }
         url = UriComponentsBuilder.fromHttpUrl(url).queryParams(map).build().toUriString();
-        System.out.println("Url " + url);
         HttpPost request = new HttpPost(url);
         addHeaders(request, headers);
         if (parameters != null) {
