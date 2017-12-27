@@ -39,7 +39,7 @@ public class Formats {
             + "OoUu" // double acute
             ;
     
-    public static final String[] TYPES= new String[]{"java.lang.String","char","java.lang.Character","int","java.lang.Integer","java.lang.Long",
+    public static final String[] TYPES= new String[]{"java.lang.String","char","java.lang.Character","int","java.lang.Integer","long","java.lang.Long",
                 "java.math.BigInteger","double","java.lang.Double","float","java.lang.Float","boolean","java.lang.Boolean","java.util.Date","java.sql.Time"};
     
     public static final List TYPES_LIST= Arrays.asList(TYPES);
