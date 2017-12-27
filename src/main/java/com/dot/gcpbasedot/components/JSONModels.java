@@ -57,6 +57,7 @@ public class JSONModels {
                         break;
                     case "int":
                     case "java.lang.Integer":
+                    case "long":
                     case "java.lang.Long":
                     case "java.math.BigInteger":
                         field.put("type", "int");
@@ -110,6 +111,7 @@ public class JSONModels {
                             break;
                         case "int":
                         case "java.lang.Integer":
+                        case "long":
                         case "java.lang.Long":
                         case "java.math.BigInteger":
                             field.put("type", "int");
@@ -168,6 +170,7 @@ public class JSONModels {
                         break;
                     case "int":
                     case "java.lang.Integer":
+                    case "long":
                     case "java.lang.Long":
                     case "java.math.BigInteger":
                         field.put("type", "int");

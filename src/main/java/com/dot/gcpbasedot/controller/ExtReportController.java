@@ -306,6 +306,7 @@ public abstract class ExtReportController extends ExtController {
                                     break;
                                 case "int":
                                 case "java.lang.Integer":
+                                case "long":
                                 case "java.lang.Long":
                                 case "java.math.BigInteger":
                                 case "double":

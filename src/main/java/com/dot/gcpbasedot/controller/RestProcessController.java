@@ -154,7 +154,9 @@ public abstract class RestProcessController {
                 Object inObject= EntityReflection.jsonToObject(jsonIn, inDtos.get(processName));
                 Object outObject = method.invoke(this, inObject);
                 jsonOut= Util.objectToJson(outObject);
-                response.addHeader("response-data-format", ExternalServiceDto.JSON);
+                if(response!=null){
+                    response.addHeader("response-data-format", ExternalServiceDto.JSON);
+                }
             }
             jsonResult.put("success", true);
             jsonResult.put("message", "Proceso realizado");
@@ -168,17 +170,30 @@ public abstract class RestProcessController {
         if(logProcessClass!=null && logProcessService!=null){
             Integer processId= this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
                     jsonResult.getString("message"), jsonResult.getBoolean("success"));
-            response.addHeader("Process-Id", processId.toString());
+            if(response!=null){
+                response.addHeader("Process-Id", processId.toString());
+            }
         }
         
         return getStringBytes(jsonOut);
+    }
+    
+    public String doServerProcess(String processName, Object data){
+        byte[] resultPse= doProcess(Util.objectToJson(data), processName, null, null);
+        try {
+            return new String(resultPse, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            return null;
+        }
     }
     
     private String callExternalService(String processName, String data, HttpServletResponse response) throws IOException{
         ExternalServiceConnection externalServiceConnection= externalServiceConnections.get(processName);
         ExternalServiceDto externalService= externalServiceConnection.getExternalService();
         JSONObject jsonData= new JSONObject(data);
-        response.addHeader("response-data-format", externalService.getResponseDataFormat());
+        if(response!=null){
+            response.addHeader("response-data-format", externalService.getResponseDataFormat());
+        }
         
         Map<String, String> headers= null;
         Map<String, String> pathVars= null;
@@ -231,7 +246,9 @@ public abstract class RestProcessController {
     private String callSOAPService(String processName, String data, HttpServletResponse response) throws SOAPException, IOException{
         SimpleSOAPClient simpleSOAPClient= simpleSOAPClients.get(processName);
         JSONObject jsonData= new JSONObject(data);
-        response.addHeader("response-data-format", "JSON");
+        if(response!=null){
+            response.addHeader("response-data-format", "JSON");
+        }
         String xmlRequestBody= null;
         if(!envelopeMap.containsKey(processName)){
             InputStream is= this.getClass().getClassLoader().getResourceAsStream("soap_envelopes/"+mainProcessRef+"-"+processName+".xml");

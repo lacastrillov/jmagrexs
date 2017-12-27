@@ -226,6 +226,7 @@ public abstract class ExtProcessController extends ExtController {
         
         HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, entityClass);
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, entityClass);
+        HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, entityClass);
         HashSet<String> hideFields= fcba.getHideFields(entityClass);
         HashSet<String> fieldsNN= fcba.getNotNullFields(entityClass);
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(entityClass);
@@ -332,6 +333,7 @@ public abstract class ExtProcessController extends ExtController {
                                 }
                                 case "int":
                                 case "java.lang.Integer":
+                                case "long":
                                 case "java.lang.Long":
                                 case "java.math.BigInteger":
                                 case "double":
@@ -378,7 +380,7 @@ public abstract class ExtProcessController extends ExtController {
                     
                 // ADD TO jsonEmptyModel
                 if(fieldName.equals("id")==false){
-                    jsonEmptyModel.put(fieldName, "");
+                    jsonEmptyModel.put(fieldName, (defaultValueMap.containsKey(fieldName))?defaultValueMap.get(fieldName):"");
                 }
             }
         }

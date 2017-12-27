@@ -418,6 +418,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                     break;
                                 case "int":
                                 case "java.lang.Integer":
+                                case "long":
                                 case "java.lang.Long":
                                 case "java.math.BigInteger":
                                 case "double":
@@ -569,6 +570,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 }
                                 case "int":
                                 case "java.lang.Integer":
+                                case "long":
                                 case "java.lang.Long":
                                 case "java.math.BigInteger":
                                 case "double":

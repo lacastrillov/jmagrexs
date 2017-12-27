@@ -177,7 +177,7 @@ public class JSONFilters {
                             formField.put("items", fieldsRangeArray);
                             
                             jsonFieldsFilters.put(formField);
-                        }else if(type.equals("int") || type.equals("java.lang.Integer") || type.equals("java.lang.Long") || type.equals("java.math.BigInteger") ||
+                        }else if(type.equals("int") || type.equals("java.lang.Integer") || type.equals("long") || type.equals("java.lang.Long") || type.equals("java.math.BigInteger") ||
                                 type.equals("double") || type.equals("java.lang.Double") || type.equals("float") || type.equals("java.lang.Float")){
 
                             if(fieldName.equals("id")){
@@ -388,7 +388,7 @@ public class JSONFilters {
                         formField.put("items", fieldsRangeArray);
 
                         jsonFieldsFilters.put(formField);
-                    }else if(type.equals("int") || type.equals("java.lang.Integer") || type.equals("java.lang.Long") || type.equals("java.math.BigInteger") ||
+                    }else if(type.equals("int") || type.equals("java.lang.Integer") || type.equals("long")  || type.equals("java.lang.Long") || type.equals("java.math.BigInteger") ||
                             type.equals("double") || type.equals("java.lang.Double") || type.equals("float") || type.equals("java.lang.Float")){
 
                         if(fieldName.equals("id")){
