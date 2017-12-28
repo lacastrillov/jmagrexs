@@ -207,6 +207,40 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
 
         return q.getResultList();
     }
+    
+    /**
+     *
+     * @param nameQuerySource
+     * @param parameters
+     * @return
+     */
+    @Override
+    public List<T> findByParametersJPQL(String nameQuerySource, Parameters parameters) {
+        String querySource = queryMap.get(nameQuerySource);
+        HashMap<String, Object> mapParameters = new HashMap<>();
+        
+        StringBuilder sql = new StringBuilder(querySource);
+
+        sql.append(getFilterQuery(parameters, mapParameters));
+
+        sql.append(getOrderQuery(parameters.getOrderByParameters()));
+        
+        Query q = this.getEntityManager().createQuery(sql.toString());
+        for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
+            q.setParameter(entry.getKey(), entry.getValue());
+        }
+
+        if (parameters.getMaxResults() != null) {
+            q.setMaxResults(parameters.getMaxResults().intValue());
+        }
+        if (parameters.getFirstResult() != null) {
+            q.setFirstResult(parameters.getFirstResult().intValue());
+        }
+        
+        System.out.println("SQL :: "+sql.toString());
+
+        return q.getResultList();
+    }
 
     /**
      *
@@ -225,6 +259,29 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
             q.setParameter(entry.getKey(), entry.getValue());
         }
         
+        return (Long) q.getSingleResult();
+    }
+    
+    /**
+     *
+     * @param nameQuerySource
+     * @param parameters
+     * @return
+     */
+    @Override
+    public Long countByParametersJPQL(String nameQuerySource, Parameters parameters) {
+        String querySource = queryMap.get(nameQuerySource);
+        HashMap<String, Object> mapParameters = new HashMap<>();
+        
+        StringBuilder sql = new StringBuilder(querySource);
+
+        sql.append(getFilterQuery(parameters, mapParameters));
+        
+        Query q = this.getEntityManager().createQuery(sql.toString());
+        for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
+            q.setParameter(entry.getKey(), entry.getValue());
+        }
+
         return (Long) q.getSingleResult();
     }
 

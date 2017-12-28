@@ -119,6 +119,14 @@ public interface GenericDao<T extends BaseEntity> {
      * @return
      */
     List<T> findByParameters(Parameters parameters);
+    
+    /**
+     * 
+     * @param nameQuerySource
+     * @param parameters
+     * @return 
+     */
+    List<T> findByParametersJPQL(String nameQuerySource, Parameters parameters);
 
     /**
      *
@@ -127,6 +135,13 @@ public interface GenericDao<T extends BaseEntity> {
      */
     Long countByParameters(Parameters parameters);
 
+    /**
+     * 
+     * @param nameQuerySource
+     * @param parameters
+     * @return 
+     */
+    Long countByParametersJPQL(String nameQuerySource, Parameters parameters);
     /**
      *
      * @param parameters

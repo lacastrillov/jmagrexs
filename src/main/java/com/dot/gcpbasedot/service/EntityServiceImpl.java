@@ -137,6 +137,12 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     
     @Override
     @Transactional(readOnly = true)
+    public List<T> findByParametersJPQL(String nameQuerySource, Parameters parameters){
+        return getGenericDao().findByParametersJPQL(nameQuerySource, parameters);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
     public List<T> findByParameter(String parameter, Object value) {
         Parameters parameters= new Parameters();
         parameters.whereEqual(parameter, value);
@@ -147,6 +153,12 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     @Transactional(readOnly = true)
     public Long countByParameters(Parameters parameters) {
         return getGenericDao().countByParameters(parameters);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Long countByParametersJPQL(String nameQuerySource, Parameters parameters){
+        return getGenericDao().countByParametersJPQL(nameQuerySource, parameters);
     }
 
     @Override

@@ -322,7 +322,24 @@ public final class EntityReflection {
             String fieldName= propertyDescriptor.getName();
             String type = propertyDescriptor.getPropertyType().getName();
             
-            if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
+            if(type.equals("java.lang.Class")){
+                continue;
+            }
+            if(type.equals("org.json.JSONObject")){
+                if(source.has(fieldName)){
+                    JSONObject value= source.getJSONObject(fieldName);
+                    if (value != null && targetWrapper.isWritableProperty(fieldName)) {
+                        targetWrapper.setPropertyValue(fieldName, value);
+                    }
+                }
+            }else if(type.equals("org.json.JSONArray")){
+                if(source.has(fieldName)){
+                    JSONArray value= source.getJSONArray(fieldName);
+                    if (value != null && targetWrapper.isWritableProperty(fieldName)) {
+                        targetWrapper.setPropertyValue(fieldName, value);
+                    }
+                }
+            }else if(type.equals("java.util.List")==false){
                 String value = null;
                 if(source.has(fieldName)){
                     value= source.get(fieldName).toString();

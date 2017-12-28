@@ -125,6 +125,14 @@ public interface EntityService<T> {
     List<T> findByParameters(Parameters parameters);
     
     /**
+     * 
+     * @param nameQuerySource
+     * @param parameters
+     * @return 
+     */
+    List<T> findByParametersJPQL(String nameQuerySource, Parameters parameters);
+    
+    /**
      *
      * @param parameter
      * @param value
@@ -138,6 +146,14 @@ public interface EntityService<T> {
      * @return
      */
     Long countByParameters(Parameters parameters);
+    
+    /**
+     * 
+     * @param nameQuerySource
+     * @param parameters
+     * @return 
+     */
+    Long countByParametersJPQL(String nameQuerySource, Parameters parameters);
 
     /**
      *
