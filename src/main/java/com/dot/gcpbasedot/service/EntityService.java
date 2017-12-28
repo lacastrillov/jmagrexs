@@ -126,11 +126,13 @@ public interface EntityService<T> {
     
     /**
      * 
-     * @param nameQuerySource
-     * @param parameters
+     * @param nameQueryJPQL
+     * @param mapParameters
+     * @param maxResults
+     * @param firstResult
      * @return 
      */
-    List<T> findByParametersJPQL(String nameQuerySource, Parameters parameters);
+    List<T> findByNameQueryJPQL(String nameQueryJPQL, Map<String, Object> mapParameters, Integer maxResults, Integer firstResult);
     
     /**
      *
@@ -146,14 +148,6 @@ public interface EntityService<T> {
      * @return
      */
     Long countByParameters(Parameters parameters);
-    
-    /**
-     * 
-     * @param nameQuerySource
-     * @param parameters
-     * @return 
-     */
-    Long countByParametersJPQL(String nameQuerySource, Parameters parameters);
 
     /**
      *

@@ -210,34 +210,27 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
     
     /**
      *
-     * @param nameQuerySource
-     * @param parameters
+     * @param nameQueryJPQL
+     * @param mapParameters
+     * @param maxResults
+     * @param firstResult
      * @return
      */
     @Override
-    public List<T> findByParametersJPQL(String nameQuerySource, Parameters parameters) {
-        String querySource = queryMap.get(nameQuerySource);
-        HashMap<String, Object> mapParameters = new HashMap<>();
+    public List<T> findByNameQueryJPQL(String nameQueryJPQL, Map<String, Object> mapParameters, Integer maxResults, Integer firstResult) {
+        String jpql = queryMap.get(nameQueryJPQL);
         
-        StringBuilder sql = new StringBuilder(querySource);
-
-        sql.append(getFilterQuery(parameters, mapParameters));
-
-        sql.append(getOrderQuery(parameters.getOrderByParameters()));
-        
-        Query q = this.getEntityManager().createQuery(sql.toString());
+        Query q = this.getEntityManager().createQuery(jpql);
         for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
             q.setParameter(entry.getKey(), entry.getValue());
         }
-
-        if (parameters.getMaxResults() != null) {
-            q.setMaxResults(parameters.getMaxResults().intValue());
+        if (maxResults != null) {
+            q.setMaxResults(maxResults);
         }
-        if (parameters.getFirstResult() != null) {
-            q.setFirstResult(parameters.getFirstResult().intValue());
+        if (firstResult != null) {
+            q.setFirstResult(firstResult);
         }
-        
-        System.out.println("SQL :: "+sql.toString());
+        System.out.println("JPQL :: "+jpql);
 
         return q.getResultList();
     }
@@ -259,29 +252,6 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
             q.setParameter(entry.getKey(), entry.getValue());
         }
         
-        return (Long) q.getSingleResult();
-    }
-    
-    /**
-     *
-     * @param nameQuerySource
-     * @param parameters
-     * @return
-     */
-    @Override
-    public Long countByParametersJPQL(String nameQuerySource, Parameters parameters) {
-        String querySource = queryMap.get(nameQuerySource);
-        HashMap<String, Object> mapParameters = new HashMap<>();
-        
-        StringBuilder sql = new StringBuilder(querySource);
-
-        sql.append(getFilterQuery(parameters, mapParameters));
-        
-        Query q = this.getEntityManager().createQuery(sql.toString());
-        for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
-            q.setParameter(entry.getKey(), entry.getValue());
-        }
-
         return (Long) q.getSingleResult();
     }
 
