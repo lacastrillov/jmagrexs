@@ -3,8 +3,6 @@
 
 function ${entityName}ExtViewport(){
     
-    Ext.context= "";
-    
     var Instance= this;
     
     var util= new Util();

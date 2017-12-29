@@ -16,3 +16,6 @@
     <script src="${ExtJSLib6}/examples/classic/shared/include-ext.js"></script>
     <!--<script src="${ExtJSLib6}/examples/classic/shared/options-toolbar.js"></script>-->
 </c:if>
+    <script>
+        Ext.context= "";
+    </script>

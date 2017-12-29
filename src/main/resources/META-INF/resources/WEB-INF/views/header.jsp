@@ -12,7 +12,7 @@
     var userAuthentication = new UserAuthentication();
 </script>
 <div id="headerHtml" style="display:none;">
-    <a href="/"><img src="${extViewConfig.favicon}" class="logoAdmin"></a>
+    <a href="/"><img src="<%=request.getContextPath()%>${extViewConfig.favicon}" class="logoAdmin"></a>
     <h1>Administraci&oacute;n ${extViewConfig.appName}</h1>
     <sec:authentication var="user" property="principal" />
     <sec:authorize access="isAuthenticated()">

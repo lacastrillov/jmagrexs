@@ -3,8 +3,6 @@
 
 function ${reportName}ExtViewport(){
     
-    Ext.context= "";
-    
     var Instance= this;
     
     var util= new Util();
