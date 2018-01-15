@@ -61,6 +61,7 @@ public abstract class ExtFileExplorerController extends ExtController {
         ModelAndView mav= new ModelAndView("fileExplorer");
         
         mav.addObject("extViewConfig", extViewConfig);
+        mav.addObject("basePath", globalMenuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;

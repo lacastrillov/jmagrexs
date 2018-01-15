@@ -39,6 +39,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         ModelAndView mav= new ModelAndView("configurationObject");
         
         mav.addObject("extViewConfig", extViewConfig);
+        mav.addObject("basePath", globalMenuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;

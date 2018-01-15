@@ -75,6 +75,7 @@ public abstract class ExtTableController extends ExtController {
         }
         
         mav.addObject("extViewConfig", extViewConfig);
+        mav.addObject("basePath", globalMenuComponent.getBasePath());
         addGeneralObjects(mav, tableName);
         
         return mav;

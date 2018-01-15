@@ -25,6 +25,7 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -222,13 +223,18 @@ public class ExternalServiceConnection {
     public String getStringResult(Map<String, String> headers, Map<String, String> pathVars, Object body) throws IOException {
         ConnectionResponse response = null;
         String stringData = "";
+        if(headers==null){
+            headers= new HashMap<>();
+        }
         if (body != null) {
             switch (getExternalService().getInputDataFormat()) {
                 case ExternalServiceDto.JSON:
                     stringData = Util.objectToJson(body);
+                    headers.put("Content-Type", "application/json");
                     break;
                 case ExternalServiceDto.XML:
                     stringData = XMLMarshaller.convertObjectToXML(body);
+                    headers.put("Content-Type", "application/xml");
                     break;
                 default:
                     stringData = (String) body;

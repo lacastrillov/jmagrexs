@@ -26,6 +26,8 @@ public class MenuComponent {
     @Autowired
     private ServletContext context;
 
+    private String basePath;
+
     private final Set parentMenuKey = new HashSet();
 
     private final List<MenuItem> menuData = new ArrayList<>();
@@ -33,13 +35,21 @@ public class MenuComponent {
     private boolean ordered= false;
     
 
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+    
+    public String getBasePath(){
+        return this.basePath;
+    }
+
     public void addItemMenu(String parentMenuTitle, String entityRef, String itemTitle) {
         MenuItem menuItem = new MenuItem(parentMenuTitle, entityRef, itemTitle);
         addItemMenu(menuItem);
     }
 
     public void addItemMenu(MenuItem menuItem) {
-        String href= context.getContextPath() + "/" + menuItem.getEntityRef() + "/" + menuItem.getPageType().getPageRef();
+        String href= context.getContextPath() + basePath + "/" + menuItem.getEntityRef() + "/" + menuItem.getPageType().getPageRef();
         if (menuItem.getPageType()==PageType.REPORT) {
             href+= "/" + menuItem.getReportName() + ".htm";
         } else {

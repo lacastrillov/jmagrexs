@@ -70,6 +70,7 @@ public abstract class ExtReportController extends ExtController {
         mav.addObject("reportConfig", reportsConfig.get(reportName));
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
         mav.addObject("reportName", reportName);
+        mav.addObject("basePath", globalMenuComponent.getBasePath());
         
         return mav;
     }

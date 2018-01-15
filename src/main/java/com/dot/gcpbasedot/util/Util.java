@@ -82,10 +82,10 @@ public class Util {
         return gson.toJson(obj);
     }
     
-    public static Time getCurrentTime(){
+    public static Time getCurrentTime(int diffHour){
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        //cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 5);
+        cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - diffHour);
         Date currentDate = cal.getTime();
         SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");
         sdfTime.setTimeZone(TimeZone.getTimeZone("EST"));

@@ -47,6 +47,7 @@ public abstract class ExtEntityController extends ExtReportController {
         ModelAndView mav= new ModelAndView("entity");
         
         mav.addObject("extViewConfig", extViewConfig);
+        mav.addObject("basePath", globalMenuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;

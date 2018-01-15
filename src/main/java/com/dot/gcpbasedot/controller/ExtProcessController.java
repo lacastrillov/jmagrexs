@@ -62,6 +62,7 @@ public abstract class ExtProcessController extends ExtController {
         ModelAndView mav= new ModelAndView("process");
         
         mav.addObject("extViewConfig", extViewConfig);
+        mav.addObject("basePath", globalMenuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;
