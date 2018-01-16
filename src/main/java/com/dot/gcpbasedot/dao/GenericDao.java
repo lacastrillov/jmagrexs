@@ -186,39 +186,35 @@ public interface GenericDao<T extends BaseEntity> {
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @return
      */
-    Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters);
+    Map<String, Object> loadByNameQuery(String nameQuery, Map<String, Object> mapParameters);
     
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @param c
      * @return
      */
-    Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c);
+    Object loadByNameQuery(String nameQuery, Map<String, Object> mapParameters, Class c);
     
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @return
      */
-    List<Map<String, Object>> findByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters);
+    List<Map<String, Object>> findByNameQuery(String nameQuery, Map<String, Object> mapParameters);
     
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @param c
      * @return
      */
-    List<Object> findByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c);
+    List<Object> findByNameQuery(String nameQuery, Map<String, Object> mapParameters, Class c);
 
 }

@@ -124,15 +124,13 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     /**
      * 
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @return 
      */
-    public Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters) {
+    public Map<String, Object> loadByNameQuery(String nameQuery, Map<String, Object> mapParameters) {
         String query = String.format(queryMap.get(nameQuery));
 
-        List<Map<String, Object>> rows = namedParameterJdbcTemplate.queryForList(query,
-                getMapSqlParameterSource(nameParameters, valueParameters));
+        List<Map<String, Object>> rows = namedParameterJdbcTemplate.queryForList(query, getMapSqlParameterSource(mapParameters));
         if (rows.size() > 0) {
             return rows.get(0);
         }
@@ -143,15 +141,14 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     /**
      * 
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @param c
      * @return 
      */
-    public Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c) {
+    public Object loadByNameQuery(String nameQuery, Map<String, Object> mapParameters, Class c) {
         String query = String.format(queryMap.get(nameQuery));
 
-        List<Object> rows = namedParameterJdbcTemplate.query(query, getMapSqlParameterSource(nameParameters, valueParameters),
+        List<Object> rows = namedParameterJdbcTemplate.query(query, getMapSqlParameterSource(mapParameters),
                 new BeanPropertyRowMapper(c));
         if (rows.size() > 0) {
             return rows.get(0);
@@ -163,56 +160,43 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     /**
      * 
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @return 
      */
-    public List<Map<String, Object>> findByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters) {
+    public List<Map<String, Object>> findByNameQuery(String nameQuery, Map<String, Object> mapParameters) {
         String query = String.format(queryMap.get(nameQuery));
-        MapSqlParameterSource mapParameters = new MapSqlParameterSource();
 
-        if (nameParameters != null && valueParameters != null && nameParameters.length == valueParameters.length) {
-            for (int i = 0; i < nameParameters.length; i++) {
-                mapParameters.addValue(nameParameters[i], valueParameters[i]);
-            }
-        }
-
-        return namedParameterJdbcTemplate.queryForList(query, mapParameters);
+        return namedParameterJdbcTemplate.queryForList(query, getMapSqlParameterSource(mapParameters));
     }
 
     /**
      * 
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @param c
      * @return 
      */
-    public List<Object> findByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c) {
+    public List<Object> findByNameQuery(String nameQuery, Map<String, Object> mapParameters, Class c) {
         String query = String.format(queryMap.get(nameQuery));
 
-        return namedParameterJdbcTemplate.query(query, getMapSqlParameterSource(nameParameters, valueParameters),
-                new BeanPropertyRowMapper(c));
+        return namedParameterJdbcTemplate.query(query, getMapSqlParameterSource(mapParameters), new BeanPropertyRowMapper(c));
     }
 
     /**
      * 
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @return 
      */
-    private MapSqlParameterSource getMapSqlParameterSource(String[] nameParameters, Object[] valueParameters) {
-        MapSqlParameterSource mapParameters = new MapSqlParameterSource();
+    private MapSqlParameterSource getMapSqlParameterSource(Map<String, Object> mapParameters) {
+        MapSqlParameterSource mapSqlParameters = new MapSqlParameterSource();
 
-        if (nameParameters != null && valueParameters != null && nameParameters.length == valueParameters.length) {
-            for (int i = 0; i < nameParameters.length; i++) {
-                if (nameParameters[i] != null && valueParameters[i] != null) {
-                    mapParameters.addValue(nameParameters[i], valueParameters[i]);
-                }
+        if (mapParameters != null) {
+            for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
+                mapSqlParameters.addValue(entry.getKey(), entry.getValue());
             }
         }
 
-        return mapParameters;
+        return mapSqlParameters;
     }
 
 }

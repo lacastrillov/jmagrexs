@@ -325,55 +325,50 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
      * @return
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Map<String, Object> loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters){
-        return this.getGenericDao().loadByNameQuery(nameQuery, nameParameters, valueParameters);
+    public Map<String, Object> loadByNameQuery(String nameQuery, Map<String, Object> mapParameters){
+        return this.getGenericDao().loadByNameQuery(nameQuery, mapParameters);
     }
     
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @param c
      * @return
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Object loadByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c){
-        return this.getGenericDao().loadByNameQuery(nameQuery, nameParameters, valueParameters, c);
+    public Object loadByNameQuery(String nameQuery, Map<String, Object> mapParameters, Class c){
+        return this.getGenericDao().loadByNameQuery(nameQuery, mapParameters, c);
     }
     
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @return
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public List<Map<String, Object>> findByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters){
-        return this.getGenericDao().findByNameQuery(nameQuery, nameParameters, valueParameters);
+    public List<Map<String, Object>> findByNameQuery(String nameQuery, Map<String, Object> mapParameters){
+        return this.getGenericDao().findByNameQuery(nameQuery, mapParameters);
     }
     
     /**
      *
      * @param nameQuery
-     * @param nameParameters
-     * @param valueParameters
+     * @param mapParameters
      * @param c
      * @return
      */
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public List<Object> findByNameQuery(String nameQuery, String[] nameParameters, Object[] valueParameters, Class c){
-        return this.getGenericDao().findByNameQuery(nameQuery, nameParameters, valueParameters, c);
+    public List<Object> findByNameQuery(String nameQuery, Map<String, Object> mapParameters, Class c){
+        return this.getGenericDao().findByNameQuery(nameQuery, mapParameters, c);
     }
 
 }
