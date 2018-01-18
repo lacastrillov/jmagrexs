@@ -30,11 +30,12 @@ function ${reportName}ExtController(parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={};
-        Instance.filter.eq={};
-        Instance.filter.lk={};
-        Instance.filter.btw={};
-        Instance.filter.vm={};
+        Instance.filter={
+            eq:{},
+            lk:{},
+            btw:{},
+            vm:{}
+        };
     };
     
     Instance.services.index= function(request){

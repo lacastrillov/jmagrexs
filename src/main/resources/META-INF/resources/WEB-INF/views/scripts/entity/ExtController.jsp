@@ -30,11 +30,12 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={};
-        Instance.filter.eq={};
-        Instance.filter.lk={};
-        Instance.filter.btw={};
-        Instance.filter.in={};
+        Instance.filter={
+            eq:{},
+            lk:{},
+            btw:{},
+            in:{}
+        };
     };
     
     Instance.services.index= function(request){

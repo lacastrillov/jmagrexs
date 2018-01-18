@@ -31,11 +31,12 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={};
-        Instance.filter.eq={"mainProcessRef":"${viewConfig.mainProcessRef}"};
-        Instance.filter.lk={};
-        Instance.filter.btw={};
-        Instance.filter.in={};
+        Instance.filter={
+            eq:{"mainProcessRef":"${viewConfig.mainProcessRef}"},
+            lk:{},
+            btw:{},
+            in:{}
+        };
     };
     
     Instance.services.index= function(request){
