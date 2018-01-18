@@ -516,7 +516,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             handler: this.onDeleteClick
                         },
                         </c:if>
-                        
                         <c:if test="${viewConfig.visibleExportButton}">
                         {
                             text: 'Exportar',

@@ -105,21 +105,6 @@ function ${entityName}ExtStore(){
         return store;
     };
 
-    Instance.find= function(filter, params, func){
-        Ext.Ajax.request({
-            url: Ext.context+"/rest/${entityRefLogProcess}/find.htm",
-            method: "GET",
-            params: "filter="+encodeURIComponent(filter) + params,
-            success: function(response){
-                var responseText= Ext.decode(response.responseText);
-                func(responseText);
-            },
-            failure: function(response){
-                commonExtView.processFailure(response);
-            }
-        });
-    };
-    
     Instance.doProcess= function(processName, data, func){
         Ext.MessageBox.show({
             msg: 'Ejecutando...',
@@ -139,6 +124,34 @@ function ${entityName}ExtStore(){
                 var responseDataFormat= response.getAllResponseHeaders()['response-data-format'];
                 var processId= response.getAllResponseHeaders()['process-id'];
                 func(processName, processId, response.responseText, responseDataFormat);
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
+    Instance.upload= function(form, processName, processId, func){
+        form.submit({
+            url: Ext.context+'/rest/${viewConfig.mainProcessRef}/diskupload/'+processName+'/'+processId+'.htm',
+            waitMsg: 'Subiendo archivo...',
+            success: function(form, action) {
+                func(action.result);
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
+    Instance.find= function(filter, params, func){
+        Ext.Ajax.request({
+            url: Ext.context+"/rest/${entityRefLogProcess}/find.htm",
+            method: "GET",
+            params: "filter="+encodeURIComponent(filter) + params,
+            success: function(response){
+                var responseText= Ext.decode(response.responseText);
+                func(responseText);
             },
             failure: function(response){
                 commonExtView.processFailure(response);
@@ -168,12 +181,21 @@ function ${entityName}ExtStore(){
         });
     };
     
-    Instance.upload= function(form, processName, processId, func){
-        form.submit({
-            url: Ext.context+'/rest/${viewConfig.mainProcessRef}/diskupload/'+processName+'/'+processId+'.htm',
-            waitMsg: 'Subiendo archivo...',
-            success: function(form, action) {
-                func(action.result);
+    Instance.deleteByFilter= function(filter, func){
+        Ext.MessageBox.show({
+            msg: 'Eliminando...',
+            width:200,
+            wait:true,
+            waitConfig: {interval:200}
+        });
+        Ext.Ajax.request({
+            url: Ext.context+'/rest/${entityRefLogProcess}/delete/byfilter.htm',
+            method: "GET",
+            params: (filter!==null && filter!=="")?"filter="+encodeURIComponent(filter):"",
+            success: function(response){
+                var responseText= Ext.decode(response.responseText);
+                func(responseText);
+                Ext.MessageBox.hide();
             },
             failure: function(response){
                 commonExtView.processFailure(response);

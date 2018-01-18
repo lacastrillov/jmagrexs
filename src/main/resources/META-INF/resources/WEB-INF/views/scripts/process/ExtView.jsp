@@ -385,6 +385,21 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         });
     };
     
+    function getComboboxLimit(store){
+        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500]);
+        combobox.addListener('change',function(record){
+            if(record.getValue()!=="" && store.pageSize!==record.getValue()){
+                store.pageSize=record.getValue();
+                Instance.reloadPageStore(1);
+            }
+        }, this);
+        combobox.labelWidth= 46;
+        combobox.width= 125;
+        combobox.setValue(${viewConfig.maxResultsPerPage});
+        
+        return combobox;
+    }
+    
     Instance.defineWriterGrid= function(modelText, columns){
         Ext.define('WriterGrid${viewConfig.entityNameLogProcess}', {
             extend: 'Ext.grid.Panel',
@@ -392,6 +407,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
 
             requires: [
                 'Ext.grid.plugin.CellEditing',
+                'Ext.selection.CheckboxModel',
                 'Ext.form.field.Text',
                 'Ext.toolbar.TextItem'
             ],
@@ -400,21 +416,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
 
                 this.editing = Ext.create('Ext.grid.plugin.CellEditing');
                 
-                var comboboxLimit= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500]);
-                comboboxLimit.addListener('change',function(record){
-                    if(record.getValue()!=="" && this.store.pageSize!==record.getValue()){
-                        this.store.pageSize=record.getValue();
-                        Instance.reloadPageStore(1);
-                    }
-                }, this);
-                comboboxLimit.labelWidth= 50;
-                comboboxLimit.width= 130;
-                comboboxLimit.setValue(${viewConfig.maxResultsPerPage});
-
                 Ext.apply(this, {
                     //iconCls: 'icon-grid',
                     hideHeaders:${viewConfig.hideHeadersGrid},
                     frame: false,
+                    selType: 'checkboxmodel',
                     plugins: [this.editing],
                     dockedItems: [{
                         weight: 2,
@@ -424,30 +430,28 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             xtype: 'tbtext',
                             text: '<b>@lacv</b>'
                         }, '|',
-                        comboboxLimit
                         <c:if test="${viewConfig.editableGrid && viewConfig.visibleRemoveButtonInGrid}">
-                        ,{
+                        {
                             //iconCls: 'icon-delete',
                             text: 'Eliminar',
                             disabled: true,
                             itemId: 'delete',
                             scope: this,
                             handler: this.onDeleteClick
-                        }
+                        },
                         </c:if>
-                        
                         <c:if test="${viewConfig.visibleExportButton}">
-                        ,{
+                        {
                             text: 'Exportar',
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
                                 {text: 'A json', handler: function(){this.exportTo('json');}, scope: this},
                                 {text: 'A xml', handler: function(){this.exportTo('xml');}, scope: this}]
-                        }
+                        },
                         </c:if>
                         <c:if test="${viewConfig.editableGrid}">
-                        , {
+                        {
                             text: 'Auto-Guardar',
                             enableToggle: ${viewConfig.defaultAutoSave},
                             pressed: true,
@@ -461,8 +465,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: 'Guardar',
                             scope: this,
                             handler: this.onSync
-                        }
+                        },
                         </c:if>
+                        getComboboxLimit(this.store)
                         ]
                     }, {
                         weight: 1,
@@ -491,12 +496,27 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onDeleteClick: function(){
-                var selection = this.getView().getSelectionModel().getSelection()[0];
+                var selection = this.getView().getSelectionModel().getSelection();
+                if (selection.length>0) {
+                    if(selection.length===1){
+                        this.store.getProxy().extraParams.idEntity= selection[0].data.id;
+                        this.store.remove(selection[0]);
+                    }else{
+                        var filter={"in":{"id":[]}};
+                        for(var i=0; i<selection.length; i++){
+                            filter.in.id.push(selection[i].data.id);
+                        }
+                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                            Instance.reloadPageStore(Instance.store.currentPage);
+                        });
+                    }
+                }
+                /*var selection = this.getView().getSelectionModel().getSelection()[0];
                 if (selection) {
                     this.store.getProxy().extraParams.idEntity= selection.data.id;
                     this.store.remove(selection);
                     parentExtController.loadFormData("");
-                }
+                }*/
             },
             
             exportTo: function(type){
