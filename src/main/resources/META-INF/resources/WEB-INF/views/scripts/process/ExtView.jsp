@@ -511,12 +511,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         });
                     }
                 }
-                /*var selection = this.getView().getSelectionModel().getSelection()[0];
-                if (selection) {
-                    this.store.getProxy().extraParams.idEntity= selection.data.id;
-                    this.store.remove(selection);
-                    parentExtController.loadFormData("");
-                }*/
             },
             
             exportTo: function(type){
