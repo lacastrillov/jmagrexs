@@ -62,6 +62,12 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    public void insert(T entity){
+        this.getGenericDao().insert(entity);
+    }
+    
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public void removeById(Object id) {
         this.getGenericDao().removeById(id);
     }

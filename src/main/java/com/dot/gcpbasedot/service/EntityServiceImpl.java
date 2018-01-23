@@ -60,6 +60,12 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    public void insert(T entity){
+        this.getGenericDao().insert(entity);
+    }
+    
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void removeById(Object id) {
         this.getGenericDao().removeById(id);
     }

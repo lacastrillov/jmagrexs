@@ -400,7 +400,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 break;
                         }
                     }
-                    
                 }
             }],
             listeners: {
@@ -516,16 +515,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             handler: this.onDeleteClick
                         },
                         </c:if>
-                        <c:if test="${viewConfig.visibleExportButton}">
-                        {
-                            text: 'Exportar',
-                            //iconCls: 'add16',
-                            menu: [
-                                {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
-                                {text: 'A json', handler: function(){this.exportTo('json');}, scope: this},
-                                {text: 'A xml', handler: function(){this.exportTo('xml');}, scope: this}]
-                        },
-                        </c:if>
                         <c:if test="${viewConfig.editableGrid}">
                         {
                             text: 'Auto-Guardar',
@@ -546,6 +535,23 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         getComboboxLimit(this.store),
                         getComboboxOrderBy(this.store),
                         getComboboxOrderDir(this.store)
+                        <c:if test="${viewConfig.visibleExportButton}">
+                        ,{
+                            text: 'Exportar',
+                            //iconCls: 'add16',
+                            menu: [
+                                {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
+                                {text: 'A json', handler: function(){this.exportTo('json');}, scope: this},
+                                {text: 'A xml', handler: function(){this.exportTo('xml');}, scope: this}]
+                        },{
+                            itemId: 'importMenu',
+                            text: 'Importar',
+                            //iconCls: 'add16',
+                            menu: [
+                                {text: 'De json', handler: function(){this.importFrom('json');}, scope: this},
+                                {text: 'De xml', handler: function(){this.importFrom('xml');}, scope: this}]
+                        }
+                        </c:if>
                         ]
                     }, {
                         weight: 1,
@@ -617,10 +623,68 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             
             exportTo: function(type){
                 this.fireEvent('export', type);
+            },
+            
+            importFrom: function(type){
+                if (Instance.containerImport.isVisible()) {
+                    Instance.containerImport.hide(this.down('#importMenu'), function() {});
+                } else {
+                    Instance.containerImport.typeReport= type;
+                    Instance.containerImport.show(this.down('#importMenu'), function() {});
+                }
             }
 
         });
     };
+    
+    function createFormImport(){
+        Instance.formImport = Ext.create('Ext.form.Panel', {
+            border: false,
+            bodyPadding: 15,
+            fieldDefaults: {
+                labelAlign: 'left',
+                anchor: '100%'
+            },
+            items: [{
+                xtype: 'filefield',
+                name: 'data',
+                fieldLabel: 'Seleccione archivo',
+                labelWidth: 125,
+                style: 'margin-top:20px',
+                allowBlank: false
+            }]
+        });
+
+        Instance.containerImport = Ext.create('Ext.window.Window', {
+            autoShow: false,
+            title: 'Subir Archivo',
+            closable: true,
+            closeAction: 'hide',
+            width: 600,
+            height: 200,
+            minWidth: 300,
+            minHeight: 200,
+            layout: 'fit',
+            plain:true,
+            typeReport: 'json',
+            items: Instance.formImport,
+
+            buttons: [{
+                text: 'Importar',
+                handler: function(){
+                    Instance.entityExtStore.import(Instance.formImport, Instance.containerImport.typeReport, function(responseText){
+                        Instance.reloadPageStore(Instance.store.currentPage);
+                        setTimeout(function(){ Instance.containerImport.hide()},1000);
+                    });
+                }
+            },{
+                text: 'Cancelar',
+                handler: function(){
+                    Instance.containerImport.hide();
+                }
+            }]
+        });
+    }
     </c:if>
 
     <c:if test="${viewConfig.activeNNMulticheckChild}">
@@ -871,6 +935,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.gridContainer = getGridContainer();
         Instance.gridComponent = Instance.gridContainer.child('#grid${entityName}');
         Instance.store.gridComponent= Instance.gridComponent;
+        createFormImport();
         </c:if>
             
         <c:if test="${viewConfig.activeNNMulticheckChild}">

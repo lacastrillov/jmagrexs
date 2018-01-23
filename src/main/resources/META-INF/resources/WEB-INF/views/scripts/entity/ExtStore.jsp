@@ -256,6 +256,19 @@ function ${entityName}ExtStore(){
         });
     };
     
+    Instance.import= function(form, typeReport, func){
+        form.submit({
+            url: Ext.context+'/rest/${entityRef}/'+baseAction+'import/'+typeReport+'.htm',
+            waitMsg: 'Importando archivo...',
+            success: function(form, action) {
+                func(action.result);
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
     Instance.doProcess= function(mainProcessRef, processName, data, func){
         Ext.MessageBox.show({
             msg: 'Ejecutando...',

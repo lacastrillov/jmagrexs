@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -388,6 +389,58 @@ public abstract class RestEntityController {
             LOGGER.error("delete " + entityRef, e);
             return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
         }
+    }
+    
+    @RequestMapping(value = "/import/{format}.htm")
+    @ResponseBody
+    public byte[] importData(HttpServletRequest request, @PathVariable String format) {
+        List listDtos= new ArrayList();
+        //50MB
+        long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
+
+        String resultData;
+        try {
+            
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setSizeMax(maxFileSize);
+            
+            List items = upload.parseRequest(request);
+            Iterator iterator = items.iterator();
+            while (iterator.hasNext()) {
+                FileItem item = (FileItem) iterator.next();
+                InputStream is= item.getInputStream();
+                if(!item.isFormField() && item.getFieldName().equals("data")){
+                    String data= FileService.getStringFromInputStream(is);
+                    List<BaseEntity> entities= new ArrayList<>();
+                    switch(format){
+                        case "xml":
+                            data= XMLMarshaller.convertXMLToJSON(data);
+                        case "json":
+                            JSONObject object= new JSONObject(data);
+                            JSONArray array= object.getJSONArray("data");
+                            for (int i = 0; i < array.length(); i++) {
+                                entities.add((BaseEntity) EntityReflection.jsonToObject(array.getJSONObject(i).toString(), entityClass));
+                            }
+                            break;
+                    }
+                    for(BaseEntity entity: entities){
+                        try{
+                            service.insert(entity);
+                            listDtos.add(entity);
+                        }catch(Exception e){
+                            LOGGER.error("importData " + entityRef, e);
+                        }
+                    }
+                }
+            }
+            
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Inserci&oacute;n de " + entityRef + " realizada...", true);
+        } catch (Exception e) {
+            LOGGER.error("importData " + entityRef, e);
+            resultData= Util.getOperationCallback(null, "Error en inserci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
+        }
+        return getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/upload/{idEntity}.htm")

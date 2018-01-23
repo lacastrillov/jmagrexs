@@ -47,7 +47,13 @@ public interface GenericDao<T extends BaseEntity> {
      * @param entity the new entity.
      */
     void createForce(T entity);
-
+    
+    /**
+     * 
+     * @param entity 
+     */
+    void insert(T entity);
+    
     /**
      * Guarda los cambios en la entidad.
      *

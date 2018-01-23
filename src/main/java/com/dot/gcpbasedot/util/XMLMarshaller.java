@@ -76,7 +76,13 @@ public class XMLMarshaller {
      */
     public static String convertXMLToJSON(String xml){
         JSONObject xmlJSONObj = XML.toJSONObject(xml);
-        return xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
+        String json= xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
+        JSONObject root= new JSONObject(json);
+        Iterator keys = root.keys();
+        if (!root.keySet().isEmpty() && root.keySet().size()==1) {
+            return root.get(keys.next().toString()).toString();
+        }
+        return json;
     }
 
     /**
@@ -88,12 +94,6 @@ public class XMLMarshaller {
     public static Object convertXMLToObject(String xml, Class objectClass) {
         String jsonPrettyPrintString = convertXMLToJSON(xml);
         
-        JSONObject root= new JSONObject(jsonPrettyPrintString);
-        Iterator keys = root.keys();
-        if (!root.keySet().isEmpty() && root.keySet().size()==1) {
-            JSONObject object= root.getJSONObject(keys.next().toString());
-            return EntityReflection.jsonToObject(object.toString(), objectClass);
-        }
         return EntityReflection.jsonToObject(jsonPrettyPrintString, objectClass);
     }
     
@@ -107,14 +107,9 @@ public class XMLMarshaller {
         List<Object> result = new ArrayList<>();
         String jsonPrettyPrintString = convertXMLToJSON(xml);
         
-        JSONObject root= new JSONObject(jsonPrettyPrintString);
-        Iterator keys = root.keys();
-        if (!root.keySet().isEmpty() && root.keySet().size()==1) {
-            JSONArray array= root.getJSONArray(keys.next().toString());
-            for (int i = 0; i < array.length(); i++) {
-                result.add(EntityReflection.jsonToObject(array.getJSONObject(i).toString(), objectClass));
-            }
-            return result;
+        JSONArray array= new JSONArray(jsonPrettyPrintString);
+        for (int i = 0; i < array.length(); i++) {
+            result.add(EntityReflection.jsonToObject(array.getJSONObject(i).toString(), objectClass));
         }
         return result;
     }

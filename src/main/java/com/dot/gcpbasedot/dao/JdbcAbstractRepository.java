@@ -1,12 +1,20 @@
 package com.dot.gcpbasedot.dao;
 
 import com.dot.gcpbasedot.domain.BaseEntity;
+import com.dot.gcpbasedot.reflection.EntityReflection;
+import static com.dot.gcpbasedot.reflection.EntityReflection.getEntityAnnotatedFields;
 import com.dot.gcpbasedot.reflection.ReflectionUtils;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 import javax.sql.DataSource;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -71,6 +79,42 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
 
     public void setDbEngine(String dbEngine) {
         jdbcDirectRepository.setDbEngine(dbEngine);
+    }
+    
+    /**
+     * *************************************************************************
+     * ********** JDBC BY entity ***********************************************
+     */
+    
+    /**
+     *
+     * @param entity
+     */
+    public void insert(T entity) {
+        Map<String,Object> data= new HashMap<>();
+        BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(entity);
+        
+        Table tan= (Table) EntityReflection.getClassAnnotation(entity.getClass(), Table.class);
+        List<Field> columnFields= getEntityAnnotatedFields(entity.getClass(), Column.class);
+        List<Field> joinColumnFields= getEntityAnnotatedFields(entity.getClass(), JoinColumn.class);
+        
+        for(Field f: columnFields){
+            Column an= f.getAnnotation(Column.class);
+            Object value= sourceWrapper.getPropertyValue(f.getName());
+            if(value!=null){
+                data.put(an.name(), value);
+            }
+        }
+        
+        for(Field f: joinColumnFields){
+            JoinColumn an= f.getAnnotation(JoinColumn.class);
+            BaseEntity joinEntity= (BaseEntity) sourceWrapper.getPropertyValue(f.getName());
+            if(joinEntity!=null){
+                data.put(an.name(), joinEntity.getId());
+            }
+        }
+        
+        jdbcDirectRepository.create(tan.name(), data);
     }
     
     /**
