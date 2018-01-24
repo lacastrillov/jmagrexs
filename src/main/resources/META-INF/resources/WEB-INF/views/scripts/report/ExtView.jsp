@@ -427,8 +427,11 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                             xtype: 'tbtext',
                             text: '<b>@lacv</b>'
                         }, '|',
+                        getComboboxLimit(this.store),
+                        getComboboxOrderBy(this.store),
+                        getComboboxOrderDir(this.store)
                         <c:if test="${reportConfig.visibleExportButton}">
-                        {
+                        ,{
                             xtype:'splitbutton',
                             text: 'Exportar',
                             //iconCls: 'add16',
@@ -436,11 +439,8 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                                 {text: 'A xls', handler: function(){this.exportTo('xls')}, scope: this},
                                 {text: 'A json', handler: function(){this.exportTo('json')}, scope: this},
                                 {text: 'A xml', handler: function(){this.exportTo('xml')}, scope: this}]
-                        },
+                        }
                         </c:if>
-                        getComboboxLimit(this.store),
-                        getComboboxOrderBy(this.store),
-                        getComboboxOrderDir(this.store)
                         ]
                     }, {
                         weight: 1,

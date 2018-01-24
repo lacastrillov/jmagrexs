@@ -440,16 +440,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             handler: this.onDeleteClick
                         },
                         </c:if>
-                        <c:if test="${viewConfig.visibleExportButton}">
-                        {
-                            text: 'Exportar',
-                            //iconCls: 'add16',
-                            menu: [
-                                {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
-                                {text: 'A json', handler: function(){this.exportTo('json');}, scope: this},
-                                {text: 'A xml', handler: function(){this.exportTo('xml');}, scope: this}]
-                        },
-                        </c:if>
                         <c:if test="${viewConfig.editableGrid}">
                         {
                             text: 'Auto-Guardar',
@@ -468,6 +458,16 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         },
                         </c:if>
                         getComboboxLimit(this.store)
+                        <c:if test="${viewConfig.visibleExportButton}">
+                        ,{
+                            text: 'Exportar',
+                            //iconCls: 'add16',
+                            menu: [
+                                {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
+                                {text: 'A json', handler: function(){this.exportTo('json');}, scope: this},
+                                {text: 'A xml', handler: function(){this.exportTo('xml');}, scope: this}]
+                        }
+                        </c:if>
                         ]
                     }, {
                         weight: 1,

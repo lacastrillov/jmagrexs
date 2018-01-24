@@ -369,6 +369,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: '<b>@lacv</b>'
                         }, '|',
                         {
+                            id: 'check-all',
+                            xtype: 'checkbox',
+                            boxLabel: 'Seleccionar todo',
+                            listeners: {
+                                change: function(checkbox, newValue, oldValue, eOpts) {
+                                    util.checkAll(newValue);
+                                }
+                            }
+                        },{
                             itemId: 'fileMenu',
                             text: 'Archivo',
                             //iconCls: 'add16',
@@ -382,29 +391,19 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 {text: 'Renombrar', handler: function(){this.onRenameFile();}, scope: this},
                                 {text: 'Mover', handler: function(){this.onMoveFile();}, scope: this}]
                         },
+                        getComboboxLimit(this.store),
+                        getComboboxOrderBy(this.store),
+                        getComboboxOrderDir(this.store)
                         <c:if test="${viewConfig.visibleExportButton}">
-                        {
+                        ,{
                             text: 'Exportar',
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'A xls', handler: function(){this.exportTo('xls');}, scope: this},
                                 {text: 'A json', handler: function(){this.exportTo('json');}, scope: this},
                                 {text: 'A xml', handler: function(){this.exportTo('xml');}, scope: this}]
-                        },
-                        </c:if>
-                        getComboboxLimit(this.store),
-                        getComboboxOrderBy(this.store),
-                        getComboboxOrderDir(this.store),
-                        {
-                            id: 'check-all',
-                            xtype: 'checkbox',
-                            boxLabel: 'Seleccionar todo',
-                            listeners: {
-                                change: function(checkbox, newValue, oldValue, eOpts) {
-                                    util.checkAll(newValue);
-                                }
-                            }
                         }
+                        </c:if>
                         ]
                     }, {
                         weight: 1,

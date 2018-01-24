@@ -170,6 +170,19 @@ function ${entityName}ExtStore(){
         });
     };
     
+    Instance.import= function(form, typeReport, func){
+        form.submit({
+            url: Ext.context+'/rest/${entityRef}/${tableName}/import/'+typeReport+'.htm',
+            waitMsg: 'Importando archivo...',
+            success: function(form, action) {
+                func(action.result);
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
     Instance.deleteByFilter= function(filter, func){
         Ext.MessageBox.show({
             msg: 'Eliminando...',

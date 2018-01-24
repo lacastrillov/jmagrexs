@@ -9,6 +9,7 @@ import com.dot.gcpbasedot.dto.ResultListCallback;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
 import com.dot.gcpbasedot.service.JdbcDirectService;
 import com.dot.gcpbasedot.util.ExcelService;
+import com.dot.gcpbasedot.util.FileService;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -242,6 +244,58 @@ public abstract class RestDirectController {
             LOGGER.error("delete " + tableName, e);
             return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + tableName + ": " + e.getMessage(), true);
         }
+    }
+    
+    @RequestMapping(value = "/{tableName}/import/{format}.htm")
+    @ResponseBody
+    public byte[] importData(HttpServletRequest request, @PathVariable String tableName, @PathVariable String format) {
+        List listDtos= new ArrayList();
+        //50MB
+        long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
+
+        String resultData;
+        try {
+            List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setSizeMax(maxFileSize);
+            
+            List items = upload.parseRequest(request);
+            Iterator iterator = items.iterator();
+            while (iterator.hasNext()) {
+                FileItem item = (FileItem) iterator.next();
+                InputStream is= item.getInputStream();
+                if(!item.isFormField() && item.getFieldName().equals("data")){
+                    String data= FileService.getStringFromInputStream(is);
+                    List<Map<String, Object>> entities= new ArrayList<>();
+                    switch(format){
+                        case "xml":
+                            data= XMLMarshaller.convertXMLToJSON(data);
+                        case "json":
+                            JSONObject object= new JSONObject(data);
+                            JSONArray array= object.getJSONArray("data");
+                            for (int i = 0; i < array.length(); i++) {
+                                entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+                            }
+                            break;
+                    }
+                    for(Map<String, Object> entity: entities){
+                        try{
+                            directService.create(tableName, entity);
+                            listDtos.add(entity);
+                        }catch(Exception e){
+                            LOGGER.error("importData " + tableName, e);
+                        }
+                    }
+                }
+            }
+            
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Inserci&oacute;n de " + tableName + " realizada...", true);
+        } catch (Exception e) {
+            LOGGER.error("importData " + tableName, e);
+            resultData= Util.getOperationCallback(null, "Error en inserci&oacute;n de " + tableName + ": " + e.getMessage(), false);
+        }
+        return getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/{tableName}/upload/{idEntity}.htm")
