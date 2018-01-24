@@ -145,6 +145,13 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_standard"){
                     childExtController.loadGridData();
                     childExtController.loadFormData("");
+                }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
+                    childExtController.loadGridData();
+                    childExtController.loadFormData("");
+                    var record= childExtController.entityExtView.store.first();
+                    if(record){
+                        childExtController.setFormData(record);
+                    }
                 }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv-n-n-multicheck"){
                     childExtController.loadNNMulticheckData();
                 }

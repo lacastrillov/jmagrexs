@@ -30,6 +30,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     Instance.init= function(){
         Instance.typeView= "${typeView}";
         Instance.pluralEntityTitle= '${viewConfig.pluralEntityTitle}';
+        Instance.singularEntityTitle= '${viewConfig.singularEntityTitle}';
         Instance.entityExtModel.defineModel(Instance.modelName);
         Instance.store= Instance.entityExtStore.getStore(Instance.modelName);
         <c:if test="${viewConfig.activeGridTemplate}">
@@ -143,7 +144,18 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         childExtController.entityExtView.gridContainer,
 
                         childExtController.entityExtView.formContainer
-
+                    ]
+                };
+            }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
+                itemTab= {
+                    xtype:'tabpanel',
+                    title: childExtController.entityExtView.singularEntityTitle,
+                    plain:true,
+                    activeTab: 0,
+                    style: 'background-color:#dfe8f6; padding:10px;',
+                    defaults: {bodyStyle: 'padding:15px', autoScroll:true},
+                    items:[
+                        childExtController.entityExtView.formContainer
                     ]
                 };
             }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv-n-n-multicheck"){
