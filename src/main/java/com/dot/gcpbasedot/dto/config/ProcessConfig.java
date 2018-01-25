@@ -20,10 +20,6 @@ import java.util.Set;
  */
 public class ProcessConfig {
     
-    public static String TCV_STANDARD= "tcv_standard";
-    
-    public static String TCV_N_N_MULTICHECK= "tcv-n-n-multicheck";
-    
     private String mainProcessRef;
     
     private String mainProcessName;

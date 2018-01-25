@@ -14,10 +14,6 @@ import com.dot.gcpbasedot.service.EntityService;
  */
 public class FileExplorerConfig {
     
-    public static String TCV_STANDARD= "tcv_standard";
-    
-    public static String TCV_N_N_MULTICHECK= "tcv-n-n-multicheck";
-    
     private EntityService entityService;
     
     private Class dtoClass;

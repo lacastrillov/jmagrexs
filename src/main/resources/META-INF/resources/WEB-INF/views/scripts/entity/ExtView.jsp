@@ -132,7 +132,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         var jsonTypeChildExtViews= ${jsonTypeChildExtViews};
         childExtControllers.forEach(function(childExtController) {
             var itemTab= null;
-            if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_standard"){
+            if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
                 itemTab= {
                     xtype:'tabpanel',
                     title: childExtController.entityExtView.pluralEntityTitle,
@@ -147,18 +147,21 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     ]
                 };
             }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
-                itemTab= {
+                itemTab= Ext.widget('tabpanel',{
                     xtype:'tabpanel',
                     title: childExtController.entityExtView.singularEntityTitle,
                     plain:true,
                     activeTab: 0,
-                    style: 'background-color:#dfe8f6; padding:10px;',
-                    defaults: {bodyStyle: 'padding:15px', autoScroll:true},
+                    style: 'background-color:#dfe8f6; padding:5px;',
+                    defaults: {bodyStyle: 'padding:0px', autoScroll:true},
                     items:[
                         childExtController.entityExtView.formContainer
                     ]
-                };
-            }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv-n-n-multicheck"){
+                });
+                var buttonCreate = childExtController.entityExtView.formComponent.down("#create"+childExtController.entityName);
+                buttonCreate.setVisible(false);
+                itemTab.getTabBar().hide();
+            }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_n_to_n"){
                 itemTab= childExtController.entityExtView.checkboxGroupContainer;
             }
             
@@ -193,8 +196,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 var buttons= [];
                 <c:if test="${viewConfig.editableForm}">
                 buttons= [{
-                    iconCls: 'icon-save',
                     itemId: 'save${entityName}',
+                    iconCls: 'icon-save',
                     text: 'Actualizar',
                     disabled: true,
                     scope: this,
@@ -202,6 +205,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 },
                 <c:if test="${not viewConfig.preloadedForm}">
                 {
+                    itemId: 'create${entityName}',
                     //iconCls: 'icon-user-add',
                     text: 'Crear',
                     scope: this,

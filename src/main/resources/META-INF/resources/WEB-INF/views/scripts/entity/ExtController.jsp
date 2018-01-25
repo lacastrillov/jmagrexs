@@ -22,6 +22,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     
     Instance.init= function(){
+        Instance.entityName= "${entityName}";
         Instance.entityRef= "${entityRef}";
         Instance.typeController= "${typeController}";
         Instance.idEntitySelected= "";
@@ -123,6 +124,21 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
     };
     
+    Instance.loadFormFirstItem= function(){
+        Instance.loadFormData("");
+        var params="&limit=1&page=1";
+        params+="&sort="+Instance.entityExtView.store.getOrderProperty()+"&dir="+Instance.entityExtView.store.getOrderDir();
+        Instance.entityExtView.entityExtStore.find(JSON.stringify(Instance.filter), params, function(responseText){
+            if(responseText.success && responseText.totalCount>0){
+                var data= responseText.data[0];
+                var record= Ext.create(Instance.modelName);
+                record.data= data;
+                Instance.setFormData(record);
+                Instance.findAssociatedEntities(data);
+            }
+        });
+    };
+    
     Instance.findAssociatedEntities= function(data){
         <c:forEach var="associatedER" items="${interfacesEntityRef}">
         if("${associatedER}" in data && "id" in data["${associatedER}"]){
@@ -142,17 +158,12 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             Instance.entityExtView.childExtControllers.forEach(function(childExtController) {
                 childExtController.filter= {"eq":{"${entityRef}":idEntitySelected}};
                 childExtController.entityExtView.setValueInEmptyModel("${entityRef}", idEntitySelected);
-                if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_standard"){
+                if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
                     childExtController.loadGridData();
                     childExtController.loadFormData("");
                 }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
-                    childExtController.loadGridData();
-                    childExtController.loadFormData("");
-                    var record= childExtController.entityExtView.store.first();
-                    if(record){
-                        childExtController.setFormData(record);
-                    }
-                }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv-n-n-multicheck"){
+                    childExtController.loadFormFirstItem();
+                }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_n_to_n"){
                     childExtController.loadNNMulticheckData();
                 }
             });

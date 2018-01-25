@@ -22,11 +22,11 @@ import java.util.Map;
  */
 public class EntityConfig {
     
-    public static String TCV_STANDARD= "tcv_standard";
+    public static String TCV_1_TO_N= "tcv_1_to_n";
     
     public static String TCV_1_TO_1= "tcv_1_to_1";
     
-    public static String TCV_N_N_MULTICHECK= "tcv-n-n-multicheck";
+    public static String TCV_N_TO_N= "tcv_n_to_n";
     
     private EntityService entityService;
     

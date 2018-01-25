@@ -303,13 +303,17 @@ public abstract class RestEntityController {
             JSONObject jsonObject= new JSONObject(jsonData);
             
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
-            BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(entity!=null){
-                EntityReflection.updateEntity(jsonData, entity);
+            if(id!=null){
+                BaseEntity entity = (BaseEntity) service.loadById(id);
+                if(entity!=null){
+                    EntityReflection.updateEntity(jsonData, entity);
 
-                service.update(entity);
-                dto = mapper.entityToDto(entity);
-                resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+                    service.update(entity);
+                    dto = mapper.entityToDto(entity);
+                    resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+                }else{
+                    return this.create(data, request);
+                }
             }else{
                 return this.create(data, request);
             }
