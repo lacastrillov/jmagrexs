@@ -179,8 +179,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.imageRender= function(value, field) {
         Instance.setLinkFieldValue(field, value);
         if(value){
-            return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a><br>'+
-                   '<img style="max-width:150%" src="'+value+'">';
+            return '<a href="'+value+'" target="_blank">'+
+                   '<img style="max-width:150%" src="'+value+'"></a>';
         }else{
             return "";
         }
@@ -202,8 +202,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         Instance.setLinkFieldValue(field, value);
         var videoId= util.getParameter(value, "v");
         if(videoId!==""){
-            return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
-                   '<iframe width="528" height="287" src="https://www.youtube.com/embed/'+videoId+'" frameborder="0" allowfullscreen></iframe>';
+            return '<iframe width="528" height="287" src="https://www.youtube.com/embed/'+videoId+'" frameborder="0" allowfullscreen></iframe>';
         }else{
             return "";
         }
@@ -212,8 +211,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.videoFileUploadRender= function(value, field) {
         Instance.setLinkFieldValue(field, value);
         if(value){
-            return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
-                   '<video style="width:528px;height:297px" controls>'+
+            return '<video style="width:528px;height:297px" controls>'+
                    '    <source src="'+value+'" type="video/'+value.split('.').pop()+'">'+
                    '    Your browser does not support the video tag.'+
                    '</video>';
@@ -225,8 +223,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.audioFileUploadRender= function(value, field) {
         Instance.setLinkFieldValue(field, value);
         if(value){
-            return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
-                   '<audio style="width:500px" src="'+value+'" preload="auto" controls>'+
+            return '<audio style="width:500px" src="'+value+'" preload="auto" controls>'+
                    '    Your browser does not support the video tag.'+
                    '</audio>';
         }else{

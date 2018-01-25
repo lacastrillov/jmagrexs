@@ -991,6 +991,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 }
             }
         });
+        <c:if test="${viewConfig.preloadedForm}">
+        Instance.tabsContainer.getTabBar().hide();
+        </c:if>
         
         Instance.mainView= {
             id: Instance.id,
