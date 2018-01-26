@@ -23,6 +23,7 @@ import com.dot.gcpbasedot.dto.ProcessButton;
 import com.dot.gcpbasedot.enums.PageType;
 import com.dot.gcpbasedot.util.Formats;
 import com.google.gson.Gson;
+import java.util.LinkedHashMap;
 import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -249,6 +250,7 @@ public abstract class ExtEntityController extends ExtReportController {
         JSONArray jsonInternalViewButtons= new JSONArray();
         JSONArray jsonGridColumns= new JSONArray();
         JSONArray sortColumns= new JSONArray();
+        LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
         JSONObject jsonEmptyModel= new JSONObject();
         Map<String, String> jsonFormFieldsProcessMap= new HashMap();
         
@@ -259,6 +261,7 @@ public abstract class ExtEntityController extends ExtReportController {
         HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, viewConfig.getDtoClass());
+        HashMap<String, String> groupFieldsMap= fcba.getGroupFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         HashSet<String> hideFields= fcba.getHideFields(viewConfig.getDtoClass());
         HashSet<String> fieldsNN= fcba.getNotNullFields(viewConfig.getDtoClass());
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(viewConfig.getDtoClass());
@@ -276,6 +279,29 @@ public abstract class ExtEntityController extends ExtReportController {
                 
                 // ADD TO jsonFormFields
                 if(viewConfig.isVisibleForm() && !hideFields.contains(fieldName + HideView.FORM.name())){
+                    String titleGroup="";
+                    if(groupFieldsMap.containsKey(fieldName)){
+                        titleGroup= groupFieldsMap.get(fieldName);
+                        if(!fieldGroups.containsKey(titleGroup)){
+                            JSONObject fieldDefaults= new JSONObject();
+                            fieldDefaults.put("anchor", "49%");
+                            fieldDefaults.put("minWidth", 280);
+                            fieldDefaults.put("labelAlign", "right");
+                            
+                            JSONObject objectField= new JSONObject();
+                            objectField.put("xtype", "fieldset");
+                            objectField.put("title", titleGroup);
+                            objectField.put("collapsible", true);
+                            objectField.put("layout", "anchor");
+                            objectField.put("defaultType", "textfield");
+                            objectField.put("cls", "my-fieldset");
+                            objectField.put("fieldDefaults", fieldDefaults);
+                            objectField.put("items", new JSONArray());
+                            
+                            fieldGroups.put(titleGroup, objectField);
+                        }
+                    }
+                    
                     if(Formats.TYPES_LIST.contains(type)){
                         boolean addFormField= true;
                         JSONObject formField= new JSONObject();
@@ -305,7 +331,8 @@ public abstract class ExtEntityController extends ExtReportController {
                                 for(int i=1; i<data.length; i++){
                                     dataArray.put(data[i]);
                                 }
-                                jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#";
+                                addFormField(field,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
@@ -317,7 +344,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Google Maps Point");
@@ -328,7 +355,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -341,7 +368,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.fileRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -354,7 +381,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.imageRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -367,7 +394,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -380,7 +407,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 formField.put("name", fieldName + "_File");
                                 formField.put("xtype", "filefield");
@@ -393,7 +420,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("fieldLabel", fieldTitle);
                                 renderField.put("xtype", "displayfield");
                                 renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                                jsonFormFields.put(renderField);
+                                addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }
                             if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
@@ -403,7 +430,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 linkField.put("id", "form"+entityClass.getSimpleName()+"_"+fieldName + "LinkField");
                                 linkField.put("name", fieldName);
                                 linkField.put("fieldLabel", "&nbsp;");
-                                jsonFormFields.put(linkField);
+                                addFormField(linkField,jsonFormFields,fieldGroups,titleGroup);
                             }
                         }else{
                             switch (type) {
@@ -441,7 +468,7 @@ public abstract class ExtEntityController extends ExtReportController {
                             formField.put("allowBlank", false);
                         }
                         if(addFormField){
-                            jsonFormFields.put(formField);
+                            addFormField(formField,jsonFormFields,fieldGroups,titleGroup);
                         }
                     }else{
                         String combobox="(function(){ ";
@@ -450,7 +477,7 @@ public abstract class ExtEntityController extends ExtReportController {
                         }
                         combobox+="return Instance.formCombobox"+fieldEntity+";" +
                                         "})()";
-                        jsonFormFields.put("#"+combobox+"#");
+                        addFormField("#"+combobox+"#",jsonFormFields,fieldGroups,titleGroup);
                     }
                 }
                 
@@ -622,6 +649,10 @@ public abstract class ExtEntityController extends ExtReportController {
                 }
             }
         }
+        //ADD fieldGroups in FORM
+        for (Map.Entry<String, JSONObject> group : fieldGroups.entrySet()) {
+            jsonFormFields.put(group.getValue());
+        }
         
         if(viewConfig.isActiveGridTemplate()){
             if(viewConfig.getGridTemplate()!=null){
@@ -696,6 +727,14 @@ public abstract class ExtEntityController extends ExtReportController {
         mav.addObject("sortColumns", sortColumns.toString());
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
         mav.addObject("jsonFormFieldsProcessMap", jsonFormFieldsProcessMap);
+    }
+    
+    private void addFormField(Object field, JSONArray jsonFormFields, LinkedHashMap<String,JSONObject> fieldGroups, String titleGroup){
+        if(titleGroup.equals("")){
+            jsonFormFields.put(field);
+        }else{
+            fieldGroups.get(titleGroup).getJSONArray("items").put(field);
+        }
     }
 
     public Object getFormRecordId(){

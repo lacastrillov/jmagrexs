@@ -19,6 +19,7 @@
         
         <style>
             .x-html-editor-input textarea{white-space: pre !important;}
+            .my-fieldset {width: 50% !important; min-width: 300px;}
         </style>
         
         <!-- ############################ IMPORT LAYOUTS ################################ -->

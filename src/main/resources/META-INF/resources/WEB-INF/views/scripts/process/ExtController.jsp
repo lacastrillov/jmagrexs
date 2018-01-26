@@ -84,14 +84,27 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     Instance.loadFormData= function(id){
         if(id!==""){
             Instance.entityExtView.entityExtStore.load(id, function(data){
-                //Show Process
-                Ext.getCmp('content-processes').layout.setActiveItem('formContainer'+data.processName);
-                
-                //Populate Form
-                Instance.populateForm(data.processName, data.dataIn);
-                
-                //Populate tree result
-                Instance.formSavedResponse(data.processName, data.dataOut, data.outputDataFormat);
+                if(Ext.getCmp('formContainer'+data.processName)!==undefined){
+                    
+                    //Show Process
+                    Ext.getCmp('content-processes').layout.setActiveItem('formContainer'+data.processName);
+
+                    //Populate Form
+                    Instance.populateForm(data.processName, data.dataIn);
+
+                    //Populate tree result
+                    Instance.formSavedResponse(data.processName, data.dataOut, data.outputDataFormat);
+                    
+                }else{
+                    setTimeout(function(){
+                        Ext.MessageBox.show({
+                            title: 'ERROR',
+                            msg: 'Proceso '+data.processName+' no encontrado',
+                            icon: Ext.MessageBox.ERROR,
+                            buttons: Ext.Msg.OK
+                        });
+                    },50);
+                }
             });
         }
     };

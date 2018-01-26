@@ -7,6 +7,7 @@ package com.dot.gcpbasedot.components;
 
 import com.dot.gcpbasedot.annotation.ColumnWidth;
 import com.dot.gcpbasedot.annotation.DefaultValue;
+import com.dot.gcpbasedot.annotation.GroupField;
 import com.dot.gcpbasedot.annotation.HideField;
 import com.dot.gcpbasedot.annotation.NotNull;
 import com.dot.gcpbasedot.annotation.Order;
@@ -85,6 +86,19 @@ public class FieldConfigurationByAnnotations {
         
         for(Field f: annotatedFields){
             TextField an= f.getAnnotation(TextField.class);
+            String fieldName= f.getName();
+            map.put(fieldName, an.value());
+        }
+        
+        return map;
+    }
+    
+    public HashMap<String, String> getGroupFieldsMap(PropertyDescriptor[] propertyDescriptors, Class dtoClass){
+        List<Field> annotatedFields= EntityReflection.getEntityAnnotatedFields(dtoClass, GroupField.class);
+        HashMap<String, String> map= new HashMap<>();
+        
+        for(Field f: annotatedFields){
+            GroupField an= f.getAnnotation(GroupField.class);
             String fieldName= f.getName();
             map.put(fieldName, an.value());
         }
