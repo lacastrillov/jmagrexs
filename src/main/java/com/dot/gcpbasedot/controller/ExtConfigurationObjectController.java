@@ -39,7 +39,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         ModelAndView mav= new ModelAndView("configurationObject");
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", globalMenuComponent.getBasePath());
+        mav.addObject("basePath", menuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;
@@ -52,8 +52,8 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getMainConfigurationRef());
         mav.addObject("entityName", viewConfig.getMainConfigurationName());
-        if(globalMenuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, globalMenuComponent);
+        if(menuComponent!=null){
+            JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
         

@@ -706,7 +706,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     <c:if test="${viewConfig.activeNNMulticheckChild}">
     function getCheckboxGroupContainer(){
         var checkboxGroupContainer= Ext.create('Ext.container.Container', {
-            title: 'Lista '+Instance.${viewConfig.entityRefNNMulticheckChild}ExtInterfaces.pluralEntityTitle,
+            title: Instance.${viewConfig.entityRefNNMulticheckChild}ExtInterfaces.pluralEntityTitle,
             style: 'background-color:#dfe8f6; padding:10px;',
             layout: 'anchor',
             defaults: {

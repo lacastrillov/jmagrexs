@@ -23,46 +23,45 @@ public abstract class ExtController {
     @Autowired
     public ExtViewConfig extViewConfig;
     
-    protected MenuComponent globalMenuComponent;
+    @Autowired
+    public MenuComponent menuComponent;
     
     
-    protected void addMenuComponent(MenuComponent menuComponent){
-        this.globalMenuComponent= menuComponent;
-    }
     
     public JSONArray getMenuItems(HttpSession session, MenuComponent globalMenuComponent){
-        JSONArray menuItems= new JSONArray();
+        JSONArray menuJSON= new JSONArray();
         if(session.getAttribute("menuItems")==null){
             List<MenuItem> menuData= globalMenuComponent.getMenuData();
             menuData= configureVisibilityMenu(menuData);
-
-            for (MenuItem menuDataI : menuData) {
-                if(menuDataI.isVisible()){
-                    JSONObject menuParent= new JSONObject();
-                    MenuItem itemParent = menuDataI;
-                    menuParent.put("text", itemParent.getItemTitle());
-                    JSONObject menu= new JSONObject();
-                    JSONArray items= new JSONArray();
-                    for(int j=0; j<itemParent.getSubMenus().size(); j++){
-                        MenuItem itemChild= itemParent.getSubMenus().get(j);
-                        if(itemChild.isVisible()){
-                            JSONObject item= new JSONObject();
-                            item.put("text", itemChild.getItemTitle());
-                            item.put("href", itemChild.getHref());
-                            items.put(item);
-                        }
-                    }
-                    menu.put("items", items);
-                    menuParent.put("menu", menu);
-                    menuItems.put(menuParent);
-                }
-            }
-            session.setAttribute("menuItems", menuItems.toString());
+            menuJSON= generateMenuJSON(menuData);
+            session.setAttribute("menuItems", menuJSON.toString());
         }else{
-            menuItems= new JSONArray((String)session.getAttribute("menuItems"));
+            menuJSON= new JSONArray((String)session.getAttribute("menuItems"));
         }
         
-        return menuItems;
+        return menuJSON;
+    }
+    
+    private JSONArray generateMenuJSON(List<MenuItem> menuItems){
+        JSONArray menuJSON= new JSONArray();
+        for (MenuItem menuDataI : menuItems) {
+            if(menuDataI.isVisible()){
+                JSONObject menuParent= new JSONObject();
+                MenuItem itemParent = menuDataI;
+                menuParent.put("text", itemParent.getItemTitle());
+                if(menuDataI.getType().equals(MenuItem.CHILD)){
+                    menuParent.put("href", itemParent.getHref());
+                }
+                if(itemParent.getSubMenus().size()>0){
+                    JSONObject menu= new JSONObject();
+                    JSONArray items= generateMenuJSON(itemParent.getSubMenus());
+                    menu.put("items", items);
+                    menuParent.put("menu", menu);
+                }
+                menuJSON.put(menuParent);
+            }
+        }
+        return menuJSON;
     }
     
     protected List<MenuItem> configureVisibilityMenu(List<MenuItem> menuData){

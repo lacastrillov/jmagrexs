@@ -5,8 +5,12 @@
  */
 package com.dot.gcpbasedot.dto;
 
+import com.dot.gcpbasedot.components.MenuComponent;
 import com.dot.gcpbasedot.enums.PageType;
+import java.util.ArrayList;
 import java.util.List;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 
 /**
  *
@@ -14,11 +18,13 @@ import java.util.List;
  */
 public class MenuItem {
     
+    public static final String PARENT= "parent";
+    
+    public static final String CHILD= "child";
+    
     private PageType pageType;
     
     private String type;
-    
-    private String parentMenuTitle;
     
     private String entityRef;
     
@@ -26,45 +32,81 @@ public class MenuItem {
     
     private String reportName;
     
-    private String href;
-    
-    private int parentPosition;
-    
     private int itemPosition;
     
     private boolean visible;
     
-    private List<MenuItem> subMenus;
+    private List<MenuItem> subMenus= new ArrayList<>();
     
     
     public MenuItem(String itemTitle){
-        this.pageType= PageType.ENTITY;
         this.type= "parent";
-        this.parentMenuTitle= "";
         this.entityRef= "";
         this.itemTitle= itemTitle;
         this.reportName= "";
-        this.parentPosition= 1000;
         this.itemPosition= 1000;
         this.visible= true;
     }
     
-    public MenuItem(String parentMenuTitle, String entityRef, String itemTitle){
+    public MenuItem(String itemTitle, int itemPosition){
+        this.type= "parent";
+        this.entityRef= "";
+        this.itemTitle= itemTitle;
+        this.reportName= "";
+        this.itemPosition= itemPosition;
+        this.visible= true;
+    }
+    
+    public MenuItem(String entityRef, String itemTitle){
         this.pageType= PageType.ENTITY;
         this.type= "child";
-        this.parentMenuTitle= parentMenuTitle;
         this.entityRef= entityRef;
         this.itemTitle= itemTitle;
         this.reportName= "";
-        this.parentPosition= 1000;
         this.itemPosition= 1000;
         this.visible= true;
     }
+    
+    public MenuItem(String entityRef, String itemTitle, int itemPosition){
+        this.pageType= PageType.ENTITY;
+        this.type= "child";
+        this.entityRef= entityRef;
+        this.itemTitle= itemTitle;
+        this.reportName= "";
+        this.itemPosition= itemPosition;
+        this.visible= true;
+    }
+    
+    /**
+     * @return the href
+     */
+    public String getHref(){
+        if(this.type.equals(CHILD)){
+            ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+            MenuComponent menuComponent= (MenuComponent) ctx.getBean("menuComponent");
+            String href= menuComponent.getContextPath() + menuComponent.getBasePath() + "/" + this.entityRef + "/" + this.pageType.getPageRef();
+            if (this.pageType==PageType.REPORT) {
+                href+= "/" + this.reportName + ".htm";
+            } else {
+                href+= ".htm";
+            }
+            return href;
+        }
+        return "";
+    }
 
+    /**
+     * 
+     * @return pageType
+     */
     public PageType getPageType() {
         return pageType;
     }
 
+    /**
+     * 
+     * @param pageType 
+     */
     public void setPageType(PageType pageType) {
         this.pageType = pageType;
     }
@@ -81,20 +123,6 @@ public class MenuItem {
      */
     public void setType(String type) {
         this.type = type;
-    }
-
-    /**
-     * @return the parentMenuTitle
-     */
-    public String getParentMenuTitle() {
-        return parentMenuTitle;
-    }
-
-    /**
-     * @param parentMenuTitle the parentMenuTitle to set
-     */
-    public void setParentMenuTitle(String parentMenuTitle) {
-        this.parentMenuTitle = parentMenuTitle;
     }
 
     /**
@@ -138,36 +166,6 @@ public class MenuItem {
     public void setReportName(String reportName) {
         this.reportName = reportName;
     }
-    
-    /**
-     * @return the href
-     */
-    public String getHref() {
-        return href;
-    }
-
-    /**
-     * @param href the href to set
-     */
-    public void setHref(String href) {
-        this.href = href;
-    }
-
-    /**
-     * @return the parentPosition
-     */
-    public int getParentPosition() {
-        return parentPosition;
-    }
-
-    /**
-     * @param parentPosition the parentPosition to set
-     */
-    public void setParentPosition(int parentPosition) {
-        if(parentPosition!=1000){
-            this.parentPosition = parentPosition;
-        }
-    }
 
     /**
      * @return the itemPosition
@@ -198,11 +196,26 @@ public class MenuItem {
     public void setSubMenus(List<MenuItem> subMenus) {
         this.subMenus = subMenus;
     }
+    
+    /**
+     * @param subMenu
+     */
+    public void addSubMenu(MenuItem subMenu) {
+        this.subMenus.add(subMenu);
+    }
 
+    /**
+     * 
+     * @return visible
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     * 
+     * @param visible 
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }

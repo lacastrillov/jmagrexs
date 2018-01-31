@@ -70,7 +70,7 @@ public abstract class ExtReportController extends ExtController {
         mav.addObject("reportConfig", reportsConfig.get(reportName));
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
         mav.addObject("reportName", reportName);
-        mav.addObject("basePath", globalMenuComponent.getBasePath());
+        mav.addObject("basePath", menuComponent.getBasePath());
         
         return mav;
     }
@@ -82,8 +82,8 @@ public abstract class ExtReportController extends ExtController {
         mav.addObject("reportConfig", reportsConfig.get(reportName));
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
         mav.addObject("reportName",reportName);
-        if(globalMenuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, globalMenuComponent);
+        if(menuComponent!=null){
+            JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
         if(reportsConfig.get(reportName).isVisibleFilters()){

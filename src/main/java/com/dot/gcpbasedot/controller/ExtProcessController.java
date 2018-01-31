@@ -62,7 +62,7 @@ public abstract class ExtProcessController extends ExtController {
         ModelAndView mav= new ModelAndView("process");
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", globalMenuComponent.getBasePath());
+        mav.addObject("basePath", menuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;
@@ -75,8 +75,8 @@ public abstract class ExtProcessController extends ExtController {
         mav.addObject("viewConfig", processConfig);
         mav.addObject("entityRef", processConfig.getMainProcessRef());
         mav.addObject("entityName", processConfig.getMainProcessName());
-        if(globalMenuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, globalMenuComponent);
+        if(menuComponent!=null){
+            JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
         

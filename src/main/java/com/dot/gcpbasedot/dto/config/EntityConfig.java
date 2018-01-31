@@ -13,6 +13,7 @@ import com.dot.gcpbasedot.service.EntityService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,8 +145,8 @@ public class EntityConfig {
         this.defaultOrderBy= "id";
         this.defaultOrderDir= "DESC";
         this.maxResultsPerPage= 50L;
-        this.internalViewButton= new HashMap<>();
-        this.childExtViews= new HashMap<>();
+        this.internalViewButton= new LinkedHashMap<>();
+        this.childExtViews= new LinkedHashMap<>();
         this.typeChildExtViews= new HashMap<>();
         this.comboboxChildDependent= new HashMap<>();
         this.processButtons= new ArrayList<>();

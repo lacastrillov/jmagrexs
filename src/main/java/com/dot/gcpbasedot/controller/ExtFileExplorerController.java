@@ -61,7 +61,7 @@ public abstract class ExtFileExplorerController extends ExtController {
         ModelAndView mav= new ModelAndView("fileExplorer");
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", globalMenuComponent.getBasePath());
+        mav.addObject("basePath", menuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;
@@ -74,8 +74,8 @@ public abstract class ExtFileExplorerController extends ExtController {
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());
-        if(globalMenuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, globalMenuComponent);
+        if(menuComponent!=null){
+            JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){

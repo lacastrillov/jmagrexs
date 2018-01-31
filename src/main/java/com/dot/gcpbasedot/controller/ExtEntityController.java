@@ -48,7 +48,7 @@ public abstract class ExtEntityController extends ExtReportController {
         ModelAndView mav= new ModelAndView("entity");
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", globalMenuComponent.getBasePath());
+        mav.addObject("basePath", menuComponent.getBasePath());
         addGeneralObjects(mav);
         
         return mav;
@@ -61,8 +61,8 @@ public abstract class ExtEntityController extends ExtReportController {
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());
-        if(globalMenuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, globalMenuComponent);
+        if(menuComponent!=null){
+            JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){
@@ -671,7 +671,7 @@ public abstract class ExtEntityController extends ExtReportController {
             internalViewButton.put("text", entry.getValue());
             internalViewButton.put("scope", "#this#");
             internalViewButton.put("scale", "medium");
-            internalViewButton.put("handler", "#function(){parentExtController.viewInternalPage('/"+entry.getKey()+"/entity.htm')}#");
+            internalViewButton.put("handler", "#function(){parentExtController.viewInternalPage('"+menuComponent.getBasePath()+"/"+entry.getKey()+"/entity.htm')}#");
             
             jsonInternalViewButtons.put(internalViewButton);
         }

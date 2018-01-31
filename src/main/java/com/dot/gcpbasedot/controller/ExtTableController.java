@@ -75,7 +75,7 @@ public abstract class ExtTableController extends ExtController {
         }
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", globalMenuComponent.getBasePath());
+        mav.addObject("basePath", menuComponent.getBasePath());
         addGeneralObjects(mav, tableName);
         
         return mav;
@@ -87,8 +87,8 @@ public abstract class ExtTableController extends ExtController {
         
         List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
         
-        if(globalMenuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, globalMenuComponent);
+        if(menuComponent!=null){
+            JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){

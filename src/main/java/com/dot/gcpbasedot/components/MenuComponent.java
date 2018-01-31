@@ -6,13 +6,10 @@
 package com.dot.gcpbasedot.components;
 
 import com.dot.gcpbasedot.dto.MenuItem;
-import com.dot.gcpbasedot.enums.PageType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,8 +25,6 @@ public class MenuComponent {
 
     private String basePath;
 
-    private final Set parentMenuKey = new HashSet();
-
     private final List<MenuItem> menuData = new ArrayList<>();
 
     private boolean ordered= false;
@@ -42,52 +37,53 @@ public class MenuComponent {
     public String getBasePath(){
         return this.basePath;
     }
-
-    public void addItemMenu(String parentMenuTitle, String entityRef, String itemTitle) {
-        MenuItem menuItem = new MenuItem(parentMenuTitle, entityRef, itemTitle);
-        addItemMenu(menuItem);
+    
+    public String getContextPath(){
+        return context.getContextPath();
     }
-
-    public void addItemMenu(MenuItem menuItem) {
-        String href= context.getContextPath() + basePath + "/" + menuItem.getEntityRef() + "/" + menuItem.getPageType().getPageRef();
-        if (menuItem.getPageType()==PageType.REPORT) {
-            href+= "/" + menuItem.getReportName() + ".htm";
-        } else {
-            href+= ".htm";
-        }
-        menuItem.setHref(href);
-
-        if (parentMenuKey.contains(menuItem.getParentMenuTitle()) == false) {
-            MenuItem parentMenuItem = new MenuItem(menuItem.getParentMenuTitle());
-            parentMenuItem.setItemPosition(menuItem.getParentPosition());
-
-            List<MenuItem> itemsSubMenu = new ArrayList<>();
-            itemsSubMenu.add(menuItem);
-            parentMenuItem.setSubMenus(itemsSubMenu);
-            menuData.add(parentMenuItem);
-            parentMenuKey.add(menuItem.getParentMenuTitle());
-        } else {
-            for (int i = 0; i < menuData.size(); i++) {
-                MenuItem parentMenuItem = menuData.get(i);
-                if (parentMenuItem.getItemTitle().equals(menuItem.getParentMenuTitle())) {
-                    menuData.get(i).setItemPosition(menuItem.getParentPosition());
-                    menuData.get(i).getSubMenus().add(menuItem);
-                }
+    
+    public void addItemMenu(MenuItem menuItem){
+        addItem(menuData, menuItem);
+    }
+    
+    private void addItem(List<MenuItem> menu, MenuItem menuItem){
+        MenuItem existingMenuItem= getMenuItem(menu, menuItem.getItemTitle());
+        if(existingMenuItem==null){
+            menu.add(menuItem);
+        }else{
+            if(menuItem.getItemPosition()!=1000){
+                existingMenuItem.setItemPosition(menuItem.getItemPosition());
+            }
+            for(MenuItem subMenuItem: menuItem.getSubMenus()){
+                addItem(existingMenuItem.getSubMenus(), subMenuItem);
             }
         }
+    }
+    
+    private MenuItem getMenuItem(List<MenuItem> menuItems, String itemTitle){
+        for(MenuItem menuItem: menuItems){
+            if(menuItem.getItemTitle().equals(itemTitle)){
+                return menuItem;
+            }
+        }
+        return null;
     }
 
     public List<MenuItem> getMenuData() {
         if (!ordered) {
-            Collections.sort(menuData, new MenuItemComparator());
-            for(MenuItem parentMenuItem: menuData){
-                List<MenuItem> subMenus= parentMenuItem.getSubMenus();
-                Collections.sort(subMenus, new MenuItemComparator());
-                parentMenuItem.setSubMenus(subMenus);
-            }
+            sortMenuItems(menuData);
             ordered= true;
         }
         return menuData;
+    }
+    
+    private void sortMenuItems(List<MenuItem> menuItems){
+        Collections.sort(menuItems, new MenuItemComparator());
+        for(MenuItem subMenuItem: menuItems){
+            if(subMenuItem.getSubMenus().size()>0){
+                sortMenuItems(subMenuItem.getSubMenus());
+            }
+        }
     }
     
     class MenuItemComparator implements Comparator<MenuItem> {
@@ -102,6 +98,7 @@ public class MenuComponent {
                 return 1;
             }
         }
+        
     }
 
 }
