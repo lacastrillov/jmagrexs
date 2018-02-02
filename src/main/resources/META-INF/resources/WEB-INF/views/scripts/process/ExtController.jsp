@@ -120,9 +120,13 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.formSavedResponse= function(processName, dataOut, outputDataFormat){
         if(outputDataFormat==='JSON'){
-            var rootMenu= util.objectToJSONMenu(JSON.parse(dataOut), true);
             var treePanel = Ext.getCmp('tree-result-'+processName);
-            treePanel.getStore().setRootNode(rootMenu);
+            try{
+                var rootMenu= util.objectToJSONMenu(JSON.parse(dataOut), true);
+                treePanel.getStore().setRootNode(rootMenu);
+            }catch(e){
+                treePanel.getStore().setRootNode({});
+            }
         }else if(outputDataFormat==='HTML'){
             var divPanel = Ext.getCmp('div-result-'+processName);
             divPanel.update('<div style="width:99%; height:400px; overflow:auto;">'+ dataOut + '</div>');
