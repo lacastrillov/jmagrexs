@@ -9,7 +9,12 @@
 
 <script type="text/javascript">
     var navegadorExtInit= new EntityExtInit();
-    var userAuthentication = new UserAuthentication();
+    var userAuthentication;
+    try{
+        userAuthentication = new UserAuthentication();
+    }catch(e){
+        console.error(e);
+    }
 </script>
 <div id="headerHtml" style="display:none;">
     <a href="/"><img src="<%=request.getContextPath()%>${extViewConfig.favicon}" class="logoAdmin"></a>

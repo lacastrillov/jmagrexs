@@ -170,7 +170,7 @@ public abstract class RestEntityController {
     public byte[] findYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) Boolean yamlFormat) {
+            @RequestParam(required = false) Boolean yamlFormat) {
 
         String resultData;
         try {
@@ -184,7 +184,7 @@ public abstract class RestEntityController {
             resultData=Util.getResultListCallback(new ArrayList(), "Error buscando " + entityRef + ": " + e.getMessage(), false);
         }
         
-        if(yamlFormat){
+        if(yamlFormat!=null && yamlFormat){
             resultData= "<textarea style='width:100%; height:100%;color:darkblue'>"+resultData+"</textarea>";
         }
         
