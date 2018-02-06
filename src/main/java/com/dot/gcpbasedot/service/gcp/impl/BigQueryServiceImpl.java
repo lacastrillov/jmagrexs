@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
  *
  * Objecto que se espera ejecute una consulta asincrona con BitTable.
  *
- * @author Juan Orozco (jorozco@grupodot.com)
+ * @author Luis Castrillo (lcastrillo)
  * @Since Sep 26, 2015 1:05:07 AM
  * @Version 1.1
  *

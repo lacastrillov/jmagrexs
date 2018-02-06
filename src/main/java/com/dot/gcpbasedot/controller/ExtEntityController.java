@@ -61,10 +61,8 @@ public abstract class ExtEntityController extends ExtReportController {
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());
-        if(menuComponent!=null){
-            JSONArray menuItems= getMenuItems(session, menuComponent);
-            mav.addObject("menuItems",menuItems.toString());
-        }
+        JSONArray menuItems= getMenuItems(session, menuComponent);
+        mav.addObject("menuItems",menuItems.toString());
         if(viewConfig.isVisibleFilters()){
             JSONArray jsonFieldsFilters= jf.getFieldsFilters(
                     viewConfig.getDtoClass(), viewConfig.getLabelField(), viewConfig.getDateFormat(), PageType.ENTITY);
@@ -145,7 +143,7 @@ public abstract class ExtEntityController extends ExtReportController {
     @RequestMapping(value = "/ExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extView(@RequestParam(required = true) String typeView) {
         ModelAndView mav= new ModelAndView("scripts/entity/ExtView");
-        
+        mav.addObject("basePath", menuComponent.getBasePath());
         if(typeView.equals("Parent")){
             viewConfig.setActiveGridTemplate(viewConfig.isActiveGridTemplateAsParent());
         }
