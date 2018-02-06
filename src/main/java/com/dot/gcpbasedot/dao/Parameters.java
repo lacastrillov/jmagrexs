@@ -70,7 +70,11 @@ public class Parameters {
     // *** Where methods
 
     public void whereEqual(String parameter, Object value) {
-        equalParameters.put(parameter, new Object[] { "=", value });
+        if(value!=null){
+            equalParameters.put(parameter, new Object[] { "=", value });
+        }else{
+            whereIsNull(parameter);
+        }
     }
 
     public void whereGreaterThan(String parameter, Object value) {
@@ -90,7 +94,11 @@ public class Parameters {
     }
 
     public void whereDifferentThan(String parameter, Object value) {
-        differentThanParameters.put(parameter, new Object[] { "<>", value });
+        if(value!=null){
+            differentThanParameters.put(parameter, new Object[] { "<>", value });
+        }else{
+            whereIsNotNull(parameter);
+        }
     }
 
     public void whereIsNull(String parameter) {
