@@ -33,20 +33,50 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class Util {
     
+    /**
+     * 
+     * @param listDto
+     * @param messagge
+     * @param success
+     * @return 
+     */
     public static String getResultListCallback(List listDto, String messagge, boolean success) {
         return getResultListCallback(listDto, (long) listDto.size(), messagge, success);
     }
 
+    /**
+     * 
+     * @param listDto
+     * @param totalCount
+     * @param messagge
+     * @param success
+     * @return 
+     */
     public static String getResultListCallback(List listDto, Long totalCount, String messagge, boolean success) {
         ResultListCallback resultListCallback = getResultList(listDto, totalCount, messagge, success);
         
         return objectToJson(resultListCallback);
     }
 
+    /**
+     * 
+     * @param listDto
+     * @param messagge
+     * @param success
+     * @return 
+     */
     public static ResultListCallback getResultList(List listDto, String messagge, boolean success) {
         return getResultList(listDto, (long) listDto.size(), messagge, success);
     }
 
+    /**
+     * 
+     * @param listDto
+     * @param totalCount
+     * @param messagge
+     * @param success
+     * @return 
+     */
     public static ResultListCallback getResultList(List listDto, Long totalCount, String messagge, boolean success) {
         ResultListCallback resultListCallback = new ResultListCallback();
 
@@ -58,12 +88,26 @@ public class Util {
         return resultListCallback;
     }
 
+    /**
+     * 
+     * @param dto
+     * @param messagge
+     * @param success
+     * @return 
+     */
     public static String getOperationCallback(Object dto, String messagge, boolean success) {
         OperationCallback operationCallback = getOperation(dto, messagge, success);
 
         return objectToJson(operationCallback);
     }
 
+    /**
+     * 
+     * @param dto
+     * @param messagge
+     * @param success
+     * @return 
+     */
     public static OperationCallback getOperation(Object dto, String messagge, boolean success) {
         OperationCallback operationCallback = new OperationCallback();
 
@@ -74,6 +118,11 @@ public class Util {
         return operationCallback;
     }
 
+    /**
+     * 
+     * @param obj
+     * @return 
+     */
     public static String objectToJson(Object obj) {
         GsonBuilder gsonB = new GsonBuilder();
         gsonB.setDateFormat("dd/MM/yyyy");
@@ -82,6 +131,11 @@ public class Util {
         return gson.toJson(obj);
     }
     
+    /**
+     * 
+     * @param diffHour
+     * @return 
+     */
     public static Time getCurrentTime(int diffHour){
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -93,6 +147,11 @@ public class Util {
         return Time.valueOf(sdfTime.format(currentDate));
     }
     
+    /**
+     * 
+     * @param object
+     * @return 
+     */
     public static String jsonToYaml(Object object){
         Yaml yaml= new Yaml();
         Map<String, Object> map = jsonToHashMap(objectToJson(object));
@@ -101,6 +160,11 @@ public class Util {
         return output;
     }
 
+    /**
+     * 
+     * @param json
+     * @return 
+     */
     public static HashMap<String, Object> jsonToHashMap(String json) {
         HashMap<String, Object> data = new HashMap();
         try {
@@ -140,6 +204,11 @@ public class Util {
         return data;
     }
     
+    /**
+     * 
+     * @param json
+     * @return 
+     */
     public static String remakeJSONObject(String json){
         JSONObject source= new JSONObject(json);
         JSONObject finalObject= new JSONObject();
@@ -157,6 +226,12 @@ public class Util {
         return finalObject.toString();
     };
     
+    /**
+     * 
+     * @param obj
+     * @param key
+     * @param value 
+     */
     public static void assignValue(JSONObject obj, String key, Object value){
         if(key.contains(".")){
             String firstKey= key.substring(0, key.indexOf("."));
@@ -190,6 +265,11 @@ public class Util {
         }
     };
     
+    /**
+     * 
+     * @param json
+     * @return 
+     */
     public static JSONObject unremakeJSONObject(String json){
         JSONObject source= new JSONObject(json);
         JSONObject finalObject= new JSONObject();
@@ -202,6 +282,12 @@ public class Util {
         return finalObject;
     };
     
+    /**
+     * 
+     * @param level
+     * @param finalObject
+     * @param object 
+     */
     public static void assignSingleLevelValue(String level, JSONObject finalObject, Object object){
         if(object instanceof JSONArray){
             JSONArray jsonArray= (JSONArray) object;
@@ -219,6 +305,30 @@ public class Util {
         }
     };
     
+    /**
+     * 
+     * @param parent
+     * @param levels
+     * @return 
+     */
+    public static JSONObject getRecursiveJSONObject(JSONObject parent, String levels){
+        String[] arrayLevels= levels.split(">");
+        JSONObject result= parent;
+        for(String level: arrayLevels){
+            if(result.has(level)){
+                result= result.getJSONObject(level);
+            }else{
+                return null;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * 
+     * @param contentType
+     * @return 
+     */
     public static String getSimpleContentType(String contentType){
         List extensions= Arrays.asList(
                 new String[] {"conf","css","csv","html","java","js","json","jsp","php","properties","txt","vm","xml"});
