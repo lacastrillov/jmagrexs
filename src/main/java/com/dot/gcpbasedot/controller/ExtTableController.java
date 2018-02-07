@@ -67,6 +67,7 @@ public abstract class ExtTableController extends ExtController {
     public ModelAndView table(@PathVariable String tableName) {
         ModelAndView mav= new ModelAndView("table");
         
+        tableColumnsConfig.updateColumnsConfig(tableName);
         List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
         if(columns!=null){
             viewConfig.setPluralEntityTitle(columns.get(0).getTableName());
