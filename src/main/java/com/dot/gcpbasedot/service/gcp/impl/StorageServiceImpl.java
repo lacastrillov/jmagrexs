@@ -61,16 +61,17 @@ public class StorageServiceImpl implements StorageService {
         Objects objects;
 
         // Iterate through each page of results, and add them to our results list.
+        String nextPageToken;
         do {
             objects = listRequest.execute();
             // Add the items in this page of results to the list we'll return.
             if(objects.getItems()!=null){
                 results.addAll(objects.getItems());
-
-                // Get the next page, in the next iteration of this loop.
-                listRequest.setPageToken(objects.getNextPageToken());
             }
-        } while (null != objects.getNextPageToken());
+            // Get the next page, in the next iteration of this loop.
+            nextPageToken= objects.getNextPageToken();
+            listRequest.setPageToken(nextPageToken);
+        } while (nextPageToken!=null);
         
         for(StorageObject obj: results){
             if(obj.getName().equals(fileName)){
@@ -99,14 +100,17 @@ public class StorageServiceImpl implements StorageService {
         Objects objects;
 
         // Iterate through each page of results, and add them to our results list.
+        String nextPageToken;
         do {
             objects = listRequest.execute();
             // Add the items in this page of results to the list we'll return.
-            results.addAll(objects.getItems());
-
+            if(objects.getItems()!=null){
+                results.addAll(objects.getItems());
+            }
             // Get the next page, in the next iteration of this loop.
-            listRequest.setPageToken(objects.getNextPageToken());
-        } while (null != objects.getNextPageToken());
+            nextPageToken= objects.getNextPageToken();
+            listRequest.setPageToken(nextPageToken);
+        } while (nextPageToken!=null);
 
         return results;
     }
@@ -279,92 +283,5 @@ public class StorageServiceImpl implements StorageService {
         }
         return objGoogleCredential;
     }
-
-    private static GrupoDotGoogleCredencial getGrupoDotGoogleCredencialx() {
-        GrupoDotGoogleCredencial credencial = new GrupoDotGoogleCredencial();
-
-        credencial.setAccountId("analytics@proven-signal-88616.iam.gserviceaccount.com");
-        credencial.setProjectId("proven-signal-88616");
-        credencial.setKeyFile("grupodot-101-gcp-22697afcc28d.p12");
-
-        return credencial;
-    }
     
-    private static GrupoDotGoogleCredencial getGrupoDotGoogleCredencial() {
-        GrupoDotGoogleCredencial credencial = new GrupoDotGoogleCredencial();
-
-        credencial.setAccountId("1078407497421-compute@developer.gserviceaccount.com");
-        credencial.setProjectId("novaventa-co");
-        credencial.setKeyFile("novaventa-co-7652830868f6.p12");
-
-        return credencial;
-    }
-
-    public static void main(String[] args) {
-        StorageServiceImpl obj = new StorageServiceImpl();
-        //String bucketName = "demonovaventa2";
-        String bucketName= "fotos-novaventa-test";
-        try {
-            // Get metadata about the specified bucket.
-            Bucket bucket = obj.getBucket(bucketName, getGrupoDotGoogleCredencial());
-            System.out.println("name: " + bucket.getSelfLink());
-            System.out.println("location: " + bucket.getLocation());
-            System.out.println("timeCreated: " + bucket.getTimeCreated());
-            System.out.println("owner: " + bucket.getOwner());
-
-            // List the contents of the bucket.
-            /*List<StorageObject> bucketContents = obj.listBucket(bucketName, getGrupoDotGoogleCredencial());
-            if (null == bucketContents) {
-                System.out.println("There were no objects in the given bucket; try adding some and re-running.");
-            }
-            
-            Storage.Objects.Insert insertRequest= null;
-            StorageObject object2;
-            Gson gson= new Gson();
-            for (StorageObject object : bucketContents) {
-                System.out.println("***************************************");
-                System.out.println(gson.toJson(object));
-                System.out.println(object.getMediaLink());
-            }*/
-            
-            StorageObject ob= obj.getStorageObject(bucketName, "productos/2016/2895.jpg",getGrupoDotGoogleCredencial());
-            System.out.println(ob.getMediaLink());
-            
-             //StorageObject objR= insertRequest.execute();
-             //System.out.println(gson.toJson(objR));
-            
-            //Path tempPath = Files.createTempFile("StorageSample", "txt");
-            //Files.write(tempPath, "Sample file".getBytes());
-            //File tempFile = new File("album/");
-            //tempFile.deleteOnExit();
-
-            // Create a temp file to upload
-            /*Path tempPath = Files.createTempFile("StorageSample", "txt");
-            Files.write(tempPath, "Sample file".getBytes());
-            File tempFile = tempPath.toFile();
-            tempFile.deleteOnExit();
-            String TEST_FILENAME = "json|test.txt";
-            String link= obj.uploadFile(TEST_FILENAME, "text/plain", tempFile, bucketName, getGrupoDotGoogleCredencial()).getMediaLink();
-            System.out.println("link: "+link);*/
-            
-            /*URL url= new URL("http://4.bp.blogspot.com/-DsKNJx_WZRo/VQjsJGHMNqI/AAAAAAAAHO8/v-CRBeF3eL0/s1600/cara%2Blinda%2B5.jpg");
-            BufferedImage bi = ImageIO.read(url);
-            FileServiceImpl fs = new FileServiceImpl();
-            BufferedImage bi2= fs.resizeImage(bi, 200, 200);
-            InputStream is= fs.bufferedImageToInputStream(bi2, "jpg");
-            String link= obj.uploadFile("20160128imeisamsumg.jpg", "image/jpg", is, bucketName, getGrupoDotGoogleCredencial()).getMediaLink();
-            System.out.println("link: "+link);*/
-
-            // Now delete the file
-            //obj.deleteObject(TEST_FILENAME, bucketName, getGrupoDotGoogleCredencial());
-
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
-    }
-
 }
