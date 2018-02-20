@@ -509,7 +509,7 @@ public abstract class RestEntityController {
                     if(dtoClass!=null){
                         is= generateResizedImages(fieldName, item.getName(), item.getContentType(), is, id);
                     }
-                    result+= saveFilePart(0, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id);
+                    result+= saveFilePart(0, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id)+"<br>";
                 }
             }
             
