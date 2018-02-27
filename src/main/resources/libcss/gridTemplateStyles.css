@@ -1,0 +1,20 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 20/09/2016, 09:06:09 AM
+    Author     : desarrollador
+*/
+#filters-panel-body .x-panel.x-box-item[style*='height: 42px;'] table {margin-top: 3px}
+#detailResults {padding: 0 5px;white-space: normal;}
+#detailResults a, a:hover { text-decoration:none; }
+#detailResults .thumbnail{padding-bottom: 0px;font: 16px/18px Arial, Helvetica, sans-serif; margin: 10px 0; height: 185px; position: relative}
+#detailResults .thumbnail figure {background-color: #dfeaf2;height: 106px;}
+#detailResults .img-responsive {display: inline-block; max-height: 100px;}
+#detailResults .thumbnail h3, #detailResults .thumbnail strong, #detailResults .thumbnail address{ color:#000; }
+#detailResults .thumbnail h3 {margin-bottom: 0px;}
+#detailResults .thumbnail strong {font-weight: normal;}
+#detailResults .form-group {position:absolute; bottom:5px; width: 100%;}
+#detailResults .item_check { margin-left: -20%; margin-top: 17px; position: relative; z-index: 1; }

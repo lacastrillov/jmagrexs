@@ -73,7 +73,7 @@ public abstract class RestEntityController {
     @Autowired
     private ServletContext selvletContext;
     
-    @Autowired
+    //@Autowired
     private VelocityEngine velocityEngine;
     
     @Autowired

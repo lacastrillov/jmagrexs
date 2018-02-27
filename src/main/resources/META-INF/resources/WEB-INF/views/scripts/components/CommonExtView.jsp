@@ -328,10 +328,17 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.processFailure= function(response){
         if(response.status===403){
-            Instance.showErrorMessage(Instance.error403);
-            Instance.loadUserInSession(function(userData){
-                if(!userData.session){
-                    location.reload(); 
+            Ext.MessageBox.show({
+                msg: 'Cargando...',
+                width:200,
+                wait:true,
+                waitConfig: {interval:200}
+            });
+            userAuthentication.replicateAuthentication(function(replicationResult){
+                if(replicationResult.replicated || replicationResult.userData===null){
+                    location.reload();
+                }else{
+                    Instance.showErrorMessage(Instance.error403);
                 }
             });
         }else{
@@ -341,23 +348,10 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.showErrorMessage= function(errorMsg){
         Ext.MessageBox.show({
-            title: 'REMOTE EXCEPTION',
+            title: 'ERROR REMOTO',
             msg: errorMsg,
             icon: Ext.MessageBox.ERROR,
             buttons: Ext.Msg.OK
-        });
-    };
-    
-    Instance.loadUserInSession= function(func){
-        Ext.Ajax.request({
-            url: Ext.context+'/account/ajax/userInSession',
-            method: "GET",
-            success: function(response){
-                func(Ext.decode(response.responseText));
-            },
-            failure: function(response){
-                func({"session":true});
-            }
         });
     };
     
