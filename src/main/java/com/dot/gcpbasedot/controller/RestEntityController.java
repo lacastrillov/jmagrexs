@@ -73,8 +73,10 @@ public abstract class RestEntityController {
     @Autowired
     private ServletContext selvletContext;
     
-    //@Autowired
+    @Autowired
     private VelocityEngine velocityEngine;
+    
+    VelocityEngine vv;
     
     @Autowired
     @Value("${static.domain.url}")
