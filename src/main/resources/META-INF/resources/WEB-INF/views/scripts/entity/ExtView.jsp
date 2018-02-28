@@ -909,6 +909,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.formCombobox${associatedEntityName}= Instance.${associatedER}ExtInterfaces.getCombobox('form', '${entityName}', '${associatedER}', '${associatedEntityTitle}');
         Instance.gridCombobox${associatedEntityName}= Instance.${associatedER}ExtInterfaces.getCombobox('grid', '${entityName}', '${associatedER}', '${associatedEntityTitle}');
         Instance.filterCombobox${associatedEntityName}= Instance.${associatedER}ExtInterfaces.getCombobox('filter', '${entityName}', '${associatedER}', '${associatedEntityTitle}');
+        Instance.filterMultiselect${associatedEntityName}= Instance.${associatedER}ExtInterfaces.getMultiselect('${entityName}', '${associatedER}', '${associatedEntityTitle}');
         Instance.combobox${associatedEntityName}Render= Instance.${associatedER}ExtInterfaces.getComboboxRender('grid');
         </c:forEach>
         

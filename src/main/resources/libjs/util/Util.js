@@ -381,6 +381,24 @@ function Util() {
         return result;
     };
     
+    this.arrayContains= function(array, obj) {
+        for(var i=0; i<array.length; i++){
+            if (array[i]===obj) {
+               return true;
+            }
+        }
+        return false;
+    };
+    
+    this.arrayRemove= function(array, obj) {
+        for(var i=0; i<array.length; i++){
+            if (array[i]===obj) {
+               array.splice(i, 1);
+            }
+        }
+        return array;
+    };
+    
     this.objectToJSONMenu= function(object, expanded){
         var menuObj= {"text":"root",expanded: true,"children":[]};
         

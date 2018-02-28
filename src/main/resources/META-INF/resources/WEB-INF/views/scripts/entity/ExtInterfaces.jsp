@@ -110,6 +110,14 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                         console.log("end");*/
                     },
                     scope: this
+                },
+                afterrender: function( ){
+                    if(component==='filter'){
+                        Instance.store.addListener('load', function(){
+                            var rec = { id: 0, ${labelField}: '-' };
+                            Instance.store.insert(0,rec);
+                        });
+                    }
                 }
             }/*,
             getDisplayValue: function() {
@@ -131,14 +139,58 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             Instance.combobox[component].fieldLabel= fieldTitle;
         }
         
-        if(component==='filter'){
-            Instance.store.addListener('load', function(){
-                var rec = { id: 0, ${labelField}: '-' };
-                Instance.store.insert(0,rec);
-            });
-        }
-        
         return Instance.combobox[component];
+    };
+    
+    Instance.getMultiselect= function(entityDestination, fieldName, fieldTitle){
+        Instance.store.pageSize= 1000;
+        Instance.store.sorters.items[0].property='${labelField}';
+        Instance.store.sorters.items[0].direction='ASC';
+        Instance.multiselect= {
+            id: 'multiselect'+fieldName+'In'+entityDestination,
+            name: fieldName,
+            fieldLabel: fieldTitle,
+            xtype: 'multiselect',
+            displayField: '${labelField}',
+            valueField: 'id',
+            allowBlank: true,
+            anchor: '100%',
+            height: 150,
+            msgTarget: 'side',
+            arrayValues:[],
+            lastSelected: null,
+            store: Instance.store,
+            listeners: {
+                change: function(record){
+                    var value= record.getValue();
+                    if(value.length===1){
+                        this.lastSelected= value[0];
+                    }
+                },
+                el: {
+                    click: function() {
+                        var selector=Ext.getCmp('multiselect'+fieldName+'In'+entityDestination);
+                        if(selector.lastSelected!==null && !util.arrayContains(selector.arrayValues, selector.lastSelected)){
+                            selector.arrayValues.push(selector.lastSelected);
+                        }else{
+                            selector.arrayValues= util.arrayRemove(selector.arrayValues, selector.lastSelected);
+                        }
+                        selector.setValue(selector.arrayValues);
+                        if(selector.arrayValues.length>0){
+                            parentExtController.filter.in[fieldName]= selector.arrayValues;
+                        }else{
+                            delete parentExtController.filter.in[fieldName];
+                        }
+                    },
+                    scope: this
+                },
+                afterrender: function( ){
+                    Instance.multiselect.store.loadPage(1);
+                }
+            }
+        };
+        
+        return Instance.multiselect;
     };
     
     Instance.getComboboxRender= function(component){

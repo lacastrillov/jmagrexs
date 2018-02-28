@@ -19,6 +19,8 @@ public enum FieldType {
     
     LIST,
     
+    MULTI_SELECT,
+    
     URL,
     
     HTML_EDITOR,

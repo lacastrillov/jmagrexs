@@ -245,7 +245,11 @@ public class JSONFilters {
                             jsonFieldsFilters.put(formField);
                         }
                     }else{
-                        jsonFieldsFilters.put("#"+container+".filterCombobox"+fieldEntity+"#");
+                        if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.MULTI_SELECT.name())){
+                            jsonFieldsFilters.put("#"+container+".filterMultiselect"+fieldEntity+"#");
+                        }else{
+                            jsonFieldsFilters.put("#"+container+".filterCombobox"+fieldEntity+"#");
+                        }
                     }
                 }
                     
