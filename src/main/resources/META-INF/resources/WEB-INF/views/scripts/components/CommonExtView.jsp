@@ -91,7 +91,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             valueField: 'value',
             allowBlank: true,
             anchor: '100%',
-            height: 150,
+            maxHeight: 150,
             msgTarget: 'side',
             arrayValues:[],
             lastSelected: null,

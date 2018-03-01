@@ -155,7 +155,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             valueField: 'id',
             allowBlank: true,
             anchor: '100%',
-            height: 150,
+            maxHeight: 150,
             msgTarget: 'side',
             arrayValues:[],
             lastSelected: null,
