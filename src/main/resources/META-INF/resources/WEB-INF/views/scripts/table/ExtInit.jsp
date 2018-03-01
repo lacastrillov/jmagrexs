@@ -25,6 +25,7 @@ function EntityExtInit(){
             'Ext.selection.*',
             'Ext.tab.Panel',
             'Ext.util.History',
+            'Ext.ux.form.MultiSelect',
             'Ext.ux.layout.Center',
             'Ext.ux.GroupTabPanel',
             'Ext.window.MessageBox'

@@ -11,6 +11,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(model!==null){
             Instance.modelNameCombobox= "ComboboxModelIn"+model;
             Instance.combobox={};
+            Instance.multiselect={};
             Instance.errorGeneral= "Error de servidor";
             Instance.error403= "Usted no tiene permisos para realizar esta operaci&oacute;n";
             Ext.define(Instance.modelNameCombobox, {
@@ -64,6 +65,65 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
         
         return Instance.combobox[component+'_'+fieldName];
+    };
+    
+    Instance.getSimpleMultiselect= function(fieldName, fieldTitle, dataArray){
+        var data=[];
+        dataArray.forEach(function(item) {
+            if((item+"").indexOf(':')!==-1){
+                var itemValue= item.split(':');
+                data.push({value:itemValue[0],text:itemValue[1]});
+            }else{
+                data.push({value:item,text:item});
+            }
+        });
+        var store = Ext.create('Ext.data.Store', {
+            autoDestroy: false,
+            model: Instance.modelNameCombobox,
+            data: data
+        });
+        Instance.multiselect[fieldName]= {
+            id: 'multiselect'+fieldName+'In'+model,
+            name: fieldName,
+            fieldLabel: fieldTitle,
+            xtype: 'multiselect',
+            displayField: 'text',
+            valueField: 'value',
+            allowBlank: true,
+            anchor: '100%',
+            height: 150,
+            msgTarget: 'side',
+            arrayValues:[],
+            lastSelected: null,
+            store: store,
+            listeners: {
+                change: function(record){
+                    var value= record.getValue();
+                    if(value.length===1){
+                        this.lastSelected= value[0];
+                    }
+                },
+                el: {
+                    click: function() {
+                        var selector=Ext.getCmp('multiselect'+fieldName+'In'+model);
+                        if(selector.lastSelected!==null && !util.arrayContains(selector.arrayValues, selector.lastSelected)){
+                            selector.arrayValues.push(selector.lastSelected);
+                        }else{
+                            selector.arrayValues= util.arrayRemove(selector.arrayValues, selector.lastSelected);
+                        }
+                        selector.setValue(selector.arrayValues);
+                        if(selector.arrayValues.length>0){
+                            parentExtController.filter.in[fieldName]= selector.arrayValues;
+                        }else{
+                            delete parentExtController.filter.in[fieldName];
+                        }
+                    },
+                    scope: this
+                }
+            }
+        };
+        
+        return Instance.multiselect[fieldName];
     };
     
     Instance.enableManagementTabHTMLEditor= function(){

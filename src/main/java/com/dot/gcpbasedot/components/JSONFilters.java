@@ -68,15 +68,22 @@ public class JSONFilters {
                     if(Formats.TYPES_LIST.contains(type)){
                         boolean addFormField= true;
                         JSONObject formField= new JSONObject();
-                        
-                        if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.LIST.name())){
+                        String typeForm="";
+                        if(typeFormFields.containsKey(fieldName)){
+                            typeForm= typeFormFields.get(fieldName)[0];
+                        }
+                        if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
                             addFormField= false;
                             String[] data= typeFormFields.get(fieldName);
                             JSONArray dataArray = new JSONArray();
                             for(int i=1; i<data.length; i++){
                                 dataArray.put(data[i]);
                             }
-                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            if(typeForm.equals(FieldType.LIST.name())){
+                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            }else{
+                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            }
                         }else if (type.equals("java.lang.String") || type.equals("char") || type.equals("java.lang.Character")) {
                             formField.put("name", fieldName);
                             formField.put("xtype", "textfield");
@@ -283,15 +290,22 @@ public class JSONFilters {
                 if(Formats.TYPES_LIST.contains(type)){
                     boolean addFormField= true;
                     JSONObject formField= new JSONObject();
-
-                    if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.LIST.name())){
+                    String typeForm="";
+                    if(typeFormFields.containsKey(fieldName)){
+                        typeForm= typeFormFields.get(fieldName)[0];
+                    }
+                    if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
                         addFormField= false;
                         String[] data= typeFormFields.get(fieldName);
                         JSONArray dataArray = new JSONArray();
                         for(int i=1; i<data.length; i++){
                             dataArray.put(data[i]);
                         }
-                        jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        if(typeForm.equals(FieldType.LIST.name())){
+                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        }else{
+                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        }
                     }else if (type.equals("java.lang.String") || type.equals("char") || type.equals("java.lang.Character")) {
                         formField.put("name", fieldName);
                         formField.put("xtype", "textfield");
