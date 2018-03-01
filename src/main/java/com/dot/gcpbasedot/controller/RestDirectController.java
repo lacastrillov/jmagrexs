@@ -200,12 +200,10 @@ public abstract class RestDirectController {
 
     @RequestMapping(value = "/{tableName}/load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] load(@PathVariable String tableName, @RequestParam String data) {
-        JSONObject jsonObject= new JSONObject(data);
-
+    public byte[] load(@PathVariable String tableName, @RequestParam String idEntity) {
         String resultData;
         try {
-            Map<String, Object> entity = directService.loadByParameter(tableName, "id", jsonObject.getInt("id"));
+            Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
             
             resultData= Util.getOperationCallback(entity, "Carga de " + tableName + " realizada...", true);
         } catch (Exception e) {

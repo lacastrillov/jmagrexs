@@ -272,11 +272,11 @@ function ${entityName}ExtStore(){
         });
     };
     
-    Instance.load= function(id${entityName}, func){
+    Instance.load= function(idEntity, func){
         Ext.Ajax.request({
             url: Ext.context+'/rest/${entityRef}/'+baseAction+'load.htm',
             method: "GET",
-            params: 'data='+encodeURIComponent('{"id":'+id${entityName}+'}'),
+            params: 'idEntity='+idEntity,
             success: function(response){
                 var responseText= Ext.decode(response.responseText);
                 func(responseText.data);

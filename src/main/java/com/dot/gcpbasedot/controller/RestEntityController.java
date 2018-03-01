@@ -346,13 +346,12 @@ public abstract class RestEntityController {
 
     @RequestMapping(value = "/load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] load(@RequestParam String data) {
-        JSONObject jsonObject= new JSONObject(data);
+    public byte[] load(@RequestParam String idEntity) {
         BaseEntity dto = null;
 
         String resultData;
         try {
-            Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
+            Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);

@@ -195,19 +195,18 @@ public abstract class RestSessionController extends RestEntityController {
 
     @RequestMapping(value = "/session_load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionLoad(@RequestParam String data) {
-        JSONObject jsonObject= new JSONObject(data);
+    public byte[] sessionLoad(@RequestParam String idEntity) {
         BaseEntity dto = null;
 
         String resultData;
         try {
-            Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
+            Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canLoad(entity)){
                 dto = mapper.entityToDto(entity);
                 resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
             }else{
-                resultData= "{\"success\":false,\"message\":\"Error, no puede cargar el " + entityRef + " con id "+jsonObject.get("id").toString()+"\"}";
+                resultData= "{\"success\":false,\"message\":\"Error, no puede cargar el " + entityRef + " con id "+idEntity+"\"}";
             }
         } catch (Exception e) {
             LOGGER.error("load " + entityRef, e);

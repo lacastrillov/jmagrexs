@@ -146,7 +146,7 @@ function ${entityName}ExtStore(){
         Ext.Ajax.request({
             url: Ext.context+"/rest/${entityRef}/${tableName}/load.htm",
             method: "GET",
-            params: 'data='+encodeURIComponent('{"id":'+idEntity+'}'),
+            params: 'idEntity='+idEntity,
             success: function(response){
                 var responseText= Ext.decode(response.responseText);
                 func(responseText.data);
