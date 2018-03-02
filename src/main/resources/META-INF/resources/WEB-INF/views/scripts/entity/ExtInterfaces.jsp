@@ -174,7 +174,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                         if(selector.lastSelected!==null && index===-1){
                             selector.arrayValues.push(selector.lastSelected);
                         }else{
-                            selector.arrayValues= selector.arrayValues.splice(index, 1);
+                            selector.arrayValues.splice(index, 1);
                         }
                         selector.setValue(selector.arrayValues);
                         if(selector.arrayValues.length>0){

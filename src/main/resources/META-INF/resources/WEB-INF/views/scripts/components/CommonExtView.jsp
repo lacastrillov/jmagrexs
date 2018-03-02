@@ -110,7 +110,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                         if(selector.lastSelected!==null && index===-1){
                             selector.arrayValues.push(selector.lastSelected);
                         }else{
-                            selector.arrayValues= selector.arrayValues.splice(index, 1);
+                            selector.arrayValues.splice(index, 1);
                         }
                         selector.setValue(selector.arrayValues);
                         if(selector.arrayValues.length>0){
