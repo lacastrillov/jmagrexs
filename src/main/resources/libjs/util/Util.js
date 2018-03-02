@@ -143,7 +143,6 @@ function Util() {
             if (result === -1) {
                 result = url.length;
             }
-            ;
             valor = url.substring(index + 1, result);
         }
 
@@ -379,24 +378,6 @@ function Util() {
         });
         
         return result;
-    };
-    
-    this.arrayContains= function(array, obj) {
-        for(var i=0; i<array.length; i++){
-            if (array[i]===obj) {
-               return true;
-            }
-        }
-        return false;
-    };
-    
-    this.arrayRemove= function(array, obj) {
-        for(var i=0; i<array.length; i++){
-            if (array[i]===obj) {
-               array.splice(i, 1);
-            }
-        }
-        return array;
     };
     
     this.objectToJSONMenu= function(object, expanded){

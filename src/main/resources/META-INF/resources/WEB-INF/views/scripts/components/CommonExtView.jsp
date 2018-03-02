@@ -106,10 +106,11 @@ function CommonExtView(parentExtController, parentExtView, model){
                 el: {
                     click: function() {
                         var selector=Ext.getCmp('multiselect'+fieldName+'In'+model);
-                        if(selector.lastSelected!==null && !util.arrayContains(selector.arrayValues, selector.lastSelected)){
+                        var index= selector.arrayValues.indexOf(selector.lastSelected);
+                        if(selector.lastSelected!==null && index===-1){
                             selector.arrayValues.push(selector.lastSelected);
                         }else{
-                            selector.arrayValues= util.arrayRemove(selector.arrayValues, selector.lastSelected);
+                            selector.arrayValues= selector.arrayValues.splice(index, 1);
                         }
                         selector.setValue(selector.arrayValues);
                         if(selector.arrayValues.length>0){
