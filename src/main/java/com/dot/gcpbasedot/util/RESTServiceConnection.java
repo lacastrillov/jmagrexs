@@ -6,7 +6,7 @@
 package com.dot.gcpbasedot.util;
 
 import com.dot.gcpbasedot.dto.ConnectionResponse;
-import com.dot.gcpbasedot.dto.ExternalServiceDto;
+import com.dot.gcpbasedot.dto.RESTServiceDto;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,19 +72,19 @@ import org.springframework.web.util.UriComponentsBuilder;
  *
  * @author grupot
  */
-public class ExternalServiceConnection {
+public class RESTServiceConnection {
 
-    private static final Logger LOGGER = Logger.getLogger(ExternalServiceConnection.class);
+    private static final Logger LOGGER = Logger.getLogger(RESTServiceConnection.class);
 
     private final HttpClient client;
     
     private final RestTemplate restTemplate;
 
-    private final ExternalServiceDto externalService;
+    private final RESTServiceDto externalService;
     
     
 
-    public ExternalServiceConnection(ExternalServiceDto externalService) {
+    public RESTServiceConnection(RESTServiceDto externalService) {
         this.externalService = externalService;
         //HttpClient
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(60000).setSocketTimeout(60000).build();
@@ -100,7 +100,7 @@ public class ExternalServiceConnection {
     /**
      * @return the externalService
      */
-    public ExternalServiceDto getExternalService() {
+    public RESTServiceDto getRESTService() {
         return externalService;
     }
 
@@ -122,12 +122,15 @@ public class ExternalServiceConnection {
             stringResult = getStringResult(headers, pathVars, parameters);
         }
         try {
+            if(getRESTService().getOutClass().equals(String.class)){
+                return stringResult;
+            }
             switch (externalService.getResponseDataFormat()) {
-                case ExternalServiceDto.JSON:
-                    result = EntityReflection.jsonToObject(stringResult, getExternalService().getOutClass());
+                case RESTServiceDto.JSON:
+                    result = EntityReflection.jsonToObject(stringResult, getRESTService().getOutClass());
                     break;
-                case ExternalServiceDto.XML:
-                    result = XMLMarshaller.convertXMLToObject(stringResult, getExternalService().getOutClass());
+                case RESTServiceDto.XML:
+                    result = XMLMarshaller.convertXMLToObject(stringResult, getRESTService().getOutClass());
                     break;
                 default:
                     result = stringResult;
@@ -159,14 +162,14 @@ public class ExternalServiceConnection {
         }
         try {
             switch (externalService.getResponseDataFormat()) {
-                case ExternalServiceDto.JSON:
+                case RESTServiceDto.JSON:
                     JSONArray array = new JSONArray(stringResult);
                     for (int i = 0; i < array.length(); i++) {
-                        result.add(EntityReflection.jsonToObject(array.getJSONObject(i).toString(), getExternalService().getOutClass()));
+                        result.add(EntityReflection.jsonToObject(array.getJSONObject(i).toString(), getRESTService().getOutClass()));
                     }
                     break;
-                case ExternalServiceDto.XML:
-                    result= XMLMarshaller.convertXMLToList(stringResult, getExternalService().getOutClass());
+                case RESTServiceDto.XML:
+                    result= XMLMarshaller.convertXMLToList(stringResult, getRESTService().getOutClass());
                     break;
                 default:
                     result.add(stringResult);
@@ -189,7 +192,7 @@ public class ExternalServiceConnection {
      */
     public String getStringResult(Map<String, String> headers, Map<String, String> pathVars, Map<String, String> parameters) throws IOException {
         ConnectionResponse response = null;
-        switch (getExternalService().getMethod()) {
+        switch (getRESTService().getMethod()) {
             case GET:
                 response = get(headers, pathVars, parameters);
                 break;
@@ -227,12 +230,12 @@ public class ExternalServiceConnection {
             headers= new HashMap<>();
         }
         if (body != null) {
-            switch (getExternalService().getInputDataFormat()) {
-                case ExternalServiceDto.JSON:
+            switch (getRESTService().getInputDataFormat()) {
+                case RESTServiceDto.JSON:
                     stringData = Util.objectToJson(body);
                     headers.put("Content-Type", "application/json");
                     break;
-                case ExternalServiceDto.XML:
+                case RESTServiceDto.XML:
                     stringData = XMLMarshaller.convertObjectToXML(body);
                     headers.put("Content-Type", "application/xml");
                     break;
@@ -241,7 +244,7 @@ public class ExternalServiceConnection {
                     break;
             }
         }
-        switch (getExternalService().getMethod()) {
+        switch (getRESTService().getMethod()) {
             case POST:
                 response = post(headers, pathVars, stringData);
                 break;
@@ -299,7 +302,7 @@ public class ExternalServiceConnection {
         headers.setAccept(accepts);
         org.springframework.http.HttpEntity<String> entity;
         
-        if(getExternalService().getMethod().equals(HttpMethod.POST)){
+        if(getRESTService().getMethod().equals(HttpMethod.POST)){
             if(parameters!=null){
                 headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
                 MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
@@ -315,7 +318,7 @@ public class ExternalServiceConnection {
             }
         }else{
             entity= new org.springframework.http.HttpEntity<>(headers);
-            ResponseEntity res= restTemplate.exchange(url, getExternalService().getMethod(), entity, String.class);
+            ResponseEntity res= restTemplate.exchange(url, getRESTService().getMethod(), entity, String.class);
             result= res.getBody().toString();
         }
         return result;
@@ -660,7 +663,7 @@ public class ExternalServiceConnection {
     }
 
     private String buildFullUrl(Map<String, String> pathVars) throws UnsupportedEncodingException {
-        String endpoint = getExternalService().getEndpoint();
+        String endpoint = getRESTService().getEndpoint();
         if (pathVars != null) {
             for (Map.Entry<String, String> pathVar : pathVars.entrySet()) {
                 endpoint = endpoint.replaceAll("\\{" + pathVar.getKey() + "}", pathVar.getValue());

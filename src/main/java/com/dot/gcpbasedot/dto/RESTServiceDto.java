@@ -11,7 +11,7 @@ import org.springframework.http.HttpMethod;
  *
  * @author grupot
  */
-public class ExternalServiceDto {
+public class RESTServiceDto {
     
     private String processName;
     
@@ -38,12 +38,12 @@ public class ExternalServiceDto {
     public static final String JSON="JSON", XML="XML", HTML="HTML", PLAIN="PLAIN";
     
     
-    public ExternalServiceDto(String processName, String endpoint, HttpMethod method, Class inClass){
+    public RESTServiceDto(String processName, String endpoint, HttpMethod method, Class inClass){
         this.processName= processName;
         this.endpoint= endpoint;
         this.method= method;
         this.inClass= inClass;
-        this.outClass= null;
+        this.outClass= String.class;
         this.modeSendingData= IN_PARAMETERS;
         this.inputDataFormat= JSON;
         this.responseDataFormat= JSON;

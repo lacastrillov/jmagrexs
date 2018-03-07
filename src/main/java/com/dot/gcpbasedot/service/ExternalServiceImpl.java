@@ -7,10 +7,10 @@ package com.dot.gcpbasedot.service;
 
 import com.dot.gcpbasedot.annotation.HttpHeader;
 import com.dot.gcpbasedot.annotation.PathVar;
-import com.dot.gcpbasedot.dto.ExternalServiceDto;
+import com.dot.gcpbasedot.dto.RESTServiceDto;
 import com.dot.gcpbasedot.dto.SOAPServiceDto;
 import com.dot.gcpbasedot.reflection.EntityReflection;
-import com.dot.gcpbasedot.util.ExternalServiceConnection;
+import com.dot.gcpbasedot.util.RESTServiceConnection;
 import com.dot.gcpbasedot.util.FileService;
 import com.dot.gcpbasedot.util.SimpleSOAPClient;
 import com.dot.gcpbasedot.util.Util;
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.soap.SOAPException;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 /**
@@ -29,7 +30,9 @@ import org.json.JSONObject;
  */
 public abstract class ExternalServiceImpl implements ExternalService {
     
-    protected final Map<String, ExternalServiceConnection> externalServiceConnections = new HashMap<>();
+    protected static final Logger LOGGER = Logger.getLogger(ExternalServiceImpl.class);
+    
+    protected final Map<String, RESTServiceConnection> restServiceConnections = new HashMap<>();
     
     protected final Map<String, SimpleSOAPClient> simpleSOAPClients = new HashMap<>();
     
@@ -39,14 +42,14 @@ public abstract class ExternalServiceImpl implements ExternalService {
 
     protected final Map<String, Class> outDtos = new HashMap<>();
     
-    private String mainProcessRef;
+    private String baseEnvelopeFile;
     
     
-    protected void enableExternalService(ExternalServiceDto externalService){
-        ExternalServiceConnection externalServiceConnection= new ExternalServiceConnection(externalService);
-        externalServiceConnections.put(externalService.getProcessName(), externalServiceConnection);
-        inDtos.put(externalService.getProcessName(), externalService.getInClass());
-        outDtos.put(externalService.getProcessName(), externalService.getOutClass());
+    protected void enableRESTService(RESTServiceDto restService){
+        RESTServiceConnection restServiceConnection= new RESTServiceConnection(restService);
+        restServiceConnections.put(restService.getProcessName(), restServiceConnection);
+        inDtos.put(restService.getProcessName(), restService.getInClass());
+        outDtos.put(restService.getProcessName(), restService.getOutClass());
     }
     
     protected void enableSOAPClient(SOAPServiceDto soapService){
@@ -55,13 +58,55 @@ public abstract class ExternalServiceImpl implements ExternalService {
         inDtos.put(soapService.getProcessName(), soapService.getInClass());
     }
     
-    protected String callExternalService(String processName, Object data) throws IOException{
-        ExternalServiceConnection externalServiceConnection= externalServiceConnections.get(processName);
-        ExternalServiceDto externalService= externalServiceConnection.getExternalService();
+    @Override
+    public boolean isRESTService(String processName){
+        return restServiceConnections.containsKey(processName);
+    }
+    
+    @Override
+    public boolean isSOAPService(String processName){
+        return simpleSOAPClients.containsKey(processName);
+    }
+    
+    @Override
+    public RESTServiceDto getRESTService(String processName){
+        if(isRESTService(processName)){
+            return restServiceConnections.get(processName).getRESTService();
+        }
+        return null;
+    }
+    
+    @Override
+    public SOAPServiceDto getSOAPService(String processName){
+        if(isSOAPService(processName)){
+            return simpleSOAPClients.get(processName).getSoapService();
+        }
+        return null;
+    }
+    
+    public void setBaseEnvelopeFile(String baseEnvelopeFile){
+        this.baseEnvelopeFile= baseEnvelopeFile;
+    }
+    
+    @Override
+    public Object callService(String processName, Object data){
+        try{
+            if(isRESTService(processName)){
+                return callRESTService(processName, data);
+            }else if(isSOAPService(processName)){
+                return callSOAPService(processName, data);
+            }
+        }catch(IOException | SOAPException e){
+            LOGGER.error("ERROR callService "+processName, e);
+        }
+        return null;
+    }
+    
+    @Override
+    public Object callRESTService(String processName, Object data) throws IOException {
+        RESTServiceConnection restServiceConnection= restServiceConnections.get(processName);
+        RESTServiceDto externalService= restServiceConnection.getRESTService();
         JSONObject jsonData= new JSONObject(Util.objectToJson(data));
-        /*if(response!=null){
-            response.addHeader("response-data-format", externalService.getResponseDataFormat());
-        }*/
         
         Map<String, String> headers= null;
         Map<String, String> pathVars= null;
@@ -90,9 +135,9 @@ public abstract class ExternalServiceImpl implements ExternalService {
         }
         
         if(jsonData.names()!=null && jsonData.names().length()>0){
-            if(externalService.getModeSendingData().equals(ExternalServiceDto.IN_BODY)){
+            if(externalService.getModeSendingData().equals(RESTServiceDto.IN_BODY)){
                 body= EntityReflection.jsonToObject(jsonData.toString(), externalService.getInClass());
-            }else if(externalService.getModeSendingData().equals(ExternalServiceDto.IN_PARAMETERS)){
+            }else if(externalService.getModeSendingData().equals(RESTServiceDto.IN_PARAMETERS)){
                 parameters= new HashMap<>();
                 for(int i = 0; i<jsonData.names().length(); i++){
                     String fieldName= jsonData.names().getString(i);
@@ -101,25 +146,19 @@ public abstract class ExternalServiceImpl implements ExternalService {
             }
         }
         
-        String jsonOut;
-        if(body!=null){
-            jsonOut= externalServiceConnection.getStringResult(headers, pathVars, body);
-        }else{
-            jsonOut= externalServiceConnection.getStringResult(headers, pathVars, parameters);
-        }
-        
-        return jsonOut;
+        return restServiceConnection.getObjectResult(headers, pathVars, parameters, body);
     }
     
-    protected String callSOAPService(String processName, Object data) throws SOAPException, IOException{
+    @Override
+    public String callSOAPService(String processName, Object data) throws SOAPException, IOException{
         SimpleSOAPClient simpleSOAPClient= simpleSOAPClients.get(processName);
         JSONObject jsonData= new JSONObject(Util.objectToJson(data));
-        /*if(response!=null){
-            response.addHeader("response-data-format", "JSON");
-        }*/
         String xmlRequestBody= null;
         if(!envelopeMap.containsKey(processName)){
-            InputStream is= this.getClass().getClassLoader().getResourceAsStream("soap_envelopes/"+mainProcessRef+"-"+processName+".xml");
+            if(baseEnvelopeFile==null){
+                baseEnvelopeFile= this.getClass().getSimpleName();
+            }
+            InputStream is= this.getClass().getClassLoader().getResourceAsStream("soap_envelopes/"+baseEnvelopeFile+"-"+processName+".xml");
             envelopeMap.put(processName, FileService.getStringFromInputStream(is));
             xmlRequestBody= envelopeMap.get(processName);
         }

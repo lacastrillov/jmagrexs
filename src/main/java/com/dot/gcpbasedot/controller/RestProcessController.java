@@ -1,21 +1,16 @@
 package com.dot.gcpbasedot.controller;
 
 import com.dot.gcpbasedot.annotation.DoProcess;
-import com.dot.gcpbasedot.annotation.HttpHeader;
-import com.dot.gcpbasedot.annotation.PathVar;
-import com.dot.gcpbasedot.dto.ExternalServiceDto;
+import com.dot.gcpbasedot.dto.RESTServiceDto;
 import com.dot.gcpbasedot.dto.SOAPServiceDto;
 import com.dot.gcpbasedot.interfaces.LogProcesInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
+import com.dot.gcpbasedot.service.ExternalService;
 import com.dot.gcpbasedot.util.Util;
-import com.dot.gcpbasedot.util.ExternalServiceConnection;
-import com.dot.gcpbasedot.util.FileService;
-import com.dot.gcpbasedot.util.SimpleSOAPClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -30,7 +25,6 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.soap.SOAPException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -59,9 +53,7 @@ public abstract class RestProcessController {
 
     protected final Map<String, Class> outDtos = new HashMap<>();
     
-    protected final Map<String, ExternalServiceConnection> externalServiceConnections = new HashMap<>();
-    
-    protected final Map<String, SimpleSOAPClient> simpleSOAPClients = new HashMap<>();
+    private ExternalService externalService;
     
     private String mainProcessRef;
     
@@ -78,17 +70,8 @@ public abstract class RestProcessController {
         this.logProcessService= logProcessService;
     }
     
-    protected void enableExternalService(ExternalServiceDto externalService){
-        ExternalServiceConnection externalServiceConnection= new ExternalServiceConnection(externalService);
-        externalServiceConnections.put(externalService.getProcessName(), externalServiceConnection);
-        inDtos.put(externalService.getProcessName(), externalService.getInClass());
-        outDtos.put(externalService.getProcessName(), externalService.getOutClass());
-    }
-    
-    protected void enableSOAPClient(SOAPServiceDto soapService){
-        SimpleSOAPClient simpleSOATClient= new SimpleSOAPClient(soapService);
-        simpleSOAPClients.put(soapService.getProcessName(), simpleSOATClient);
-        inDtos.put(soapService.getProcessName(), soapService.getInClass());
+    protected void enableExternalService(ExternalService externalService){
+        this.externalService= externalService;
     }
     
     protected String getClientId(){
@@ -145,18 +128,25 @@ public abstract class RestProcessController {
         long initTime= initDate.getTime();
             
         try {
-            if(externalServiceConnections.get(processName)!=null){
-                jsonOut= callExternalService(processName, jsonIn, response);
-            }else if(simpleSOAPClients.get(processName)!=null){
-                jsonOut= callSOAPService(processName, jsonIn, response);
+            String responseDataFormat= RESTServiceDto.JSON;
+            if(externalService.isRESTService(processName)){
+                responseDataFormat= externalService.getRESTService(processName).getResponseDataFormat();
+                Object outObject= (String) externalService.callRESTService(processName, jsonIn);
+                if(externalService.getRESTService(processName).getOutClass().equals(String.class)){
+                    jsonOut= (String) outObject;
+                }else{
+                    jsonOut= Util.objectToJson(outObject);
+                }
+            }else if(externalService.isSOAPService(processName)){
+                jsonOut= externalService.callSOAPService(processName, jsonIn);
             }else{
                 Method method = this.getClass().getMethod(processName, inDtos.get(processName));
                 Object inObject= EntityReflection.jsonToObject(jsonIn, inDtos.get(processName));
                 Object outObject = method.invoke(this, inObject);
                 jsonOut= Util.objectToJson(outObject);
-                if(response!=null){
-                    response.addHeader("response-data-format", ExternalServiceDto.JSON);
-                }
+            }
+            if(response!=null){
+                response.addHeader("response-data-format", responseDataFormat);
             }
             jsonResult.put("success", true);
             jsonResult.put("message", "Proceso realizado");
@@ -185,80 +175,6 @@ public abstract class RestProcessController {
         } catch (UnsupportedEncodingException ex) {
             return null;
         }
-    }
-    
-    private String callExternalService(String processName, String data, HttpServletResponse response) throws IOException{
-        ExternalServiceConnection externalServiceConnection= externalServiceConnections.get(processName);
-        ExternalServiceDto externalService= externalServiceConnection.getExternalService();
-        JSONObject jsonData= new JSONObject(data);
-        if(response!=null){
-            response.addHeader("response-data-format", externalService.getResponseDataFormat());
-        }
-        
-        Map<String, String> headers= null;
-        Map<String, String> pathVars= null;
-        Map<String, String> parameters= null;
-        Object body= null;
-        
-        //Headers
-        List<Field> headerFields= EntityReflection.getEntityAnnotatedFields(externalService.getInClass(), HttpHeader.class);
-        if(headerFields.size()>0){
-            headers= new HashMap<>();
-            for(Field field: headerFields){
-                HttpHeader an= field.getAnnotation(HttpHeader.class);
-                headers.put(an.value(), jsonData.get(field.getName()).toString());
-                jsonData.remove(field.getName());
-            }
-        }
-        
-        //Path Vars
-        List<Field> pathVarFields= EntityReflection.getEntityAnnotatedFields(externalService.getInClass(), PathVar.class);
-        if(pathVarFields.size()>0){
-            pathVars= new HashMap<>();
-            for(Field field: pathVarFields){
-                pathVars.put(field.getName(), jsonData.get(field.getName()).toString());
-                jsonData.remove(field.getName());
-            }
-        }
-        
-        if(jsonData.names()!=null && jsonData.names().length()>0){
-            if(externalService.getModeSendingData().equals(ExternalServiceDto.IN_BODY)){
-                body= EntityReflection.jsonToObject(jsonData.toString(), externalService.getInClass());
-            }else if(externalService.getModeSendingData().equals(ExternalServiceDto.IN_PARAMETERS)){
-                parameters= new HashMap<>();
-                for(int i = 0; i<jsonData.names().length(); i++){
-                    String fieldName= jsonData.names().getString(i);
-                    parameters.put(fieldName, jsonData.get(fieldName).toString());
-                }
-            }
-        }
-        
-        String jsonOut;
-        if(body!=null){
-            jsonOut= externalServiceConnection.getStringResult(headers, pathVars, body);
-        }else{
-            jsonOut= externalServiceConnection.getStringResult(headers, pathVars, parameters);
-        }
-        
-        return jsonOut;
-    }
-    
-    private String callSOAPService(String processName, String data, HttpServletResponse response) throws SOAPException, IOException{
-        SimpleSOAPClient simpleSOAPClient= simpleSOAPClients.get(processName);
-        JSONObject jsonData= new JSONObject(data);
-        if(response!=null){
-            response.addHeader("response-data-format", "JSON");
-        }
-        String xmlRequestBody= null;
-        if(!envelopeMap.containsKey(processName)){
-            InputStream is= this.getClass().getClassLoader().getResourceAsStream("soap_envelopes/"+mainProcessRef+"-"+processName+".xml");
-            envelopeMap.put(processName, FileService.getStringFromInputStream(is));
-            xmlRequestBody= envelopeMap.get(processName);
-        }
-        xmlRequestBody= simpleSOAPClient.mergeDataInEnvelope(jsonData, envelopeMap.get(processName));
-        String jsonOut= simpleSOAPClient.sendMessageGetJSON(xmlRequestBody).toString();
-        
-        return jsonOut;
     }
     
     @RequestMapping(value = "/diskupload/{processName}/{processId}.htm")
@@ -348,11 +264,15 @@ public abstract class RestProcessController {
             logProcess.setRegistrationDate(initDate);
             logProcess.setSuccess(success);
             
-            if(externalServiceConnections.get(processName)!=null){
-                ExternalServiceConnection externalServiceConnection= externalServiceConnections.get(processName);
-                ExternalServiceDto externalService= externalServiceConnection.getExternalService();
-                logProcess.setOutputDataFormat(externalService.getResponseDataFormat());
-                if(!externalService.isSaveResponseInLog()){
+            if(externalService.isRESTService(processName)){
+                RESTServiceDto restService= externalService.getRESTService(processName);
+                logProcess.setOutputDataFormat(restService.getResponseDataFormat());
+                if(!restService.isSaveResponseInLog()){
+                    logProcess.setDataOut("");
+                }
+            }else if(externalService.isSOAPService(processName)){
+                SOAPServiceDto soapService= externalService.getSOAPService(processName);
+                if(!soapService.isSaveResponseInLog()){
                     logProcess.setDataOut("");
                 }
             }
