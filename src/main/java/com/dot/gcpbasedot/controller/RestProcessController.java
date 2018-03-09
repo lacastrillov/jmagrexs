@@ -130,15 +130,19 @@ public abstract class RestProcessController {
         try {
             String responseDataFormat= RESTServiceDto.JSON;
             if(externalService.isRESTService(processName)){
-                responseDataFormat= externalService.getRESTService(processName).getResponseDataFormat();
-                Object outObject= (String) externalService.callRESTService(processName, jsonIn);
-                if(externalService.getRESTService(processName).getOutClass().equals(String.class)){
+                RESTServiceDto restService= externalService.getRESTService(processName);
+                responseDataFormat= restService.getResponseDataFormat();
+                Object inObject= EntityReflection.jsonToObject(jsonIn, restService.getInClass());
+                Object outObject= (String) externalService.callRESTService(processName, inObject);
+                if(restService.getOutClass().equals(String.class)){
                     jsonOut= (String) outObject;
                 }else{
                     jsonOut= Util.objectToJson(outObject);
                 }
             }else if(externalService.isSOAPService(processName)){
-                jsonOut= externalService.callSOAPService(processName, jsonIn);
+                SOAPServiceDto soapService= externalService.getSOAPService(processName);
+                Object inObject= EntityReflection.jsonToObject(jsonIn, soapService.getInClass());
+                jsonOut= externalService.callSOAPService(processName, inObject);
             }else{
                 Method method = this.getClass().getMethod(processName, inDtos.get(processName));
                 Object inObject= EntityReflection.jsonToObject(jsonIn, inDtos.get(processName));
@@ -244,15 +248,30 @@ public abstract class RestProcessController {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             sdf.setTimeZone(TimeZone.getTimeZone("EST"));
 
-            Object inObject= EntityReflection.jsonToObject(dataIn, inDtos.get(processName), true);
-            String minJsonIn= Util.objectToJson(inObject);
-
             LogProcesInterface logProcess= (LogProcesInterface) EntityReflection.getObjectForClass(logProcessClass);
             try{
                 logProcess.setClientId(getClientId());
             }catch(Exception e){
                 logProcess.setClientId("Anonimo");
             }
+            Object inObject;
+            if(externalService.isRESTService(processName)){
+                RESTServiceDto restService= externalService.getRESTService(processName);
+                logProcess.setOutputDataFormat(restService.getResponseDataFormat());
+                inObject= EntityReflection.jsonToObject(dataIn, restService.getInClass(), true);
+                if(!restService.isSaveResponseInLog()){
+                    logProcess.setDataOut("");
+                }
+            }else if(externalService.isSOAPService(processName)){
+                SOAPServiceDto soapService= externalService.getSOAPService(processName);
+                inObject= EntityReflection.jsonToObject(dataIn, soapService.getInClass(), true);
+                if(!soapService.isSaveResponseInLog()){
+                    logProcess.setDataOut("");
+                }
+            }else{
+                inObject= EntityReflection.jsonToObject(dataIn, inDtos.get(processName), true);
+            }
+            String minJsonIn= Util.objectToJson(inObject);
             logProcess.setDataIn(minJsonIn);
             logProcess.setDataOut(dataOut);
             logProcess.setOutputDataFormat("JSON");
