@@ -9,6 +9,7 @@ import com.dot.gcpbasedot.util.Util;
 import com.dot.gcpbasedot.util.XMLMarshaller;
 import com.dot.gcpbasedot.dto.ResultListCallback;
 import com.dot.gcpbasedot.mapper.EntityMapper;
+import com.dot.gcpbasedot.util.CSVService;
 import com.dot.gcpbasedot.util.ExcelService;
 import com.dot.gcpbasedot.util.FileService;
 import java.awt.image.BufferedImage;
@@ -167,6 +168,25 @@ public abstract class RestEntityController {
         }
     }
     
+    @RequestMapping(value = "/find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public void findCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
+            HttpServletResponse response) {
+        
+        response.setContentType("text/csv; charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + entityRef + "_report.csv\"");
+
+        try {
+            List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            
+            response.getWriter().print(CSVService.generateCSVReport(listEntities, dtoClass));
+        } catch (Exception e) {
+            LOGGER.error("find " + entityRef, e);
+        }
+    }
+    
     @RequestMapping(value = "/find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public byte[] findYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
@@ -263,6 +283,26 @@ public abstract class RestEntityController {
             List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
             
             ExcelService.generateExcelReport(listDtos, response.getOutputStream(), dtoReportClass);
+        } catch (Exception e) {
+            LOGGER.error("find " + entityRef + " - " + reportName, e);
+        }
+    }
+    
+    @RequestMapping(value = "/report/csv/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public void reportCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
+        
+        response.setContentType("text/csv; charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.csv\"");
+
+        try {
+            Class dtoReportClass= Class.forName(dtoName);
+            List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
+            
+            response.getWriter().print(CSVService.generateCSVReport(listDtos, dtoReportClass));
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
         }

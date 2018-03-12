@@ -59,6 +59,18 @@ public abstract class RestSessionController extends RestEntityController {
         super.findXls(sessionFilter, query, start, limit, page, sort, dir, response);
     }
     
+    @RequestMapping(value = "/session_find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public void sessionFindCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
+            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
+            HttpServletResponse response) {
+        
+        String sessionFilter= getSessionFilters(filter, null);
+        
+        super.findCsv(sessionFilter, query, start, limit, page, sort, dir, response);
+    }
+    
     @RequestMapping(value = "/session_find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public byte[] sessionFindYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
