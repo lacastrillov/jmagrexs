@@ -506,7 +506,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     dockedItems: [{
                         weight: 2,
                         xtype: 'toolbar',
-                        dock: 'bottom',
+                        margin  : '5 0 5 0',
+                        dock: 'top',
                         items: [{
                             xtype: 'tbtext',
                             text: '<b>@lacv</b>'
