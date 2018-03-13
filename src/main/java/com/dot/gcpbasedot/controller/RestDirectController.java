@@ -8,6 +8,7 @@ import com.dot.gcpbasedot.util.XMLMarshaller;
 import com.dot.gcpbasedot.dto.ResultListCallback;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
 import com.dot.gcpbasedot.service.JdbcDirectService;
+import com.dot.gcpbasedot.util.CSVService;
 import com.dot.gcpbasedot.util.ExcelService;
 import com.dot.gcpbasedot.util.FileService;
 import java.io.InputStream;
@@ -115,6 +116,26 @@ public abstract class RestDirectController {
             List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
             
             ExcelService.generateExcelReport(listItems, response.getOutputStream(), columns);
+        } catch (Exception e) {
+            LOGGER.error("find " + tableName, e);
+        }
+    }
+    
+    @RequestMapping(value = "/{tableName}/find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public void findCsv(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
+            HttpServletResponse response) {
+        
+        response.setContentType("text/csv; charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.csv\"");
+
+        try {
+            List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
+            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
+            
+            response.getWriter().print(CSVService.generateCSVReport(listItems, columns));
         } catch (Exception e) {
             LOGGER.error("find " + tableName, e);
         }

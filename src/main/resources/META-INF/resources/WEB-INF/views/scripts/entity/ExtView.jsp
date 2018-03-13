@@ -414,6 +414,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 var urlFind= store.proxy.api.read.replace("find.htm","find/xls.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
+                            case "csv":
+                                var urlFind= store.proxy.api.read.replace("find.htm","find/csv.htm");
+                                window.open(urlFind+data,'_blank');
+                                break;
                         }
                     }
                 }
@@ -557,6 +561,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: 'Exportar',
                             //iconCls: 'add16',
                             menu: [
+                                {text: 'A CSV', handler: function(){this.exportTo('csv');}, scope: this},
                                 {text: 'A Excel', handler: function(){this.exportTo('xls');}, scope: this},
                                 {text: 'A JSON', handler: function(){this.exportTo('json');}, scope: this},
                                 {text: 'A XML', handler: function(){this.exportTo('xml');}, scope: this}]
