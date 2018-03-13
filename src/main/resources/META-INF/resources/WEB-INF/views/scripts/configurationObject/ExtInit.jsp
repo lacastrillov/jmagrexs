@@ -9,7 +9,7 @@ function EntityExtInit(){
 
         Ext.Loader.setPath('Ext.ux', ExtJSLib+'/examples/ux');
         
-        Ext.Ajax.timeout = 60000;
+        Instance.setAjaxTimeout(60000);
 
         Ext.require([
             'Ext.tip.QuickTipManager',
@@ -47,6 +47,13 @@ function EntityExtInit(){
             mvcExt.setHomeRequest("/${entityRef}");
             mvcExt.processFirtsRequest();
         });
+    };
+    
+    Instance.setAjaxTimeout= function(value){
+        Ext.Ajax.timeout= value;
+        Ext.override(Ext.form.Basic, { timeout: Ext.Ajax.timeout / 1000 });
+        Ext.override(Ext.data.proxy.Server, { timeout: Ext.Ajax.timeout });
+        Ext.override(Ext.data.Connection, { timeout: Ext.Ajax.timeout });
     };
     
     Instance.init();

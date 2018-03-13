@@ -77,8 +77,6 @@ public abstract class RestEntityController {
     @Autowired
     private VelocityEngine velocityEngine;
     
-    VelocityEngine vv;
-    
     @Autowired
     @Value("${static.domain.url}")
     public String LOCAL_DOMAIN;

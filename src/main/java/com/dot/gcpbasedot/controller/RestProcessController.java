@@ -129,7 +129,7 @@ public abstract class RestProcessController {
             
         try {
             String responseDataFormat= RESTServiceDto.JSON;
-            if(externalService.isRESTService(processName)){
+            if(externalService!=null && externalService.isRESTService(processName)){
                 RESTServiceDto restService= externalService.getRESTService(processName);
                 responseDataFormat= restService.getResponseDataFormat();
                 Object inObject= EntityReflection.jsonToObject(jsonIn, restService.getInClass());
@@ -139,7 +139,7 @@ public abstract class RestProcessController {
                 }else{
                     jsonOut= Util.objectToJson(outObject);
                 }
-            }else if(externalService.isSOAPService(processName)){
+            }else if(externalService!=null && externalService.isSOAPService(processName)){
                 SOAPServiceDto soapService= externalService.getSOAPService(processName);
                 Object inObject= EntityReflection.jsonToObject(jsonIn, soapService.getInClass());
                 jsonOut= externalService.callSOAPService(processName, inObject);
@@ -255,14 +255,14 @@ public abstract class RestProcessController {
                 logProcess.setClientId("Anonimo");
             }
             Object inObject;
-            if(externalService.isRESTService(processName)){
+            if(externalService!=null && externalService.isRESTService(processName)){
                 RESTServiceDto restService= externalService.getRESTService(processName);
                 logProcess.setOutputDataFormat(restService.getResponseDataFormat());
                 inObject= EntityReflection.jsonToObject(dataIn, restService.getInClass(), true);
                 if(!restService.isSaveResponseInLog()){
                     logProcess.setDataOut("");
                 }
-            }else if(externalService.isSOAPService(processName)){
+            }else if(externalService!=null && externalService.isSOAPService(processName)){
                 SOAPServiceDto soapService= externalService.getSOAPService(processName);
                 inObject= EntityReflection.jsonToObject(dataIn, soapService.getInClass(), true);
                 if(!soapService.isSaveResponseInLog()){
@@ -282,19 +282,6 @@ public abstract class RestProcessController {
             logProcess.setRecordTime(Time.valueOf(sdf.format(new Date())));
             logProcess.setRegistrationDate(initDate);
             logProcess.setSuccess(success);
-            
-            if(externalService.isRESTService(processName)){
-                RESTServiceDto restService= externalService.getRESTService(processName);
-                logProcess.setOutputDataFormat(restService.getResponseDataFormat());
-                if(!restService.isSaveResponseInLog()){
-                    logProcess.setDataOut("");
-                }
-            }else if(externalService.isSOAPService(processName)){
-                SOAPServiceDto soapService= externalService.getSOAPService(processName);
-                if(!soapService.isSaveResponseInLog()){
-                    logProcess.setDataOut("");
-                }
-            }
             
             logProcessService.create(logProcess);
             
