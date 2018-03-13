@@ -380,8 +380,6 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 Instance.reloadPageStore(1);
             }
         }, this);
-        combobox.labelWidth= 80;
-        combobox.width= 250;
         combobox.setValue("${reportConfig.defaultOrderBy}");
         
         return combobox;
@@ -396,8 +394,6 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 Instance.reloadPageStore(1);
             }
         }, this);
-        combobox.labelWidth= 60;
-        combobox.width= 150;
         combobox.setValue("${reportConfig.defaultOrderDir}");
         
         return combobox;
@@ -426,14 +422,20 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                     dockedItems: [ {
                         weight: 2,
                         xtype: 'toolbar',
-                        dock: 'bottom',
+                        margin  : '5 0 5 0',
+                        dock: 'top',
                         items: [{
                             xtype: 'tbtext',
                             text: '<b>@lacv</b>'
                         }, '|',
                         getComboboxLimit(this.store),
-                        getComboboxOrderBy(this.store),
-                        getComboboxOrderDir(this.store)
+                        {
+                            text: 'Ordenar',
+                            //iconCls: 'add16',
+                            menu: [
+                                getComboboxOrderBy(this.store),
+                                getComboboxOrderDir(this.store)]
+                        }
                         <c:if test="${reportConfig.visibleExportButton}">
                         ,{
                             xtype:'splitbutton',

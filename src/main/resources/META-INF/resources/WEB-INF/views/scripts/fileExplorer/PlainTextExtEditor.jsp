@@ -11,8 +11,8 @@
             #contentEditor:focus { background: transparent; }
             #message {color:#15428B; font-weight: bold; font-size: 12px; margin-left: 10px; margin-top: 10px;}
         </style>
-        <script type="text/javascript"  src="/js/libs/jquery/jquery-3.1.0.min.js"></script>
-        <script src="/js/util/Util.js"></script>
+        <script src="<%=request.getContextPath()%>/libjs/jquery/jquery-3.1.0.min.js"></script>
+        <script src="<%=request.getContextPath()%>/libjs/util/Util.js"></script>
         <script>
             function PlainTextExtEditor() {
                 

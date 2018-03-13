@@ -467,9 +467,23 @@ public abstract class RestEntityController {
                             }
                             break;
                     }
-                    for(BaseEntity entity: entities){
+                    
+                    //Buscar entidades existentes
+                    List ids= new ArrayList<>();
+                    for(BaseEntity newEntity: entities){
+                        ids.add(newEntity.getId());
+                    }
+                    List<? extends BaseEntity> existingEntities = service.listAllByIds(ids);
+                    
+                    
+                    for(BaseEntity newEntity: entities){
                         try{
-                            service.insert(entity);
+                            BaseEntity entity= (BaseEntity) service.loadById(newEntity.getId());
+                            if(entity==null){
+                                service.insert(entity);
+                            }else{
+                                service.update(newEntity);
+                            }
                             listDtos.add(entity);
                         }catch(Exception e){
                             LOGGER.error("importData " + entityRef, e);

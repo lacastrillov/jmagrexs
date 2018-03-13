@@ -296,8 +296,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 Instance.reloadPageStore(1);
             }
         }, this);
-        combobox.labelWidth= 80;
-        combobox.width= 250;
         combobox.setValue("${viewConfig.defaultOrderBy}");
         
         return combobox;
@@ -312,8 +310,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 Instance.reloadPageStore(1);
             }
         }, this);
-        combobox.labelWidth= 60;
-        combobox.width= 150;
         combobox.setValue("${viewConfig.defaultOrderDir}");
         
         return combobox;
@@ -345,7 +341,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     dockedItems: [{
                         weight: 2,
                         xtype: 'toolbar',
-                        dock: 'bottom',
+                        margin  : '5 0 5 0',
+                        dock: 'top',
                         items: [{
                             xtype: 'tbtext',
                             text: '<b>@lacv</b>'
@@ -386,8 +383,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         },
                         </c:if>
                         getComboboxLimit(this.store),
-                        getComboboxOrderBy(this.store),
-                        getComboboxOrderDir(this.store)
+                        {
+                            text: 'Ordenar',
+                            //iconCls: 'add16',
+                            menu: [
+                                getComboboxOrderBy(this.store),
+                                getComboboxOrderDir(this.store)]
+                        }
                         <c:if test="${viewConfig.visibleExportButton}">
                         ,{
                             text: 'Exportar',
