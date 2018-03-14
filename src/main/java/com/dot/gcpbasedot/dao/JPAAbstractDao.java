@@ -125,7 +125,9 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      */
     @Override
     public List<T> listAllByIds(List<Object> entityIds) {
-        return (List<T>) this.getEntityManager().find(getPersistentClass(), entityIds);
+        Parameters p= new Parameters();
+        p.whereIn("id", entityIds.toArray());
+        return findByParameters(p);
     }
 
     /**
@@ -153,12 +155,9 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      */
     @Override
     public void removeAllByIds(List<Object> entityIds) {
-        StringBuilder jpql = new StringBuilder("DELETE FROM ");
-        jpql.append(getPersistentClass().getSimpleName());
-        jpql.append(" AS o WHERE o.id IN (:ids) ");
-        Query q = this.getEntityManager().createQuery(jpql.toString());
-        q.setParameter("ids", entityIds);
-        q.executeUpdate();
+        Parameters p= new Parameters();
+        p.whereIn("id", entityIds.toArray());
+        removeByParameters(p);
     }
     
     /**

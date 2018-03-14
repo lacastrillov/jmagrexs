@@ -70,10 +70,10 @@ public class CSVService {
                                 report.append(textValue).append(DEFAULT_SEPARATOR);
                             }
                         }catch(Exception e){
-                            report.append(" ").append(DEFAULT_SEPARATOR);
+                            report.append("").append(DEFAULT_SEPARATOR);
                         }
                     }else{
-                        report.append(" ").append(DEFAULT_SEPARATOR);
+                        report.append("").append(DEFAULT_SEPARATOR);
                     }
                 }
             }
@@ -105,10 +105,10 @@ public class CSVService {
                             report.append(value.toString()).append(DEFAULT_SEPARATOR);
                         }
                     }catch(Exception e){
-                        report.append(" ").append(DEFAULT_SEPARATOR);
+                        report.append("").append(DEFAULT_SEPARATOR);
                     }
                 }else{
-                    report.append(" ").append(DEFAULT_SEPARATOR);
+                    report.append("").append(DEFAULT_SEPARATOR);
                 }
             }
             report.append("\n");

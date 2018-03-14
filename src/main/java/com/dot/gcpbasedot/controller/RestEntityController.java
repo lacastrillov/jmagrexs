@@ -21,8 +21,10 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -474,15 +476,18 @@ public abstract class RestEntityController {
                         ids.add(newEntity.getId());
                     }
                     List<? extends BaseEntity> existingEntities = service.listAllByIds(ids);
+                    Set existingIds= new HashSet();
+                    for(BaseEntity entity: existingEntities){
+                        existingIds.add(entity.getId());
+                    }
                     
-                    
-                    for(BaseEntity newEntity: entities){
+                    //Insertar o actualizar la entidad
+                    for(BaseEntity entity: entities){
                         try{
-                            BaseEntity entity= (BaseEntity) service.loadById(newEntity.getId());
-                            if(entity==null){
+                            if(!existingIds.contains(entity.getId())){
                                 service.insert(entity);
                             }else{
-                                service.update(newEntity);
+                                service.update(entity);
                             }
                             listDtos.add(entity);
                         }catch(Exception e){
