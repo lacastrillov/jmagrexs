@@ -13,12 +13,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.web.util.HtmlUtils;
 
 public class CSVService {
     
-    private static final char DEFAULT_SEPARATOR = ';';
+    private static final String DEFAULT_SEPARATOR = ";";
     
     private static final FieldConfigurationByAnnotations FCBA= new FieldConfigurationByAnnotations();
     
@@ -114,6 +115,27 @@ public class CSVService {
             report.append("\n");
         }
         return report.toString().replaceAll(DEFAULT_SEPARATOR+"\n", "\n");
+    }
+    
+    public String csvRecordsToJSON(String csvRecords, Class dtoClass){
+        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
+        HashMap<String, String> titledFieldsMap= FCBA.getTitledFieldsMap(propertyDescriptors, dtoClass);
+        HashMap<String, String> invertedTitledFieldsMap= new HashMap<>();
+        
+        for (Map.Entry<String, String> entry : titledFieldsMap.entrySet()){
+            invertedTitledFieldsMap.put(HtmlUtils.htmlUnescape(entry.getValue()), entry.getKey());
+        }
+        
+        String[] records= csvRecords.split("\n");
+        JSONArray objects= new JSONArray();
+        for(int i=1; i<records.length; i++){
+            String[] record= records[i].split(DEFAULT_SEPARATOR);
+            for(int j=0; i<record.length; j++){
+                
+            }
+        }
+
+        return null;
     }
 
 }
