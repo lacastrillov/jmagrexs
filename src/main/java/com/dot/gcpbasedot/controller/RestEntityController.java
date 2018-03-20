@@ -21,10 +21,10 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -107,7 +107,7 @@ public abstract class RestEntityController {
 
         String resultData;
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
             
@@ -130,8 +130,8 @@ public abstract class RestEntityController {
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
 
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
-            List<? extends BaseEntity> listDtos = mapper.listEntitiesToListDtos(listEntities);
+            List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
 
             ResultListCallback resultListCallBack = Util.getResultList(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
@@ -196,7 +196,7 @@ public abstract class RestEntityController {
 
         String resultData;
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
             
@@ -423,7 +423,7 @@ public abstract class RestEntityController {
     @ResponseBody
     public String deleteByFilter(@RequestParam String filter) {
         try {
-            List<? extends BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null, null);
+            List<BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null, null);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             
             for(BaseEntity entity: listEntities){
@@ -444,6 +444,7 @@ public abstract class RestEntityController {
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
         String resultData;
+        int totalRecords=0;
         try {
             
             FileItemFactory factory = new DiskFileItemFactory();
@@ -485,19 +486,22 @@ public abstract class RestEntityController {
                     for(BaseEntity newEntity: entities){
                         ids.add(newEntity.getId());
                     }
-                    List<? extends BaseEntity> existingEntities = service.listAllByIds(ids);
-                    Set existingIds= new HashSet();
+                    List<BaseEntity> existingEntities = service.listAllByIds(ids);
+                    Map<Object, BaseEntity> mapExistingEntities= new HashMap();
                     for(BaseEntity entity: existingEntities){
-                        existingIds.add(entity.getId());
+                        mapExistingEntities.put(entity.getId(), entity);
                     }
                     
                     //Insertar o actualizar la entidad
+                    totalRecords= entities.size();
                     for(BaseEntity entity: entities){
                         try{
-                            if(!existingIds.contains(entity.getId())){
+                            if(!mapExistingEntities.containsKey(entity.getId())){
                                 service.insert(entity);
                             }else{
-                                service.update(entity);
+                                BaseEntity existingEntity= mapExistingEntities.get(entity.getId());
+                                EntityReflection.updateEntity(entity, existingEntity);
+                                service.update(existingEntity);
                             }
                             listDtos.add(entity);
                         }catch(Exception e){
@@ -507,10 +511,10 @@ public abstract class RestEntityController {
                 }
             }
             
-            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Inserci&oacute;n de " + entityRef + " realizada...", true);
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+totalRecords+" registros tipo " + entityRef + " finalizada...", true);
         } catch (Exception e) {
             LOGGER.error("importData " + entityRef, e);
-            resultData= Util.getOperationCallback(null, "Error en inserci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
+            resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
         }
         return getStringBytes(resultData);
     }

@@ -697,6 +697,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 text: 'Importar',
                 handler: function(){
                     Instance.entityExtStore.import(Instance.formImport, Instance.containerImport.typeReport, function(responseText){
+                        Ext.MessageBox.alert('Status', responseText.message);
                         Instance.reloadPageStore(Instance.store.currentPage);
                         setTimeout(function(){ Instance.containerImport.hide()},1000);
                     });

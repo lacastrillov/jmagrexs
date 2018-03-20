@@ -137,7 +137,9 @@ public class CSVService {
         String[] records= csvRecords.split("\n");
         String[] columns= records[0].split(DEFAULT_SEPARATOR);
         for(int i=0; i<columns.length; i++){
-            columns[i]= invertedTitledFieldsMap.get(columns[i]);
+            if(invertedTitledFieldsMap.containsKey(columns[i])){
+                columns[i]= invertedTitledFieldsMap.get(columns[i]);
+            }
         }
         JSONArray objects= new JSONArray();
         for(int i=1; i<records.length; i++){
