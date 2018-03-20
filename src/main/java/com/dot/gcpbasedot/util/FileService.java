@@ -191,15 +191,25 @@ public class FileService {
     }
     
     public static String getStringFromInputStream(InputStream is) throws IOException {
-		BufferedReader br = null;
-		StringBuilder sb = new StringBuilder();
-		String line;
-        br = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         while ((line = br.readLine()) != null) {
             sb.append(line);
         }
-		br.close();
-		return sb.toString();
-	}
+        br.close();
+        return sb.toString();
+    }
+    
+    public static String getLinesFromInputStream(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String line;
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        while ((line = br.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        br.close();
+        return sb.toString();
+    }
     
 }
