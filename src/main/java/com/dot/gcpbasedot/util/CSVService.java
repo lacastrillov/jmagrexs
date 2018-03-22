@@ -91,7 +91,7 @@ public class CSVService {
         for (GenericTableColumn column : columns) {
             String type = column.getDataType();
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
-                report.append(column.getColumnAlias()).append(DEFAULT_SEPARATOR);
+                report.append(column.getColumnName()).append(DEFAULT_SEPARATOR);
             }
         }
         report.append("\n");
@@ -159,5 +159,45 @@ public class CSVService {
 
         return objects.toString();
     }
+    
+    /*public static String csvRecordsToJSON(String csvRecords, List<GenericTableColumn> columns){
+        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
+        HashMap<String, String> titledFieldsMap= FCBA.getTitledFieldsMap(propertyDescriptors, dtoClass);
+        HashMap<String, String> invertedTitledFieldsMap= new HashMap<>();
+        
+        for (Map.Entry<String, String> entry : titledFieldsMap.entrySet()){
+            invertedTitledFieldsMap.put(HtmlUtils.htmlUnescape(entry.getValue()), entry.getKey());
+        }
+        Set<String> baseEntityTypes= new HashSet<>();
+        for(PropertyDescriptor pd: propertyDescriptors){
+            if(BaseEntity.class.isAssignableFrom(pd.getPropertyType())){
+                baseEntityTypes.add(pd.getName());
+            }
+        }
+        String[] records= csvRecords.split("\n");
+        String[] columns= records[0].split(DEFAULT_SEPARATOR);
+        for(int i=0; i<columns.length; i++){
+            if(invertedTitledFieldsMap.containsKey(columns[i])){
+                columns[i]= invertedTitledFieldsMap.get(columns[i]);
+            }
+        }
+        JSONArray objects= new JSONArray();
+        for(int i=1; i<records.length; i++){
+            JSONObject object= new JSONObject();
+            String[] record= records[i].split(DEFAULT_SEPARATOR);
+            for(int j=0; j<record.length; j++){
+                String fieldName= columns[j];
+                String value= record[j];
+                if(baseEntityTypes.contains(fieldName)){
+                    object.put(fieldName, value.split(" - ")[0]);
+                }else{
+                    object.put(fieldName, value);
+                }
+            }
+            objects.put(object);
+        }
+
+        return objects.toString();
+    }*/
 
 }

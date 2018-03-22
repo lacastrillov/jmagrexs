@@ -260,6 +260,16 @@ public abstract class RestSessionController extends RestEntityController {
         }
     }
     
+    @RequestMapping(value = "/session_import/{format}.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @ResponseBody
+    public byte[] sessionImportData(HttpServletRequest request, @PathVariable String format) {
+        if(canImportData()){
+            return super.importData(request, format);
+        }else{
+            return getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
+        }
+    }
+    
     @RequestMapping(value = "/session_upload/{idEntity}.htm")
     @ResponseBody
     public byte[] sessionUpload(HttpServletRequest request, @PathVariable String idEntity) {
@@ -373,6 +383,8 @@ public abstract class RestSessionController extends RestEntityController {
     public abstract boolean canDelete(BaseEntity entity);
     
     public abstract boolean canDeleteByFilters(JSONObject jsonFilters);
+    
+    public boolean canImportData(){ return false; }
     
     public String getUserCode(){
         return "";

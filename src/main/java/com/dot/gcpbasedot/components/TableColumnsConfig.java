@@ -46,6 +46,7 @@ public class TableColumnsConfig {
     public void updateColumnsConfig(String tableName){
         Parameters p= new Parameters();
         p.whereEqual("tableAlias", tableName);
+        p.orderBy("columnOrder", "ASC");
         List<Object> result= jdbcDirectService.findByParameters("("+columsConfigQuerySource+")", p, GenericTableColumn.class);
         List<GenericTableColumn> columns= new ArrayList<>();
         for(Object item: result){
