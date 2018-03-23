@@ -279,7 +279,7 @@ public abstract class RestDirectController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && item.getFieldName().equals("data")){
-                    String data, csvData, jsonData=null;
+                    String data, csvData, xlsData, jsonData=null;
                     List<Map<String, Object>> entities= new ArrayList<>();
                     JSONArray array;
                     switch(format){
@@ -287,6 +287,13 @@ public abstract class RestDirectController {
                             data= FileService.getLinesFromInputStream(is);
                             csvData= CSVService.csvRecordsToJSON(data, columns);
                             array= new JSONArray(csvData);
+                            for (int i = 0; i < array.length(); i++) {
+                                entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+                            }
+                            break;
+                        case "xls":
+                            xlsData= ExcelService.xlsTableToJSON(is, columns);
+                            array= new JSONArray(xlsData);
                             for (int i = 0; i < array.length(); i++) {
                                 entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
                             }

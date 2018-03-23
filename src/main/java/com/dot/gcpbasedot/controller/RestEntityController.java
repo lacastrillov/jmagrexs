@@ -444,7 +444,7 @@ public abstract class RestEntityController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && item.getFieldName().equals("data")){
-                    String data, csvData, jsonData=null;
+                    String data, csvData, xlsData, jsonData=null;
                     List<BaseEntity> entities= new ArrayList<>();
                     JSONArray array;
                     switch(format){
@@ -452,6 +452,13 @@ public abstract class RestEntityController {
                             data= FileService.getLinesFromInputStream(is);
                             csvData= CSVService.csvRecordsToJSON(data, dtoClass);
                             array= new JSONArray(csvData);
+                            for (int i = 0; i < array.length(); i++) {
+                                entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
+                            }
+                            break;
+                        case "xls":
+                            xlsData= ExcelService.xlsTableToJSON(is, dtoClass);
+                            array= new JSONArray(xlsData);
                             for (int i = 0; i < array.length(); i++) {
                                 entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
                             }

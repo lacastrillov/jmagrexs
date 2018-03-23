@@ -244,12 +244,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 var urlFind= store.proxy.api.read.replace("/find.htm","/find/xml.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
-                            case "xls":
-                                var urlFind= store.proxy.api.read.replace("/find.htm","/find/xls.htm");
-                                window.open(urlFind+data,'_blank');
-                                break;
                             case "csv":
                                 var urlFind= store.proxy.api.read.replace("/find.htm","/find/csv.htm");
+                                window.open(urlFind+data,'_blank');
+                                break;
+                            case "xls":
+                                var urlFind= store.proxy.api.read.replace("/find.htm","/find/xls.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
                         }
@@ -405,6 +405,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'De CSV', handler: function(){this.importFrom('csv');}, scope: this},
+                                {text: 'De Excel', handler: function(){this.importFrom('xls');}, scope: this},
                                 {text: 'De JSON', handler: function(){this.importFrom('json');}, scope: this},
                                 {text: 'De XML', handler: function(){this.importFrom('xml');}, scope: this}]
                         }
