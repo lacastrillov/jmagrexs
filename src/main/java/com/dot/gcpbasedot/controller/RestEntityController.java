@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,8 +46,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,7 +97,7 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] find(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+    public HttpEntity<byte[]> find(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long start,  @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
@@ -120,8 +117,8 @@ public abstract class RestEntityController {
             LOGGER.error("find " + entityRef, e);
             resultData=Util.getResultListCallback(new ArrayList(), "Error buscando " + entityRef + ": " + e.getMessage(), false);
         }
-        
-        return getStringBytes(resultData);
+
+        return Util.getHttpEntityBytes(resultData, "json");
     }
 
     @RequestMapping(value = "/find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -136,13 +133,8 @@ public abstract class RestEntityController {
 
             ResultListCallback resultListCallBack = Util.getResultList(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
             String xml = XMLMarshaller.convertObjectToXML(resultListCallBack);
-            byte[] documentBody = xml.getBytes();
-
-            HttpHeaders header = new HttpHeaders();
-            header.setContentType(new MediaType("application", "xml"));
-            header.setContentLength(documentBody.length);
-
-            return new HttpEntity<>(documentBody, header);
+            
+            return Util.getHttpEntityBytes(xml, "xml");
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
             return null;
@@ -210,12 +202,12 @@ public abstract class RestEntityController {
             resultData= "<textarea style='width:100%; height:100%;color:darkblue'>"+resultData+"</textarea>";
         }
         
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] report(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> report(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
@@ -238,7 +230,7 @@ public abstract class RestEntityController {
             resultData= Util.getResultListCallback(new ArrayList(), "Error reporte " + reportName + ": " + e.getMessage(), false);
         }
         
-        return getStringBytes(resultData);
+        return Util.getHttpEntityBytes(resultData, "json");
     }
     
     @RequestMapping(value = "/report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -255,13 +247,8 @@ public abstract class RestEntityController {
 
             ResultListCallback resultListCallBack = Util.getResultList(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
             String xml = XMLMarshaller.convertObjectToXML(resultListCallBack);
-            byte[] documentBody = xml.getBytes();
-
-            HttpHeaders header = new HttpHeaders();
-            header.setContentType(new MediaType("application", "xml"));
-            header.setContentLength(documentBody.length);
-
-            return new HttpEntity<>(documentBody, header);
+            
+            return Util.getHttpEntityBytes(xml, "xml");
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
             return null;
@@ -328,7 +315,7 @@ public abstract class RestEntityController {
             LOGGER.error("create " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/update.htm", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -363,7 +350,7 @@ public abstract class RestEntityController {
             LOGGER.error("update " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en actualizaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -381,7 +368,7 @@ public abstract class RestEntityController {
             LOGGER.error("update " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n masiva de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/load.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -399,7 +386,7 @@ public abstract class RestEntityController {
             LOGGER.error("load " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en carga de " + entityRef + ": " + e.getMessage(), true);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
@@ -493,7 +480,6 @@ public abstract class RestEntityController {
                     }
                     
                     //Insertar o actualizar la entidad
-                    totalRecords= entities.size();
                     for(BaseEntity entity: entities){
                         try{
                             if(!mapExistingEntities.containsKey(entity.getId())){
@@ -504,6 +490,7 @@ public abstract class RestEntityController {
                                 service.update(existingEntity);
                             }
                             listDtos.add(entity);
+                            totalRecords++;
                         }catch(Exception e){
                             LOGGER.error("importData " + entityRef, e);
                         }
@@ -516,7 +503,7 @@ public abstract class RestEntityController {
             LOGGER.error("importData " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/upload/{idEntity}.htm")
@@ -552,7 +539,7 @@ public abstract class RestEntityController {
             LOGGER.error("upload " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/diskupload/{idEntity}.htm")
@@ -593,7 +580,7 @@ public abstract class RestEntityController {
             LOGGER.error("upload " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     protected InputStream generateResizedImages(String fieldName, String fileName, String contentType, InputStream is, Object idParent) throws IOException{
@@ -690,7 +677,7 @@ public abstract class RestEntityController {
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return getStringBytes(content);
+        return Util.getStringBytes(content);
     }
     
     @RequestMapping(value = "/setContentFile.htm")
@@ -705,15 +692,6 @@ public abstract class RestEntityController {
         }
         
         return "Error al guardar";
-    }
-    
-    protected byte[] getStringBytes(String data){
-        try {
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("getStringBytes", ex);
-            return null;
-        }
     }
     
     protected String saveFile(FileItemStream fileIS, Object idEntity){

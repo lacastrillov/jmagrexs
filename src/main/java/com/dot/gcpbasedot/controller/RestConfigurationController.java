@@ -6,7 +6,6 @@ import com.dot.gcpbasedot.service.ConfigurationObjectService;
 import com.dot.gcpbasedot.util.Util;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +54,7 @@ public abstract class RestConfigurationController {
             LOGGER.error("load " + configurationObjectRef, e);
             resultData= Util.getOperationCallback(dto, "Error en carga de " + configurationObjectRef + ": " + e.getMessage(), true);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/saveConfig.htm", method = RequestMethod.POST)
@@ -69,7 +68,7 @@ public abstract class RestConfigurationController {
         } catch (IOException ex) {
             LOGGER.error("ERROR executeProcess", ex);
         }
-        return getStringBytes("{success:false}");
+        return Util.getStringBytes("{success:false}");
     }
     
     @RequestMapping(value = "/saveConfig/{configurationObjectRef}.htm", method = RequestMethod.POST)
@@ -103,7 +102,7 @@ public abstract class RestConfigurationController {
             LOGGER.error("ERROR doProcess", e);
         }
         
-        return getStringBytes(jsonOut);
+        return Util.getStringBytes(jsonOut);
     }
     
     @RequestMapping(value = "/diskupload/{configurationObjectRef}.htm")
@@ -147,16 +146,8 @@ public abstract class RestConfigurationController {
             LOGGER.error("upload " + configurationObjectRef, e);
             resultData= Util.getOperationCallback(null, "Error al cargar archivos en el configurationObject " + configurationObjectRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
-    protected byte[] getStringBytes(String data){
-        try {
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("getStringBytes", ex);
-            return null;
-        }
-    }
     
 }

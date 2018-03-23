@@ -12,8 +12,8 @@ import com.dot.gcpbasedot.util.CSVService;
 import com.dot.gcpbasedot.util.ExcelService;
 import com.dot.gcpbasedot.util.FileService;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +54,7 @@ public abstract class RestDirectController {
 
     @RequestMapping(value = "/{tableName}/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] find(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> find(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) Long numColumns) {
@@ -72,8 +70,8 @@ public abstract class RestDirectController {
             LOGGER.error("find " + tableName, e);
             resultData=Util.getResultListCallback(new ArrayList(), "Error buscando " + tableName + ": " + e.getMessage(), false);
         }
-        
-        return getStringBytes(resultData);
+
+        return Util.getHttpEntityBytes(resultData, "json");
     }
 
     @RequestMapping(value = "/{tableName}/find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -88,13 +86,8 @@ public abstract class RestDirectController {
 
             ResultListCallback resultListCallBack = Util.getResultList(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
             String xml = XMLMarshaller.convertObjectToXML(resultListCallBack);
-            byte[] documentBody = xml.getBytes();
 
-            HttpHeaders header = new HttpHeaders();
-            header.setContentType(new MediaType("application", "xml"));
-            header.setContentLength(documentBody.length);
-
-            return new HttpEntity<>(documentBody, header);
+            return Util.getHttpEntityBytes(xml, "xml");
         } catch (Exception e) {
             LOGGER.error("find " + tableName, e);
             return null;
@@ -170,7 +163,7 @@ public abstract class RestDirectController {
             LOGGER.error("create " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en creaci&oacute;n de " + tableName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/{tableName}/update.htm", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -198,7 +191,7 @@ public abstract class RestDirectController {
             LOGGER.error("update " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + tableName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     /*@RequestMapping(value = "/{tableName}/update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -231,7 +224,7 @@ public abstract class RestDirectController {
             LOGGER.error("load " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en carga de " + tableName + ": " + e.getMessage(), true);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/{tableName}/delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
@@ -273,6 +266,7 @@ public abstract class RestDirectController {
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
         String resultData;
+        int totalRecords=0;
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
             FileItemFactory factory = new DiskFileItemFactory();
@@ -285,23 +279,56 @@ public abstract class RestDirectController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && item.getFieldName().equals("data")){
-                    String data= FileService.getStringFromInputStream(is);
+                    String data, csvData, jsonData=null;
                     List<Map<String, Object>> entities= new ArrayList<>();
+                    JSONArray array;
                     switch(format){
+                        case "csv":
+                            data= FileService.getLinesFromInputStream(is);
+                            csvData= CSVService.csvRecordsToJSON(data, columns);
+                            array= new JSONArray(csvData);
+                            for (int i = 0; i < array.length(); i++) {
+                                entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+                            }
+                            break;
                         case "xml":
-                            data= XMLMarshaller.convertXMLToJSON(data);
+                            data= FileService.getStringFromInputStream(is);
+                            jsonData= XMLMarshaller.convertXMLToJSON(data);
                         case "json":
-                            JSONObject object= new JSONObject(data);
-                            JSONArray array= object.getJSONArray("data");
+                            JSONObject object= new JSONObject(jsonData);
+                            array= object.getJSONArray("data");
                             for (int i = 0; i < array.length(); i++) {
                                 entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
                             }
                             break;
                     }
+                    
+                    //Buscar entidades existentes
+                    List ids= new ArrayList<>();
+                    for(Map<String, Object> newEntity: entities){
+                        ids.add(newEntity.get("id"));
+                    }
+                    
+                    Parameters p= new Parameters();
+                    p.whereIn("id", ids.toArray());
+                    List<Map<String, Object>> existingEntities = directService.findByParameters(tableName, p);
+                    Map<Object, Map<String, Object>> mapExistingEntities= new HashMap();
+                    for(Map<String, Object> entity: existingEntities){
+                        mapExistingEntities.put(entity.get("id"), entity);
+                    }
+                    
+                    //Insertar o actualizar la entidad
                     for(Map<String, Object> entity: entities){
                         try{
-                            directService.create(tableName, entity);
+                            if(!mapExistingEntities.containsKey(entity.get("id"))){
+                                directService.create(tableName, entity);
+                            }else{
+                                Map<String, Object> existingEntity= mapExistingEntities.get(entity.get("id"));
+                                EntityReflection.updateMap(entity, existingEntity);
+                                directService.updateByParameter(tableName, existingEntity, "id", entity.get("id"));
+                            }
                             listDtos.add(entity);
+                            totalRecords++;
                         }catch(Exception e){
                             LOGGER.error("importData " + tableName, e);
                         }
@@ -309,12 +336,12 @@ public abstract class RestDirectController {
                 }
             }
             
-            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Inserci&oacute;n de " + tableName + " realizada...", true);
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+totalRecords+" registros tipo " + tableName + " finalizada...", true);
         } catch (Exception e) {
             LOGGER.error("importData " + tableName, e);
-            resultData= Util.getOperationCallback(null, "Error en inserci&oacute;n de " + tableName + ": " + e.getMessage(), false);
+            resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + tableName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/{tableName}/upload/{idEntity}.htm")
@@ -348,7 +375,7 @@ public abstract class RestDirectController {
             LOGGER.error("upload " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + tableName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/{tableName}/diskupload/{idEntity}.htm")
@@ -384,18 +411,7 @@ public abstract class RestDirectController {
             LOGGER.error("upload " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + tableName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
-    }
-    
-    
-    
-    protected byte[] getStringBytes(String data){
-        try {
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("getStringBytes", ex);
-            return null;
-        }
+        return Util.getStringBytes(resultData);
     }
     
     protected String saveFile(String tableName, FileItemStream fileIS, Object idEntity){

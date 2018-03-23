@@ -9,6 +9,7 @@ import com.dot.gcpbasedot.dto.OperationCallback;
 import com.dot.gcpbasedot.dto.ResultListCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.UnsupportedEncodingException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -322,6 +326,33 @@ public class Util {
             }
         }
         return result;
+    }
+    
+    /**
+     * 
+     * @param data
+     * @return 
+     */
+    public static byte[] getStringBytes(String data){
+        try {
+            return data.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            return null;
+        }
+    }
+    
+    /**
+     * 
+     * @param data
+     * @param type
+     * @return 
+     */
+    public static HttpEntity<byte[]> getHttpEntityBytes(String data, String type){
+        byte[] byteResult= getStringBytes(data);
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(new MediaType("application", type));
+        header.setContentLength(byteResult.length);
+        return new HttpEntity<>(byteResult, header);
     }
     
     /**

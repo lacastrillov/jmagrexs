@@ -404,6 +404,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: 'Importar',
                             //iconCls: 'add16',
                             menu: [
+                                {text: 'De CSV', handler: function(){this.importFrom('csv');}, scope: this},
                                 {text: 'De JSON', handler: function(){this.importFrom('json');}, scope: this},
                                 {text: 'De XML', handler: function(){this.importFrom('xml');}, scope: this}]
                         }
@@ -529,6 +530,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 text: 'Importar',
                 handler: function(){
                     Instance.entityExtStore.import(Instance.formImport, Instance.containerImport.typeReport, function(responseText){
+                        Ext.MessageBox.alert('Status', responseText.message);
                         Instance.reloadPageStore(Instance.store.currentPage);
                         setTimeout(function(){ Instance.containerImport.hide()},1000);
                     });

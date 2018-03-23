@@ -417,6 +417,27 @@ public final class EntityReflection {
         }
     }
     
+    /**
+     * Updates the target map with the values of the source map, avoiding
+     * null valued fields.
+     *
+     * @param source map with new values.
+     * @param target map to update.
+     */
+    public static void updateMap(Map<String,Object> source, Map<String,Object> target) {
+        for (Map.Entry<String,Object> entry : source.entrySet()) {
+            Object value = entry.getValue();
+            if (value != null) {
+                target.put(entry.getKey(), value);
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param dtoClass
+     * @return 
+     */
     public static Set<String> getHiddenLogFields(Class dtoClass){
         Set<String> hiddenLogFields= new HashSet<>();
         List<Field> annotatedFields= getEntityAnnotatedFields(dtoClass, HideField.class);

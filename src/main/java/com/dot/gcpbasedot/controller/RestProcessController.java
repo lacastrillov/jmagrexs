@@ -101,7 +101,7 @@ public abstract class RestProcessController {
         } catch (IOException ex) {
             LOGGER.error("ERROR executeProcess", ex);
         }
-        return getStringBytes("{success:false}");
+        return Util.getStringBytes("{success:false}");
     }
     
     @RequestMapping(value = "/doProcess/{processName}.htm", method = RequestMethod.POST)
@@ -169,7 +169,7 @@ public abstract class RestProcessController {
             }
         }
         
-        return getStringBytes(jsonOut);
+        return Util.getStringBytes(jsonOut);
     }
     
     public String doServerProcess(String processName, Object data){
@@ -220,16 +220,7 @@ public abstract class RestProcessController {
             LOGGER.error("upload " + processName, e);
             resultData= Util.getOperationCallback(null, "Error al cargar archivos en el proceso " + processName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
-    }
-    
-    protected byte[] getStringBytes(String data){
-        try {
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("getStringBytes", ex);
-            return null;
-        }
+        return Util.getStringBytes(resultData);
     }
     
     @Async

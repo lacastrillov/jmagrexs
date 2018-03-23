@@ -26,7 +26,7 @@ public abstract class RestSessionController extends RestEntityController {
 
     @RequestMapping(value = "/session_find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionFind(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+    public HttpEntity<byte[]> sessionFind(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
@@ -85,7 +85,7 @@ public abstract class RestSessionController extends RestEntityController {
     
     @RequestMapping(value = "/session_report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionReport(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> sessionReport(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
@@ -144,7 +144,7 @@ public abstract class RestSessionController extends RestEntityController {
             LOGGER.error("create " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/session_update.htm", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -179,7 +179,7 @@ public abstract class RestSessionController extends RestEntityController {
             LOGGER.error("update " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en actualizaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
     
     @RequestMapping(value = "/session_update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -202,7 +202,7 @@ public abstract class RestSessionController extends RestEntityController {
             LOGGER.error("update " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n masiva de " + entityRef + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/session_load.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -224,7 +224,7 @@ public abstract class RestSessionController extends RestEntityController {
             LOGGER.error("load " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en carga de " + entityRef + ": " + e.getMessage(), true);
         }
-        return getStringBytes(resultData);
+        return Util.getStringBytes(resultData);
     }
 
     @RequestMapping(value = "/session_delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
@@ -266,7 +266,7 @@ public abstract class RestSessionController extends RestEntityController {
         if(canImportData()){
             return super.importData(request, format);
         }else{
-            return getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
+            return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
         }
     }
     
@@ -282,7 +282,7 @@ public abstract class RestSessionController extends RestEntityController {
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
-        return getStringBytes("{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity+ "\"}");
+        return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity+ "\"}");
     }
     
     @RequestMapping(value = "/session_diskupload/{idEntity}.htm")
@@ -297,7 +297,7 @@ public abstract class RestSessionController extends RestEntityController {
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
-        return getStringBytes("{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity+ "\"}");
+        return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity+ "\"}");
     }
     
     @RequestMapping(value = "/session_multipartupload/{idParent}.htm")
@@ -326,7 +326,7 @@ public abstract class RestSessionController extends RestEntityController {
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return getStringBytes(content);
+        return Util.getStringBytes(content);
     }
     
     @RequestMapping(value = "/session_setContentFile.htm")
