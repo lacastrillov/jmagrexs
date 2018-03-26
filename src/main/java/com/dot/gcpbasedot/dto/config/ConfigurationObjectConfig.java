@@ -37,6 +37,8 @@ public class ConfigurationObjectConfig {
     
     private boolean visibleHeader;
     
+    private boolean visibleSeeAllButton;
+    
     private boolean editableForm;
     
     private final Set<String> multipartFormConfig;
@@ -51,6 +53,7 @@ public class ConfigurationObjectConfig {
         this.visibleForm= true;
         this.visibleMenu= true;
         this.visibleHeader= true;
+        this.visibleSeeAllButton= false;
         this.editableForm= true;
         this.multipartFormConfig= new HashSet<>();
         this.nameConfigurationObjects= new LinkedHashMap<>();
@@ -174,6 +177,22 @@ public class ConfigurationObjectConfig {
      */
     public void setVisibleHeader(boolean visibleHeader) {
         this.visibleHeader = visibleHeader;
+    }
+    
+    /**
+     * 
+     * @return the visibleSeeAllButton
+     */
+    public boolean isVisibleSeeAllButton() {
+        return visibleSeeAllButton;
+    }
+
+    /**
+     * 
+     * @param visibleSeeAllButton 
+     */
+    public void setVisibleSeeAllButton(boolean visibleSeeAllButton) {
+        this.visibleSeeAllButton = visibleSeeAllButton;
     }
 
     /**

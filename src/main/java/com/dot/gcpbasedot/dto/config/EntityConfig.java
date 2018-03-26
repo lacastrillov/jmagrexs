@@ -63,6 +63,8 @@ public class EntityConfig {
     
     private boolean visibleExportButton;
     
+    private boolean visibleSeeAllButton;
+    
     private boolean editableGrid;
     
     private boolean editableForm;
@@ -128,6 +130,7 @@ public class EntityConfig {
         this.visibleAddButtonInGrid= true;
         this.visibleRemoveButtonInGrid= true;
         this.visibleExportButton= true;
+        this.visibleSeeAllButton= false;
         this.editableGrid= true;
         this.editableForm= true;
         this.collapsedFilters= true;
@@ -429,6 +432,22 @@ public class EntityConfig {
      */
     public void setVisibleExportButton(boolean visibleExportButton) {
         this.visibleExportButton = visibleExportButton;
+    }
+
+    /**
+     * 
+     * @return the visibleSeeAllButton
+     */
+    public boolean isVisibleSeeAllButton() {
+        return visibleSeeAllButton;
+    }
+
+    /**
+     * 
+     * @param visibleSeeAllButton 
+     */
+    public void setVisibleSeeAllButton(boolean visibleSeeAllButton) {
+        this.visibleSeeAllButton = visibleSeeAllButton;
     }
 
     /**

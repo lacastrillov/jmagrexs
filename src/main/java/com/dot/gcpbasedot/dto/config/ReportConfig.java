@@ -50,6 +50,8 @@ public class ReportConfig {
     
     private boolean visibleOrderByDirButtons;
     
+    private boolean visibleSeeAllButton;
+    
     private boolean collapsedFilters;
     
     private boolean hideHeadersGrid;
@@ -93,6 +95,7 @@ public class ReportConfig {
         this.visibleHeader= true;
         this.visibleExportButton= true;
         this.visibleOrderByDirButtons= true;
+        this.visibleSeeAllButton= false;
         this.collapsedFilters= true;
         this.hideHeadersGrid= false;
         this.activeGridTemplate= false;
@@ -297,12 +300,36 @@ public class ReportConfig {
         this.visibleExportButton = visibleExportButton;
     }
 
+    /**
+     * 
+     * @return visibleOrderByDirButtons
+     */
     public boolean isVisibleOrderByDirButtons() {
         return visibleOrderByDirButtons;
     }
 
+    /**
+     * 
+     * @param visibleOrderByDirButtons 
+     */
     public void setVisibleOrderByDirButtons(boolean visibleOrderByDirButtons) {
         this.visibleOrderByDirButtons = visibleOrderByDirButtons;
+    }
+    
+    /**
+     * 
+     * @return the visibleSeeAllButton
+     */
+    public boolean isVisibleSeeAllButton() {
+        return visibleSeeAllButton;
+    }
+
+    /**
+     * 
+     * @param visibleSeeAllButton 
+     */
+    public void setVisibleSeeAllButton(boolean visibleSeeAllButton) {
+        this.visibleSeeAllButton = visibleSeeAllButton;
     }
     
     /**

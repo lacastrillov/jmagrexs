@@ -217,11 +217,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     handler: this.onReset
                 },
                 </c:if>
+                <c:if test="${viewConfig.visibleSeeAllButton}">
                 {
                     text: '&#x25BC; Ver todo',
                     scope: this,
                     handler: this.onSeeAll
                 },
+                </c:if>
                 '|'];
                 </c:if>
                 if(additionalButtons){

@@ -200,11 +200,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     text: 'Limpiar',
                     scope: this,
                     handler: this.onReset
-                },{
+                },
+                <c:if test="${viewConfig.visibleSeeAllButton}">
+                {
                     text: '&#x25BC; Ver todo',
                     scope: this,
                     handler: this.onSeeAll
-                },'|'];
+                },
+                </c:if>
+                '|'];
                 </c:if>
                 Ext.apply(this, {
                     activeRecord: null,

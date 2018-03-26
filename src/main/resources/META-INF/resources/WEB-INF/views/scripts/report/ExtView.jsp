@@ -145,11 +145,14 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             initComponent: function(){
                 //this.addEvents('create');
                 
-                var buttons= [{
+                var buttons= [
+                <c:if test="${viewConfig.visibleSeeAllButton}">
+                {
                     text: '&#x25BC; Ver todo',
                     scope: this,
                     handler: this.onSeeAll
                 },'|'
+                </c:if>
                 ];
                 if(additionalButtons){
                     for(var i=0; i<additionalButtons.length; i++){
@@ -197,45 +200,6 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             },
             
             renderReplaceActiveRecord: function(record){
-                if(renderReplacements){
-                    for(var i=0; i<renderReplacements.length; i++){
-                        var renderReplace= renderReplacements[i];
-                        var replaceField= renderReplace.replace.field;
-                        var replaceAttribute= renderReplace.replace.attribute;
-                        var value="ND";
-                        
-                        if (typeof record.data[replaceField] === "object" && Object.getOwnPropertyNames(record.data[replaceField]).length === 0){
-                            value= "";
-                        }else if(replaceAttribute.indexOf(".")===-1){
-                            value= record.data[replaceField][replaceAttribute];
-                        }else{
-                            var niveles= replaceAttribute.split(".");
-                            try{
-                                switch(niveles.length){
-                                    case 2:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]];
-                                        break;
-                                    case 3:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]][niveles[2]];
-                                        break;
-                                    case 4:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]][niveles[2]][niveles[3]];
-                                        break;
-                                    case 5:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]][niveles[2]][niveles[3]][niveles[4]];
-                                        break;
-                                }
-                            }catch(err){
-                                console.log(err);
-                            }
-                            
-                        }
-                        if(typeof(value) !== 'undefined'){
-                            //value= util.htmlEntitiesDecode(value);
-                            renderReplace.component.setValue(value);
-                        }
-                    }
-                }
                 return record;
             }
     
