@@ -761,7 +761,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 <c:set var="associatedEntityName" value="${fn:toUpperCase(fn:substring(associatedER, 0, 1))}${fn:substring(associatedER, 1,fn:length(associatedER))}"></c:set>
             ${associatedEntityName}: function(entity){
                 var res = entity.split("__");
-                return '<a href="${basePath}/${associatedER}/entity.htm#?tab=1&id='+res[0]+'">'+res[1]+'</a>';
+                return '<a href="<%=request.getContextPath()%>${basePath}/${associatedER}/entity.htm#?tab=1&id='+res[0]+'">'+res[1]+'</a>';
             },
             </c:forEach>
         };
