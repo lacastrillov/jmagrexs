@@ -15,6 +15,10 @@ public enum FieldType {
     
     PASSWORD,
     
+    DURATION,
+    
+    PRICE,
+    
     TEXT_AREA,
     
     LIST,

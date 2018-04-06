@@ -345,6 +345,10 @@ public abstract class ExtReportController extends ExtController {
                             typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                             
                             gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");
+                        }else if(typeForm.equals(FieldType.DURATION.name())){
+                            gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
+                        }else if(typeForm.equals(FieldType.PRICE.name())){
+                            gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
                         }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
                         }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){

@@ -209,6 +209,27 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.durationGridRender= function(value, p, record){
+        if(value && !isNaN(value)){
+            var seconds= Math.ceil(Number(value)/1000);
+            var minutes= Math.floor(seconds/60);
+            var hours= Math.floor(minutes/60);
+            var ad_minutes= minutes-(hours*60);
+            var ad_seconds= seconds-(ad_minutes*60)-(hours*60*60);
+            return hours+":"+ad_minutes+":"+ad_seconds;
+        }else{
+            return value;
+        }
+    };
+    
+    Instance.priceGridRender= function(value, p, record){
+        if(value && !isNaN(value)){
+            return "$ "+Number(value).priceFormat(2);
+        }else{
+            return value;
+        }
+    };
+    
     Instance.fileRender= function(value, field){
         Instance.setLinkFieldValue(field, value);
         if(value){

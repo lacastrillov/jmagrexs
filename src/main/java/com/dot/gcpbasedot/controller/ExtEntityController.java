@@ -522,6 +522,20 @@ public abstract class ExtEntityController extends ExtReportController {
                                 if(viewConfig.isEditableGrid() && !readOnly){
                                     gridColumn.put("editor", editor);
                                 }
+                            }else if(typeForm.equals(FieldType.DURATION.name())){
+                                gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
+                                JSONObject field= new JSONObject();
+                                field.put("type", "textfield");
+                                if(viewConfig.isEditableGrid() && !readOnly){
+                                    gridColumn.put("field", field);
+                                }
+                            }else if(typeForm.equals(FieldType.PRICE.name())){
+                                gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
+                                JSONObject field= new JSONObject();
+                                field.put("type", "textfield");
+                                if(viewConfig.isEditableGrid() && !readOnly){
+                                    gridColumn.put("field", field);
+                                }
                             }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
                                 String[] data= typeFormFields.get(fieldName);
                                 JSONArray dataArray = new JSONArray();

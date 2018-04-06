@@ -101,6 +101,7 @@ function Util() {
             "♣": "&clubs;", "♥": "&hearts;", "♦": "&diams;"
         };
         Instance.configReplaceAll();
+        Instance.configPriceFormat();
     };
     
     Instance.getIndex= function(name){
@@ -221,6 +222,13 @@ function Util() {
         String.prototype.replaceAll = function(search, replacement) {
             var target = this;
             return target.replace(new RegExp(search, 'g'), replacement);
+        };
+    };
+    
+    this.configPriceFormat = function () {
+        Number.prototype.priceFormat = function(n, x) {
+            var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+            return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
         };
     };
     
