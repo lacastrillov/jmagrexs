@@ -14,6 +14,8 @@ import com.dot.gcpbasedot.util.RESTServiceConnection;
 import com.dot.gcpbasedot.util.FileService;
 import com.dot.gcpbasedot.util.SimpleSOAPClient;
 import com.dot.gcpbasedot.util.Util;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -41,6 +43,8 @@ public abstract class ExternalServiceImpl implements ExternalService {
     protected final Map<String, Class> inDtos = new HashMap<>();
 
     protected final Map<String, Class> outDtos = new HashMap<>();
+    
+    private final Gson gson = new GsonBuilder().serializeNulls().create();
     
     private String baseEnvelopeFile;
     
@@ -150,9 +154,9 @@ public abstract class ExternalServiceImpl implements ExternalService {
     }
     
     @Override
-    public String callSOAPService(String processName, Object data) throws SOAPException, IOException{
+    public String callSOAPService(String processName, Object data) throws SOAPException, IOException {
         SimpleSOAPClient simpleSOAPClient= simpleSOAPClients.get(processName);
-        JSONObject jsonData= new JSONObject(Util.objectToJson(data));
+        JSONObject jsonData= new JSONObject(gson.toJson(data));
         String xmlRequestBody= null;
         if(!envelopeMap.containsKey(processName)){
             if(baseEnvelopeFile==null){
@@ -162,8 +166,11 @@ public abstract class ExternalServiceImpl implements ExternalService {
             envelopeMap.put(processName, FileService.getStringFromInputStream(is));
             xmlRequestBody= envelopeMap.get(processName);
         }
+        LOGGER.info("callSOAPService "+processName);
         xmlRequestBody= simpleSOAPClient.mergeDataInEnvelope(jsonData, envelopeMap.get(processName));
+        LOGGER.info("XML "+xmlRequestBody);
         String jsonOut= simpleSOAPClient.sendMessageGetJSON(xmlRequestBody).toString();
+        LOGGER.info("JSON "+jsonOut);
         
         return jsonOut;
     }

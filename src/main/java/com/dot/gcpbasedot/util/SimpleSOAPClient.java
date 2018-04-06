@@ -156,10 +156,10 @@ public class SimpleSOAPClient {
             if (!jsonData.isNull(field)) {
                 Object fieldObj = jsonData.get(field);
                 if (fieldObj instanceof JSONArray == false && fieldObj instanceof JSONObject ==false) {
-                    mergedEnvelope= mergedEnvelope.replaceAll("%%"+field+"%%", fieldObj.toString());
+                    mergedEnvelope= mergedEnvelope.replace("%%"+field+"%%", fieldObj.toString());
                 }
             } else {
-                mergedEnvelope= mergedEnvelope.replaceAll("%%"+field+"%%", "");
+                mergedEnvelope= mergedEnvelope.replace("%%"+field+"%%", "");
             }
         }
         return mergedEnvelope;
