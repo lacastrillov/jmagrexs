@@ -265,12 +265,14 @@ public abstract class ExtEntityController extends ExtReportController {
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(viewConfig.getDtoClass());
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(viewConfig.getDtoClass());
         
-        JSONObject numbererColumn= new JSONObject();
-        numbererColumn.put("xtype", "rownumberer");
-        numbererColumn.put("width", 40);
-        numbererColumn.put("align", "left");
-        numbererColumn.put("sortable", false);
-        jsonGridColumns.put(numbererColumn);
+        if(!viewConfig.isActiveGridTemplate()){
+            JSONObject numbererColumn= new JSONObject();
+            numbererColumn.put("xtype", "rownumberer");
+            numbererColumn.put("width", 40);
+            numbererColumn.put("align", "left");
+            numbererColumn.put("sortable", false);
+            jsonGridColumns.put(numbererColumn);
+        }
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
             
