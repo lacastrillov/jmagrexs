@@ -119,19 +119,28 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.formSavedResponse= function(processName, dataOut, outputDataFormat){
+        var treeTabs = Ext.getCmp('tree-tabs-'+processName);
+        var divPanel = Ext.getCmp('div-result-'+processName);
+        treeTabs.hide();
+        divPanel.hide();
         if(outputDataFormat==='JSON'){
+            treeTabs.show();
             var treePanel = Ext.getCmp('tree-result-'+processName);
+            var jsonPanel = Ext.getCmp('json-result-'+processName);
             try{
-                var rootMenu= util.objectToJSONMenu(JSON.parse(dataOut), true);
+                var dataOutObject= JSON.parse(dataOut);
+                var rootMenu= util.objectToJSONMenu(dataOutObject, true);
                 treePanel.getStore().setRootNode(rootMenu);
+                jsonPanel.update('<textarea readonly style="width:99%; height:100%; white-space: pre !important;">'+
+                        JSON.stringify(dataOutObject, null, 4)+'</textarea>');
             }catch(e){
                 treePanel.getStore().setRootNode({});
             }
         }else if(outputDataFormat==='HTML'){
-            var divPanel = Ext.getCmp('div-result-'+processName);
+            divPanel.show();
             divPanel.update('<div style="width:99%; height:400px; overflow:auto;">'+ dataOut + '</div>');
         }else{
-            var divPanel = Ext.getCmp('div-result-'+processName);
+            divPanel.show();
             var textDataOut= dataOut;
             var textStyle='';
             if(outputDataFormat==='XML'){

@@ -139,7 +139,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             
         itemsForm.push(getResultTree("${processName.key}"));
         
-        itemsForm.push({id: 'div-result-${processName.key}', xtype: "panel", html: ""});
+        itemsForm.push({
+            id: 'div-result-${processName.key}',
+            xtype: "panel",
+            title: 'Resultado',
+            hidden: true,
+            html: ""});
         
         return Ext.create('Ext.container.Container', {
             id: 'formContainer${processName.key}',
@@ -164,8 +169,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         // Go ahead and create the TreePanel now so that we can use it below
          var treePanel = Ext.create('Ext.tree.Panel', {
             id: 'tree-result-'+processName,
-            title: 'Resultado',
-            //region:'north',
+            title: 'Arbol',
             split: true,
             width: '100%',
             autoHeight: true,
@@ -175,7 +179,26 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             store: store
         });
         
-        return treePanel;
+        var treeTabs= Ext.widget('tabpanel', {
+            id: 'tree-tabs-'+processName,
+            title: 'Resultado',
+            activeTab: 0,
+            hidden: true,
+            style: 'background-color:#dfe8f6; margin:0px',
+            defaults: {bodyStyle: 'padding:0px', autoScroll:true},
+            items:[
+                treePanel,
+                {
+                    id: 'json-result-'+processName,
+                    xtype: "panel",
+                    title: 'JSON',
+                    height: 500,
+                    html: ''
+                }
+            ]
+        });
+        
+        return treeTabs;
     }
     
     Instance.defineWriterForm= function(modelName, fields){
