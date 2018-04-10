@@ -269,8 +269,8 @@ public abstract class ExtEntityController extends ExtReportController {
             JSONObject numbererColumn= new JSONObject();
             numbererColumn.put("xtype", "rownumberer");
             numbererColumn.put("width", 40);
-            numbererColumn.put("align", "left");
             numbererColumn.put("sortable", false);
+            numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
             jsonGridColumns.put(numbererColumn);
         }
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
