@@ -182,6 +182,12 @@ public abstract class ExtTableController extends ExtController {
         HashSet<String> fieldsRO= new HashSet<>();//fctc.getReadOnlyFields(viewConfig.getDtoClass());
         fieldsRO.add("id");
         
+        JSONObject numbererColumn= new JSONObject();
+        numbererColumn.put("xtype", "rownumberer");
+        numbererColumn.put("width", 40);
+        numbererColumn.put("sortable", false);
+        numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
+        jsonGridColumns.put(numbererColumn);
         for (GenericTableColumn column : columns) {
             String type = column.getDataType();
             
