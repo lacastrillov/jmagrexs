@@ -19,12 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
  * @author lacastrillov
  * @param <T>
  */
-public abstract class ConfigurationObjectServiceImpl<T> implements ConfigurationObjectService<T> {
+public abstract class ConfigurationObjectServiceImpl1<T> implements ConfigurationObjectService<T> {
     
     private final Class<T> coClass;
     
+    protected final String TRANSACTION_MANAGER = "TRANSACTION_MANAGER_1";
+    
 
-    public ConfigurationObjectServiceImpl() {
+    public ConfigurationObjectServiceImpl1() {
         coClass = ReflectionUtils.getParametrizedType(this.getClass());
     }
     
@@ -36,7 +38,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     public abstract GenericDao getJsonObjectDao();
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public T load() {
         Parameters p= new Parameters();
         p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
@@ -46,7 +48,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public String loadJson() {
         Parameters p= new Parameters();
         p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
@@ -56,7 +58,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public T load(String relatedEntity, Integer relatedId) {
         Parameters p= new Parameters();
         p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
@@ -67,7 +69,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public String loadJson(String relatedEntity, Integer relatedId) {
         Parameters p= new Parameters();
         p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
@@ -94,7 +96,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public void save(T configurationObject) {
         Parameters p= new Parameters();
         p.whereEqual("type", getConfigurationObjectClass().getSimpleName());
@@ -104,7 +106,7 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public void save(T configurationObject, String relatedEntity, Integer relatedId) {
         Parameters p= new Parameters();
         p.whereEqual("type", getConfigurationObjectClass().getSimpleName());

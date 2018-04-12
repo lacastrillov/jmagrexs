@@ -25,6 +25,8 @@ public enum FieldType {
     
     MULTI_SELECT,
     
+    RADIOS,
+    
     URL,
     
     HTML_EDITOR,

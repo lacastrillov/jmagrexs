@@ -236,7 +236,6 @@ public abstract class ExtReportController extends ExtController {
                                 formField.put("enableColors", true);
                                 formField.put("enableAlignments", true);
                                 formField.put("height", 400);
-                            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 //Add Url File
                                 formField.put("name", fieldName);

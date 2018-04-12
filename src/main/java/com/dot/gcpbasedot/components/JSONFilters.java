@@ -73,14 +73,15 @@ public class JSONFilters {
                         if(typeFormFields.containsKey(fieldName)){
                             typeForm= typeFormFields.get(fieldName)[0];
                         }
-                        if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
+                        if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
+                                typeForm.equals(FieldType.RADIOS.name())){
                             addFormField= false;
                             String[] data= typeFormFields.get(fieldName);
                             JSONArray dataArray = new JSONArray();
                             for(int i=1; i<data.length; i++){
                                 dataArray.put(data[i]);
                             }
-                            if(typeForm.equals(FieldType.LIST.name())){
+                            if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.RADIOS.name())){
                                 jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
                             }else{
                                 jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
@@ -295,14 +296,15 @@ public class JSONFilters {
                     if(typeFormFields.containsKey(fieldName)){
                         typeForm= typeFormFields.get(fieldName)[0];
                     }
-                    if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
+                    if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
+                            typeForm.equals(FieldType.RADIOS.name())){
                         addFormField= false;
                         String[] data= typeFormFields.get(fieldName);
                         JSONArray dataArray = new JSONArray();
                         for(int i=1; i<data.length; i++){
                             dataArray.put(data[i]);
                         }
-                        if(typeForm.equals(FieldType.LIST.name())){
+                        if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.RADIOS.name())){
                             jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
                         }else{
                             jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");

@@ -339,6 +339,15 @@ public abstract class ExtEntityController extends ExtReportController {
                                 }
                                 String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#";
                                 addFormField(field,jsonFormFields,fieldGroups,titleGroup);
+                            }else if(typeForm.equals(FieldType.RADIOS.name())){
+                                addFormField= false;
+                                String[] data= typeFormFields.get(fieldName);
+                                JSONArray dataArray = new JSONArray();
+                                for(int i=1; i<data.length; i++){
+                                    dataArray.put(data[i]);
+                                }
+                                String field= "#Instance.commonExtView.getRadioGroup('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#";
+                                addFormField(field,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
@@ -544,7 +553,8 @@ public abstract class ExtEntityController extends ExtReportController {
                                 if(viewConfig.isEditableGrid() && !readOnly){
                                     gridColumn.put("field", field);
                                 }
-                            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
+                            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
+                                    typeForm.equals(FieldType.RADIOS.name())){
                                 String[] data= typeFormFields.get(fieldName);
                                 JSONArray dataArray = new JSONArray();
                                 for(int i=1; i<data.length; i++){

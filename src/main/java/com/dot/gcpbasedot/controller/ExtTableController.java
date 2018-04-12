@@ -229,6 +229,14 @@ public abstract class ExtTableController extends ExtController {
                                 dataArray.put(data[i]);
                             }
                             jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        }else if(typeForm.equals(FieldType.RADIOS.name())){
+                            addFormField= false;
+                            String[] data= typeFormFields.get(fieldName);
+                            JSONArray dataArray = new JSONArray();
+                            for(int i=1; i<data.length; i++){
+                                dataArray.put(data[i]);
+                            }
+                            jsonFormFields.put("#Instance.commonExtView.getRadioGroup('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
                         }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                             formField.put("id", "form" + viewConfig.getTableName() + "_" +fieldName + "LinkField");
                             formField.put("fieldLabel", "&nbsp;");
@@ -428,7 +436,8 @@ public abstract class ExtTableController extends ExtController {
                             if(viewConfig.isEditableGrid() && !readOnly){
                                 gridColumn.put("field", field);
                             }
-                        }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
+                        }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
+                                typeForm.equals(FieldType.RADIOS.name())){
                             String[] data= typeFormFields.get(fieldName);
                             JSONArray dataArray = new JSONArray();
                             for(int i=1; i<data.length; i++){

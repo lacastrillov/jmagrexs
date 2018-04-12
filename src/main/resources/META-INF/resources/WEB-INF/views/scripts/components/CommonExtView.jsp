@@ -12,6 +12,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             Instance.modelNameCombobox= "ComboboxModelIn"+model;
             Instance.combobox={};
             Instance.multiselect={};
+            Instance.radiogroup={};
             Instance.errorGeneral= "Error de servidor";
             Instance.error403= "Usted no tiene permisos para realizar esta operaci&oacute;n";
             Ext.define(Instance.modelNameCombobox, {
@@ -125,6 +126,39 @@ function CommonExtView(parentExtController, parentExtView, model){
         };
         
         return Instance.multiselect[fieldName];
+    };
+    
+    Instance.getRadioGroup= function(fieldName, fieldTitle, dataArray){
+        var data=[];
+        dataArray.forEach(function(item) {
+            if((item+"").indexOf(':')!==-1){
+                var itemValue= item.split(':');
+                data.push({name: fieldName, inputValue:itemValue[0], boxLabel:itemValue[1]});
+            }else{
+                data.push({name: fieldName, inputValue:item, boxLabel:item});
+            }
+        });
+        Ext.override(Ext.form.RadioGroup, {
+            setValue : function(v){
+                if (this.rendered) {
+                    var value={};
+                    value[this.el.dom.name]=true;
+                    Ext.getCmp(this.id).items.items.forEach(function(item){
+                        if(item.inputValue===v){
+                            item.setValue(true);
+                        }
+                    });
+                }
+                return this;
+            }
+        });
+        Instance.radiogroup[fieldName]= new Ext.form.RadioGroup({
+            name: fieldName,
+            fieldLabel: fieldTitle,
+            items: data
+        });
+        
+        return Instance.radiogroup[fieldName];
     };
     
     Instance.enableManagementTabHTMLEditor= function(){

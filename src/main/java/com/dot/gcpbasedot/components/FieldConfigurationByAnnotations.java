@@ -151,7 +151,7 @@ public class FieldConfigurationByAnnotations {
             FieldType ft= an.value();
             String[] typeData= new String[]{ft.name()};
             
-            if(ft.equals(FieldType.LIST) || ft.equals(FieldType.MULTI_SELECT)){
+            if(ft.equals(FieldType.LIST) || ft.equals(FieldType.MULTI_SELECT) || ft.equals(FieldType.RADIOS)){
                 map.put(fieldName, (String[]) ArrayUtils.addAll(typeData, an.data()));
             }else{
                 map.put(fieldName, typeData);

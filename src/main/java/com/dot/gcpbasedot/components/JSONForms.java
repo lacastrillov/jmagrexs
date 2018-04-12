@@ -83,6 +83,14 @@ public class JSONForms {
                                     dataArray.put(data[i]);
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            }else if(typeForm.equals(FieldType.RADIOS.name())){
+                                addFormField= false;
+                                String[] data= typeFormFields.get(fieldName);
+                                JSONArray dataArray = new JSONArray();
+                                for(int i=1; i<data.length; i++){
+                                    dataArray.put(data[i]);
+                                }
+                                jsonFormFields.put("#Instance.commonExtView.getRadioGroup('"+parent + fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("id", "form" + processName+ "_" + parent + fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
