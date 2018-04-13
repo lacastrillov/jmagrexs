@@ -1004,13 +1004,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 }
             }
         });
-        <c:if test="${viewConfig.preloadedForm}">
+        <c:if test="${viewConfig.preloadedForm || onlyForm}">
         Instance.tabsContainer.getTabBar().hide();
         </c:if>
         
         Instance.mainView= {
             id: Instance.id,
+            <c:if test="${not onlyForm}">
             title: 'Gestionar ${viewConfig.pluralEntityTitle}',
+            </c:if>
             frame: false,
             layout: 'border',
             items: [

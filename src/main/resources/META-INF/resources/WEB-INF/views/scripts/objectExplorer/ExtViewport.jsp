@@ -55,7 +55,7 @@ function ${entityName}ExtViewport(){
             minSize: 200,
 
             fieldDefaults: {
-                //labelWidth: "51%",
+                labelWidth: "51%",
                 anchor: '100%',
                 labelAlign: 'right'
             },
@@ -111,8 +111,9 @@ function ${entityName}ExtViewport(){
     Instance.renderViewport= function(){
         Ext.create('Ext.Viewport', {
             layout: 'border',
+            title: 'Toures Balon',
             items: [
-            <c:if test="${viewConfig.visibleHeader && not onlyForm}">
+            <c:if test="${viewConfig.visibleHeader}">
             {
                 xtype: 'box',
                 id: 'header',
@@ -121,10 +122,10 @@ function ${entityName}ExtViewport(){
                 height: 30
             },
             </c:if>
-            <c:if test="${viewConfig.visibleMenu && not onlyForm}">
+            <c:if test="${viewConfig.visibleMenu}">
             Instance.menuBar,
             </c:if>
-            <c:if test="${viewConfig.visibleFilters && not onlyForm}">
+            <c:if test="${viewConfig.visibleFilters}">
             Instance.filters,
             </c:if>
             Instance.border
