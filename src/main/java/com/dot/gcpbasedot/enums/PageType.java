@@ -21,7 +21,7 @@ public enum PageType {
     
     FILE_EXPLORER("fileExplorer"),
     
-    OBJECT_EXPLORER("objectExplorer"),
+    ENTITY_EXPLORER("entityExplorer"),
     
     CONFIGURATION_OBJECT("configurationObject");
     

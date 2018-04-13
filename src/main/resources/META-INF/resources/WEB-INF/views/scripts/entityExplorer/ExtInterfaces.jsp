@@ -32,10 +32,10 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
         
         if(entity!==null && typeof(entity)!=='undefined'){
             var path= "";
-            var parent= entity.webObject;
+            var parent= entity.webEntity;
             while(parent!==undefined && parent.id!==undefined){
                 path= parent.id + "__" + parent.name + "/" + path;
-                parent= parent.webObject;
+                parent= parent.webEntity;
             }
             path+= entity.id + "__" + entity.name;
             source['Ruta']= path;

@@ -7,12 +7,14 @@ package com.dot.gcpbasedot.dto.config;
 
 import com.dot.gcpbasedot.dto.GridTemplate;
 import com.dot.gcpbasedot.service.EntityService;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author desarrollador
  */
-public class ObjectExplorerConfig {
+public class EntityExplorerConfig {
     
     private EntityService entityService;
     
@@ -70,8 +72,10 @@ public class ObjectExplorerConfig {
     
     private GridTemplate gridTemplate;
     
+    private final Map<String, String> refEntities;
     
-    public ObjectExplorerConfig(String entityRef, EntityService entityService, Class dtoClass) {
+    
+    public EntityExplorerConfig(String entityRef, EntityService entityService, Class dtoClass) {
         this.entityRef= entityRef;
         this.entityName= entityService.getEntityClass().getSimpleName();
         this.labelField= "name";
@@ -100,6 +104,7 @@ public class ObjectExplorerConfig {
         this.defaultOrderDir= "DESC";
         this.maxResultsPerPage= 50L;
         this.gridTemplate= new GridTemplate("");
+        this.refEntities= new HashMap<>();
     }
 
     /**
@@ -495,6 +500,21 @@ public class ObjectExplorerConfig {
      */
     public void setGridTemplate(GridTemplate gridTemplate) {
         this.gridTemplate = gridTemplate;
+    }
+
+    /**
+     * @return the refEntities
+     */
+    public Map<String, String> getRefEntities() {
+        return refEntities;
+    }
+
+    /**
+     * @param entityRef
+     * @param entityName
+     */
+    public void addEntityRef(String entityRef, String entityName) {
+        this.refEntities.put(entityRef, entityName);
     }
     
     

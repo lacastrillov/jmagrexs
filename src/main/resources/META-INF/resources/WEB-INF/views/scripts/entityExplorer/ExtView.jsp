@@ -382,8 +382,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: 'Archivo',
                             //iconCls: 'add16',
                             menu: [
-                                {text: 'Subir Archivos', handler: function(){this.onUploadFile();}, scope: this},
-                                {text: 'Crear Archivo', handler: function(){this.onCreateFile();}, scope: this},
+                                {text: 'Crear Entidad', menu:[
+                                    {text: 'Usuario', handler: function(){this.onCreateEntity('user');}, scope: this},
+                                    {text: 'Categoria', handler: function(){this.onCreateEntity('category');}, scope: this}
+                                ]},
                                 {text: 'Crear Carpeta', handler: function(){this.onCreateFolder();}, scope: this},
                                 <c:if test="${viewConfig.visibleRemoveButtonInGrid}">
                                 {text: 'Eliminar', handler: function(){this.onDeleteClick();}, scope: this},
@@ -463,12 +465,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 });
             },
             
-            onCreateFile: function(){
-                Ext.MessageBox.prompt('Crear Archivo', 'Por favor, ingrese el nombre:', function(btn, text){
+            onCreateEntity: function(entityRef){
+                alert(entityRef)
+                Ext.MessageBox.prompt('Crear Entidad', 'Por favor, ingrese el nombre:', function(btn, text){
                     if(text!==""){
-                        var data= {"name":text,"type":"file"};
-                        if(parentExtController.filter.eq!==undefined && parentExtController.filter.eq.webObject!==undefined){
-                            data["webObject"]=parentExtController.filter.eq.webObject;
+                        var data= {"name":text,"entityRef":"file"};
+                        if(parentExtController.filter.eq!==undefined && parentExtController.filter.eq.webEntity!==undefined){
+                            data["webEntity"]=parentExtController.filter.eq.webEntity;
                         }
                         Instance.entityExtStore.save('create', JSON.stringify(data), function(responseText){
                             Instance.reloadPageStore(Instance.store.currentPage);
@@ -480,23 +483,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             onCreateFolder: function(){
                 Ext.MessageBox.prompt('Crear Carpeta', 'Por favor, ingrese el nombre:', function(btn, text){
                     if(text!==""){
-                        var data= {"name":text,"type":"folder"};
-                        if(parentExtController.filter.eq!==undefined && parentExtController.filter.eq.webObject!==undefined){
-                            data["webObject"]=parentExtController.filter.eq.webObject;
+                        var data= {"name":text,"entityRef":"folder"};
+                        if(parentExtController.filter.eq!==undefined && parentExtController.filter.eq.webEntity!==undefined){
+                            data["webEntity"]=parentExtController.filter.eq.webEntity;
                         }
                         Instance.entityExtStore.save('create', JSON.stringify(data), function(responseText){
                             Instance.reloadPageStore(Instance.store.currentPage);
                         });
                     }
                 });
-            },
-            
-            onUploadFile: function(){
-                if (Instance.formUpload.isVisible()) {
-                    Instance.formUpload.hide(this.down('#fileMenu'), function() {});
-                } else {
-                    Instance.formUpload.show(this.down('#fileMenu'), function() {});
-                }
             },
             
             onRenameFile: function(){
@@ -563,73 +558,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             
         });
     };
-
-    function getFormUpload(){
-        var progressbar = Ext.widget('progressbar', {
-            animate: true,
-            value: 0.0
-        });
-        
-        Instance.commonExtView.defineMultiFilefield();
-        
-        var formUpload = Ext.create('Ext.form.Panel', {
-            defaultType: 'textfield',
-            border: false,
-            bodyPadding: 15,
-            fieldDefaults: {
-                labelAlign: 'left',
-                anchor: '100%'
-            },
-
-            items: [
-                progressbar,
-                {
-                id: 'multifilefieldId',
-                xtype: 'multifilefield',
-                name: 'location',
-                fieldLabel: 'Seleccione archivos',
-                labelWidth: 125,
-                style: 'margin-top:20px',
-                allowBlank: false
-            }]
-        });
-
-        var win = Ext.create('Ext.window.Window', {
-            autoShow: false,
-            title: 'Subir Archivos',
-            closable: true,
-            closeAction: 'hide',
-            width: 600,
-            height: 200,
-            minWidth: 300,
-            minHeight: 200,
-            layout: 'fit',
-            plain:true,
-            items: formUpload,
-
-            buttons: [{
-                text: 'Subir',
-                handler: function(){
-                    var endpoint= Ext.context+"/rest/${entityRef}/multipartupload/"+parentExtController.filter.eq.webObject+".htm";
-                    fileUploader.startFileUpload('multifilefieldId-button-fileInputEl', endpoint, function(fileName, percentComplete, loadFinished){
-                        progressbar.updateProgress(percentComplete/100, fileName+' '+percentComplete+'% completado...');
-                        if(loadFinished){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                            setTimeout(function(){ Instance.formUpload.hide()},1000);
-                        }
-                    });
-                }
-            },{
-                text: 'Cancelar',
-                handler: function(){
-                    progressbar.updateProgress(0,'0%');
-                    Instance.formUpload.hide();
-                }
-            }]
-        });
-        
-        return win;
-    }
     
     function getFormMove(){
         
@@ -656,7 +584,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         });
         
         treePanel.getSelectionModel().on('select', function(selModel, record) {
-            Instance.filterMove.uv.webObject= record.getId();
+            Instance.filterMove.uv.webEntity= record.getId();
         });
 
         var win = Ext.create('Ext.window.Window', {
@@ -675,7 +603,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             buttons: [{
                 text: 'Mover',
                 handler: function(){
-                    if(Instance.filterMove.uv.webObject!==undefined){
+                    if(Instance.filterMove.uv.webEntity!==undefined){
                         Instance.entityExtStore.updateByFilter(JSON.stringify(Instance.filterMove), function(responseText){
                             Instance.reloadPageStore(Instance.store.currentPage);
                             setTimeout(function(){ Instance.formMove.hide()},1000);
@@ -696,14 +624,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     function getPropertyGrid(){
         var renderers= {
             "Ruta": function(entity){
-                var breadcrumb= "<a href='#?filter={\"isn\":[\"webObject\"]}'>Ra&iacute;z</a>";
+                var breadcrumb= "<a href='#?filter={\"isn\":[\"webEntity\"]}'>Ra&iacute;z</a>";
                 var path = entity.split("/");
                 for(var i=0; i<path.length; i++){
                     if(path[i].indexOf("__")!==-1){
                         var res= path[i].split("__");
                         breadcrumb+=" / ";
                         if(i<path.length-1){
-                            breadcrumb+="<a href='#?filter={\"eq\":{\"webObject\":"+res[0]+"}}'>";
+                            breadcrumb+="<a href='#?filter={\"eq\":{\"webEntity\":"+res[0]+"}}'>";
                         }
                         breadcrumb+=res[1];
                         if(i<path.length-1){
@@ -773,8 +701,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         
         Instance.propertyGrid= getPropertyGrid();
         
-        Instance.formUpload= getFormUpload();
-        
         Instance.formMove= getFormMove();
 
         Instance.tabsContainer= Ext.widget('tabpanel', {
@@ -791,7 +717,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     bodyStyle: 'padding:0px',
                     items:[
                         {
-                            id: 'webObjectDetail',
+                            id: 'webEntityDetail',
                             xtype : 'panel',
                             region: 'center',
                             width: '70%',

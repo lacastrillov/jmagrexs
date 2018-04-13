@@ -26,7 +26,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.typeController= "${typeController}";
         mvcExt.mappingController(Instance.id, Instance);
         Instance.initFilter();
-        Instance.filter.isn=["webObject"];
+        Instance.filter.isn=["webEntity"];
     };
     
     Instance.initFilter= function(){
@@ -82,7 +82,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.entityExtView.reloadPageStore(1);
         if(Instance.entityExtView.formComponent!==null){
             Instance.entityExtView.formComponent.setActiveRecord(null);
-            util.setHtml("webObjectDetail-innerCt", Instance.entityExtView.commonExtView.getLoadingContent());
+            util.setHtml("webEntityDetail-innerCt", Instance.entityExtView.commonExtView.getLoadingContent());
         }
     };
     
@@ -97,7 +97,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                         var record= Ext.create(Instance.modelName);
                         record.data= data;
                         Instance.entityExtView.formComponent.setActiveRecord(record || null);
-                        Instance.entityExtView.webObjectExtInterfaces.addLevel(data);
+                        Instance.entityExtView.webEntityExtInterfaces.addLevel(data);
                     });
                 }
             }else{

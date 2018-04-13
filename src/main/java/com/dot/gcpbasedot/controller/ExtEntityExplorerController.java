@@ -1,6 +1,6 @@
 package com.dot.gcpbasedot.controller;
 
-import com.dot.gcpbasedot.dto.config.ObjectExplorerConfig;
+import com.dot.gcpbasedot.dto.config.EntityExplorerConfig;
 import com.dot.gcpbasedot.enums.FieldType;
 import com.dot.gcpbasedot.enums.HideView;
 import com.dot.gcpbasedot.reflection.EntityReflection;
@@ -29,11 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public abstract class ExtObjectExplorerController extends ExtController {
+public abstract class ExtEntityExplorerController extends ExtController {
 
-    protected static final Logger LOGGER = Logger.getLogger(ExtObjectExplorerController.class);
+    protected static final Logger LOGGER = Logger.getLogger(ExtEntityExplorerController.class);
     
-    private ObjectExplorerConfig viewConfig;
+    private EntityExplorerConfig viewConfig;
     
     @Autowired
     private FieldConfigurationByAnnotations fcba;
@@ -48,17 +48,17 @@ public abstract class ExtObjectExplorerController extends ExtController {
     public JSONFilters jf;
     
     
-    protected void addControlMapping(ObjectExplorerConfig viewConfig) {
+    protected void addControlMapping(EntityExplorerConfig viewConfig) {
         this.viewConfig= viewConfig;
     }
 
     protected void addControlMapping(String entityRef, EntityService entityService, Class dtoClass) {
-        viewConfig= new ObjectExplorerConfig(entityRef, entityService, dtoClass);
+        viewConfig= new EntityExplorerConfig(entityRef, entityService, dtoClass);
     }
 
-    @RequestMapping(value = "/objectExplorer.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView objectExplorer() {
-        ModelAndView mav= new ModelAndView("objectExplorer");
+    @RequestMapping(value = "/entityExplorer.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView entityExplorer() {
+        ModelAndView mav= new ModelAndView("entityExplorer");
         
         mav.addObject("extViewConfig", extViewConfig);
         mav.addObject("basePath", menuComponent.getBasePath());
@@ -69,7 +69,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtViewport.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extViewport(HttpSession session) {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtViewport");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtViewport");
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
@@ -79,8 +79,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){
-            JSONArray jsonFieldsFilters= jf.getFieldsFilters(
-                    viewConfig.getDtoClass(), viewConfig.getLabelField(), viewConfig.getDateFormat(), PageType.OBJECT_EXPLORER);
+            JSONArray jsonFieldsFilters= jf.getFieldsFilters(viewConfig.getDtoClass(), viewConfig.getLabelField(), viewConfig.getDateFormat(), PageType.ENTITY_EXPLORER);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -89,7 +88,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtInit.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extInit() {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtInit");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtInit");
         
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());
@@ -99,7 +98,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extModel() {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtModel");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtModel");
         
         JSONArray jsonModel = jm.getJSONModel(viewConfig.getDtoClass(), viewConfig.getDateFormat());
         JSONArray jsonTemplateModel = new JSONArray();
@@ -128,7 +127,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extStore() {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtStore");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtStore");
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
@@ -140,7 +139,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtView.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extView(@RequestParam(required = true) String typeView) {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtView");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtView");
         
         if(typeView.equals("Parent")){
             viewConfig.setActiveGridTemplate(viewConfig.isActiveGridTemplateAsParent());
@@ -157,7 +156,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtController.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extController(@RequestParam(required = true) String typeController) {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtController");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtController");
         
         mav.addObject("typeController", typeController);
         addGeneralObjects(mav);
@@ -167,7 +166,7 @@ public abstract class ExtObjectExplorerController extends ExtController {
     
     @RequestMapping(value = "/ExtInterfaces.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extInterfaces() {
-        ModelAndView mav= new ModelAndView("scripts/objectExplorer/ExtInterfaces");
+        ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtInterfaces");
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
