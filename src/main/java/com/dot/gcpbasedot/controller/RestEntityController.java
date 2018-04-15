@@ -8,6 +8,7 @@ import com.dot.gcpbasedot.service.EntityService;
 import com.dot.gcpbasedot.util.Util;
 import com.dot.gcpbasedot.util.XMLMarshaller;
 import com.dot.gcpbasedot.dto.ResultListCallback;
+import com.dot.gcpbasedot.interfaces.WebEntityInterface;
 import com.dot.gcpbasedot.mapper.EntityMapper;
 import com.dot.gcpbasedot.util.CSVService;
 import com.dot.gcpbasedot.util.ExcelService;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +47,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.ContextLoader;
 
 @Controller
 public abstract class RestEntityController {
@@ -310,6 +314,7 @@ public abstract class RestEntityController {
 
             service.create(entity);
             dto = mapper.entityToDto(entity);
+            updateRelatedWebEntity(entity, request);
             resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
         } catch (Exception e) {
             LOGGER.error("create " + entityRef, e);
@@ -339,6 +344,7 @@ public abstract class RestEntityController {
 
                     service.update(entity);
                     dto = mapper.entityToDto(entity);
+                    updateRelatedWebEntity(entity, request);
                     resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
                 }else{
                     return this.create(data, request);
@@ -682,7 +688,7 @@ public abstract class RestEntityController {
             String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
             content= (pathFile.startsWith(LOCAL_DIR))?FileService.getTextFile(pathFile):"";
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("getContentFile ",ex);
         }
         return Util.getStringBytes(content);
     }
@@ -699,10 +705,28 @@ public abstract class RestEntityController {
                 return "El contenido no pudo ser guardado";
             }
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("setContentFile ",ex);
         }
         
         return "Error al guardar";
+    }
+    
+    private void updateRelatedWebEntity(BaseEntity entity, HttpServletRequest request){
+        try{
+            if(request.getParameter("webEntityId")!=null){
+                Long webEntityId= Long.parseLong(request.getParameter("webEntityId"));
+                ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+                if(ctx.getBean("webEntityService")!=null){
+                    EntityService entityService = (EntityService) ctx.getBean("webEntityService");
+                    WebEntityInterface webEntity= (WebEntityInterface) entityService.loadById(webEntityId);
+                    webEntity.setEntityId(""+entity.getId());
+                    webEntity.setModificationDate(new Date());
+                    entityService.update(webEntity);
+                }
+            }
+        }catch(Exception e){
+            LOGGER.error("updateRelatedWebEntity " + entityRef, e);
+        }
     }
     
     protected String saveFile(FileItemStream fileIS, Object idEntity){

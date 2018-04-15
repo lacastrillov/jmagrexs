@@ -216,7 +216,7 @@ function ${entityName}ExtStore(){
         Ext.Ajax.request({
             url: Ext.context+'/rest/${entityRef}/'+baseAction+operation+'.htm',
             method: "POST",
-            params: "data="+encodeURIComponent(data),
+            params: "data="+encodeURIComponent(data)<c:if test="${not empty param.webEntityId}">+"&webEntityId=${param.webEntityId}"</c:if>,
             success: function(response){
                 Ext.MessageBox.hide();
                 var responseText= Ext.decode(response.responseText);

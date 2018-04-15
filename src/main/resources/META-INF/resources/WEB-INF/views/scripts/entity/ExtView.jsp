@@ -99,6 +99,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         var itemsForm= [{
             itemId: 'form${entityName}',
             xtype: 'writerform${entityName}',
+            <c:if test="${onlyForm}">
+            title: '${viewConfig.singularEntityTitle}',
+            </c:if>
             border: false,
             width: '100%',
             listeners: {

@@ -344,8 +344,12 @@ public abstract class ExtEntityController extends ExtReportController {
                                 for(int i=1; i<data.length; i++){
                                     dataArray.put(data[i]);
                                 }
-                                String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#";
-                                addFormField(field,jsonFormFields,fieldGroups,titleGroup);
+                                if(!readOnly){
+                                    String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#";
+                                    addFormField(field,jsonFormFields,fieldGroups,titleGroup);
+                                }else{
+                                    addFormField=true;
+                                }
                             }else if(typeForm.equals(FieldType.RADIOS.name())){
                                 addFormField= false;
                                 String[] data= typeFormFields.get(fieldName);

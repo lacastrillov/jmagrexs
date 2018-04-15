@@ -468,6 +468,15 @@ public class FileExplorerConfig {
     public void setDefaultOrderDir(String defaultOrderDir) {
         this.defaultOrderDir = defaultOrderDir;
     }
+    
+    /**
+     * @param defaultOrderBy the defaultOrderBy to set
+     * @param defaultOrderDir
+     */
+    public void setDefaultOrder(String defaultOrderBy, String defaultOrderDir) {
+        this.defaultOrderBy = defaultOrderBy;
+        this.defaultOrderDir = defaultOrderDir;
+    }
 
     /**
      * @return the maxResultsPerPage

@@ -98,6 +98,12 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                         record.data= data;
                         Instance.entityExtView.formComponent.setActiveRecord(record || null);
                         Instance.entityExtView.webEntityExtInterfaces.addLevel(data);
+                        
+                        //Cargar entidad
+                        var htmlView= '<div style="margin:0px;text-align: center; height: 99%;">'+
+                                      '<iframe src="'+data.location+'" frameborder="0" width="100%" height="100%"></iframe>'+
+                                      '</div>';
+                        util.setHtml("webEntityDetail-innerCt", htmlView);
                     });
                 }
             }else{

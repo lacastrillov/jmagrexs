@@ -266,7 +266,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.numbererGridRender= function(value, metaData, record, rowIdx, colIdx, dataSource, view){
         metaData.style="text-align:left;color:#666666;";
-        return (record.index+1);
+        return (isNaN(record.index))?"":(record.index+1);
     };
     
     Instance.fileRender= function(value, field){

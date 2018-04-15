@@ -383,8 +383,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'Crear Entidad', menu:[
-                                    {text: 'Usuario', handler: function(){this.onCreateEntity('user');}, scope: this},
-                                    {text: 'Categoria', handler: function(){this.onCreateEntity('category');}, scope: this}
+                                    <c:forEach var="entityRef" items="${viewConfig.refEntities}">
+                                    {text: '${entityRef.value}', handler: function(){this.onCreateEntity('${entityRef.key}','${entityRef.value}');}, scope: this},
+                                    </c:forEach>
                                 ]},
                                 {text: 'Crear Carpeta', handler: function(){this.onCreateFolder();}, scope: this},
                                 <c:if test="${viewConfig.visibleRemoveButtonInGrid}">
@@ -465,11 +466,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 });
             },
             
-            onCreateEntity: function(entityRef){
-                alert(entityRef)
+            onCreateEntity: function(entityRef, entityName){
                 Ext.MessageBox.prompt('Crear Entidad', 'Por favor, ingrese el nombre:', function(btn, text){
                     if(text!==""){
-                        var data= {"name":text,"entityRef":"file"};
+                        var data= {"name":text,"entityRef":entityRef,"entityName":entityName};
                         if(parentExtController.filter.eq!==undefined && parentExtController.filter.eq.webEntity!==undefined){
                             data["webEntity"]=parentExtController.filter.eq.webEntity;
                         }

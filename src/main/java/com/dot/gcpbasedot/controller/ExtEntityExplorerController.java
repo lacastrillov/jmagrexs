@@ -236,7 +236,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
-            String simpleType= propertyDescriptor.getPropertyType().getSimpleName();
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
                 String fieldName= propertyDescriptor.getName();
@@ -269,14 +268,18 @@ public abstract class ExtEntityExplorerController extends ExtController {
                                 formField.put("enableColors", true);
                                 formField.put("enableAlignments", true);
                                 formField.put("height", 400);
-                            }else if(typeForm.equals(FieldType.LIST.name())){
+                            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
                                 addFormField= false;
                                 String[] data= typeFormFields.get(fieldName);
                                 JSONArray dataArray = new JSONArray();
                                 for(int i=1; i<data.length; i++){
                                     dataArray.put(data[i]);
                                 }
-                                jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                if(!readOnly){
+                                    jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                }else{
+                                    addFormField= true;
+                                }
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");

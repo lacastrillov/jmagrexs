@@ -7,7 +7,7 @@ package com.dot.gcpbasedot.dto.config;
 
 import com.dot.gcpbasedot.dto.GridTemplate;
 import com.dot.gcpbasedot.service.EntityService;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -104,7 +104,7 @@ public class EntityExplorerConfig {
         this.defaultOrderDir= "DESC";
         this.maxResultsPerPage= 50L;
         this.gridTemplate= new GridTemplate("");
-        this.refEntities= new HashMap<>();
+        this.refEntities= new LinkedHashMap<>();
     }
 
     /**
@@ -471,6 +471,15 @@ public class EntityExplorerConfig {
      * @param defaultOrderDir the defaultOrderDir to set
      */
     public void setDefaultOrderDir(String defaultOrderDir) {
+        this.defaultOrderDir = defaultOrderDir;
+    }
+    
+    /**
+     * @param defaultOrderBy the defaultOrderBy to set
+     * @param defaultOrderDir
+     */
+    public void setDefaultOrder(String defaultOrderBy, String defaultOrderDir) {
+        this.defaultOrderBy = defaultOrderBy;
         this.defaultOrderDir = defaultOrderDir;
     }
 
