@@ -815,7 +815,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             closable: true,
             closeAction: 'hide',
             width: '50%',
-            height: 300,
+            height: 500,
             minWidth: 300,
             minHeight: 200,
             layout: 'fit',

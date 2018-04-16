@@ -90,6 +90,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 itemId: 'form${configurationObjectName.key}',
                 xtype: 'writerform${configurationObjectName.key}',
                 title: '${configurationObjectName.value}',
+                style: 'min-width: 450px',
                 border: false,
                 width: '60%',
                 minWidth: 300,

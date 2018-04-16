@@ -467,7 +467,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
             
             onCreateEntity: function(entityRef, entityName){
-                Ext.MessageBox.prompt('Crear Entidad', 'Por favor, ingrese el nombre:', function(btn, text){
+                Ext.MessageBox.prompt('Crear '+entityName, 'Por favor, ingrese el nombre:', function(btn, text){
                     if(text!==""){
                         var data= {"name":text,"entityRef":entityRef,"entityName":entityName};
                         if(parentExtController.filter.eq!==undefined && parentExtController.filter.eq.webEntity!==undefined){

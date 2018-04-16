@@ -110,9 +110,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             itemId: 'form${processName.key}',
             xtype: 'writerform${processName.key}',
             title: '${processName.value}',
+            style: 'min-width: 450px',
             border: false,
             width: '60%',
-            minWidth: 300,
             listeners: {
                 doProcess: function(form, data){
                     Instance.entityExtStore.doProcess('${processName.key}', data, function(processName, processId, dataOut, outputDataFormat){
