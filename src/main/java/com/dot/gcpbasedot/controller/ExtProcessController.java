@@ -233,6 +233,12 @@ public abstract class ExtProcessController extends ExtController {
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(entityClass);
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(entityClass);
         
+        JSONObject numbererColumn= new JSONObject();
+        numbererColumn.put("xtype", "rownumberer");
+        numbererColumn.put("width", 40);
+        numbererColumn.put("sortable", false);
+        numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
+        jsonGridColumns.put(numbererColumn);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
             
