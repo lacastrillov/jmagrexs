@@ -10,6 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.Iterator;
 
 import javax.xml.soap.MessageFactory;
@@ -103,7 +106,18 @@ public class SimpleSOAPClient {
      */
     public JSONObject sendMessageGetJSON(String xmlRequestBody) throws SOAPException, IOException{
         SOAPMessage stringToSOAPMessage = stringToSOAPMessage(xmlRequestBody);
-        SOAPMessage soapResponse = soapConnection.call(stringToSOAPMessage, soapService.getEndpoint());
+        URL endpoint = new URL(null, soapService.getEndpoint(), new URLStreamHandler() {
+            @Override
+            protected URLConnection openConnection(URL url) throws IOException {
+                URL target = new URL(url.toString());
+                URLConnection connection = target.openConnection();
+                // Connection settings
+                connection.setConnectTimeout(60000); // 1 min
+                connection.setReadTimeout(60000); // 1 min
+                return (connection);
+            }
+        });
+        SOAPMessage soapResponse = soapConnection.call(stringToSOAPMessage, endpoint);
         String strMsg= soatMessageToString(soapResponse);
         String jsonMsg= XMLMarshaller.convertXMLToJSON(strMsg);
         JSONObject jsonObject= new JSONObject(jsonMsg);
