@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="ExtJSLib4" value="${pageContext.request.scheme}://${pageContext.request.serverName}:8080/ext-4.2.1" />
-<c:set var="ExtJSLib6" value="${pageContext.request.scheme}://${pageContext.request.serverName}:8080/ext-6.2.0/build" />
+<c:set var="ExtJSLib4" value="${serverDomain.domain}:8080/ext-4.2.1" />
+<c:set var="ExtJSLib6" value="${serverDomain.domain}:8080/ext-6.2.0/build" />
 <c:if test="${extViewConfig.extJsVersion==4}">
     <c:choose>
         <c:when test = "${extViewConfig.extJsLib4==''}">
@@ -33,5 +33,5 @@
     <!--<script src="${ExtJSLib}/examples/classic/shared/options-toolbar.js"></script>-->
 </c:if>
     <script>
-        Ext.context="${extViewConfig.applicationPath}";
+        Ext.context="${serverDomain.applicationContext}";
     </script>

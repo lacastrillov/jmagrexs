@@ -7,6 +7,7 @@ package com.dot.gcpbasedot.controller;
 
 import com.dot.gcpbasedot.components.ExtViewConfig;
 import com.dot.gcpbasedot.components.MenuComponent;
+import com.dot.gcpbasedot.components.ServerDomain;
 import com.dot.gcpbasedot.dto.MenuItem;
 import java.util.List;
 import javax.servlet.http.HttpSession;
@@ -26,6 +27,8 @@ public abstract class ExtController {
     @Autowired
     public MenuComponent menuComponent;
     
+    @Autowired
+    public ServerDomain serverDomain;
     
     
     public JSONArray getMenuItems(HttpSession session, MenuComponent globalMenuComponent){

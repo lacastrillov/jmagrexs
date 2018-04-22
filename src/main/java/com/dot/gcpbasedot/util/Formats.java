@@ -279,6 +279,19 @@ public class Formats {
         DateFormat dateFormat = new SimpleDateFormat(format);
         return dateFormat.format(date);
     }
+    
+    /**
+     * Metodo que convierte un Time en String
+     *
+     * @param time
+     * @param format
+     * @return
+     * @throws ParseException
+     */
+    public static String timeToString(Time time, String format) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(format);
+        return dateFormat.format(time);
+    }
 
     /**
      * Metodo que convierte un String en Date
@@ -305,6 +318,7 @@ public class Formats {
         String[] inFormats= new String[]{
             "dd-MM-yyyy",
             "dd-MM-yyyy HH:mm:ss",
+            "dd-MM-yyyy hh:mm:ss a",
             "yyyy-MM-dd'T'HH:mm:ss",
             "yyyy-MM-dd'T'HH:mm:ss'.000-05:00'"
         };

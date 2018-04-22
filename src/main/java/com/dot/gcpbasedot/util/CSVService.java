@@ -1,38 +1,50 @@
 package com.dot.gcpbasedot.util;
 
 import com.dot.gcpbasedot.annotation.LabelField;
+import com.dot.gcpbasedot.components.ExtViewConfig;
 import com.dot.gcpbasedot.components.FieldConfigurationByAnnotations;
+import com.dot.gcpbasedot.components.FieldConfigurationByTableColumns;
 import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
+import com.dot.gcpbasedot.enums.FieldType;
 import com.dot.gcpbasedot.enums.HideView;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import java.beans.PropertyDescriptor;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.util.HtmlUtils;
 
 public class CSVService {
+    
+    protected static final Logger LOGGER = Logger.getLogger(CSVService.class);
     
     private static final String DEFAULT_SEPARATOR = ";";
     
     private static final FieldConfigurationByAnnotations FCBA= new FieldConfigurationByAnnotations();
     
+    private static final FieldConfigurationByTableColumns FCTC= new FieldConfigurationByTableColumns();
+    
 
     public static String generateCSVReport(List<Object> list, Class dtoClass) throws Exception {
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
         StringBuilder report=new StringBuilder("");
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
         FCBA.orderPropertyDescriptor(propertyDescriptors, dtoClass, "name");
 
         HashMap<String, String> titledFieldsMap= FCBA.getTitledFieldsMap(propertyDescriptors, dtoClass);
+        HashMap<String,String[]> typeFormFields= FCBA.getTypeFormFields(dtoClass);
         HashSet<String> hideFields= FCBA.getHideFields(dtoClass);
 
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -55,11 +67,16 @@ public class CSVService {
                     if (value != null) {
                         try{
                             if(Formats.TYPES_LIST.contains(typeWrapper.getName())){
-                                Object parseValue = typeWrapper.cast(value);
                                 if(typeWrapper.getName().equals("java.util.Date")){
-                                    report.append(Formats.dateToString((Date)parseValue, "dd-MM-yyyy")).append(DEFAULT_SEPARATOR);
+                                    String format= extViewConfig.getDateFormatJava();
+                                    if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){
+                                        format= extViewConfig.getDatetimeFormatJava();
+                                    }
+                                    report.append(Formats.dateToString((Date)value, format)).append(DEFAULT_SEPARATOR);
+                                }else if(typeWrapper.getName().equals("java.sql.Time")){
+                                    report.append(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())).append(DEFAULT_SEPARATOR);
                                 }else{
-                                    report.append(parseValue.toString()).append(DEFAULT_SEPARATOR);
+                                    report.append(value.toString()).append(DEFAULT_SEPARATOR);
                                 }
                             }else{
                                 BeanWrapperImpl internalWrapper = new BeanWrapperImpl(value);
@@ -74,6 +91,7 @@ public class CSVService {
                                 report.append(textValue).append(DEFAULT_SEPARATOR);
                             }
                         }catch(Exception e){
+                            LOGGER.error("ERROR generateCSVReport1", e);
                             report.append("").append(DEFAULT_SEPARATOR);
                         }
                     }else{
@@ -87,7 +105,11 @@ public class CSVService {
     }
     
     public static String generateCSVReport(List<Map<String, Object>> list, List<GenericTableColumn> columns) throws Exception {
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
         StringBuilder report=new StringBuilder("");
+        HashMap<String,String[]> typeFormFields= FCTC.getTypeFormFields(columns);
+        
         for (GenericTableColumn column : columns) {
             String type = column.getDataType();
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
@@ -103,12 +125,18 @@ public class CSVService {
                 if (value != null) {
                     try{
                         if(propertyType.equals("java.util.Date")){
-                            DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                            report.append(format.format(value)).append(DEFAULT_SEPARATOR);
+                            String format= extViewConfig.getDateFormatJava();
+                            if(typeFormFields.containsKey(column.getColumnAlias()) && typeFormFields.get(column.getColumnAlias())[0].equals(FieldType.DATETIME.name())){
+                                format= extViewConfig.getDatetimeFormatJava();
+                            }
+                            report.append(Formats.dateToString((Date)value, format)).append(DEFAULT_SEPARATOR);
+                        }else if(propertyType.equals("java.sql.Time")){
+                            report.append(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())).append(DEFAULT_SEPARATOR);
                         }else{
                             report.append(value.toString()).append(DEFAULT_SEPARATOR);
                         }
                     }catch(Exception e){
+                        LOGGER.error("ERROR generateCSVReport2", e);
                         report.append("").append(DEFAULT_SEPARATOR);
                     }
                 }else{

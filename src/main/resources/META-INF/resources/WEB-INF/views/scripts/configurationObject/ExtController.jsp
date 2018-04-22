@@ -40,7 +40,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.loadFormData= function(configObj){
-        if(configObj!==""){
+        if(configObj!==null){
             Instance.entityExtView.entityExtStore.loadConfig(configObj, function(data){
                 //Show Process
                 Ext.getCmp('content-configurationObjects').layout.setActiveItem('formContainer'+configObj);

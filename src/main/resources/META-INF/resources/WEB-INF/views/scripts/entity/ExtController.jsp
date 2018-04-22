@@ -44,17 +44,21 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         var filter= util.getParameter(request,"filter");
         var id= util.getParameter(request,"id");
         
-        if(activeTab!==""){
+        if(activeTab!==null){
             Instance.entityExtView.tabsContainer.setActiveTab(Number(activeTab));
         }else{
             Instance.entityExtView.tabsContainer.setActiveTab(0);
         }
         
-        if(filter!==""){
+        var changedFilters= false;
+        if(filter!==null){
             Instance.initFilter();
             var currentFilter= JSON.parse(filter);
             for (var key in currentFilter) {
-                Instance.filter[key]= currentFilter[key];
+                if(Instance.filter[key]!==currentFilter[key]){
+                    Instance.filter[key]= currentFilter[key];
+                    changedFilters= true;
+                }
             }
         }
         
@@ -67,17 +71,18 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
         </c:forEach>
         
+        <c:if test="${viewConfig.visibleGrid}">
+        if(activeTab!=="1" && (Instance.entityExtView.store.totalCount===undefined || changedFilters)){
+            Instance.loadGridData();
+            Instance.appliedFilters= filter;
+        }
+        </c:if>
         if(activeTab==="1"){
-            if(id!==""){
+            if(id!==null){
                 Instance.idEntitySelected= id;
             }
             Instance.loadFormData(Instance.idEntitySelected);
         }
-        <c:if test="${viewConfig.visibleGrid}">
-        if(activeTab==="" || activeTab==="0"){
-            Instance.loadGridData();
-        }
-        </c:if>
         <c:if test="${viewConfig.preloadedForm && formRecordId!=null}">
         Instance.loadFormData(${formRecordId});
         </c:if>
@@ -97,7 +102,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.loadFormData= function(id){
         if(Instance.entityExtView.formComponent!==null){
-            if(id!==""){
+            if(id!==null){
                 var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 
                 if(activeRecord===null){

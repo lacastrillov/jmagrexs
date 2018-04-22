@@ -70,7 +70,7 @@ public abstract class ExtReportController extends ExtController {
         mav.addObject("reportConfig", reportsConfig.get(reportName));
         mav.addObject("entityRef", reportsConfig.get(reportName).getEntityRef());
         mav.addObject("reportName", reportName);
-        mav.addObject("basePath", menuComponent.getBasePath());
+        mav.addObject("serverDomain", serverDomain);
         
         return mav;
     }
@@ -88,7 +88,7 @@ public abstract class ExtReportController extends ExtController {
         }
         if(reportsConfig.get(reportName).isVisibleFilters()){
             JSONArray jsonFieldsFilters= jf.getFieldsFilters(
-                    reportsConfig.get(reportName).getDtoClass(), "name", reportsConfig.get(reportName).getDateFormat(), PageType.REPORT);
+                    reportsConfig.get(reportName).getDtoClass(), "name", PageType.REPORT);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -109,7 +109,7 @@ public abstract class ExtReportController extends ExtController {
     public ModelAndView reportExtModel(@PathVariable String reportName) {
         ModelAndView mav= new ModelAndView("scripts/report/ExtModel");
         
-        JSONArray jsonModel = jm.getJSONModel(reportsConfig.get(reportName).getDtoClass(), reportsConfig.get(reportName).getDateFormat());
+        JSONArray jsonModel = jm.getJSONModel(reportsConfig.get(reportName).getDtoClass());
         JSONArray jsonTemplateModel = new JSONArray();
         
         if(reportsConfig.get(reportName).isActiveGridTemplate()){
@@ -228,6 +228,10 @@ public abstract class ExtReportController extends ExtController {
                                 formField.put("vtype", "email");
                             }else if(typeForm.equals(FieldType.PASSWORD.name())){
                                 formField.put("inputType", "password");
+                            }else if(typeForm.equals(FieldType.DATETIME.name())){
+                                formField.put("xtype", "datefield");
+                                formField.put("format", extViewConfig.getDatetimeFormat());
+                                formField.put("tooltip", "Seleccione la fecha");
                             }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
                                 formField.put("xtype", "textarea");
                                 formField.put("height", 200);
@@ -304,12 +308,12 @@ public abstract class ExtReportController extends ExtController {
                             switch (type) {
                                 case "java.util.Date":
                                     formField.put("xtype", "datefield");
-                                    formField.put("format", reportConfig.getDateFormat());
+                                    formField.put("format", extViewConfig.getDateFormat());
                                     formField.put("tooltip", "Seleccione la fecha");
                                     break;
                                 case "java.sql.Time":
                                     formField.put("xtype", "timefield");
-                                    formField.put("format", "h:i:s A");
+                                    formField.put("format", extViewConfig.getTimeFormat());
                                     formField.put("tooltip", "Seleccione la hora");
                                     break;
                                 case "int":
@@ -356,18 +360,26 @@ public abstract class ExtReportController extends ExtController {
                             gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
                         }else if(typeForm.equals(FieldType.PRICE.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
+                        }else if(typeForm.equals(FieldType.DATETIME.name())){
+                            gridColumn.put("xtype", "datecolumn");
+                            gridColumn.put("format", extViewConfig.getDatetimeFormat());
                         }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
                         }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.audioGridRender#");
                         }
+                    }else{
+                        if(fieldName.equals(reportConfig.getLabelField())){
+                            gridColumn.put("renderer", "#"+reportConfig.getLabelField()+"EntityRender#");
+                        }
+                        if(type.equals("java.util.Date")){
+                            gridColumn.put("xtype", "datecolumn");
+                            gridColumn.put("format", extViewConfig.getDateFormat());
+                        }else if(type.equals("java.sql.Time")){
+                            gridColumn.put("xtype", "timefield");
+                            gridColumn.put("format", extViewConfig.getTimeFormat());
+                        }
                     }
-                    if(fieldName.equals(reportConfig.getIdColumnName())){
-                        gridColumn.put("renderer", "#"+reportConfig.getIdColumnName()+"EntityRender#");
-                    }
-                    JSONObject field= new JSONObject();
-                    field.put("type", "textfield");
-                    gridColumn.put("field", field);
                    
                     jsonGridColumns.put(gridColumn);
                 }
@@ -387,12 +399,16 @@ public abstract class ExtReportController extends ExtController {
                         }
                         jsonFormMapFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+")#");
                     }else if (type.equals("java.util.Date")) {
+                        String format=extViewConfig.getDateFormat();
+                        if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){
+                            format=extViewConfig.getDatetimeFormat();
+                        }
                         formField.put("xtype", "datefield");
-                        formField.put("format", reportConfig.getDateFormat());
+                        formField.put("format", format);
                         formField.put("tooltip", "Seleccione la fecha");
                     }else if (type.equals("java.sql.Time")) {
                         formField.put("xtype", "timefield");
-                        formField.put("format", "h:i:s A");
+                        formField.put("format", extViewConfig.getTimeFormat());
                         formField.put("tooltip", "Seleccione la hora");
                     }else if(type.equals("int") || type.equals("java.lang.Integer") || type.equals("java.lang.Long") || type.equals("java.math.BigInteger") ||
                             type.equals("double") || type.equals("java.lang.Double") || type.equals("float") || type.equals("java.lang.Float")){
@@ -457,7 +473,7 @@ public abstract class ExtReportController extends ExtController {
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass(), processButton.getDateFormat());
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass());
                 jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
             }
             gridColumn.put("items", gridActions);

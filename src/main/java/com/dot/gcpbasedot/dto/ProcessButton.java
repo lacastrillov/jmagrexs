@@ -26,12 +26,9 @@ public class ProcessButton {
     
     private Class dtoClass;
     
-    private String dateFormat;
-    
     
     public ProcessButton(){
         this.processTitle= "Proceso";
-        this.dateFormat= "d/m/Y";
         this.iconUrl= "/img/process_icons/settings.png";
         this.sourceByDestinationFields= new HashMap<>();
     }
@@ -121,14 +118,5 @@ public class ProcessButton {
     public void setDtoClass(Class dtoClass) {
         this.dtoClass = dtoClass;
     }
-
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
-    }
-    
     
 }

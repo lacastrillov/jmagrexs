@@ -7,6 +7,7 @@ package com.dot.gcpbasedot.components;
 
 import com.dot.gcpbasedot.annotation.Size;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
+import com.dot.gcpbasedot.enums.FieldType;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.util.Formats;
 import java.beans.PropertyDescriptor;
@@ -28,23 +29,32 @@ import org.springframework.stereotype.Component;
 public class JSONModels {
     
     @Autowired
+    public ExtViewConfig extViewConfig;
+    
+    @Autowired
     public FieldConfigurationByAnnotations fcba;
     
     @Autowired
     public FieldConfigurationByTableColumns fctc;
     
     
-    public JSONArray getJSONModel(Class dtoClass, String dateFormat) {
+    public JSONArray getJSONModel(Class dtoClass) {
         JSONArray jsonModel= new JSONArray();
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
             HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, dtoClass);
+            HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
                 JSONObject field= new JSONObject();
-                field.put("name", propertyDescriptor.getName());
+                String fieldName= propertyDescriptor.getName();
+                String typeForm= "";
+                if(typeFormFields.containsKey(fieldName)){
+                    typeForm= typeFormFields.get(fieldName)[0];
+                }
+                field.put("name", fieldName);
                 if(propertyDescriptor.getName().equals("id")){
                     field.put("useNull", true);
                 }
@@ -74,7 +84,11 @@ public class JSONModels {
                         break;
                     case "java.util.Date":
                         field.put("type", "date");
-                        field.put("dateFormat", dateFormat);
+                        if(typeForm.equals(FieldType.DATETIME.name())){
+                            field.put("dateFormat", extViewConfig.getDatetimeFormat());
+                        }else{
+                            field.put("dateFormat", extViewConfig.getDateFormat());
+                        }
                         break;
                     default:
                         break;
@@ -90,16 +104,21 @@ public class JSONModels {
         return jsonModel;
     }
     
-    public JSONArray getJSONRecursiveModel(String parent, Class<?> entityClass, String dateFormat) {
+    public JSONArray getJSONRecursiveModel(String parent, Class<?> dtoClass) {
         JSONArray jsonModel= new JSONArray();
-        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
+        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
             String type = propertyDescriptor.getPropertyType().getName();
-            String fieldName= propertyDescriptor.getName();
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
                 JSONObject field= new JSONObject();
+                String fieldName= propertyDescriptor.getName();
+                String typeForm= "";
+                if(typeFormFields.containsKey(fieldName)){
+                    typeForm= typeFormFields.get(fieldName)[0];
+                }
                 field.put("name", parent + fieldName);
                 
                 if(Formats.TYPES_LIST.contains(type)){
@@ -128,7 +147,11 @@ public class JSONModels {
                             break;
                         case "java.util.Date":
                             field.put("type", "date");
-                            field.put("dateFormat", dateFormat);
+                            if(typeForm.equals(FieldType.DATETIME.name())){
+                                field.put("dateFormat", extViewConfig.getDatetimeFormat());
+                            }else{
+                                field.put("dateFormat", extViewConfig.getDateFormat());
+                            }
                             break;
                         default:
                             break;
@@ -137,7 +160,7 @@ public class JSONModels {
                     jsonModel.put(field);
                 }else{
                     Class childClass = propertyDescriptor.getPropertyType();
-                    JSONArray childModel= getJSONRecursiveModel(parent+fieldName+".", childClass, dateFormat);
+                    JSONArray childModel= getJSONRecursiveModel(parent+fieldName+".", childClass);
                     for(int i=0; i<childModel.length(); i++){
                         jsonModel.put(childModel.get(i));
                     }
@@ -148,7 +171,7 @@ public class JSONModels {
         return jsonModel;
     }
     
-    public JSONArray getJSONModel(List<GenericTableColumn> columns, String dateFormat) {
+    public JSONArray getJSONModel(List<GenericTableColumn> columns) {
         JSONArray jsonModel= new JSONArray();
         
         for (GenericTableColumn column : columns) {
@@ -187,7 +210,11 @@ public class JSONModels {
                         break;
                     case "java.util.Date":
                         field.put("type", "date");
-                        field.put("dateFormat", dateFormat);
+                        if(column.getFieldType()!=null && column.getFieldType().equals(FieldType.DATETIME.name())){
+                            field.put("dateFormat", extViewConfig.getDatetimeFormat());
+                        }else{
+                            field.put("dateFormat", extViewConfig.getDateFormat());
+                        }
                         break;
                     default:
                         break;

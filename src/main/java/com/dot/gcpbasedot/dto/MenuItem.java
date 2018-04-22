@@ -5,7 +5,7 @@
  */
 package com.dot.gcpbasedot.dto;
 
-import com.dot.gcpbasedot.components.MenuComponent;
+import com.dot.gcpbasedot.components.ServerDomain;
 import com.dot.gcpbasedot.enums.PageType;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,8 +83,9 @@ public class MenuItem {
     public String getHref(){
         if(this.type.equals(CHILD)){
             ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
-            MenuComponent menuComponent= (MenuComponent) ctx.getBean("menuComponent");
-            String href= menuComponent.getContextPath() + menuComponent.getBasePath() + "/" + this.entityRef + "/" + this.pageType.getPageRef();
+            ServerDomain serverDomain= (ServerDomain) ctx.getBean("serverDomain");
+            String href= serverDomain.getApplicationContext() + serverDomain.getAdminPath() + "/" 
+                    + this.entityRef + "/" + this.pageType.getPageRef();
             if (this.pageType==PageType.REPORT) {
                 href+= "/" + this.reportName + ".htm";
             } else {

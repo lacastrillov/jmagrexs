@@ -40,8 +40,6 @@ public class ProcessConfig {
     
     private String mainProcessTitle;
     
-    private String dateFormat;
-    
     private boolean visibleFilters;
     
     private boolean visibleForm;
@@ -109,7 +107,6 @@ public class ProcessConfig {
         this.logProcessClass= logProcessClass;
         this.labelField= "id";
         this.mainProcessTitle= this.mainProcessRef;
-        this.dateFormat= "d/m/Y";
         this.visibleFilters= true;
         this.visibleForm= true;
         this.visibleGrid= true;
@@ -234,20 +231,6 @@ public class ProcessConfig {
      */
     public void setMainProcessTitle(String mainProcessTitle) {
         this.mainProcessTitle = mainProcessTitle;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    /**
-     * @param dateFormat the dateFormat to set
-     */
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
 
     /**

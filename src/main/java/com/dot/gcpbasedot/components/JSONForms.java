@@ -28,10 +28,13 @@ public class JSONForms {
     public final int MAX_LIST_ITEMS= 20;
     
     @Autowired
+    public ExtViewConfig extViewConfig;
+    
+    @Autowired
     private FieldConfigurationByAnnotations fcba;
     
     
-    public JSONArray getJSONProcessForm(String processName, String parent, Class dtoClass, String dateFormat){
+    public JSONArray getJSONProcessForm(String processName, String parent, Class dtoClass){
         JSONArray jsonFormFields= new JSONArray();
         
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
@@ -70,6 +73,10 @@ public class JSONForms {
                             }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
                                 formField.put("xtype", "textarea");
                                 formField.put("height", 200);
+                            }else if(typeForm.equals(FieldType.DATETIME.name())){
+                                formField.put("xtype", "datefield");
+                                formField.put("format", extViewConfig.getDatetimeFormat());
+                                formField.put("tooltip", "Seleccione la fecha");
                             }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
                                 formField.put("xtype", "htmleditor");
                                 formField.put("enableColors", true);
@@ -194,12 +201,12 @@ public class JSONForms {
                             switch (type) {
                                 case "java.util.Date":
                                     formField.put("xtype", "datefield");
-                                    formField.put("format", dateFormat);
+                                    formField.put("format", extViewConfig.getDateFormat());
                                     formField.put("tooltip", "Seleccione la fecha");
                                     break;
                                 case "java.sql.Time":
                                     formField.put("xtype", "timefield");
-                                    formField.put("format", "h:i:s A");
+                                    formField.put("format", extViewConfig.getTimeFormat());
                                     formField.put("tooltip", "Seleccione la hora");
                                     break;
                                 case "int":
@@ -242,7 +249,7 @@ public class JSONForms {
                         objectField.put("defaultType", "textfield");
                         objectField.put("minWidth", 300);
                         objectField.put("fieldDefaults", fieldDefaults);
-                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+".", childClass, dateFormat));
+                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+".", childClass));
                         
                         jsonFormFields.put(objectField);
                     }
@@ -283,7 +290,7 @@ public class JSONForms {
                             fieldDefaultsChild.put("disabled", true);
                         }
                         objectField.put("fieldDefaults", fieldDefaultsChild);
-                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+"["+i+"].", childClass, dateFormat));
+                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+"["+i+"].", childClass));
                     }else{
                         objectField.put("name", parent + fieldName + "["+i+"]");
                         objectField.put("fieldLabel", "Item "+i);
@@ -294,12 +301,12 @@ public class JSONForms {
                         switch (childClass.getName()) {
                             case "java.util.Date":
                                 objectField.put("xtype", "datefield");
-                                objectField.put("format", dateFormat);
+                                objectField.put("format", extViewConfig.getDateFormat());
                                 objectField.put("tooltip", "Seleccione la fecha");
                                 break;
                             case "java.sql.Time":
                                 objectField.put("xtype", "timefield");
-                                objectField.put("format", "h:i:s A");
+                                objectField.put("format", extViewConfig.getTimeFormat());
                                 objectField.put("tooltip", "Seleccione la hora");
                                 break;
                             case "int":

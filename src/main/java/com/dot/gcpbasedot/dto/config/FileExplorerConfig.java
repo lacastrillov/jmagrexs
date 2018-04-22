@@ -28,8 +28,6 @@ public class FileExplorerConfig {
     
     private String singularEntityTitle;
     
-    private String dateFormat;
-    
     private boolean visibleFilters;
     
     private boolean visibleForm;
@@ -79,7 +77,6 @@ public class FileExplorerConfig {
         this.dtoClass= dtoClass;
         this.pluralEntityTitle= this.entityName + "s";
         this.singularEntityTitle= this.entityName;
-        this.dateFormat= "d/m/Y";
         this.visibleFilters= true;
         this.visibleForm= true;
         this.visibleMenu= true;
@@ -198,20 +195,6 @@ public class FileExplorerConfig {
      */
     public void setSingularEntityTitle(String singularEntityTitle) {
         this.singularEntityTitle = singularEntityTitle;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    /**
-     * @param dateFormat the dateFormat to set
-     */
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
 
     /**

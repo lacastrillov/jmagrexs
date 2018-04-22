@@ -29,8 +29,6 @@ public class ConfigurationObjectConfig {
     
     private String labelField;
     
-    private String dateFormat;
-    
     private boolean visibleForm;
     
     private boolean visibleMenu;
@@ -49,7 +47,6 @@ public class ConfigurationObjectConfig {
         this.mainConfigurationName= mainConfigurationRef.substring(0, 1).toUpperCase() + mainConfigurationRef.substring(1);
         this.mainConfigurationTitle= this.mainConfigurationRef;
         this.labelField= "id";
-        this.dateFormat= "d/m/Y";
         this.visibleForm= true;
         this.visibleMenu= true;
         this.visibleHeader= true;
@@ -121,20 +118,6 @@ public class ConfigurationObjectConfig {
      */
     public void setMainConfigurationTitle(String mainConfigurationTitle) {
         this.mainConfigurationTitle = mainConfigurationTitle;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    /**
-     * @param dateFormat the dateFormat to set
-     */
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
 
     /**

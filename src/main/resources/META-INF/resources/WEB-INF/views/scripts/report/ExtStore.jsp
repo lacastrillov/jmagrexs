@@ -181,11 +181,18 @@ function ${reportName}ExtStore(){
     </c:if>
 
     Instance.load= function(idRecord, func){
+        Ext.MessageBox.show({
+            msg: 'Cargando...',
+            width:200,
+            wait:true,
+            waitConfig: {interval:200}
+        });
         Ext.Ajax.request({
             url:  Ext.context+'/rest/${entityRef}/'+baseAction+'report/${reportName}.htm',
             method: "GET",
-            params: 'filter='+encodeURIComponent('{"${reportConfig.idColumnName}":'+idRecord+'}')+'&dtoName=${reportConfig.dtoName}',
+            params: 'filter='+encodeURIComponent('{eq:{"${reportConfig.idColumnName}":"'+idRecord+'"}}')+'&dtoName=${reportConfig.dtoName}',
             success: function(response){
+                Ext.MessageBox.hide();
                 var responseText= Ext.decode(response.responseText);
                 func(responseText.data[0]);
             },

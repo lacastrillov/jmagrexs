@@ -39,7 +39,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         ModelAndView mav= new ModelAndView("configurationObject");
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", menuComponent.getBasePath());
+        mav.addObject("serverDomain", serverDomain);
         addGeneralObjects(mav);
         
         return mav;
@@ -81,7 +81,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         Map<String, String> jsonModelValidationsMap= new HashMap();
         
         for (Map.Entry<String, Class> entry : configurationObjects.entrySet()){
-            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue(), viewConfig.getDateFormat());
+            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
             JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
             jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
@@ -120,7 +120,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         Map<String, String> jsonFormFieldsMap= new HashMap();
         
         for (Map.Entry<String, Class> entry : configurationObjects.entrySet()){
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue(), viewConfig.getDateFormat());
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         mav.addObject("nameConfigurationObjects", nameConfigurationObjects);

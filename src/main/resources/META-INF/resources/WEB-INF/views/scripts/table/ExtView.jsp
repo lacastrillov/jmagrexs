@@ -592,6 +592,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 tabchange: function(tabPanel, tab){
                     var idx = tabPanel.items.indexOf(tab);
                     var url= util.addUrlParameter(parentExtController.request,"tab", idx);
+                    if(idx===0){
+                        url= util.removeUrlParameter(url,"id");
+                    }
                     if(url!==""){
                         mvcExt.navigate(url);
                     }

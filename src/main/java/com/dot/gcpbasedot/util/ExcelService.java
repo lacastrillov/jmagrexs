@@ -1,23 +1,26 @@
 package com.dot.gcpbasedot.util;
 
 import com.dot.gcpbasedot.annotation.LabelField;
+import com.dot.gcpbasedot.components.ExtViewConfig;
 import com.dot.gcpbasedot.components.FieldConfigurationByAnnotations;
+import com.dot.gcpbasedot.components.FieldConfigurationByTableColumns;
 import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.dto.GenericTableColumn;
+import com.dot.gcpbasedot.enums.FieldType;
 import com.dot.gcpbasedot.enums.HideView;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -29,16 +32,24 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.util.HtmlUtils;
 
 public class ExcelService {
+    
+    protected static final Logger LOGGER = Logger.getLogger(ExcelService.class);
     
     private static final String TEMPLATES = "/excel/";
     
     private static final FieldConfigurationByAnnotations FCBA= new FieldConfigurationByAnnotations();
     
+    private static final FieldConfigurationByTableColumns FCTC= new FieldConfigurationByTableColumns();
+    
 
     public static void generateExcelReport(List<Object> list, OutputStream outputStream, Class dtoClass) throws Exception {
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
         try (InputStream inputStream = ExcelService.class.getResourceAsStream(TEMPLATES + "report.xls")) {
             HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
             HSSFSheet sheet1 = workbook.getSheetAt(0);
@@ -49,6 +60,7 @@ public class ExcelService {
             FCBA.orderPropertyDescriptor(propertyDescriptors, dtoClass, "name");
             
             HashMap<String, String> titledFieldsMap= FCBA.getTitledFieldsMap(propertyDescriptors, dtoClass);
+            HashMap<String,String[]> typeFormFields= FCBA.getTypeFormFields(dtoClass);
             HashSet<String> hideFields= FCBA.getHideFields(dtoClass);
             
             HSSFCellStyle style = workbook.createCellStyle();
@@ -86,11 +98,16 @@ public class ExcelService {
                         if (value != null) {
                             try{
                                 if(Formats.TYPES_LIST.contains(typeWrapper.getName())){
-                                    Object parseValue = typeWrapper.cast(value);
                                     if(typeWrapper.getName().equals("java.util.Date")){
-                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(Formats.dateToString((Date)parseValue, "dd-MM-yyyy")));
+                                        String format= extViewConfig.getDateFormatJava();
+                                        if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){
+                                            format= extViewConfig.getDatetimeFormatJava();
+                                        }
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(Formats.dateToString((Date)value, format)));
+                                    }else if(typeWrapper.getName().equals("java.sql.Time")){
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())));
                                     }else{
-                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(parseValue.toString()));
+                                        row.createCell(colIndex++).setCellValue(new HSSFRichTextString(value.toString()));
                                     }
                                 }else{
                                     BeanWrapperImpl internalWrapper = new BeanWrapperImpl(value);
@@ -105,6 +122,7 @@ public class ExcelService {
                                     row.createCell(colIndex++).setCellValue(new HSSFRichTextString(textValue));
                                 }
                             }catch(Exception e){
+                                LOGGER.error("ERROR generateExcelReport1", e);
                                 row.createCell(colIndex++).setCellValue(new HSSFRichTextString(""));
                             }
                         }else{
@@ -119,7 +137,10 @@ public class ExcelService {
     }
     
     public static void generateExcelReport(List<Map<String, Object>> list, OutputStream outputStream, List<GenericTableColumn> columns) throws Exception {
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
         try (InputStream inputStream = ExcelService.class.getResourceAsStream(TEMPLATES + "report.xls")) {
+            HashMap<String,String[]> typeFormFields= FCTC.getTypeFormFields(columns);
             HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
             HSSFSheet sheet1 = workbook.getSheetAt(0);
             int colIndex = 0;
@@ -134,7 +155,6 @@ public class ExcelService {
             style.setFont(font);                 
             
             HSSFRow row = sheet1.createRow(rowIndex);
-            
             for (GenericTableColumn column : columns) {
                 String type = column.getDataType();
                 if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
@@ -155,12 +175,18 @@ public class ExcelService {
                     if (value != null) {
                         try{
                             if(propertyType.equals("java.util.Date")){
-                                DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                                row.createCell(colIndex++).setCellValue(new HSSFRichTextString(format.format(value)));
+                                String format= extViewConfig.getDateFormatJava();
+                                if(typeFormFields.containsKey(column.getColumnAlias()) && typeFormFields.get(column.getColumnAlias())[0].equals(FieldType.DATETIME.name())){
+                                    format= extViewConfig.getDatetimeFormatJava();
+                                }
+                                row.createCell(colIndex++).setCellValue(new HSSFRichTextString(Formats.dateToString((Date)value, format)));
+                            }else if(propertyType.equals("java.sql.Time")){
+                                row.createCell(colIndex++).setCellValue(new HSSFRichTextString(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())));
                             }else{
                                 row.createCell(colIndex++).setCellValue(new HSSFRichTextString(value.toString()));
                             }
                         }catch(Exception e){
+                            LOGGER.error("ERROR generateExcelReport2", e);
                             row.createCell(colIndex++).setCellValue(new HSSFRichTextString(""));
                         }
                     }else{

@@ -62,7 +62,7 @@ public abstract class ExtProcessController extends ExtController {
         ModelAndView mav= new ModelAndView("process");
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", menuComponent.getBasePath());
+        mav.addObject("serverDomain", serverDomain);
         addGeneralObjects(mav);
         
         return mav;
@@ -104,14 +104,14 @@ public abstract class ExtProcessController extends ExtController {
         Map<String, String> jsonModelValidationsMap= new HashMap();
         
         for (Map.Entry<String, Class> entry : inDtos.entrySet()){
-            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue(), processConfig.getDateFormat());
+            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
             JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
             jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
         }
         
         //
-        JSONArray jsonModelLogProcess = jm.getJSONModel(processConfig.getLogProcessClass(), processConfig.getDateFormat());
+        JSONArray jsonModelLogProcess = jm.getJSONModel(processConfig.getLogProcessClass());
         JSONArray jsonModelValidationsLogProcess= jm.getJSONModelValidations(processConfig.getLogProcessClass());
         
         mav.addObject("viewConfig", processConfig);
@@ -158,7 +158,7 @@ public abstract class ExtProcessController extends ExtController {
         Map<String, String> jsonFormFieldsMap= new HashMap();
         
         for (Map.Entry<String, Class> entry : inDtos.entrySet()){
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue(), processConfig.getDateFormat());
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         mav.addObject("nameProcesses", nameProcesses);
@@ -167,7 +167,7 @@ public abstract class ExtProcessController extends ExtController {
         addEntityExtProcessConfiguration(mav);
         if(processConfig.isVisibleFilters()){
             JSONArray jsonFieldsFilters= jf.getFieldsFilters(
-                    processConfig.getLogProcessClass(), processConfig.getLabelField(), processConfig.getDateFormat(), PageType.PROCESS);
+                    processConfig.getLogProcessClass(), processConfig.getLabelField(), PageType.PROCESS);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -271,6 +271,18 @@ public abstract class ExtProcessController extends ExtController {
                                 if(processConfig.isEditableGrid() && !readOnly){
                                     gridColumn.put("editor", editor);
                                 }
+                            }else if(typeForm.equals(FieldType.DATETIME.name())){
+                                gridColumn.put("xtype", "datecolumn");
+                                gridColumn.put("format", extViewConfig.getDatetimeFormat());
+                                JSONObject editor = new JSONObject();
+                                editor.put("xtype", "datefield");
+                                editor.put("format", extViewConfig.getDatetimeFormat());
+                                if (fieldsNN.contains(fieldName)) {
+                                    editor.put("allowBlank", false);
+                                }
+                                if (processConfig.isEditableGrid() && !readOnly) {
+                                    gridColumn.put("editor", editor);
+                                }
                             }else if(typeForm.equals(FieldType.DURATION.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
                                 JSONObject field= new JSONObject();
@@ -323,10 +335,10 @@ public abstract class ExtProcessController extends ExtController {
                             switch (type) {
                                 case "java.util.Date": {
                                     gridColumn.put("xtype", "datecolumn");
-                                    gridColumn.put("format", processConfig.getDateFormat());
+                                    gridColumn.put("format", extViewConfig.getDateFormat());
                                     JSONObject editor = new JSONObject();
                                     editor.put("xtype", "datefield");
-                                    editor.put("format", processConfig.getDateFormat());
+                                    editor.put("format", extViewConfig.getDateFormat());
                                     if (fieldsNN.contains(fieldName)) {
                                         editor.put("allowBlank", false);
                                     }

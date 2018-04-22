@@ -13,8 +13,6 @@ public class ExtViewConfig {
     
     private String appName;
     
-    private String applicationPath;
-    
     private String extJsLib4;
     
     private String extJsLib6;
@@ -23,14 +21,31 @@ public class ExtViewConfig {
     
     private String favicon;
     
+    private String dateFormat;
+    
+    private String datetimeFormat;
+    
+    private String timeFormat;
+    
+    private String dateFormatJava;
+    
+    private String datetimeFormatJava;
+    
+    private String timeFormatJava;
+    
     
     public ExtViewConfig(){
-        appName="";
-        applicationPath="";
-        extJsLib4="";
-        extJsLib6="";
-        extJsVersion= 4;
-        favicon="";
+        this.appName="";
+        this.extJsLib4="";
+        this.extJsLib6="";
+        this.extJsVersion= 4;
+        this.favicon="";
+        this.dateFormat= "d/m/Y";
+        this.datetimeFormat= "d/m/Y h:i:s A";
+        this.timeFormat= "h:i:s A";
+        this.dateFormatJava= "dd/MM/yyyy";
+        this.datetimeFormatJava= "dd/MM/yyyy hh:mm:ss a";
+        this.timeFormatJava= "hh:mm:ss a";
     }
 
     /**
@@ -45,20 +60,6 @@ public class ExtViewConfig {
      */
     public void setAppName(String appName) {
         this.appName = appName;
-    }
-
-    /**
-     * @return the applicationPath
-     */
-    public String getApplicationPath() {
-        return applicationPath;
-    }
-
-    /**
-     * @param applicationPath the applicationPath to set
-     */
-    public void setApplicationPath(String applicationPath) {
-        this.applicationPath = applicationPath;
     }
 
     /**
@@ -115,6 +116,90 @@ public class ExtViewConfig {
      */
     public void setFavicon(String favicon) {
         this.favicon = favicon;
+    }
+    
+    /**
+     * @return the dateFormat
+     */
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    /**
+     * @param dateFormat the dateFormat to set
+     */
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+    
+    /**
+     * @return the datetimeFormat
+     */
+    public String getDatetimeFormat() {
+        return datetimeFormat;
+    }
+
+    /**
+     * @param datetimeFormat the datetimeFormat to set
+     */
+    public void setDatetimeFormat(String datetimeFormat) {
+        this.datetimeFormat = datetimeFormat;
+    }
+    
+    /**
+     * @return the timeFormat
+     */
+    public String getTimeFormat() {
+        return timeFormat;
+    }
+
+    /**
+     * @param timeFormat the timeFormat to set
+     */
+    public void setTimeFormat(String timeFormat) {
+        this.timeFormat = timeFormat;
+    }
+
+    /**
+     * @return the dateFormatJava
+     */
+    public String getDateFormatJava() {
+        return dateFormatJava;
+    }
+
+    /**
+     * @param dateFormatJava the dateFormatJava to set
+     */
+    public void setDateFormatJava(String dateFormatJava) {
+        this.dateFormatJava = dateFormatJava;
+    }
+
+    /**
+     * @return the datetimeFormatJava
+     */
+    public String getDatetimeFormatJava() {
+        return datetimeFormatJava;
+    }
+
+    /**
+     * @param datetimeFormatJava the datetimeFormatJava to set
+     */
+    public void setDatetimeFormatJava(String datetimeFormatJava) {
+        this.datetimeFormatJava = datetimeFormatJava;
+    }
+
+    /**
+     * @return the timeFormatJava
+     */
+    public String getTimeFormatJava() {
+        return timeFormatJava;
+    }
+
+    /**
+     * @param timeFormatJava the timeFormatJava to set
+     */
+    public void setTimeFormatJava(String timeFormatJava) {
+        this.timeFormatJava = timeFormatJava;
     }
     
 }

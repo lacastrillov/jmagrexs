@@ -24,8 +24,6 @@ public class TableConfig {
     
     private String singularEntityTitle;
     
-    private String dateFormat;
-    
     private boolean visibleFilters;
     
     private boolean visibleForm;
@@ -69,7 +67,6 @@ public class TableConfig {
         this.labelField= "id";
         this.pluralEntityTitle= this.tableName + "s";
         this.singularEntityTitle= this.tableName;
-        this.dateFormat= "d/m/Y";
         this.visibleFilters= true;
         this.visibleForm= true;
         this.visibleGrid= true;
@@ -158,20 +155,6 @@ public class TableConfig {
      */
     public void setSingularEntityTitle(String singularEntityTitle) {
         this.singularEntityTitle = singularEntityTitle;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    /**
-     * @param dateFormat the dateFormat to set
-     */
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
 
     /**

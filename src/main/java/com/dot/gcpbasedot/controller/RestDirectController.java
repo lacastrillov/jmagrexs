@@ -106,7 +106,7 @@ public abstract class RestDirectController {
 
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
+            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
             
             ExcelService.generateExcelReport(listItems, response.getOutputStream(), columns);
         } catch (Exception e) {
@@ -126,7 +126,7 @@ public abstract class RestDirectController {
 
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
+            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
             
             response.getWriter().print(CSVService.generateCSVReport(listItems, columns));
         } catch (Exception e) {

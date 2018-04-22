@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>${viewConfig.pluralEntityTitle} - Administraci&oacute;n ${extViewConfig.appName}</title>
-        <link rel="icon" type="image/icon" href="${extViewConfig.favicon}" /> 
+        <link rel="icon" type="image/icon" href="${serverDomain.applicationContext}${extViewConfig.favicon}" /> 
         
         <jsp:include page="statics.jsp"></jsp:include>
         
@@ -26,25 +26,25 @@
         
         <!-- ############################ IMPORT MODELS ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/${tableName}/ExtModel.htm"/>
+        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtModel.htm"/>
         
         <!-- ############################ IMPORT STORES ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/${tableName}/ExtStore.htm"/>
+        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtStore.htm"/>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/${tableName}/ExtView.htm"/>
+        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtView.htm"/>
         
         <!-- ############################ IMPORT CONTROLLERS ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/${tableName}/ExtController.htm"/>
+        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtController.htm"/>
         
         <!-- ############################ IMPORT BASE ELEMENTES ################################### -->
         
-        <c:import url="${basePath}/${entityRef}/${tableName}/ExtViewport.htm"/>
+        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtViewport.htm"/>
         
-        <c:import url="${basePath}/${entityRef}/${tableName}/ExtInit.htm"/>
+        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtInit.htm"/>
         
         <!-- ############################ IMPORT COMPONENTS ################################### -->
         

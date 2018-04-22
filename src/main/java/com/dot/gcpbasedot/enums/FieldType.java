@@ -19,6 +19,8 @@ public enum FieldType {
     
     PRICE,
     
+    DATETIME,
+    
     TEXT_AREA,
     
     LIST,

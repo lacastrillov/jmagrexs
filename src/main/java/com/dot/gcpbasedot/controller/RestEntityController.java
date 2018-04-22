@@ -1,6 +1,7 @@
 package com.dot.gcpbasedot.controller;
 
 import com.dot.gcpbasedot.annotation.ImageResize;
+import com.dot.gcpbasedot.components.FieldConfigurationByAnnotations;
 import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.dto.ItemTemplate;
 import com.dot.gcpbasedot.reflection.EntityReflection;
@@ -8,12 +9,14 @@ import com.dot.gcpbasedot.service.EntityService;
 import com.dot.gcpbasedot.util.Util;
 import com.dot.gcpbasedot.util.XMLMarshaller;
 import com.dot.gcpbasedot.dto.ResultListCallback;
+import com.dot.gcpbasedot.enums.FieldType;
 import com.dot.gcpbasedot.interfaces.WebEntityInterface;
 import com.dot.gcpbasedot.mapper.EntityMapper;
 import com.dot.gcpbasedot.util.CSVService;
 import com.dot.gcpbasedot.util.ExcelService;
 import com.dot.gcpbasedot.util.FileService;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,10 +26,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +94,9 @@ public abstract class RestEntityController {
     
     protected Long maxFileSizeToUpload=1024L;
     
+    @Autowired
+    public FieldConfigurationByAnnotations fcba;
+    
 
     protected void addControlMapping(String entityRef, EntityService entityService, EntityMapper entityMapper) {
         this.entityRef= entityRef;
@@ -116,6 +123,7 @@ public abstract class RestEntityController {
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
             }else{
                 resultData=Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
+                resultData= cleanTimeInDateField(resultData, dtoClass);
             }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
@@ -271,7 +279,7 @@ public abstract class RestEntityController {
 
         try {
             Class dtoReportClass= Class.forName(dtoName);
-            List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
+            List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
             
             ExcelService.generateExcelReport(listDtos, response.getOutputStream(), dtoReportClass);
         } catch (Exception e) {
@@ -291,7 +299,7 @@ public abstract class RestEntityController {
 
         try {
             Class dtoReportClass= Class.forName(dtoName);
-            List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
+            List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
             
             response.getWriter().print(CSVService.generateCSVReport(listDtos, dtoReportClass));
         } catch (Exception e) {
@@ -812,6 +820,41 @@ public abstract class RestEntityController {
         }
         
         return Util.getResultListCallback(items, totalCount, "Busqueda de " + entityRef + " realizada...", success);
+    }
+    
+    private String cleanTimeInDateField(String data, Class dtoClass){
+        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
+        Set<String> datetimeFields= new HashSet<>();
+        HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
+        for (Map.Entry<String, String[]> entry : typeFormFields.entrySet()) {
+            String typeForm= entry.getValue()[0];
+            if(typeForm.equals(FieldType.DATETIME.name())){
+                datetimeFields.add(entry.getKey());
+            }
+        }
+        List<String> dateFields= new ArrayList<>();
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            String fieldName= propertyDescriptor.getName();
+            String type = propertyDescriptor.getPropertyType().getName();
+            if(type.equals("java.util.Date") && !datetimeFields.contains(fieldName)){
+                dateFields.add(fieldName);
+            }
+        }
+        if(dateFields.size()>0){
+            JSONObject result= new JSONObject(data);
+            for(int i=0; i<result.getJSONArray("data").length(); i++){
+                JSONObject entityJson= result.getJSONArray("data").getJSONObject(i);
+                for(int j=0; j<dateFields.size(); j++){
+                    String fieldName= dateFields.get(j);
+                    if(!entityJson.isNull(fieldName)){
+                        String date= entityJson.getString(fieldName);
+                        result.getJSONArray("data").getJSONObject(i).put(fieldName, date.split(" ")[0]);
+                    }
+                }
+            }
+            return result.toString();
+        }
+        return data;
     }
     
 }

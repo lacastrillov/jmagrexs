@@ -6,6 +6,7 @@
 package com.dot.gcpbasedot.components;
 
 import com.dot.gcpbasedot.enums.PageType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RangeFunctions {
+    
+    @Autowired
+    public ExtViewConfig extViewConfig;
     
     public String getListenerFuntionSingleValue(String typeFilter, String fieldName, PageType pageType){
         String container= "Instance.entityExtController";
@@ -32,14 +36,14 @@ public class RangeFunctions {
         return functionOnChange;
     }
     
-    public String getListenerFuntionRangeValue(int index, String fieldName, String format, String dateFormat, PageType pageType){
+    public String getListenerFuntionRangeValue(int index, String fieldName, String type, String format, PageType pageType){
         String getValue= "this.getValue();";
-        switch (format) {
+        switch (type) {
             case "date":
-                getValue= "Ext.Date.format(this.getValue(), '"+dateFormat+"');";
+                getValue= "Ext.Date.format(this.getValue(), '"+format+"');";
                 break;
             case "time":
-                getValue= "Ext.Date.format(this.getValue(), 'H:i:s');";
+                getValue= "Ext.Date.format(this.getValue(), '"+format+"');";
                 break;
         }
         String container= "Instance.entityExtController";

@@ -50,10 +50,10 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     
     Instance.reloadPageStore= function(page){
         <c:if test="${not reportConfig.activeGridTemplate}">
-            Instance.store.loadPage(page);
+        Instance.store.loadPage(page);
         </c:if>
         <c:if test="${reportConfig.activeGridTemplate}">
-            Instance.gridStore.loadPage(page);
+        Instance.gridStore.loadPage(page);
         </c:if>
     };
     
@@ -321,7 +321,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     };
     
     function getComboboxLimit(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500]);
+        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500, 1000, 2000, 5000, 10000]);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.pageSize!==record.getValue()){
                 store.pageSize=record.getValue();
@@ -540,7 +540,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         processForm.getForm().setValues(initData);
     };
     
-    function ${reportConfig.idColumnName}EntityRender(value, p, record){
+    function ${reportConfig.labelField}EntityRender(value, p, record){
         if(record){
             if(Instance.typeView==="Parent"){
                 return "<a style='font-size: 15px;' href='#?id="+record.data.${reportConfig.idColumnName}+"&tab=1'>"+value+"</a>";
@@ -616,6 +616,9 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 tabchange: function(tabPanel, tab){
                     var idx = tabPanel.items.indexOf(tab);
                     var url= util.addUrlParameter(parentExtController.request,"tab", idx);
+                    if(idx===0){
+                        url= util.removeUrlParameter(url,"id");
+                    }
                     if(url!==""){
                         mvcExt.navigate(url);
                     }

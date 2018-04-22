@@ -29,6 +29,9 @@ import org.springframework.util.StringUtils;
 public class JSONFilters {
     
     @Autowired
+    public ExtViewConfig extViewConfig;
+    
+    @Autowired
     public FieldConfigurationByAnnotations fcba;
     
     @Autowired
@@ -40,7 +43,7 @@ public class JSONFilters {
     private final double RANGE_COLUMN_WIDTH= 0.33;
     
     
-    public JSONArray getFieldsFilters(Class dtoClass, String labelField, String dateFormat, PageType pageType){
+    public JSONArray getFieldsFilters(Class dtoClass, String labelField, PageType pageType){
         JSONArray jsonFieldsFilters= new JSONArray();
         
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
@@ -94,16 +97,20 @@ public class JSONFilters {
 
                         }else if (type.equals("java.util.Date")) {
                             addFormField= false;
+                            String format= extViewConfig.getDateFormat();
+                            if(typeForm.equals(FieldType.DATETIME.name())){
+                                format= extViewConfig.getDatetimeFormat();
+                            }
                             
                             JSONObject formField0= new JSONObject();
                             formField0.put("name", fieldName+"_start");
                             formField0.put("xtype", "datefield");
                             formField0.put("columnWidth", RANGE_COLUMN_WIDTH);
-                            formField0.put("format", dateFormat);
+                            formField0.put("format", format);
                             formField0.put("tooltip", "Seleccione la fecha");
 
                             JSONObject listeners0= new JSONObject();
-                            String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "date", dateFormat, pageType);
+                            String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "date", format, pageType);
                             listeners0.put("change", "#"+functionOnChange0+"#");
                             formField0.put("listeners", listeners0);
 
@@ -111,11 +118,11 @@ public class JSONFilters {
                             formField1.put("name", fieldName+"_end");
                             formField1.put("xtype", "datefield");
                             formField1.put("columnWidth", RANGE_COLUMN_WIDTH);
-                            formField1.put("format", dateFormat);
+                            formField1.put("format", format);
                             formField1.put("tooltip", "Seleccione la fecha");
                             
                             JSONObject listeners1= new JSONObject();
-                            String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "date", dateFormat, pageType);
+                            String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "date", format, pageType);
                             listeners1.put("change", "#"+functionOnChange1+"#");
                             formField1.put("listeners", listeners1);
                             
@@ -142,6 +149,7 @@ public class JSONFilters {
                             jsonFieldsFilters.put(formField);
                         }else if (type.equals("java.sql.Time")) {
                             addFormField= false;
+                            String format= extViewConfig.getTimeFormat();
                             
                             JSONObject formField0= new JSONObject();
                             formField0.put("name", fieldName+"_start");
@@ -150,7 +158,7 @@ public class JSONFilters {
                             formField0.put("tooltip", "Seleccione la hora");
 
                             JSONObject listeners0= new JSONObject();
-                            String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "time", dateFormat, pageType);
+                            String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "time", format, pageType);
                             listeners0.put("change", "#"+functionOnChange0+"#");
                             formField0.put("listeners", listeners0);
 
@@ -161,7 +169,7 @@ public class JSONFilters {
                             formField1.put("tooltip", "Seleccione la hora");
                             
                             JSONObject listeners1= new JSONObject();
-                            String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "time", dateFormat, pageType);
+                            String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "time", format, pageType);
                             listeners1.put("change", "#"+functionOnChange1+"#");
                             formField1.put("listeners", listeners1);
                             
@@ -203,7 +211,7 @@ public class JSONFilters {
                                 formField0.put("columnWidth", RANGE_COLUMN_WIDTH);
 
                                 JSONObject listeners0= new JSONObject();
-                                String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "", dateFormat, pageType);
+                                String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "", "", pageType);
                                 listeners0.put("change", "#"+functionOnChange0+"#");
                                 formField0.put("listeners", listeners0);
 
@@ -213,7 +221,7 @@ public class JSONFilters {
                                 formField1.put("columnWidth", RANGE_COLUMN_WIDTH);
                                 
                                 JSONObject listeners1= new JSONObject();
-                                String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "", dateFormat, pageType);
+                                String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "", "", pageType);
                                 listeners1.put("change", "#"+functionOnChange1+"#");
                                 formField1.put("listeners", listeners1);
                                 
@@ -269,7 +277,7 @@ public class JSONFilters {
     }
     
     
-    public JSONArray getFieldsFilters(List<GenericTableColumn> columns, String dateFormat){
+    public JSONArray getFieldsFilters(List<GenericTableColumn> columns){
         JSONArray jsonFieldsFilters= new JSONArray();
         
         fctc.orderTableColumns(columns);
@@ -317,16 +325,20 @@ public class JSONFilters {
 
                     }else if (type.equals("java.util.Date")) {
                         addFormField= false;
+                        String format= extViewConfig.getDateFormat();
+                        if(typeForm.equals(FieldType.DATETIME.name())){
+                            format= extViewConfig.getDatetimeFormat();
+                        }
 
                         JSONObject formField0= new JSONObject();
                         formField0.put("name", fieldName+"_start");
                         formField0.put("xtype", "datefield");
                         formField0.put("columnWidth", RANGE_COLUMN_WIDTH);
-                        formField0.put("format", dateFormat);
+                        formField0.put("format", format);
                         formField0.put("tooltip", "Seleccione la fecha");
 
                         JSONObject listeners0= new JSONObject();
-                        String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "date", dateFormat, PageType.ENTITY);
+                        String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "date", format, PageType.ENTITY);
                         listeners0.put("change", "#"+functionOnChange0+"#");
                         formField0.put("listeners", listeners0);
 
@@ -334,11 +346,11 @@ public class JSONFilters {
                         formField1.put("name", fieldName+"_end");
                         formField1.put("xtype", "datefield");
                         formField1.put("columnWidth", RANGE_COLUMN_WIDTH);
-                        formField1.put("format", dateFormat);
+                        formField1.put("format", format);
                         formField1.put("tooltip", "Seleccione la fecha");
 
                         JSONObject listeners1= new JSONObject();
-                        String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "date", dateFormat, PageType.ENTITY);
+                        String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "date", format, PageType.ENTITY);
                         listeners1.put("change", "#"+functionOnChange1+"#");
                         formField1.put("listeners", listeners1);
 
@@ -365,6 +377,7 @@ public class JSONFilters {
                         jsonFieldsFilters.put(formField);
                     }else if (type.equals("java.sql.Time")) {
                         addFormField= false;
+                        String format= extViewConfig.getTimeFormat();
 
                         JSONObject formField0= new JSONObject();
                         formField0.put("name", fieldName+"_start");
@@ -373,7 +386,7 @@ public class JSONFilters {
                         formField0.put("tooltip", "Seleccione la hora");
 
                         JSONObject listeners0= new JSONObject();
-                        String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "time", dateFormat, PageType.ENTITY);
+                        String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "time", format, PageType.ENTITY);
                         listeners0.put("change", "#"+functionOnChange0+"#");
                         formField0.put("listeners", listeners0);
 
@@ -384,7 +397,7 @@ public class JSONFilters {
                         formField1.put("tooltip", "Seleccione la hora");
 
                         JSONObject listeners1= new JSONObject();
-                        String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "time", dateFormat, PageType.ENTITY);
+                        String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "time", format, PageType.ENTITY);
                         listeners1.put("change", "#"+functionOnChange1+"#");
                         formField1.put("listeners", listeners1);
 
@@ -426,7 +439,7 @@ public class JSONFilters {
                             formField0.put("columnWidth", RANGE_COLUMN_WIDTH);
 
                             JSONObject listeners0= new JSONObject();
-                            String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "", dateFormat, PageType.ENTITY);
+                            String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "", "", PageType.ENTITY);
                             listeners0.put("change", "#"+functionOnChange0+"#");
                             formField0.put("listeners", listeners0);
 
@@ -436,7 +449,7 @@ public class JSONFilters {
                             formField1.put("columnWidth", RANGE_COLUMN_WIDTH);
 
                             JSONObject listeners1= new JSONObject();
-                            String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "", dateFormat, PageType.ENTITY);
+                            String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "", "", PageType.ENTITY);
                             listeners1.put("change", "#"+functionOnChange1+"#");
                             formField1.put("listeners", listeners1);
 

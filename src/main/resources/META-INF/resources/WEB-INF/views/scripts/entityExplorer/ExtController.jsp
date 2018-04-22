@@ -43,13 +43,13 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         var filter= util.getParameter(request,"filter");
         var id= util.getParameter(request,"id");
         
-        if(activeTab!==""){
+        if(activeTab!==null){
             Instance.entityExtView.tabsContainer.setActiveTab(Number(activeTab));
         }else{
             Instance.entityExtView.tabsContainer.setActiveTab(0);
         }
         
-        if(filter!==""){
+        if(filter!==null){
             Instance.initFilter();
             var currentFilter= JSON.parse(filter);
             for (var key in currentFilter) {
@@ -68,12 +68,11 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             </c:forEach>
         }
         
+        if(Instance.entityExtView.store.totalCount===undefined && activeTab!=="1"){
+            Instance.loadGridData();
+        }
         if(activeTab==="1"){
             Instance.loadFormData(id);
-        }
-        
-        if(activeTab==="" || activeTab==="0"){
-            Instance.loadGridData();
         }
     };
     
@@ -88,7 +87,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.loadFormData= function(id){
         if(Instance.entityExtView.formComponent!==null){
-            if(id!==""){
+            if(id!==null){
                 Instance.idEntitySelected= id;
                 var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 

@@ -136,7 +136,7 @@ function Util() {
     };
 
     Instance.getParameter = function (url, parameter) {
-        var valor = "";
+        var valor = null;
         var index = url.indexOf(parameter + "=") + parameter.length;
 
         if (url.charAt(index) === "=") {
@@ -196,7 +196,7 @@ function Util() {
 
     this.removeUrlParameter = function (url, parameter) {
         var value = Instance.getParameter(url, parameter);
-        if (value !== '') {
+        if (value !== null) {
             url = url.replace(parameter + "=" + value, "");
             url = url.replace("?&", "?").replace("&&", "&");
             var caracter = url.charAt(url.length - 1);

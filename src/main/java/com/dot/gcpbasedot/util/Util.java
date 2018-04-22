@@ -129,7 +129,7 @@ public class Util {
      */
     public static String objectToJson(Object obj) {
         GsonBuilder gsonB = new GsonBuilder();
-        gsonB.setDateFormat("dd/MM/yyyy");
+        gsonB.setDateFormat("dd/MM/yyyy hh:mm:ss a");
         Gson gson = gsonB.create();
 
         return gson.toJson(obj);

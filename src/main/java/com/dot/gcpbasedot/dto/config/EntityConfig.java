@@ -45,8 +45,6 @@ public class EntityConfig {
     
     private String singularEntityTitle;
     
-    private String dateFormat;
-    
     private boolean visibleFilters;
     
     private boolean visibleForm;
@@ -121,7 +119,6 @@ public class EntityConfig {
         this.dtoClass= dtoClass;
         this.pluralEntityTitle= this.entityName + "s";
         this.singularEntityTitle= this.entityName;
-        this.dateFormat= "d/m/Y";
         this.visibleFilters= true;
         this.visibleForm= true;
         this.visibleGrid= true;
@@ -272,20 +269,6 @@ public class EntityConfig {
      */
     public void setSingularEntityTitle(String singularEntityTitle) {
         this.singularEntityTitle = singularEntityTitle;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    /**
-     * @param dateFormat the dateFormat to set
-     */
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
 
     /**

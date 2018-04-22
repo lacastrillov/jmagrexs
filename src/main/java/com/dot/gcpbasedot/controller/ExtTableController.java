@@ -76,7 +76,7 @@ public abstract class ExtTableController extends ExtController {
         }
         
         mav.addObject("extViewConfig", extViewConfig);
-        mav.addObject("basePath", menuComponent.getBasePath());
+        mav.addObject("serverDomain", serverDomain);
         addGeneralObjects(mav, tableName);
         
         return mav;
@@ -93,7 +93,7 @@ public abstract class ExtTableController extends ExtController {
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){
-            JSONArray jsonFieldsFilters= jf.getFieldsFilters(columns, viewConfig.getDateFormat());
+            JSONArray jsonFieldsFilters= jf.getFieldsFilters(columns);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -116,7 +116,7 @@ public abstract class ExtTableController extends ExtController {
         ModelAndView mav= new ModelAndView("scripts/table/ExtModel");
         
         List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-        JSONArray jsonModel = jm.getJSONModel(columns, viewConfig.getDateFormat());
+        JSONArray jsonModel = jm.getJSONModel(columns);
         JSONArray jsonModelValidations= jm.getJSONModelValidations(columns);
         
         mav.addObject("jsonModel", jsonModel.toString());
@@ -213,6 +213,10 @@ public abstract class ExtTableController extends ExtController {
                             formField.put("vtype", "email");
                         }else if(typeForm.equals(FieldType.PASSWORD.name())){
                             formField.put("inputType", "password");
+                        }else if(typeForm.equals(FieldType.DATETIME.name())){
+                            formField.put("xtype", "datefield");
+                            formField.put("format", extViewConfig.getDatetimeFormat());
+                            formField.put("tooltip", "Seleccione la fecha");
                         }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
                             formField.put("xtype", "textarea");
                             formField.put("height", 200);
@@ -340,12 +344,12 @@ public abstract class ExtTableController extends ExtController {
                         switch (type) {
                             case "java.util.Date":
                                 formField.put("xtype", "datefield");
-                                formField.put("format", viewConfig.getDateFormat());
+                                formField.put("format", extViewConfig.getDateFormat());
                                 formField.put("tooltip", "Seleccione la fecha");
                                 break;
                             case "java.sql.Time":
                                 formField.put("xtype", "timefield");
-                                formField.put("format", "h:i:s A");
+                                formField.put("format", extViewConfig.getTimeFormat());
                                 formField.put("tooltip", "Seleccione la hora");
                                 break;
                             case "int":
@@ -422,6 +426,18 @@ public abstract class ExtTableController extends ExtController {
                             if(viewConfig.isEditableGrid() && !readOnly){
                                 gridColumn.put("editor", editor);
                             }
+                        }else if(typeForm.equals(FieldType.DATETIME.name())){
+                            gridColumn.put("xtype", "datecolumn");
+                            gridColumn.put("format", extViewConfig.getDatetimeFormat());
+                            JSONObject editor = new JSONObject();
+                            editor.put("xtype", "datefield");
+                            editor.put("format", extViewConfig.getDatetimeFormat());
+                            if (fieldsNN.contains(fieldName)) {
+                                editor.put("allowBlank", false);
+                            }
+                            if (viewConfig.isEditableGrid() && !readOnly) {
+                                gridColumn.put("editor", editor);
+                            }
                         }else if(typeForm.equals(FieldType.DURATION.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
                             JSONObject field= new JSONObject();
@@ -485,10 +501,10 @@ public abstract class ExtTableController extends ExtController {
                         switch (type) {
                             case "java.util.Date": {
                                 gridColumn.put("xtype", "datecolumn");
-                                gridColumn.put("format", viewConfig.getDateFormat());
+                                gridColumn.put("format", extViewConfig.getDateFormat());
                                 JSONObject editor = new JSONObject();
                                 editor.put("xtype", "datefield");
-                                editor.put("format", viewConfig.getDateFormat());
+                                editor.put("format", extViewConfig.getDateFormat());
                                 if (fieldsNN.contains(fieldName)) {
                                     editor.put("allowBlank", false);
                                 }
@@ -500,7 +516,7 @@ public abstract class ExtTableController extends ExtController {
                             case "java.sql.Time": {
                                 JSONObject editor = new JSONObject();
                                 editor.put("xtype", "timefield");
-                                editor.put("format", "h:i:s A");
+                                editor.put("format", extViewConfig.getTimeFormat());
                                 if (fieldsNN.contains(fieldName)) {
                                     editor.put("allowBlank", false);
                                 }

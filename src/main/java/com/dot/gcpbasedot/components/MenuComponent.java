@@ -10,37 +10,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import javax.servlet.ServletContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author lacastrillov
  */
-//@Component
+@Component
 public class MenuComponent {
-    
-    @Autowired
-    private ServletContext context;
-
-    private String basePath;
 
     private final List<MenuItem> menuData = new ArrayList<>();
 
     private boolean ordered= false;
     
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
-    
-    public String getBasePath(){
-        return this.basePath;
-    }
-    
-    public String getContextPath(){
-        return context.getContextPath();
-    }
     
     public void addItemMenu(MenuItem menuItem){
         addItem(menuData, menuItem);

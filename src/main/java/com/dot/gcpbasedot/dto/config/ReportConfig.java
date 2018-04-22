@@ -5,8 +5,10 @@
  */
 package com.dot.gcpbasedot.dto.config;
 
+import com.dot.gcpbasedot.annotation.LabelField;
 import com.dot.gcpbasedot.dto.GridTemplate;
 import com.dot.gcpbasedot.dto.ProcessButton;
+import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +34,9 @@ public class ReportConfig {
     
     private String idColumnName;
     
-    private String pluralReportTitle;
+    private String labelField;
     
-    private String dateFormat;
+    private String pluralReportTitle;
     
     private boolean visibleForm;
     
@@ -86,8 +88,8 @@ public class ReportConfig {
         this.entityRef= entityRef;
         this.reportName= reportName;
         this.idColumnName= "id";
+        this.labelField= "id";
         this.pluralReportTitle= this.reportName + "s";
-        this.dateFormat= "d/m/Y";
         this.visibleForm= true;
         this.visibleValueMapForm= false;
         this.visibleFilters= true;
@@ -109,6 +111,10 @@ public class ReportConfig {
         this.childExtReports= new LinkedHashMap<>();
         this.childRefColumnNames= new HashMap<>();
         this.processButtons= new ArrayList<>();
+        LabelField ann= (LabelField) EntityReflection.getClassAnnotation(dtoClass, LabelField.class);
+        if(ann!=null){
+            this.labelField= ann.value();
+        }
     }
 
     /**
@@ -187,6 +193,20 @@ public class ReportConfig {
     public void setIdColumnName(String idColumnName) {
         this.idColumnName = idColumnName;
     }
+    
+    /**
+     * @return the labelField
+     */
+    public String getLabelField() {
+        return labelField;
+    }
+
+    /**
+     * @param labelField the labelField to set
+     */
+    public void setLabelField(String labelField) {
+        this.labelField = labelField;
+    }
 
     /**
      * @return the pluralReportTitle
@@ -200,20 +220,6 @@ public class ReportConfig {
      */
     public void setPluralReportTitle(String pluralReportTitle) {
         this.pluralReportTitle = pluralReportTitle;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    /**
-     * @param dateFormat the dateFormat to set
-     */
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
     
     /**
