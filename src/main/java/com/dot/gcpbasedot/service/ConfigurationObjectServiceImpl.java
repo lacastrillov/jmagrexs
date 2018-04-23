@@ -10,7 +10,7 @@ import com.dot.gcpbasedot.dao.Parameters;
 import com.dot.gcpbasedot.interfaces.JsonObjectInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.reflection.ReflectionUtils;
-import com.dot.gcpbasedot.util.Util;
+import com.dot.gcpbasedot.util.JSONService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,12 +117,12 @@ public abstract class ConfigurationObjectServiceImpl<T> implements Configuration
     private void saveConfigurationObject(T configurationObject, Parameters p){
         JsonObjectInterface jsonObject= (JsonObjectInterface) getJsonObjectDao().loadByParameters(p);
         if(jsonObject!=null){
-            jsonObject.setData(Util.objectToJson(configurationObject));
+            jsonObject.setData(JSONService.objectToJson(configurationObject));
             getJsonObjectDao().update(jsonObject);
         }else{
             jsonObject= (JsonObjectInterface) EntityReflection.getObjectForClass(getJsonObjectDao().getPersistentClass());
             jsonObject.setType(getConfigurationObjectClass().getSimpleName());
-            jsonObject.setData(Util.objectToJson(configurationObject));
+            jsonObject.setData(JSONService.objectToJson(configurationObject));
             
             getJsonObjectDao().create(jsonObject);
         }

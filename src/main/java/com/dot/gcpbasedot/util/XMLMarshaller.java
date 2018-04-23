@@ -53,7 +53,7 @@ public class XMLMarshaller {
             ArrayList<?> list= (ArrayList<?>) object;
             simpleType= list.get(0).getClass().getSimpleName();
         }
-        String xml= convertJSONToXML(Util.objectToJson(object), simpleType);
+        String xml= convertJSONToXML(JSONService.objectToJson(object), simpleType);
         
         return xml;
     }

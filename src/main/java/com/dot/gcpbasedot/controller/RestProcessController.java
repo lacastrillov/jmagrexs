@@ -7,6 +7,7 @@ import com.dot.gcpbasedot.interfaces.LogProcesInterface;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
 import com.dot.gcpbasedot.service.ExternalService;
+import com.dot.gcpbasedot.util.JSONService;
 import com.dot.gcpbasedot.util.Util;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,7 +116,7 @@ public abstract class RestProcessController {
             try {
                 Map<String, String[]> map= request.getParameterMap();
                 JSONObject jsonObject= new JSONObject(map);
-                jsonIn= Util.remakeJSONObject(jsonObject.toString());
+                jsonIn= JSONService.remakeJSONObject(jsonObject.toString());
             } catch (Exception e) {
                 jsonResult.put("success", false);
                 jsonResult.put("message", "ERROR doProcess remakeJSONObject - "+e.getMessage());
@@ -137,7 +138,7 @@ public abstract class RestProcessController {
                 if(restService.getOutClass().equals(String.class)){
                     jsonOut= (String) outObject;
                 }else{
-                    jsonOut= Util.objectToJson(outObject);
+                    jsonOut= JSONService.objectToJson(outObject);
                 }
             }else if(externalService!=null && externalService.isSOAPService(processName)){
                 SOAPServiceDto soapService= externalService.getSOAPService(processName);
@@ -147,7 +148,7 @@ public abstract class RestProcessController {
                 Method method = this.getClass().getMethod(processName, inDtos.get(processName));
                 Object inObject= EntityReflection.jsonToObject(jsonIn, inDtos.get(processName));
                 Object outObject = method.invoke(this, inObject);
-                jsonOut= Util.objectToJson(outObject);
+                jsonOut= JSONService.objectToJson(outObject);
             }
             if(response!=null){
                 response.addHeader("response-data-format", responseDataFormat);
@@ -173,7 +174,7 @@ public abstract class RestProcessController {
     }
     
     public String doServerProcess(String processName, Object data){
-        byte[] resultPse= doProcess(Util.objectToJson(data), processName, null, null);
+        byte[] resultPse= doProcess(JSONService.objectToJson(data), processName, null, null);
         try {
             return new String(resultPse, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
@@ -190,7 +191,7 @@ public abstract class RestProcessController {
         String resultData;
         LogProcesInterface logProcess= (LogProcesInterface) logProcessService.loadById(processId);
         Object inObject= EntityReflection.jsonToObject(logProcess.getDataIn(), inDtos.get(processName));
-        JSONObject unremakeDataIn= Util.unremakeJSONObject(logProcess.getDataIn());
+        JSONObject unremakeDataIn= JSONService.unremakeJSONObject(logProcess.getDataIn());
         try {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
@@ -211,7 +212,7 @@ public abstract class RestProcessController {
                     }
                 }
             }
-            String dataIn= Util.remakeJSONObject(unremakeDataIn.toString());
+            String dataIn= JSONService.remakeJSONObject(unremakeDataIn.toString());
             logProcess.setDataIn(dataIn);
             logProcessService.update(logProcess);
             
@@ -262,7 +263,7 @@ public abstract class RestProcessController {
             }else{
                 inObject= EntityReflection.jsonToObject(dataIn, inDtos.get(processName), true);
             }
-            String minJsonIn= Util.objectToJson(inObject);
+            String minJsonIn= JSONService.objectToJson(inObject);
             logProcess.setDataIn(minJsonIn);
             logProcess.setDataOut(dataOut);
             logProcess.setOutputDataFormat("JSON");

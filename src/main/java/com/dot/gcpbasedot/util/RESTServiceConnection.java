@@ -232,7 +232,7 @@ public class RESTServiceConnection {
         if (body != null) {
             switch (getRESTService().getInputDataFormat()) {
                 case RESTServiceDto.JSON:
-                    stringData = Util.objectToJson(body);
+                    stringData = JSONService.objectToJson(body);
                     headers.put("Content-Type", "application/json");
                     break;
                 case RESTServiceDto.XML:

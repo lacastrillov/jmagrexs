@@ -490,5 +490,65 @@ public class Formats {
                 return "VARCHAR";
         }
     }
+    
+    /**
+     * 
+     * @param contentType
+     * @return 
+     */
+    public static String getSimpleContentType(String contentType){
+        List extensions= Arrays.asList(
+                new String[] {"conf","css","csv","html","java","js","json","jsp","php","properties","txt","vm","xml"});
+        if(extensions.contains(contentType)){
+            return contentType;
+        }
+        switch(contentType){
+            case "image/gif":
+            case "image/png":
+            case "image/jpeg":
+                return "image";
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            case "application/vnd.oasis.opendocument.text":
+            case "application/msword":
+                return "doc";
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            case "application/vnd.ms-excel":
+                return "xls";
+            case "application/pdf":
+                return "pdf";
+            case "application/gzip":
+            case "application/x-tar":
+            case "application/x-rar":
+            case "application/zip":
+                return "compress";
+            case "application/x-java-archive":
+            case "application/x-webarchive":
+                return "java";
+            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            case "application/vnd.oasis.opendocument.presentation":
+            case "application/vnd.ms-powerpoint":
+                return "ppt";
+            case "audio/mpeg":
+                return "audio";
+            case "video/mp4":
+                return "video";
+            case "application/javascript":
+                return "js";
+            case "text/css":
+                return "css";
+            case "text/plain":
+                return "txt";
+            case "text/html":
+                return "html";
+            case "application/x-php":
+                return "php";
+            case "text/xml":
+                return "xml";
+            case "application/json":
+                return "json";
+            default:
+                return "file";
+        }
+    }
 
 }

@@ -3,6 +3,7 @@ package com.dot.gcpbasedot.controller;
 import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.ConfigurationObjectService;
+import com.dot.gcpbasedot.util.JSONService;
 import com.dot.gcpbasedot.util.Util;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,7 +83,7 @@ public abstract class RestConfigurationController {
             try {
                 Map<String, String[]> map= request.getParameterMap();
                 JSONObject jsonObject= new JSONObject(map);
-                jsonIn= Util.remakeJSONObject(jsonObject.toString());
+                jsonIn= JSONService.remakeJSONObject(jsonObject.toString());
             } catch (Exception e) {
                 jsonResult.put("success", false);
                 jsonResult.put("message", "ERROR doProcess remakeJSONObject - "+e.getMessage());
@@ -115,8 +116,8 @@ public abstract class RestConfigurationController {
         ConfigurationObjectService configurationObjectService= configurationObjectServices.get(configurationObjectRef);
         Class coClass= configurationObjectService.getConfigurationObjectClass();
         Object configurationObject = configurationObjectService.load();
-        String configurationObjectJson= Util.objectToJson(configurationObject);
-        JSONObject unremakeConfigurationObject= Util.unremakeJSONObject(configurationObjectJson);
+        String configurationObjectJson= JSONService.objectToJson(configurationObject);
+        JSONObject unremakeConfigurationObject= JSONService.unremakeJSONObject(configurationObjectJson);
         try {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
@@ -137,7 +138,7 @@ public abstract class RestConfigurationController {
                     }
                 }
             }
-            configurationObjectJson= Util.remakeJSONObject(unremakeConfigurationObject.toString());
+            configurationObjectJson= JSONService.remakeJSONObject(unremakeConfigurationObject.toString());
             configurationObject= EntityReflection.jsonToObject(configurationObjectJson, coClass);
             configurationObjectService.save(configurationObject);
             

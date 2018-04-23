@@ -15,6 +15,7 @@ import com.dot.gcpbasedot.mapper.EntityMapper;
 import com.dot.gcpbasedot.util.CSVService;
 import com.dot.gcpbasedot.util.ExcelService;
 import com.dot.gcpbasedot.util.FileService;
+import com.dot.gcpbasedot.util.JSONService;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
@@ -143,8 +144,9 @@ public abstract class RestEntityController {
             List<BaseEntity> listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
 
-            ResultListCallback resultListCallBack = Util.getResultList(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-            String xml = XMLMarshaller.convertObjectToXML(resultListCallBack);
+            String resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
+            resultData= cleanTimeInDateField(resultData, dtoClass);
+            String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
             
             return Util.getHttpEntityBytes(xml, "xml");
         } catch (Exception e) {
@@ -204,10 +206,13 @@ public abstract class RestEntityController {
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
             
-            resultData= Util.jsonToYaml(Util.getResultList(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true));
+            resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
+            resultData= cleanTimeInDateField(resultData, dtoClass);
+            resultData= JSONService.jsonToYaml(resultData);
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
             resultData=Util.getResultListCallback(new ArrayList(), "Error buscando " + entityRef + ": " + e.getMessage(), false);
+            resultData= JSONService.jsonToYaml(resultData);
         }
         
         if(yamlFormat!=null && yamlFormat){
@@ -236,6 +241,7 @@ public abstract class RestEntityController {
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
             }else{
                 resultData= Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
+                resultData= cleanTimeInDateField(resultData, dtoReportClass);
             }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
@@ -257,8 +263,9 @@ public abstract class RestEntityController {
             List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
             Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
 
-            ResultListCallback resultListCallBack = Util.getResultList(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-            String xml = XMLMarshaller.convertObjectToXML(resultListCallBack);
+            String resultData = Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
+            resultData= cleanTimeInDateField(resultData, dtoClass);
+            String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
             
             return Util.getHttpEntityBytes(xml, "xml");
         } catch (Exception e) {

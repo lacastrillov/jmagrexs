@@ -9,6 +9,7 @@ import com.dot.gcpbasedot.domain.BaseEntity;
 import com.dot.gcpbasedot.mapper.BasicEntityMapper;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.service.EntityService;
+import com.dot.gcpbasedot.util.JSONService;
 import com.dot.gcpbasedot.util.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +86,7 @@ public abstract class GenericWebService {
         EntityService entityService = (EntityService) ctx.getBean(services.get(entityRef));
         BasicEntityMapper entityMapper = (BasicEntityMapper) ctx.getBean(mappers.get(entityRef));
 
-        HashMap<String, Object> mapData = Util.jsonToHashMap(data);
+        HashMap<String, Object> mapData = JSONService.jsonToHashMap(data);
         BaseEntity dto = null;
 
         try {
@@ -114,7 +115,7 @@ public abstract class GenericWebService {
         EntityService entityService = (EntityService) ctx.getBean(services.get(entityRef));
         BasicEntityMapper entityMapper = (BasicEntityMapper) ctx.getBean(mappers.get(entityRef));
 
-        HashMap<String, Object> mapData = Util.jsonToHashMap(data);
+        HashMap<String, Object> mapData = JSONService.jsonToHashMap(data);
         BaseEntity dto = null;
 
         try {
@@ -145,7 +146,7 @@ public abstract class GenericWebService {
         EntityService entityService = (EntityService) ctx.getBean(services.get(entityRef));
         BasicEntityMapper entityMapper = (BasicEntityMapper) ctx.getBean(mappers.get(entityRef));
 
-        HashMap<String, Object> mapData = Util.jsonToHashMap(data);
+        HashMap<String, Object> mapData = JSONService.jsonToHashMap(data);
         BaseEntity dto = null;
 
         try {
@@ -173,7 +174,7 @@ public abstract class GenericWebService {
         EntityService entityService = (EntityService) ctx.getBean(services.get(entityRef));
         BasicEntityMapper entityMapper = (BasicEntityMapper) ctx.getBean(mappers.get(entityRef));
 
-        HashMap<String, Object> mapData = Util.jsonToHashMap(data);
+        HashMap<String, Object> mapData = JSONService.jsonToHashMap(data);
         BaseEntity dto = null;
 
         try {

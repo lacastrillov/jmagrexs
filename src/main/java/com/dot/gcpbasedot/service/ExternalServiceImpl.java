@@ -12,8 +12,8 @@ import com.dot.gcpbasedot.dto.SOAPServiceDto;
 import com.dot.gcpbasedot.reflection.EntityReflection;
 import com.dot.gcpbasedot.util.RESTServiceConnection;
 import com.dot.gcpbasedot.util.FileService;
+import com.dot.gcpbasedot.util.JSONService;
 import com.dot.gcpbasedot.util.SimpleSOAPClient;
-import com.dot.gcpbasedot.util.Util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -110,7 +110,7 @@ public abstract class ExternalServiceImpl implements ExternalService {
     public Object callRESTService(String processName, Object data) throws IOException {
         RESTServiceConnection restServiceConnection= restServiceConnections.get(processName);
         RESTServiceDto externalService= restServiceConnection.getRESTService();
-        JSONObject jsonData= new JSONObject(Util.objectToJson(data));
+        JSONObject jsonData= new JSONObject(JSONService.objectToJson(data));
         
         Map<String, String> headers= null;
         Map<String, String> pathVars= null;
