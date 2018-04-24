@@ -24,7 +24,7 @@
     <sec:authentication var="user" property="principal" />
     <sec:authorize access="isAuthenticated()">
         <a class="logout" onclick="userAuthentication.logout()" href="javascript:void(0)">&nbsp;Cerrar sesi&oacute;n&nbsp;</a>
-        <a class="home" href="/account/home?redirect=user">&nbsp;Inicio&nbsp;</a>
+        <a class="home" href="${serverDomain.applicationContext}/account/home?redirect=user">&nbsp;Inicio&nbsp;</a>
         <p class="userSession"><b>${user.username}</b> - ${user.nombre} ${user.apellidos}</p>
     </sec:authorize>
 </div>

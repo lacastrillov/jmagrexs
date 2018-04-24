@@ -29,6 +29,8 @@ public class ServerDomain {
     
     private final String restPath="/rest";
     
+    private String contextPath;
+    
     private String applicationContext;
     
     private String adminContext;
@@ -47,16 +49,17 @@ public class ServerDomain {
         modules= new ArrayList<>();
         setRestContext(getRestPath());
         setAdminContext(getAdminPath());
-        if(!context.getContextPath().equals(restPath) && !context.getContextPath().equals(adminPath)){
-            setApplicationContext(getContext().getContextPath());
+        setContextPath(context.getContextPath());
+        if(!contextPath.equals(restPath) && !contextPath.equals(adminPath)){
+            setApplicationContext(getContextPath());
         }else{
             modules.add(restPath);
             modules.add(adminPath);
             setApplicationContext("");
-            if(context.getContextPath().equals(getRestPath())){
+            if(getContextPath().equals(getRestPath())){
                 setRestContext("");
             }
-            if(context.getContextPath().equals(getAdminPath())){
+            if(getContextPath().equals(getAdminPath())){
                 setAdminContext("");
             }
         }
@@ -67,6 +70,20 @@ public class ServerDomain {
             setDomain(req.getScheme() + "://" + req.getServerName());
             setDomainWithPort(req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort());
         }
+    }
+    
+    /**
+     * @return the context
+     */
+    public ServletContext getContext() {
+        return context;
+    }
+
+    /**
+     * @param context the context to set
+     */
+    public void setContext(ServletContext context) {
+        this.context = context;
     }
     
     /**
@@ -82,19 +99,19 @@ public class ServerDomain {
     public String getRestPath() {
         return restPath;
     }
-
+    
     /**
-     * @return the context
+     * @return the contextPath
      */
-    public ServletContext getContext() {
-        return context;
+    public String getContextPath() {
+        return contextPath;
     }
 
     /**
-     * @param context the context to set
+     * @param contextPath the contextPath to set
      */
-    public void setContext(ServletContext context) {
-        this.context = context;
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     /**
