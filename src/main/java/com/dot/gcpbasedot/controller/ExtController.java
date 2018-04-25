@@ -32,7 +32,7 @@ public abstract class ExtController {
     
     
     public JSONArray getMenuItems(HttpSession session, MenuComponent globalMenuComponent){
-        JSONArray menuJSON= new JSONArray();
+        JSONArray menuJSON;
         if(session.getAttribute("menuItems")==null){
             List<MenuItem> menuData= globalMenuComponent.getMenuData();
             menuData= configureVisibilityMenu(menuData);
