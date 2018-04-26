@@ -5,6 +5,7 @@
  */
 package com.dot.gcpbasedot.util;
 
+import com.dot.gcpbasedot.components.ExtViewConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -32,7 +35,7 @@ public class JSONService {
      */
     public static String objectToJson(Object obj) {
         GsonBuilder gsonB = new GsonBuilder();
-        gsonB.setDateFormat("dd/MM/yyyy hh:mm:ss a");
+        gsonB.setDateFormat(getExtViewConfig().getDatetimeFormatJava());
         Gson gson = gsonB.create();
 
         return gson.toJson(obj);
@@ -222,6 +225,17 @@ public class JSONService {
         String output = yaml.dump(map);
         
         return output;
+    }
+    
+    /**
+     * 
+     * @return extViewConfig
+     */
+    public static ExtViewConfig getExtViewConfig(){
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
+        
+        return extViewConfig;
     }
     
 }

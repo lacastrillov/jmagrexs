@@ -23,13 +23,13 @@ public class ExtViewConfig {
     
     private String dateFormat;
     
-    private String datetimeFormat;
-    
-    private String timeFormat;
-    
     private String dateFormatJava;
     
+    private String datetimeFormat;
+    
     private String datetimeFormatJava;
+    
+    private String timeFormat;
     
     private String timeFormatJava;
     
@@ -41,10 +41,10 @@ public class ExtViewConfig {
         this.extJsVersion= 4;
         this.favicon="";
         this.dateFormat= "d/m/Y";
-        this.datetimeFormat= "d/m/Y h:i:s A";
-        this.timeFormat= "h:i:s A";
         this.dateFormatJava= "dd/MM/yyyy";
+        this.datetimeFormat= "d/m/Y h:i:s A";
         this.datetimeFormatJava= "dd/MM/yyyy hh:mm:ss a";
+        this.timeFormat= "h:i:s A";
         this.timeFormatJava= "hh:mm:ss a";
     }
 
@@ -133,6 +133,20 @@ public class ExtViewConfig {
     }
     
     /**
+     * @return the dateFormatJava
+     */
+    public String getDateFormatJava() {
+        return dateFormatJava;
+    }
+
+    /**
+     * @param dateFormatJava the dateFormatJava to set
+     */
+    public void setDateFormatJava(String dateFormatJava) {
+        this.dateFormatJava = dateFormatJava;
+    }
+    
+    /**
      * @return the datetimeFormat
      */
     public String getDatetimeFormat() {
@@ -147,34 +161,6 @@ public class ExtViewConfig {
     }
     
     /**
-     * @return the timeFormat
-     */
-    public String getTimeFormat() {
-        return timeFormat;
-    }
-
-    /**
-     * @param timeFormat the timeFormat to set
-     */
-    public void setTimeFormat(String timeFormat) {
-        this.timeFormat = timeFormat;
-    }
-
-    /**
-     * @return the dateFormatJava
-     */
-    public String getDateFormatJava() {
-        return dateFormatJava;
-    }
-
-    /**
-     * @param dateFormatJava the dateFormatJava to set
-     */
-    public void setDateFormatJava(String dateFormatJava) {
-        this.dateFormatJava = dateFormatJava;
-    }
-
-    /**
      * @return the datetimeFormatJava
      */
     public String getDatetimeFormatJava() {
@@ -186,6 +172,20 @@ public class ExtViewConfig {
      */
     public void setDatetimeFormatJava(String datetimeFormatJava) {
         this.datetimeFormatJava = datetimeFormatJava;
+    }
+    
+    /**
+     * @return the timeFormat
+     */
+    public String getTimeFormat() {
+        return timeFormat;
+    }
+
+    /**
+     * @param timeFormat the timeFormat to set
+     */
+    public void setTimeFormat(String timeFormat) {
+        this.timeFormat = timeFormat;
     }
 
     /**
