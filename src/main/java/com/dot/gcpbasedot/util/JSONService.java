@@ -197,7 +197,11 @@ public class JSONService {
         JSONObject result= parent;
         for(String level: arrayLevels){
             if(result.has(level)){
-                result= result.getJSONObject(level);
+                try {
+                    result= result.getJSONObject(level);
+                } catch (JSONException ex) {
+                    return null;
+                }
             }else{
                 return null;
             }
