@@ -82,19 +82,24 @@ public class RESTServiceConnection {
 
     private final RESTServiceDto externalService;
     
+    private final int TIMEOUT= 60000;
     
-
+    
+    /**
+     * 
+     * @param externalService 
+     */
     public RESTServiceConnection(RESTServiceDto externalService) {
         this.externalService = externalService;
         //HttpClient
-        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(60000).setSocketTimeout(60000).build();
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(TIMEOUT).setSocketTimeout(TIMEOUT).build();
         client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
         //RestTemplate
         restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
         SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
-        rf.setReadTimeout(60000);
-        rf.setConnectTimeout(60000);
+        rf.setReadTimeout(TIMEOUT);
+        rf.setConnectTimeout(TIMEOUT);
     }
 
     /**
