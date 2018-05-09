@@ -260,7 +260,17 @@ public abstract class RestSessionController extends RestEntityController {
         }
     }
     
-    @RequestMapping(value = "/session_import/{format}.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @RequestMapping(value = "/session_import.htm", method = {RequestMethod.POST})
+    @ResponseBody
+    public byte[] sessionImportData(@RequestParam(required= false) String data, HttpServletRequest request) {
+        if(canImportData()){
+            return super.importData(data, request);
+        }else{
+            return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
+        }
+    }
+    
+    @RequestMapping(value = "/session_import/{format}.htm")
     @ResponseBody
     public byte[] sessionImportData(HttpServletRequest request, @PathVariable String format) {
         if(canImportData()){
@@ -315,9 +325,9 @@ public abstract class RestSessionController extends RestEntityController {
         return "{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idParent+ "\"}";
     }
     
-    @RequestMapping(value = "/session_getContentFile.htm")
+    @RequestMapping(value = "/session_readFile.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionGetContentFile(@RequestParam(required = true) String fileUrl) {
+    public byte[] sessionReadFile(@RequestParam(required = true) String fileUrl) {
         String content="";
         try {
             String userPath= "/ucp"+getUserCode();
@@ -329,9 +339,9 @@ public abstract class RestSessionController extends RestEntityController {
         return Util.getStringBytes(content);
     }
     
-    @RequestMapping(value = "/session_setContentFile.htm")
+    @RequestMapping(value = "/session_writeFile.htm", method = RequestMethod.POST)
     @ResponseBody
-    public String sessionSetContentFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
+    public String sessionWriteFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
         try {
             String userPath= "/ucp"+getUserCode();
             String pathFile= fileUrl.replace(LOCAL_DOMAIN + userPath, LOCAL_DIR + userPath);

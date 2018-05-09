@@ -165,7 +165,7 @@ public abstract class RestProcessController {
         if(logProcessClass!=null && logProcessService!=null){
             Integer processId= this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
                     jsonResult.getString("message"), jsonResult.getBoolean("success"));
-            if(response!=null){
+            if(response!=null && processId!=null){
                 response.addHeader("Process-Id", processId.toString());
             }
         }

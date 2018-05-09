@@ -52,7 +52,7 @@
                     $("#fileLink").attr("href",Instance.fileUrl);
                     $("#fileLink").html(decodeURIComponent(Instance.fileUrl));
                     $.ajax({
-                        url: "/rest/webFile/getContentFile.htm",
+                        url: "/rest/webFile/readFile.htm",
                         timeout: 20000,
                         type: "POST",
                         data: "fileUrl="+Instance.fileUrl,
@@ -73,7 +73,7 @@
                     $("#message").text("Guardando...");
                     var content= $("#contentEditor").val();
                     $.ajax({
-                        url: "/rest/webFile/setContentFile.htm",
+                        url: "/rest/webFile/writeFile.htm",
                         timeout: 20000,
                         type: "POST",
                         data: "fileUrl="+Instance.fileUrl+"&content="+encodeURIComponent(content),

@@ -79,6 +79,8 @@ public abstract class RestEntityController {
     
     private final String TEMPLATES_DIR ="/ext/gridtemplates/";
     
+    private Map<Class, List<String>> dateFields;
+    
     @Autowired
     private ServletContext selvletContext;
     
@@ -105,6 +107,7 @@ public abstract class RestEntityController {
         this.mapper= entityMapper;
         this.entityClass= service.getEntityClass();
         this.dtoClass= mapper.getDtoClass();
+        this.dateFields= new HashMap<>();
     }
     
     @RequestMapping(value = "/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -124,7 +127,7 @@ public abstract class RestEntityController {
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
             }else{
                 resultData=Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-                resultData= cleanTimeInDateField(resultData, dtoClass);
+                resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
@@ -145,7 +148,7 @@ public abstract class RestEntityController {
             Long totalCount = service.countByJSONFilters(filter, query);
 
             String resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-            resultData= cleanTimeInDateField(resultData, dtoClass);
+            resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
             
             return Util.getHttpEntityBytes(xml, "xml");
@@ -207,7 +210,7 @@ public abstract class RestEntityController {
             Long totalCount = service.countByJSONFilters(filter, query);
             
             resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-            resultData= cleanTimeInDateField(resultData, dtoClass);
+            resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             resultData= JSONService.jsonToYaml(resultData);
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
@@ -241,7 +244,7 @@ public abstract class RestEntityController {
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
             }else{
                 resultData= Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-                resultData= cleanTimeInDateField(resultData, dtoReportClass);
+                resultData= cleanTimeInDateFieldList(resultData, dtoReportClass);
             }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
@@ -264,7 +267,7 @@ public abstract class RestEntityController {
             Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
 
             String resultData = Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-            resultData= cleanTimeInDateField(resultData, dtoClass);
+            resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
             
             return Util.getHttpEntityBytes(xml, "xml");
@@ -331,6 +334,7 @@ public abstract class RestEntityController {
             dto = mapper.entityToDto(entity);
             updateRelatedWebEntity(entity, request);
             resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
+            resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
         } catch (Exception e) {
             LOGGER.error("create " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
@@ -361,6 +365,7 @@ public abstract class RestEntityController {
                     dto = mapper.entityToDto(entity);
                     updateRelatedWebEntity(entity, request);
                     resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+                    resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
                 }else{
                     return this.create(data, request);
                 }
@@ -403,6 +408,7 @@ public abstract class RestEntityController {
             BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
+            resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
         } catch (Exception e) {
             LOGGER.error("load " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en carga de " + entityRef + ": " + e.getMessage(), true);
@@ -444,6 +450,37 @@ public abstract class RestEntityController {
         }
     }
     
+    @RequestMapping(value = "/import.htm", method = RequestMethod.POST)
+    @ResponseBody
+    public byte[] importData(@RequestParam(required= false) String data, HttpServletRequest request) {
+        List listDtos= new ArrayList();
+
+        String resultData;
+        try {
+            String jsonData= data;
+            if(jsonData==null){
+                jsonData = IOUtils.toString(request.getInputStream());
+            }
+            
+            List<BaseEntity> entities= new ArrayList<>();
+            JSONArray array;
+            
+            JSONObject object= new JSONObject(jsonData);
+            array= object.getJSONArray("data");
+            for (int i = 0; i < array.length(); i++) {
+                entities.add((BaseEntity) EntityReflection.jsonToObject(array.getJSONObject(i).toString(), entityClass));
+            }
+
+            listDtos= importEntities(entities);
+            
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+listDtos.size()+" registros tipo " + entityRef + " finalizada...", true);
+        } catch (Exception e) {
+            LOGGER.error("import " + entityRef, e);
+            resultData= Util.getOperationCallback(null, "Error en Importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
+        }
+        return Util.getStringBytes(resultData);
+    }
+    
     @RequestMapping(value = "/import/{format}.htm")
     @ResponseBody
     public byte[] importData(HttpServletRequest request, @PathVariable String format) {
@@ -452,7 +489,6 @@ public abstract class RestEntityController {
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
         String resultData;
-        int totalRecords=0;
         try {
             
             FileItemFactory factory = new DiskFileItemFactory();
@@ -496,37 +532,11 @@ public abstract class RestEntityController {
                             break;
                     }
                     
-                    //Buscar entidades existentes
-                    List ids= new ArrayList<>();
-                    for(BaseEntity newEntity: entities){
-                        ids.add(newEntity.getId());
-                    }
-                    List<BaseEntity> existingEntities = service.listAllByIds(ids);
-                    Map<Object, BaseEntity> mapExistingEntities= new HashMap();
-                    for(BaseEntity entity: existingEntities){
-                        mapExistingEntities.put(entity.getId(), entity);
-                    }
-                    
-                    //Insertar o actualizar la entidad
-                    for(BaseEntity entity: entities){
-                        try{
-                            if(!mapExistingEntities.containsKey(entity.getId())){
-                                service.insert(entity);
-                            }else{
-                                BaseEntity existingEntity= mapExistingEntities.get(entity.getId());
-                                EntityReflection.updateEntity(entity, existingEntity);
-                                service.update(existingEntity);
-                            }
-                            listDtos.add(entity);
-                            totalRecords++;
-                        }catch(Exception e){
-                            LOGGER.error("importData " + entityRef, e);
-                        }
-                    }
+                    listDtos= importEntities(entities);
                 }
             }
             
-            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+totalRecords+" registros tipo " + entityRef + " finalizada...", true);
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+listDtos.size()+" registros tipo " + entityRef + " finalizada...", true);
         } catch (Exception e) {
             LOGGER.error("importData " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
@@ -695,22 +705,22 @@ public abstract class RestEntityController {
         }
     }
     
-    @RequestMapping(value = "/getContentFile.htm")
+    @RequestMapping(value = "/readFile.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] getContentFile(@RequestParam(required = true) String fileUrl) {
+    public byte[] readFile(@RequestParam(required = true) String fileUrl) {
         String content="";
         try {
             String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
             content= (pathFile.startsWith(LOCAL_DIR))?FileService.getTextFile(pathFile):"";
         } catch (IOException ex) {
-            LOGGER.error("getContentFile ",ex);
+            LOGGER.error("readFile ",ex);
         }
         return Util.getStringBytes(content);
     }
     
-    @RequestMapping(value = "/setContentFile.htm")
+    @RequestMapping(value = "/writeFile.htm", method = RequestMethod.POST)
     @ResponseBody
-    public String setContentFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
+    public String writeFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
         try {
             String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
             if(pathFile.startsWith(LOCAL_DIR)){
@@ -720,10 +730,43 @@ public abstract class RestEntityController {
                 return "El contenido no pudo ser guardado";
             }
         } catch (IOException ex) {
-            LOGGER.error("setContentFile ",ex);
+            LOGGER.error("writeFile ",ex);
         }
         
         return "Error al guardar";
+    }
+    
+    private List importEntities(List<BaseEntity> entities){
+        List listDtos= new ArrayList();
+        
+        //Buscar entidades existentes
+        List ids= new ArrayList<>();
+        for(BaseEntity newEntity: entities){
+            ids.add(newEntity.getId());
+        }
+        List<BaseEntity> existingEntities = service.listAllByIds(ids);
+        Map<Object, BaseEntity> mapExistingEntities= new HashMap();
+        for(BaseEntity entity: existingEntities){
+            mapExistingEntities.put(entity.getId(), entity);
+        }
+
+        //Insertar o actualizar la entidad
+        for(BaseEntity entity: entities){
+            try{
+                if(!mapExistingEntities.containsKey(entity.getId())){
+                    service.insert(entity);
+                }else{
+                    BaseEntity existingEntity= mapExistingEntities.get(entity.getId());
+                    EntityReflection.updateEntity(entity, existingEntity);
+                    service.update(existingEntity);
+                }
+                listDtos.add(entity);
+            }catch(Exception e){
+                LOGGER.error("importData " + entityRef, e);
+            }
+        }
+        
+        return listDtos;
     }
     
     private void updateRelatedWebEntity(BaseEntity entity, HttpServletRequest request){
@@ -829,30 +872,16 @@ public abstract class RestEntityController {
         return Util.getResultListCallback(items, totalCount, "Busqueda de " + entityRef + " realizada...", success);
     }
     
-    private String cleanTimeInDateField(String data, Class dtoClass){
-        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
-        Set<String> datetimeFields= new HashSet<>();
-        HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
-        for (Map.Entry<String, String[]> entry : typeFormFields.entrySet()) {
-            String typeForm= entry.getValue()[0];
-            if(typeForm.equals(FieldType.DATETIME.name())){
-                datetimeFields.add(entry.getKey());
-            }
+    private String cleanTimeInDateFieldList(String data, Class dtoClass){
+        if(!dateFields.containsKey(dtoClass)){
+            initDateFields(dtoClass);
         }
-        List<String> dateFields= new ArrayList<>();
-        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-            String fieldName= propertyDescriptor.getName();
-            String type = propertyDescriptor.getPropertyType().getName();
-            if(type.equals("java.util.Date") && !datetimeFields.contains(fieldName)){
-                dateFields.add(fieldName);
-            }
-        }
-        if(dateFields.size()>0){
+        if(dateFields.get(dtoClass).size()>0){
             JSONObject result= new JSONObject(data);
             for(int i=0; i<result.getJSONArray("data").length(); i++){
                 JSONObject entityJson= result.getJSONArray("data").getJSONObject(i);
-                for(int j=0; j<dateFields.size(); j++){
-                    String fieldName= dateFields.get(j);
+                for(int j=0; j<dateFields.get(dtoClass).size(); j++){
+                    String fieldName= dateFields.get(dtoClass).get(j);
                     if(!entityJson.isNull(fieldName)){
                         String date= entityJson.getString(fieldName);
                         result.getJSONArray("data").getJSONObject(i).put(fieldName, date.split(" ")[0]);
@@ -862,6 +891,45 @@ public abstract class RestEntityController {
             return result.toString();
         }
         return data;
+    }
+    
+    private String cleanTimeInDateFieldEntity(String data, Class dtoClass){
+        if(!dateFields.containsKey(dtoClass)){
+            initDateFields(dtoClass);
+        }
+        JSONObject result= new JSONObject(data);
+        JSONObject entityJson= result.getJSONObject("data");
+        if(dateFields.get(dtoClass).size()>0){
+            for(int j=0; j<dateFields.get(dtoClass).size(); j++){
+                String fieldName= dateFields.get(dtoClass).get(j);
+                if(!entityJson.isNull(fieldName)){
+                    String date= entityJson.getString(fieldName);
+                    result.getJSONObject("data").put(fieldName, date.split(" ")[0]);
+                }
+            }
+            return result.toString();
+        }
+        return data;
+    }
+    
+    private void initDateFields(Class dtoClass){
+        dateFields.put(dtoClass, new ArrayList());
+        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
+        Set<String> datetimeFields= new HashSet<>();
+        HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
+        for (Map.Entry<String, String[]> entry : typeFormFields.entrySet()) {
+            String typeForm= entry.getValue()[0];
+            if(typeForm.equals(FieldType.DATETIME.name())){
+                datetimeFields.add(entry.getKey());
+            }
+        }
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            String fieldName= propertyDescriptor.getName();
+            String type = propertyDescriptor.getPropertyType().getName();
+            if(type.equals("java.util.Date") && !datetimeFields.contains(fieldName)){
+                dateFields.get(dtoClass).add(fieldName);
+            }
+        }
     }
     
 }
