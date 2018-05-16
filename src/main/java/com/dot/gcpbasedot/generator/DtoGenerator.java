@@ -38,6 +38,7 @@ public class DtoGenerator extends ClassGenerator {
 
             PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
             HashSet<String> fieldsNN= getNotNullFields(entityClass);
+            HashSet<String> fieldsRO= getReadOnlyFields(entityClass);
             HashMap<String, Integer[]> sizeColumnMap= getSizeColumnMap(entityClass);
             int index=1;
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -64,8 +65,10 @@ public class DtoGenerator extends ClassGenerator {
                     }
 
                     int columnWidth= 200;
-                    if(fieldName.equals("id")){
+                    if(fieldName.equals("id") || type.equals("boolean") || type.equals("java.lang.Boolean")){
                         columnWidth= 100;
+                    }
+                    if(fieldName.equals("id")){
                         simpleTypeSet= "Object";
                     }
 
@@ -80,6 +83,7 @@ public class DtoGenerator extends ClassGenerator {
                         attributes+=
                             "    @Order("+index+")\n" +
                             ((fieldsNN.contains(fieldName))?"    @NotNull\n":"") +
+                            ((fieldsRO.contains(fieldName))?"    @ReadOnly\n":"") +
                             sizeAnnotation +
                             "    @ColumnWidth("+columnWidth+")\n" +
                             "    @TextField(\""+fieldEntity+"\")\n";
@@ -115,6 +119,7 @@ public class DtoGenerator extends ClassGenerator {
                     "import com.dot.gcpbasedot.annotation.LabelField;\n" +
                     "import com.dot.gcpbasedot.annotation.NotNull;\n" +
                     "import com.dot.gcpbasedot.annotation.Order;\n" +
+                    "import com.dot.gcpbasedot.annotation.ReadOnly;\n" +
                     "import com.dot.gcpbasedot.annotation.Size;\n" +
                     "import com.dot.gcpbasedot.annotation.TextField;\n" +
                     "import com.dot.gcpbasedot.domain.BaseEntity;\n" +

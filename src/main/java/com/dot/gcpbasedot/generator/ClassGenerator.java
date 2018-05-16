@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.GeneratedValue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -81,6 +82,16 @@ public class ClassGenerator {
         }
 
         return fieldsNN;
+    }
+    
+    protected HashSet<String> getReadOnlyFields(Class dtoClass) {
+        HashSet<String> fieldsRO = new HashSet<>();
+        List<Field> fieldsReadOnly = EntityReflection.getEntityAnnotatedFields(dtoClass, GeneratedValue.class);
+        for (Field f : fieldsReadOnly) {
+            fieldsRO.add(f.getName());
+        }
+
+        return fieldsRO;
     }
 
     protected HashMap<String, Integer[]> getSizeColumnMap(Class dtoClass) {
