@@ -84,7 +84,7 @@ public class MenuItem {
         if(this.type.equals(CHILD)){
             ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
             ServerDomain serverDomain= (ServerDomain) ctx.getBean("serverDomain");
-            String href= serverDomain.getContextPath() + serverDomain.getAdminPath() + "/" 
+            String href= serverDomain.getApplicationContext() + serverDomain.getAdminContext() + serverDomain.getAdminPath() + "/" 
                     + this.entityRef + "/" + this.pageType.getPageRef();
             if (this.pageType==PageType.REPORT) {
                 href+= "/" + this.reportName + ".htm";

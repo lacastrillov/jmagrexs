@@ -16,7 +16,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.context+"/rest/${entityRef}/saveConfig.htm",
+            url: Ext.restContext+"/rest/${entityRef}/saveConfig.htm",
             method: "POST",
             headers: {
                 'Content-Type' : 'application/json'
@@ -41,7 +41,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.context+"/rest/${entityRef}/loadConfig/"+configurationObjectRef+".htm",
+            url: Ext.restContext+"/rest/${entityRef}/loadConfig/"+configurationObjectRef+".htm",
             method: "GET",
             success: function(response){
                 var result= Ext.decode(response.responseText);
@@ -56,7 +56,7 @@ function ${entityName}ExtStore(){
     
     Instance.upload= function(form, configurationObjectRef, func){
         form.submit({
-            url: Ext.context+'/rest/${entityRef}/diskupload/'+configurationObjectRef+'.htm',
+            url: Ext.restContext+'/rest/${entityRef}/diskupload/'+configurationObjectRef+'.htm',
             waitMsg: 'Subiendo archivo...',
             success: function(form, action) {
                 func(action.result);

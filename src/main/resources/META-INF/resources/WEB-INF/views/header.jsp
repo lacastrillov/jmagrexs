@@ -12,19 +12,19 @@
     var userAuthentication;
     try{
         userAuthentication = new UserAuthentication();
-        userAuthentication.context= "${serverDomain.applicationContext}";
+        userAuthentication.context= "${serverDomain.applicationContext}${serverDomain.portalContext}";
         userAuthentication.MODULES= ${serverDomain.modulesJson};
     }catch(e){
         console.error(e);
     }
 </script>
 <div id="headerHtml" style="display:none;">
-    <a href="/"><img src="${serverDomain.applicationContext}${extViewConfig.favicon}" class="logoAdmin"></a>
+    <a href="/"><img src="${serverDomain.applicationContext}${serverDomain.portalContext}${extViewConfig.favicon}" class="logoAdmin"></a>
     <h1>Administraci&oacute;n ${extViewConfig.appName}</h1>
     <sec:authentication var="user" property="principal" />
     <sec:authorize access="isAuthenticated()">
         <a class="logout" onclick="userAuthentication.logout()" href="javascript:void(0)">&nbsp;Cerrar sesi&oacute;n&nbsp;</a>
-        <a class="home" href="${serverDomain.applicationContext}/account/home?redirect=user">&nbsp;Inicio&nbsp;</a>
+        <a class="home" href="${serverDomain.applicationContext}${serverDomain.portalContext}/account/home?redirect=user">&nbsp;Inicio&nbsp;</a>
         <p class="userSession"><b>${user.username}</b> - ${user.nombre} ${user.apellidos}</p>
     </sec:authorize>
 </div>

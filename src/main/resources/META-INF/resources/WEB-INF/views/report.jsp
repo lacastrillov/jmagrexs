@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>${reportConfig.pluralReportTitle} - Administraci&oacute;n ${extViewConfig.appName}</title>
-        <link rel="icon" type="image/icon" href="${serverDomain.applicationContext}${extViewConfig.favicon}" /> 
+        <link rel="icon" type="image/icon" href="${serverDomain.applicationContext}${serverDomain.portalContext}${extViewConfig.favicon}" /> 
         
         <jsp:include page="statics.jsp"></jsp:include>
         
@@ -21,7 +21,6 @@
         
         
         <!-- ############################ IMPORT MODELS ################################### -->
-        <!--${serverDomain.adminPath}/${entityRef}/reportExtModel/${reportName}.htm-->
         
         <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtModel/${reportName}.htm"/>
         <c:forEach var="childExtReport" items="${reportConfig.childExtReports}">

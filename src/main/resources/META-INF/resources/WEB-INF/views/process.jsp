@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>${viewConfig.mainProcessTitle} - Administraci&oacute;n ${extViewConfig.appName}</title>
-        <link rel="icon" type="image/icon" href="${serverDomain.applicationContext}${extViewConfig.favicon}" /> 
+        <link rel="icon" type="image/icon" href="${serverDomain.applicationContext}${serverDomain.portalContext}${extViewConfig.favicon}" /> 
         
         <jsp:include page="statics.jsp"></jsp:include>
         

@@ -27,6 +27,10 @@ public class ServerDomain {
     
     private final String restPath="/rest";
     
+    private String applicationContext="";
+    
+    private String portalContext="";
+    
     private String adminContext="";
     
     private String restContext="";
@@ -40,22 +44,7 @@ public class ServerDomain {
     
     @PostConstruct
     public void init(){
-        //setRestContext(getRestPath());
-        //setAdminContext(getAdminPath());
-        //setContextPath(context.getContextPath());
-        //if(!contextPath.equals(restPath) && !contextPath.equals(adminPath)){
-        //setApplicationContext(getContextPath());
-        /*}else{
-            modules.add(restPath);
-            modules.add(adminPath);
-            //setApplicationContext("");
-            if(getContextPath().equals(getRestPath())){
-                setRestContext("");
-            }
-            if(getContextPath().equals(getAdminPath())){
-                setAdminContext("");
-            }
-        }*/
+        
     }
     
     public void initDomain(HttpServletRequest req){
@@ -104,11 +93,29 @@ public class ServerDomain {
      * @return the applicationContext
      */
     public String getApplicationContext() {
-        if(this.restContext.equals("") && this.adminContext.equals("")){
-            return getContextPath();
-        }else{
-            return "";
-        }
+        return applicationContext;
+    }
+    
+    /**
+     * @param applicationContext
+     */
+    public void setApplicationContext(String applicationContext) {
+        this.applicationContext= applicationContext;
+    }
+    
+    /**
+     * @return the adminContext
+     */
+    public String getPortalContext() {
+        return portalContext;
+    }
+
+    /**
+     * @param portalContext
+     */
+    public void setPortalContext(String portalContext) {
+        this.portalContext = adminContext;
+        this.modules.add(portalContext);
     }
 
     /**

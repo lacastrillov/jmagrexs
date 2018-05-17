@@ -34,4 +34,5 @@
 </c:if>
     <script>
         Ext.context="${serverDomain.restContext}";
+        Ext.restContext="${serverDomain.restContext}";
     </script>

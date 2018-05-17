@@ -30,10 +30,10 @@ function ${entityName}ExtStore(){
                     destroy: 'GET'
                 },
                 api: {
-                    read: Ext.context+'/rest/${entityRef}/'+baseAction+'find.htm',
-                    create: Ext.context+'/rest/${entityRef}/'+baseAction+'create.htm',
-                    update: Ext.context+'/rest/${entityRef}/'+baseAction+'update.htm',
-                    destroy: Ext.context+'/rest/${entityRef}/'+baseAction+'delete.htm'
+                    read: Ext.restContext+'/rest/${entityRef}/'+baseAction+'find.htm',
+                    create: Ext.restContext+'/rest/${entityRef}/'+baseAction+'create.htm',
+                    update: Ext.restContext+'/rest/${entityRef}/'+baseAction+'update.htm',
+                    destroy: Ext.restContext+'/rest/${entityRef}/'+baseAction+'delete.htm'
                 },
                 reader: {
                     type: 'json',
@@ -124,7 +124,7 @@ function ${entityName}ExtStore(){
                     read   : 'GET'
                 },
                 api: {
-                    read: Ext.context+'/rest/${entityRef}/'+baseAction+'find.htm'
+                    read: Ext.restContext+'/rest/${entityRef}/'+baseAction+'find.htm'
                 },
                 reader: {
                     type: 'json',
@@ -193,7 +193,7 @@ function ${entityName}ExtStore(){
 
     Instance.find= function(filter, params, func){
         Ext.Ajax.request({
-            url: Ext.context+'/rest/${entityRef}/'+baseAction+'find.htm',
+            url: Ext.restContext+'/rest/${entityRef}/'+baseAction+'find.htm',
             method: "GET",
             params: ((filter!==null && filter!=="")?"filter="+encodeURIComponent(filter):"") + params,
             success: function(response){
@@ -214,7 +214,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.context+'/rest/${entityRef}/'+baseAction+operation+'.htm',
+            url: Ext.restContext+'/rest/${entityRef}/'+baseAction+operation+'.htm',
             method: "POST",
             params: "data="+encodeURIComponent(data)<c:if test="${not empty param.webEntityId}">+"&webEntityId=${param.webEntityId}"</c:if>,
             success: function(response){
@@ -230,7 +230,7 @@ function ${entityName}ExtStore(){
     
     Instance.load= function(idEntity, func){
         Ext.Ajax.request({
-            url: Ext.context+'/rest/${entityRef}/'+baseAction+'load.htm',
+            url: Ext.restContext+'/rest/${entityRef}/'+baseAction+'load.htm',
             method: "GET",
             params: 'idEntity='+idEntity,
             success: function(response){
@@ -245,7 +245,7 @@ function ${entityName}ExtStore(){
     
     Instance.upload= function(form, idEntity, func){
         form.submit({
-            url: Ext.context+'/rest/${entityRef}/'+baseAction+'diskupload/'+idEntity+'.htm',
+            url: Ext.restContext+'/rest/${entityRef}/'+baseAction+'diskupload/'+idEntity+'.htm',
             waitMsg: 'Subiendo archivo...',
             success: function(form, action) {
                 func(action.result);
@@ -258,7 +258,7 @@ function ${entityName}ExtStore(){
     
     Instance.import= function(form, typeReport, func){
         form.submit({
-            url: Ext.context+'/rest/${entityRef}/'+baseAction+'import/'+typeReport+'.htm',
+            url: Ext.restContext+'/rest/${entityRef}/'+baseAction+'import/'+typeReport+'.htm',
             waitMsg: 'Importando archivo...',
             success: function(form, action) {
                 func(action.result);
@@ -277,7 +277,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.context+"/rest/"+mainProcessRef+"/doProcess.htm",
+            url: Ext.restContext+"/rest/"+mainProcessRef+"/doProcess.htm",
             method: "POST",
             headers: {
                 'Content-Type' : 'application/json'
@@ -301,7 +301,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.context+'/rest/${entityRef}/'+baseAction+'delete/byfilter.htm',
+            url: Ext.restContext+'/rest/${entityRef}/'+baseAction+'delete/byfilter.htm',
             method: "GET",
             params: (filter!==null && filter!=="")?"filter="+encodeURIComponent(filter):"",
             success: function(response){

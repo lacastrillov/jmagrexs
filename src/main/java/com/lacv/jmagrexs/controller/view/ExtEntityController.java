@@ -728,7 +728,7 @@ public abstract class ExtEntityController extends ExtReportController {
             internalViewButton.put("text", entry.getValue());
             internalViewButton.put("scope", "#this#");
             internalViewButton.put("scale", "medium");
-            internalViewButton.put("handler", "#function(){parentExtController.viewInternalPage('"+serverDomain.getApplicationContext() + serverDomain.getAdminPath()+"/"+entry.getKey()+"/entity.htm')}#");
+            internalViewButton.put("handler", "#function(){parentExtController.viewInternalPage('"+serverDomain.getApplicationContext() + serverDomain.getAdminContext() + serverDomain.getAdminPath()+"/"+entry.getKey()+"/entity.htm')}#");
             
             jsonInternalViewButtons.put(internalViewButton);
         }

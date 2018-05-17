@@ -19,7 +19,7 @@ import org.springframework.http.HttpMethod;
  */
 public class JMagrexsClientService {
     
-    private final String serverDomain;
+    private final String domain;
     
     private final String contextPath;
     
@@ -28,14 +28,14 @@ public class JMagrexsClientService {
     private String authorization;
     
     
-    public JMagrexsClientService(String serverDomain, String contextPath, String entityRef){
-        this.serverDomain= serverDomain;
+    public JMagrexsClientService(String domain, String contextPath, String entityRef){
+        this.domain= domain;
         this.contextPath= contextPath;
         this.entityRef= entityRef;
     }
     
     private String getBaseURL(){
-        return this.serverDomain+this.contextPath+"/rest/"+this.entityRef+"/";
+        return this.domain+this.contextPath+"/rest/"+this.entityRef+"/";
     }
 
     public String getAuthorization() {
