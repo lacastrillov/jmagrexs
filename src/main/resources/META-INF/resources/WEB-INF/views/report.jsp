@@ -21,45 +21,45 @@
         
         
         <!-- ############################ IMPORT MODELS ################################### -->
-        <!--${serverDomain.adminContext}/${entityRef}/reportExtModel/${reportName}.htm-->
+        <!--${serverDomain.adminPath}/${entityRef}/reportExtModel/${reportName}.htm-->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/reportExtModel/${reportName}.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtModel/${reportName}.htm"/>
         <c:forEach var="childExtReport" items="${reportConfig.childExtReports}">
-            <c:import url="${serverDomain.adminContext}/${childExtReport.key}/reportExtModel/${childExtReport.value}.htm"/>
+            <c:import url="${serverDomain.adminPath}/${childExtReport.key}/reportExtModel/${childExtReport.value}.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT STORES ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/reportExtStore/${reportName}.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtStore/${reportName}.htm"/>
         <c:forEach var="childExtReport" items="${reportConfig.childExtReports}">
-            <c:import url="${serverDomain.adminContext}/${childExtReport.key}/reportExtStore/${childExtReport.value}.htm">
+            <c:import url="${serverDomain.adminPath}/${childExtReport.key}/reportExtStore/${childExtReport.value}.htm">
                 <c:param name="restSession" value="${reportConfig.restSession}"/>
             </c:import>
         </c:forEach>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/reportExtView/${reportName}.htm">
+        <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtView/${reportName}.htm">
             <c:param name="typeView" value="Parent"/>
         </c:import>
         <c:forEach var="childExtReport" items="${reportConfig.childExtReports}">
-            <c:import url="${serverDomain.adminContext}/${childExtReport.key}/reportExtView/${childExtReport.value}.htm">
+            <c:import url="${serverDomain.adminPath}/${childExtReport.key}/reportExtView/${childExtReport.value}.htm">
                 <c:param name="typeView" value="Child"/>
             </c:import>
         </c:forEach>
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/reportExtController/${reportName}.htm">
+        <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtController/${reportName}.htm">
             <c:param name="typeController" value="Parent"/>
         </c:import>
         <c:forEach var="childExtReport" items="${reportConfig.childExtReports}">
-            <c:import url="${serverDomain.adminContext}/${childExtReport.key}/reportExtController/${childExtReport.value}.htm">
+            <c:import url="${serverDomain.adminPath}/${childExtReport.key}/reportExtController/${childExtReport.value}.htm">
                 <c:param name="typeController" value="Child"/>
             </c:import>
         </c:forEach>
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/reportExtViewport/${reportName}.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtViewport/${reportName}.htm"/>
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/reportExtInit/${reportName}.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/reportExtInit/${reportName}.htm"/>
         
         <!-- ############################ IMPORT COMPONENTS ################################### -->
         

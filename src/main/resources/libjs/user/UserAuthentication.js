@@ -11,7 +11,7 @@ function UserAuthentication() {
     
     Instance.context= "";
     
-    Instance.MODULES= ["/rest", "/vista"];
+    Instance.MODULES= [];
 
     Instance.init = function () {
         $(document).ready(function () {
@@ -54,7 +54,7 @@ function UserAuthentication() {
     Instance.preAuthenticate= function(index, formData, modules, callback){
         if(index<modules.length){
             $.ajax({
-                url: Instance.context+modules[index]+"/account/ajax/authenticate",
+                url: modules[index]+"/account/ajax/authenticate",
                 timeout: 20000,
                 type: "POST",
                 data: formData,
@@ -98,7 +98,7 @@ function UserAuthentication() {
     Instance.preLogout= function(index, modules, callback){
         if(index<modules.length){
             $.ajax({
-                url: Instance.context+modules[index]+"/security_logout",
+                url: modules[index]+"/security_logout",
                 timeout: 5000,
                 type: "GET",
                 cache: false,
@@ -144,7 +144,7 @@ function UserAuthentication() {
     Instance.scanActiveSessions= function(index, modules, callback){
         if(index<modules.length){
             $.ajax({
-                url: Instance.context+modules[index]+"/account/ajax/userInSession",
+                url: modules[index]+"/account/ajax/userInSession",
                 timeout: 5000,
                 type: "GET",
                 cache: false,

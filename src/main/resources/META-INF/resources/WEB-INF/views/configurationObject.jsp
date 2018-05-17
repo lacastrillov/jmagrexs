@@ -29,28 +29,28 @@
         <!-- ############################ IMPORT MODELS ################################### -->
         
         <c:forEach var="modelER" items="${modelsEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${modelER}/ExtModel.htm"/>
+            <c:import url="${serverDomain.adminPath}/${modelER}/ExtModel.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT STORES ################################### -->
         
         <c:forEach var="modelER" items="${modelsEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${modelER}/ExtStore.htm"/>
+            <c:import url="${serverDomain.adminPath}/${modelER}/ExtStore.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/ExtView.htm" />
+        <c:import url="${serverDomain.adminPath}/${entityRef}/ExtView.htm" />
         
         <!-- ############################ IMPORT CONTROLLERS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/ExtController.htm" />
+        <c:import url="${serverDomain.adminPath}/${entityRef}/ExtController.htm" />
         
         <!-- ############################ IMPORT BASE ELEMENTES ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/ExtViewport.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/ExtViewport.htm"/>
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/ExtInit.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/ExtInit.htm"/>
         
         <!-- ############################ IMPORT COMPONENTS ################################### -->
         

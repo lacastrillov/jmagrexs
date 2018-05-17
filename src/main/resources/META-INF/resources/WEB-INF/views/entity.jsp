@@ -27,38 +27,38 @@
         
         <!-- ############################ IMPORT MODELS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${viewConfig.pathRef}/ExtModel.htm"/>
+        <c:import url="${serverDomain.adminPath}/${viewConfig.pathRef}/ExtModel.htm"/>
         <c:forEach var="modelER" items="${modelsEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${modelER}/ExtModel.htm"/>
+            <c:import url="${serverDomain.adminPath}/${modelER}/ExtModel.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT STORES ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${viewConfig.pathRef}/ExtStore.htm"/>
+        <c:import url="${serverDomain.adminPath}/${viewConfig.pathRef}/ExtStore.htm"/>
         <c:forEach var="modelER" items="${modelsEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${modelER}/ExtStore.htm">
+            <c:import url="${serverDomain.adminPath}/${modelER}/ExtStore.htm">
                 <c:param name="restSession" value="${viewConfig.restSession}"/>
             </c:import>
         </c:forEach>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${viewConfig.pathRef}/ExtView.htm">
+        <c:import url="${serverDomain.adminPath}/${viewConfig.pathRef}/ExtView.htm">
              <c:param name="typeView" value="Parent"/>
         </c:import>
         <c:forEach var="viewsChildER" items="${viewsChildEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${viewsChildER}/ExtView.htm">
+            <c:import url="${serverDomain.adminPath}/${viewsChildER}/ExtView.htm">
                 <c:param name="typeView" value="Child"/>
             </c:import>
         </c:forEach>
         
         <!-- ############################ IMPORT CONTROLLERS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${viewConfig.pathRef}/ExtController.htm">
+        <c:import url="${serverDomain.adminPath}/${viewConfig.pathRef}/ExtController.htm">
             <c:param name="typeController" value="Parent"/>
         </c:import>
         <c:forEach var="controllerChildER" items="${viewsChildEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${controllerChildER}/ExtController.htm">
+            <c:import url="${serverDomain.adminPath}/${controllerChildER}/ExtController.htm">
                 <c:param name="typeController" value="Child"/>
             </c:import>
         </c:forEach>
@@ -66,18 +66,18 @@
         <!-- ############################ IMPORT INTERFACES ################################### -->
         
         <c:forEach var="interfacesER" items="${interfacesEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${interfacesER}/ExtInterfaces.htm"/>
+            <c:import url="${serverDomain.adminPath}/${interfacesER}/ExtInterfaces.htm"/>
         </c:forEach>
         
         <c:forEach var="interfacesChildER" items="${interfacesChildEntityRef}">
-            <c:import url="${serverDomain.adminContext}/${interfacesChildER}/ExtInterfaces.htm"/>
+            <c:import url="${serverDomain.adminPath}/${interfacesChildER}/ExtInterfaces.htm"/>
         </c:forEach>
         
         <!-- ############################ IMPORT BASE ELEMENTES ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${viewConfig.pathRef}/ExtViewport.htm"/>
+        <c:import url="${serverDomain.adminPath}/${viewConfig.pathRef}/ExtViewport.htm"/>
         
-        <c:import url="${serverDomain.adminContext}/${viewConfig.pathRef}/ExtInit.htm"/>
+        <c:import url="${serverDomain.adminPath}/${viewConfig.pathRef}/ExtInit.htm"/>
         
         <!-- ############################ IMPORT COMPONENTS ################################### -->
         

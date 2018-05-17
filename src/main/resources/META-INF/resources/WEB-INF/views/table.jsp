@@ -26,25 +26,25 @@
         
         <!-- ############################ IMPORT MODELS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtModel.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/${tableName}/ExtModel.htm"/>
         
         <!-- ############################ IMPORT STORES ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtStore.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/${tableName}/ExtStore.htm"/>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtView.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/${tableName}/ExtView.htm"/>
         
         <!-- ############################ IMPORT CONTROLLERS ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtController.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/${tableName}/ExtController.htm"/>
         
         <!-- ############################ IMPORT BASE ELEMENTES ################################### -->
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtViewport.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/${tableName}/ExtViewport.htm"/>
         
-        <c:import url="${serverDomain.adminContext}/${entityRef}/${tableName}/ExtInit.htm"/>
+        <c:import url="${serverDomain.adminPath}/${entityRef}/${tableName}/ExtInit.htm"/>
         
         <!-- ############################ IMPORT COMPONENTS ################################### -->
         

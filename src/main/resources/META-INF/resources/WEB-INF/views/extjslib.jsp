@@ -33,5 +33,5 @@
     <!--<script src="${ExtJSLib}/examples/classic/shared/options-toolbar.js"></script>-->
 </c:if>
     <script>
-        Ext.context="${serverDomain.applicationContext}";
+        Ext.context="${serverDomain.restContext}";
     </script>
