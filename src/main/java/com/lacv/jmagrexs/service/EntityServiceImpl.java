@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityService<T> {
     
-    protected final String TRANSACTION_MANAGER = "TRANSACTION_MANAGER";
+    protected final String TRANSACTION_MANAGER = "TRANSACTION_MANAGER_0";
 
     private final Class<T> entityClass;
 

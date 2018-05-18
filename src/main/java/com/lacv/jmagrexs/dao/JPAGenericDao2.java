@@ -17,7 +17,7 @@ public class JPAGenericDao2<T extends BaseEntity> extends JPAAbstractDao<T> {
     }
     
     @Override
-    @PersistenceContext(unitName ="PersistenceUnit2")
+    @PersistenceContext(unitName ="PERSISTENCE_UNIT_2")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager= entityManager;
     }
