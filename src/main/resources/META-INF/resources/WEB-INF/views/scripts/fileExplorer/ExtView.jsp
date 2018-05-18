@@ -610,7 +610,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             buttons: [{
                 text: 'Subir',
                 handler: function(){
-                    var endpoint= "${serverDomain.applicationContext}"+Ext.restContext+"/rest/${entityRef}/multipartupload/"+parentExtController.filter.eq.webFile+".htm";
+                    var endpoint= "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/multipartupload/"+parentExtController.filter.eq.webFile+".htm";
                     fileUploader.startFileUpload('multifilefieldId-button-fileInputEl', endpoint, function(fileName, percentComplete, loadFinished){
                         progressbar.updateProgress(percentComplete/100, fileName+' '+percentComplete+'% completado...');
                         if(loadFinished){

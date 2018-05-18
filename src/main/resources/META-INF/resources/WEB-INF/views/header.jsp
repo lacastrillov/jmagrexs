@@ -12,7 +12,8 @@
     var userAuthentication;
     try{
         userAuthentication = new UserAuthentication();
-        userAuthentication.context= "${serverDomain.applicationContext}${serverDomain.portalContext}";
+        userAuthentication.applicationContext= "${serverDomain.applicationContext}";
+        userAuthentication.portalContext= "${serverDomain.portalContext}";
         userAuthentication.MODULES= ${serverDomain.modulesJson};
     }catch(e){
         console.error(e);

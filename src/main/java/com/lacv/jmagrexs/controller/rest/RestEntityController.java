@@ -2,6 +2,7 @@ package com.lacv.jmagrexs.controller.rest;
 
 import com.lacv.jmagrexs.annotation.ImageResize;
 import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
+import com.lacv.jmagrexs.components.ServerDomain;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.ItemTemplate;
 import com.lacv.jmagrexs.reflection.EntityReflection;
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -82,7 +82,7 @@ public abstract class RestEntityController {
     private Map<Class, List<String>> dateFields;
     
     @Autowired
-    private ServletContext selvletContext;
+    public ServerDomain serverDomain;
     
     @Autowired
     private VelocityEngine velocityEngine;
@@ -820,7 +820,7 @@ public abstract class RestEntityController {
             StringWriter sw = new StringWriter();
             Template vtemplate = velocityEngine.getTemplate(TEMPLATES_DIR + templateName);
             VelocityContext context= new VelocityContext();
-            context.put("contextPath", selvletContext.getContextPath());
+            context.put("serverDomain", serverDomain);
             context.put("item", dto);
             
             vtemplate.merge(context, sw);

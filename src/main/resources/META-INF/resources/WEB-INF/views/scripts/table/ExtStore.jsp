@@ -26,10 +26,10 @@ function ${entityName}ExtStore(){
                     destroy: 'GET'
                 },
                 api: {
-                    read: Ext.restContext+'/rest/${entityRef}/${tableName}/find.htm',
-                    create: Ext.restContext+'/rest/${entityRef}/${tableName}/create.htm',
-                    update: Ext.restContext+'/rest/${entityRef}/${tableName}/update.htm',
-                    destroy: Ext.restContext+'/rest/${entityRef}/${tableName}/delete.htm'
+                    read: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/find.htm",
+                    create: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/create.htm",
+                    update: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/update.htm",
+                    destroy: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/delete.htm"
                 },
                 reader: {
                     type: 'json',
@@ -107,7 +107,7 @@ function ${entityName}ExtStore(){
 
     Instance.find= function(filter, params, func){
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${entityRef}/${tableName}/find.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/find.htm",
             method: "GET",
             params: "filter="+encodeURIComponent(filter) + params,
             success: function(response){
@@ -128,7 +128,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${entityRef}/${tableName}/"+operation+".htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/"+operation+".htm",
             method: "POST",
             params: "data="+encodeURIComponent(data),
             success: function(response){
@@ -144,7 +144,7 @@ function ${entityName}ExtStore(){
     
     Instance.load= function(idEntity, func){
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${entityRef}/${tableName}/load.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/load.htm",
             method: "GET",
             params: 'idEntity='+idEntity,
             success: function(response){
@@ -159,7 +159,7 @@ function ${entityName}ExtStore(){
     
     Instance.upload= function(form, idEntity, func){
         form.submit({
-            url: Ext.restContext+"/rest/${entityRef}/${tableName}/diskupload/"+idEntity+".htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/diskupload/"+idEntity+".htm",
             waitMsg: 'Subiendo archivo...',
             success: function(form, action) {
                 func(action.result);
@@ -172,7 +172,7 @@ function ${entityName}ExtStore(){
     
     Instance.import= function(form, typeReport, func){
         form.submit({
-            url: Ext.restContext+'/rest/${entityRef}/${tableName}/import/'+typeReport+'.htm',
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/import/"+typeReport+".htm",
             waitMsg: 'Importando archivo...',
             success: function(form, action) {
                 func(action.result);
@@ -191,7 +191,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${entityRef}/${tableName}/delete/byfilter.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/${tableName}/delete/byfilter.htm",
             method: "GET",
             params: "filter="+encodeURIComponent(filter),
             success: function(response){

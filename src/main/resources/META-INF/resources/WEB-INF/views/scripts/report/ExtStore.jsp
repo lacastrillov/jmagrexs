@@ -26,7 +26,7 @@ function ${reportName}ExtStore(){
                     read   : 'GET'
                 },
                 api: {
-                    read: Ext.restContext+'/rest/${entityRef}/'+baseAction+'report/${reportName}.htm'
+                    read: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"report/${reportName}.htm"
                 },
                 reader: {
                     type: 'json',
@@ -109,7 +109,7 @@ function ${reportName}ExtStore(){
                     read   : 'GET'
                 },
                 api: {
-                    read: Ext.restContext+'/rest/${entityRef}/'+baseAction+'report/${reportName}.htm'
+                    read: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"report/${reportName}.htm"
                 },
                 reader: {
                     type: 'json',
@@ -188,7 +188,7 @@ function ${reportName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url:  Ext.restContext+'/rest/${entityRef}/'+baseAction+'report/${reportName}.htm',
+            url:  "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"report/${reportName}.htm",
             method: "GET",
             params: 'filter='+encodeURIComponent('{eq:{"${reportConfig.idColumnName}":"'+idRecord+'"}}')+'&dtoName=${reportConfig.dtoName}',
             success: function(response){
@@ -210,7 +210,7 @@ function ${reportName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/"+mainProcessRef+"/doProcess.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/"+mainProcessRef+"/doProcess.htm",
             method: "POST",
             headers: {
                 'Content-Type' : 'application/json'

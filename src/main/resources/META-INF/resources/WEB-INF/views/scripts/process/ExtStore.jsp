@@ -26,10 +26,10 @@ function ${entityName}ExtStore(){
                     destroy: 'GET'
                 },
                 api: {
-                    read: Ext.restContext+'/rest/${entityRefLogProcess}/find.htm',
-                    create: Ext.restContext+'/rest/${entityRefLogProcess}/create.htm',
-                    update: Ext.restContext+'/rest/${entityRefLogProcess}/update.htm',
-                    destroy: Ext.restContext+'/rest/${entityRefLogProcess}/delete.htm'
+                    read: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/find.htm",
+                    create: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/create.htm",
+                    update: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/update.htm",
+                    destroy: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/delete.htm"
                 },
                 reader: {
                     type: 'json',
@@ -113,7 +113,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${viewConfig.mainProcessRef}/doProcess.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${viewConfig.mainProcessRef}/doProcess.htm",
             method: "POST",
             headers: {
                 'Content-Type' : 'application/json'
@@ -133,7 +133,7 @@ function ${entityName}ExtStore(){
     
     Instance.upload= function(form, processName, processId, func){
         form.submit({
-            url: Ext.restContext+'/rest/${viewConfig.mainProcessRef}/diskupload/'+processName+'/'+processId+'.htm',
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${viewConfig.mainProcessRef}/diskupload/"+processName+"/"+processId+".htm",
             waitMsg: 'Subiendo archivo...',
             success: function(form, action) {
                 func(action.result);
@@ -146,7 +146,7 @@ function ${entityName}ExtStore(){
     
     Instance.find= function(filter, params, func){
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${entityRefLogProcess}/find.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/find.htm",
             method: "GET",
             params: "filter="+encodeURIComponent(filter) + params,
             success: function(response){
@@ -167,7 +167,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.restContext+"/rest/${entityRefLogProcess}/load.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/load.htm",
             method: "GET",
             params: 'idEntity='+idEntity,
             success: function(response){
@@ -189,7 +189,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: Ext.restContext+'/rest/${entityRefLogProcess}/delete/byfilter.htm',
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRefLogProcess}/delete/byfilter.htm",
             method: "GET",
             params: (filter!==null && filter!=="")?"filter="+encodeURIComponent(filter):"",
             success: function(response){
