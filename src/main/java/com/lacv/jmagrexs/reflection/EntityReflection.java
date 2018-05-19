@@ -161,10 +161,13 @@ public final class EntityReflection {
                     } else if(value.equals("0") || value.equals("")) {
                         targetWrapper.setPropertyValue(propertyDescriptor.getName(), null);
                     } else {
+                        BaseEntity currentChildEntity= (BaseEntity) targetWrapper.getPropertyValue(propertyDescriptor.getName());
                         Object id= getParsedFieldValue(typeWrapper, "id", value);
-                        BaseEntity childEntity = (BaseEntity) getObjectForClass(typeWrapper);
-                        childEntity.setId(id);
-                        targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
+                        if(!currentChildEntity.getId().equals(id)){
+                            BaseEntity childEntity = (BaseEntity) getObjectForClass(typeWrapper);
+                            childEntity.setId(id);
+                            targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
+                        }
                     }
                 }catch(Exception e){
                     result+=e.getMessage()+". ";

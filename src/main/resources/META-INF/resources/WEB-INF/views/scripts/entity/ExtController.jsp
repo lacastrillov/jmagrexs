@@ -25,7 +25,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.entityName= "${entityName}";
         Instance.entityRef= "${entityRef}";
         Instance.typeController= "${typeController}";
-        Instance.idEntitySelected= "";
+        Instance.idEntitySelected= null;
         mvcExt.mappingController(Instance.id, Instance);
         Instance.initFilter();
     };

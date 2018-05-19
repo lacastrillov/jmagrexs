@@ -70,7 +70,7 @@ public class EntityExplorerConfig {
     
     private GridTemplate gridTemplate;
     
-    private final Map<String, String> refEntities;
+    private Map<String, String> entityTypes;
     
     
     public EntityExplorerConfig(String entityRef, EntityService entityService, Class dtoClass) {
@@ -101,7 +101,7 @@ public class EntityExplorerConfig {
         this.defaultOrderDir= "DESC";
         this.maxResultsPerPage= 50L;
         this.gridTemplate= new GridTemplate("");
-        this.refEntities= new LinkedHashMap<>();
+        this.entityTypes= new LinkedHashMap<>();
     }
 
     /**
@@ -495,18 +495,17 @@ public class EntityExplorerConfig {
     }
 
     /**
-     * @return the refEntities
+     * @return the entityTypes
      */
-    public Map<String, String> getRefEntities() {
-        return refEntities;
+    public Map<String, String> getEntityTypes() {
+        return entityTypes;
     }
 
     /**
-     * @param entityRef
-     * @param entityName
+     * @param entityTypes the entityTypes to set
      */
-    public void addEntityRef(String entityRef, String entityName) {
-        this.refEntities.put(entityRef, entityName);
+    public void setEntityTypes(Map<String, String> entityTypes) {
+        this.entityTypes = entityTypes;
     }
     
     

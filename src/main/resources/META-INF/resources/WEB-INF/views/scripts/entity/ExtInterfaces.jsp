@@ -23,6 +23,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
     
     Instance.init= function(){
         Instance.pluralEntityTitle= '${viewConfig.pluralEntityTitle}';
+        Instance.singularEntityTitle= '${viewConfig.singularEntityTitle}';
         Instance.entityExtModel.defineModel(Instance.modelName);
         Instance.store= Instance.entityExtStore.getStore(Instance.modelName);
         Instance.combobox={};
@@ -41,9 +42,9 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
         var source= parentExtView.propertyGrid.getSource();
         
         if(entity!==null && typeof(entity)!=='undefined'){
-            source['${entityName}']= entity.id+"__"+entity.${labelField};
+            source[Instance.singularEntityTitle]= entity.id+"__"+entity.${labelField};
         }else{
-            delete source['${entityName}'];
+            delete source[Instance.singularEntityTitle];
         }
             
         parentExtView.propertyGrid.setSource(source);

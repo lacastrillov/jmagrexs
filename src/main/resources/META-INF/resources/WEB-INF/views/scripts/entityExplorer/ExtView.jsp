@@ -383,8 +383,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'Crear Entidad', menu:[
-                                    <c:forEach var="entityRef" items="${viewConfig.refEntities}">
-                                    {text: '${entityRef.value}', handler: function(){this.onCreateEntity('${entityRef.key}','${entityRef.value}');}, scope: this},
+                                    <c:forEach var="entityType" items="${viewConfig.entityTypes}">
+                                    {text: '${entityType.value}', handler: function(){this.onCreateEntity('${entityType.key}','${entityType.value}');}, scope: this},
                                     </c:forEach>
                                 ]},
                                 {text: 'Crear Carpeta', handler: function(){this.onCreateFolder();}, scope: this},
@@ -641,6 +641,10 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 }
                 return breadcrumb;
             },
+            "Tipo Entidad": function(entity){
+                var res = entity.split("__");
+                return '<a href="${serverDomain.applicationContext}${serverDomain.adminContext}${serverDomain.adminPath}/webEntityType/entity.htm#?tab=1&id='+res[0]+'">'+res[1]+'</a>';
+            }
         };
         var pg= Ext.create('Ext.grid.property.Grid', {
             id: 'propertyGrid${entityName}',

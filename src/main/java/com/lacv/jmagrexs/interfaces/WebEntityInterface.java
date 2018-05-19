@@ -26,21 +26,9 @@ public interface WebEntityInterface {
 
     void setModificationDate(Date modificationDate);
 
-    String getIcon();
-
-    void setIcon(String icon);
-
     String getName();
 
     void setName(String name);
-
-    String getEntityRef();
-
-    void setEntityRef(String entityRef);
-
-    String getEntityName();
-
-    void setEntityName(String entityName);
 
     String getEntityId();
 

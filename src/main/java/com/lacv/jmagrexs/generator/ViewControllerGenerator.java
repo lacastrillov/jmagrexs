@@ -40,7 +40,7 @@ public class ViewControllerGenerator extends ClassGenerator {
                     "import com.lacv.jmagrexs.controller.view.ExtEntityController;\n" +
                     "import com.lacv.jmagrexs.dto.MenuItem;\n" +
                     "import com.lacv.jmagrexs.dto.config.EntityConfig;\n" +
-                    "import com.lacv.jmagrexs.modules.security.services.SecurityService;\n" +
+                    "import com.lacv.jmagrexs.modules.security.services.bussiness.SecurityService;\n" +
                     "import java.util.List;\n" +
                     "import javax.annotation.PostConstruct;\n" +
                     "import org.springframework.beans.factory.annotation.Autowired;\n" +

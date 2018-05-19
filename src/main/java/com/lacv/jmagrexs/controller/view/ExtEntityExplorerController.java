@@ -395,7 +395,13 @@ public abstract class ExtEntityExplorerController extends ExtController {
                             jsonFormFields.put(formField);
                         }
                     }else{
-                        jsonFormFields.put("#Instance.formCombobox"+fieldEntity+"#");
+                        String combobox="(function(){ ";
+                        if(!viewConfig.isEditableForm() || readOnly){
+                            combobox+="Instance.formCombobox"+fieldEntity+".setDisabled(true); ";
+                        }
+                        combobox+="return Instance.formCombobox"+fieldEntity+";" +
+                                        "})()";
+                        jsonFormFields.put("#"+combobox+"#");
                     }
                 }
                 

@@ -29,6 +29,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public abstract class ExtEntityController extends ExtReportController {
+    
+    private final List<String> modelsEntityRef= new ArrayList<>();
+    
+    private final List<String> viewsChildEntityRef= new ArrayList<>();
+    
+    private final List<String> interfacesEntityRef= new ArrayList<>();
+    
+    private final List<String> interfacesChildEntityRef= new ArrayList<>();
+    
+    private JSONArray jsonModel;
+    
+    private JSONArray jsonTemplateModel;
+    
+    private JSONArray jsonModelValidations;
+    
+    private JSONArray jsonFieldsFilters;
+    
+    private final JSONArray jsonFormFields= new JSONArray();
+    
+    private final JSONArray jsonRenderReplacements= new JSONArray();
+    
+    private final JSONArray jsonInternalViewButtons= new JSONArray();
+    
+    private final JSONArray jsonGridColumns= new JSONArray();
+    
+    private final JSONArray sortColumns= new JSONArray();
+    
+    private final LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
+    
+    private final JSONObject jsonEmptyModel= new JSONObject();
+    
+    private final Map<String, String> jsonFormFieldsProcessMap= new HashMap();
+    
+    private HashMap<String, String> titledFieldsMap;
 
     protected static final Logger LOGGER1 = Logger.getLogger(ExtEntityController.class);
     
@@ -37,10 +71,14 @@ public abstract class ExtEntityController extends ExtReportController {
     
     protected void addControlMapping(EntityConfig viewConfig) {
         this.viewConfig= viewConfig;
+        generateGeneralObjects();
+        generateEntityExtViewConfiguration();
     }
 
     protected void addControlMapping(String entityRef, EntityService entityService, Class dtoClass) {
         viewConfig= new EntityConfig(entityRef, entityService, dtoClass);
+        generateGeneralObjects();
+        generateEntityExtViewConfiguration();
     }
 
     @RequestMapping(value = "/entity.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -70,8 +108,6 @@ public abstract class ExtEntityController extends ExtReportController {
         JSONArray menuItems= getMenuItems(session, menuComponent);
         mav.addObject("menuItems",menuItems.toString());
         if(viewConfig.isVisibleFilters()){
-            JSONArray jsonFieldsFilters= jf.getFieldsFilters(
-                    viewConfig.getDtoClass(), viewConfig.getLabelField(), PageType.ENTITY);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -92,23 +128,8 @@ public abstract class ExtEntityController extends ExtReportController {
     public ModelAndView extModel() {
         ModelAndView mav= new ModelAndView("scripts/entity/ExtModel");
         
-        JSONArray jsonModel = jm.getJSONModel(viewConfig.getDtoClass());
-        JSONArray jsonTemplateModel = new JSONArray();
-        JSONArray jsonModelValidations= jm.getJSONModelValidations(viewConfig.getDtoClass());
-        
-        if(viewConfig.isActiveGridTemplateAsParent() || viewConfig.isActiveGridTemplateAsChild()){
-            if(viewConfig.getGridTemplate()!=null){
-                for(int i=0; i<viewConfig.getGridTemplate().getNumColumns(); i++){
-                    JSONObject field= new JSONObject();
-                    field.put("name", "column"+i);
-                    field.put("type", "string");
-                    jsonTemplateModel.put(field);
-                }
-            }
-        }
-        
         //Process Models
-        if(viewConfig.getProcessButtons().size()>0){
+        /*if(viewConfig.getProcessButtons().size()>0){
             Map<String, String> jsonProcessModelMap= new HashMap();
             Map<String, String> jsonProcessModelValidationsMap= new HashMap();
 
@@ -118,7 +139,7 @@ public abstract class ExtEntityController extends ExtReportController {
                 jsonProcessModelMap.put(processButton.getProcessName(), jsonProcessModel.toString());
                 jsonProcessModelValidationsMap.put(processButton.getProcessName(), jsonProcessModelValidations.toString());
             }
-        }
+        }*/
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
@@ -159,7 +180,17 @@ public abstract class ExtEntityController extends ExtReportController {
         mav.addObject("typeView",typeView);
         mav.addObject("onlyForm",onlyForm);
         addGeneralObjects(mav);
-        addEntityExtViewConfiguration(mav);
+        
+        //addEntityExtViewConfiguration(mav);
+        mav.addObject("titledFieldsMap", titledFieldsMap);
+        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
+        mav.addObject("sortColumns", sortColumns.toString());
+        mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
+        mav.addObject("jsonFormFieldsProcessMap", jsonFormFieldsProcessMap);
         
         return mav;
     }
@@ -188,13 +219,20 @@ public abstract class ExtEntityController extends ExtReportController {
     }
     
     private void addGeneralObjects(ModelAndView mav){
-        List<String> modelsEntityRef= new ArrayList<>();
-        List<String> viewsChildEntityRef= new ArrayList<>();
-        List<String> interfacesEntityRef= new ArrayList<>();
-        List<String> interfacesChildEntityRef= new ArrayList<>();
-        
-        //modelsEntityRef.add(viewConfig.getEntityRef());
-        
+        if(viewConfig.isPreloadedForm()){
+            mav.addObject("formRecordId", getFormRecordId());
+        }
+        mav.addObject("viewConfig", viewConfig);
+        mav.addObject("entityRef", viewConfig.getEntityRef());
+        mav.addObject("entityName", viewConfig.getEntityName());
+        mav.addObject("labelField", viewConfig.getLabelField());
+        mav.addObject("modelsEntityRef", modelsEntityRef);
+        mav.addObject("viewsChildEntityRef", viewsChildEntityRef);
+        mav.addObject("interfacesEntityRef", interfacesEntityRef);
+        mav.addObject("interfacesChildEntityRef", interfacesChildEntityRef);
+    }
+    
+    private void generateGeneralObjects(){
         List<String> associatedEntityRef= getAssociatedEntityRef(viewConfig.getEntityService().getEntityClass());
         for(String er: associatedEntityRef){
             modelsEntityRef.add(er);
@@ -216,17 +254,24 @@ public abstract class ExtEntityController extends ExtReportController {
                 }
             }
         }
-        if(viewConfig.isPreloadedForm()){
-            mav.addObject("formRecordId", getFormRecordId());
+        
+        jsonModel = jm.getJSONModel(viewConfig.getDtoClass());
+        jsonTemplateModel = new JSONArray();
+        jsonModelValidations= jm.getJSONModelValidations(viewConfig.getDtoClass());
+        
+        if(viewConfig.isActiveGridTemplateAsParent() || viewConfig.isActiveGridTemplateAsChild()){
+            if(viewConfig.getGridTemplate()!=null){
+                for(int i=0; i<viewConfig.getGridTemplate().getNumColumns(); i++){
+                    JSONObject field= new JSONObject();
+                    field.put("name", "column"+i);
+                    field.put("type", "string");
+                    jsonTemplateModel.put(field);
+                }
+            }
         }
-        mav.addObject("viewConfig", viewConfig);
-        mav.addObject("entityRef", viewConfig.getEntityRef());
-        mav.addObject("entityName", viewConfig.getEntityName());
-        mav.addObject("labelField", viewConfig.getLabelField());
-        mav.addObject("modelsEntityRef", modelsEntityRef);
-        mav.addObject("viewsChildEntityRef", viewsChildEntityRef);
-        mav.addObject("interfacesEntityRef", interfacesEntityRef);
-        mav.addObject("interfacesChildEntityRef", interfacesChildEntityRef);
+        
+        jsonFieldsFilters= jf.getFieldsFilters(viewConfig.getDtoClass(), viewConfig.getLabelField(), PageType.ENTITY);
+        
     }
     
     private List<String> getAssociatedEntityRef(Class entityClass){
@@ -249,21 +294,11 @@ public abstract class ExtEntityController extends ExtReportController {
         return associatedEntityRef;
     }
     
-    private void addEntityExtViewConfiguration(ModelAndView mav){
-        JSONArray jsonFormFields= new JSONArray();
-        JSONArray jsonRenderReplacements= new JSONArray();
-        JSONArray jsonInternalViewButtons= new JSONArray();
-        JSONArray jsonGridColumns= new JSONArray();
-        JSONArray sortColumns= new JSONArray();
-        LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
-        JSONObject jsonEmptyModel= new JSONObject();
-        Map<String, String> jsonFormFieldsProcessMap= new HashMap();
-        
+    private void generateEntityExtViewConfiguration(){
         Class entityClass= viewConfig.getEntityService().getEntityClass();
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
         fcba.orderPropertyDescriptor(propertyDescriptors, viewConfig.getDtoClass(), viewConfig.getLabelField());
         
-        HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, String> groupFieldsMap= fcba.getGroupFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
@@ -271,6 +306,7 @@ public abstract class ExtEntityController extends ExtReportController {
         HashSet<String> fieldsNN= fcba.getNotNullFields(viewConfig.getDtoClass());
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(viewConfig.getDtoClass());
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(viewConfig.getDtoClass());
+        titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         
         if(!viewConfig.isActiveGridTemplate()){
             JSONObject numbererColumn= new JSONObject();
@@ -774,16 +810,6 @@ public abstract class ExtEntityController extends ExtReportController {
             gridColumn.put("items", gridActions);
             jsonGridColumns.put(gridColumn);
         }
-        
-        mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
-        mav.addObject("sortColumns", sortColumns.toString());
-        mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
-        mav.addObject("jsonFormFieldsProcessMap", jsonFormFieldsProcessMap);
     }
     
     private void addFormField(Object field, JSONArray jsonFormFields, LinkedHashMap<String,JSONObject> fieldGroups, String titleGroup){
