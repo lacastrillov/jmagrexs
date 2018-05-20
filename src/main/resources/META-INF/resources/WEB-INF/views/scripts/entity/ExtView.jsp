@@ -761,7 +761,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     function getPropertyGrid(){
         var renderers= {
             <c:forEach var="associatedER" items="${interfacesEntityRef}">
-            ${titledFieldsMap[associatedER]}: function(entity){
+            "${titledFieldsMap[associatedER]}": function(entity){
                 var res = entity.split("__");
                 return '<a href="${serverDomain.applicationContext}${serverDomain.adminContext}${serverDomain.adminPath}/${associatedER}/entity.htm#?tab=1&id='+res[0]+'">'+res[1]+'</a>';
             },
