@@ -82,7 +82,7 @@ public class DtoGenerator extends ClassGenerator {
                     if(!type.equals("java.util.List")){
                         attributes+=
                             "    @Order("+index+")\n" +
-                            ((fieldsNN.contains(fieldName))?"    @NotNull\n":"") +
+                            ((fieldsNN.contains(fieldName) && !fieldsRO.contains(fieldName))?"    @NotNull\n":"") +
                             ((fieldsRO.contains(fieldName))?"    @ReadOnly\n":"") +
                             sizeAnnotation +
                             "    @ColumnWidth("+columnWidth+")\n" +

@@ -541,6 +541,9 @@ public abstract class ExtEntityController extends ExtReportController {
                         if(!viewConfig.isEditableForm() || readOnly){
                             combobox+="Instance.formCombobox"+fieldEntity+".setDisabled(true); ";
                         }
+                        if(fieldsNN.contains(fieldName)){
+                            combobox+="Instance.formCombobox"+fieldEntity+".allowBlank=false; ";
+                        }
                         combobox+="return Instance.formCombobox"+fieldEntity+";" +
                                         "})()";
                         addFormField("#"+combobox+"#",jsonFormFields,fieldGroups,titleGroup);
