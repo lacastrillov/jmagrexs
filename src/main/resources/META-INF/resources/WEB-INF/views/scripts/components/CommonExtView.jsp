@@ -25,7 +25,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
-    Instance.getSimpleCombobox= function(fieldName, fieldTitle, component, dataArray){
+    Instance.getSimpleCombobox= function(fieldName, fieldTitle, component, dataArray, allowBlank){
         var data=[];
         data.push({value:"",text:"-"});
         dataArray.forEach(function(item) {
@@ -45,6 +45,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             //id: component+'Combobox'+fieldName+'In'+model,
             name: fieldName,
             editable: false,
+            allowBlank: (allowBlank!==undefined)?allowBlank:true,
             store: store,
             displayField: 'text',
             valueField: 'value',
@@ -68,7 +69,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         return Instance.combobox[component+'_'+fieldName];
     };
     
-    Instance.getSimpleMultiselect= function(fieldName, fieldTitle, dataArray){
+    Instance.getSimpleMultiselect= function(fieldName, fieldTitle, dataArray, allowBlank){
         var data=[];
         dataArray.forEach(function(item) {
             if((item+"").indexOf(':')!==-1){
@@ -90,7 +91,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             xtype: 'multiselect',
             displayField: 'text',
             valueField: 'value',
-            allowBlank: true,
+            allowBlank: (allowBlank!==undefined)?allowBlank:true,
             anchor: '100%',
             maxHeight: 150,
             msgTarget: 'side',
