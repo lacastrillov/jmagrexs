@@ -29,9 +29,16 @@ public abstract class ExtConfigurationObjectController extends ExtController {
     @Autowired
     public JSONForms jfo;
     
+    private final Map<String, String> jsonModelMap= new HashMap();
+    
+    private final Map<String, String> jsonModelValidationsMap= new HashMap();
+    
+    private final Map<String, String> jsonFormFieldsMap= new HashMap();
+    
     
     protected void addControlMapping(ConfigurationObjectConfig viewConfig) {
         this.viewConfig= viewConfig;
+        generateGeneralObjects();
     }
 
     @RequestMapping(value = "/configurationObject.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -74,23 +81,10 @@ public abstract class ExtConfigurationObjectController extends ExtController {
     public ModelAndView extModel() {
         ModelAndView mav= new ModelAndView("scripts/configurationObject/ExtModel");
         
-        Map<String, String> nameConfigurationObjects= viewConfig.getNameConfigurationObjects();
-        Map<String, Class> configurationObjects= viewConfig.getConfigurationObjects();
-        
-        Map<String, String> jsonModelMap= new HashMap();
-        Map<String, String> jsonModelValidationsMap= new HashMap();
-        
-        for (Map.Entry<String, Class> entry : configurationObjects.entrySet()){
-            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
-            JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
-            jsonModelMap.put(entry.getKey(), jsonModel.toString());
-            jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
-        }
-        
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getMainConfigurationRef());
         mav.addObject("entityName", viewConfig.getMainConfigurationName());
-        mav.addObject("nameConfigurationObjects", nameConfigurationObjects);
+        mav.addObject("nameConfigurationObjects", viewConfig.getNameConfigurationObjects());
         mav.addObject("jsonModelMap", jsonModelMap);
         mav.addObject("jsonModelValidationsMap", jsonModelValidationsMap);
         
@@ -114,16 +108,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         
         addGeneralObjects(mav);
         
-        Map<String, String> nameConfigurationObjects= viewConfig.getNameConfigurationObjects();
-        Map<String, Class> configurationObjects= viewConfig.getConfigurationObjects();
-        
-        Map<String, String> jsonFormFieldsMap= new HashMap();
-        
-        for (Map.Entry<String, Class> entry : configurationObjects.entrySet()){
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
-            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        }
-        mav.addObject("nameConfigurationObjects", nameConfigurationObjects);
+        mav.addObject("nameConfigurationObjects", viewConfig.getNameConfigurationObjects());
         mav.addObject("jsonFormFieldsMap", jsonFormFieldsMap);
         
         return mav;
@@ -160,6 +145,19 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         mav.addObject("entityName", viewConfig.getMainConfigurationName());
         mav.addObject("labelField", viewConfig.getLabelField());
         mav.addObject("modelsEntityRef", modelsEntityRef);
+    }
+    
+    private void generateGeneralObjects(){
+        for (Map.Entry<String, Class> entry : viewConfig.getConfigurationObjects().entrySet()){
+            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
+            jsonModelMap.put(entry.getKey(), jsonModel.toString());
+            
+            JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
+            jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
+            
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
+            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        }
     }
 
 }

@@ -52,9 +52,31 @@ public abstract class ExtProcessController extends ExtController {
     @Autowired
     public JSONForms jfo;
     
+    private final JSONArray jsonInternalViewButtons= new JSONArray();
+    
+    private final JSONArray jsonGridColumns= new JSONArray();
+    
+    private final JSONObject jsonEmptyModel= new JSONObject();
+    
+    private JSONArray jsonModelLogProcess;
+    
+    private JSONArray jsonModelValidationsLogProcess;
+    
+    private JSONArray jsonFieldsFilters;
+    
+    private HashMap<String, String> titledFieldsMap;
+    
+    private Map<String, String> jsonFormFieldsMap;
+    
+    private Map<String, String> jsonModelMap;
+    
+    private Map<String, String> jsonModelValidationsMap;
+    
     
     protected void addControlMapping(ProcessConfig processConfig) {
         this.processConfig= processConfig;
+        generateGeneralObjects();
+        generateEntityExtProcessConfiguration();
     }
 
     @RequestMapping(value = "/process.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -97,27 +119,10 @@ public abstract class ExtProcessController extends ExtController {
     public ModelAndView extModel() {
         ModelAndView mav= new ModelAndView("scripts/process/ExtModel");
         
-        Map<String, String> nameProcesses= processConfig.getNameProcesses();
-        Map<String, Class> inDtos= processConfig.getInDtos();
-        
-        Map<String, String> jsonModelMap= new HashMap();
-        Map<String, String> jsonModelValidationsMap= new HashMap();
-        
-        for (Map.Entry<String, Class> entry : inDtos.entrySet()){
-            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
-            JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
-            jsonModelMap.put(entry.getKey(), jsonModel.toString());
-            jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
-        }
-        
-        //
-        JSONArray jsonModelLogProcess = jm.getJSONModel(processConfig.getLogProcessClass());
-        JSONArray jsonModelValidationsLogProcess= jm.getJSONModelValidations(processConfig.getLogProcessClass());
-        
         mav.addObject("viewConfig", processConfig);
         mav.addObject("entityRef", processConfig.getMainProcessRef());
         mav.addObject("entityName", processConfig.getMainProcessName());
-        mav.addObject("nameProcesses", nameProcesses);
+        mav.addObject("nameProcesses", processConfig.getNameProcesses());
         mav.addObject("jsonModelMap", jsonModelMap);
         mav.addObject("jsonModelValidationsMap", jsonModelValidationsMap);
         mav.addObject("jsonModelLogProcess", jsonModelLogProcess);
@@ -152,22 +157,16 @@ public abstract class ExtProcessController extends ExtController {
         mav.addObject("typeView",typeView);
         addGeneralObjects(mav);
         
-        Map<String, String> nameProcesses= processConfig.getNameProcesses();
-        Map<String, Class> inDtos= processConfig.getInDtos();
-        
-        Map<String, String> jsonFormFieldsMap= new HashMap();
-        
-        for (Map.Entry<String, Class> entry : inDtos.entrySet()){
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
-            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        }
-        mav.addObject("nameProcesses", nameProcesses);
+        mav.addObject("nameProcesses", processConfig.getNameProcesses());
         mav.addObject("jsonFormFieldsMap", jsonFormFieldsMap);
         
-        addEntityExtProcessConfiguration(mav);
+        mav.addObject("titledFieldsMap", titledFieldsMap);
+        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
+        mav.addObject("jsonTypeChildExtViews", new Gson().toJson(processConfig.getTypeChildExtViews()));
+        
         if(processConfig.isVisibleFilters()){
-            JSONArray jsonFieldsFilters= jf.getFieldsFilters(
-                    processConfig.getLogProcessClass(), processConfig.getLabelField(), PageType.PROCESS);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -199,9 +198,6 @@ public abstract class ExtProcessController extends ExtController {
     
     private void addGeneralObjects(ModelAndView mav){
         List<String> modelsEntityRef= new ArrayList<>();
-        List<String> viewsChildEntityRef= new ArrayList<>();
-        List<String> interfacesEntityRef= new ArrayList<>();
-        List<String> interfacesChildEntityRef= new ArrayList<>();
         
         modelsEntityRef.add(processConfig.getMainProcessRef());
         
@@ -210,28 +206,46 @@ public abstract class ExtProcessController extends ExtController {
         mav.addObject("entityName", processConfig.getMainProcessName());
         mav.addObject("labelField", processConfig.getLabelField());
         mav.addObject("modelsEntityRef", modelsEntityRef);
-        mav.addObject("viewsChildEntityRef", viewsChildEntityRef);
-        mav.addObject("interfacesEntityRef", interfacesEntityRef);
-        mav.addObject("interfacesChildEntityRef", interfacesChildEntityRef);
     }
     
-    private void addEntityExtProcessConfiguration(ModelAndView mav){
-        JSONArray jsonInternalViewButtons= new JSONArray();
-        JSONArray jsonGridColumns= new JSONArray();
-        JSONObject jsonEmptyModel= new JSONObject();
+    private void generateGeneralObjects(){
+        jsonFormFieldsMap= new HashMap();
         
+        for (Map.Entry<String, Class> entry : processConfig.getInDtos().entrySet()){
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
+            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        }
+        
+        jsonModelMap= new HashMap();
+        jsonModelValidationsMap= new HashMap();
+        
+        for (Map.Entry<String, Class> entry : processConfig.getInDtos().entrySet()){
+            JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
+            JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
+            jsonModelMap.put(entry.getKey(), jsonModel.toString());
+            jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
+        }
+        
+        //
+        jsonModelLogProcess = jm.getJSONModel(processConfig.getLogProcessClass());
+        jsonModelValidationsLogProcess= jm.getJSONModelValidations(processConfig.getLogProcessClass());
+        
+        jsonFieldsFilters= jf.getFieldsFilters(processConfig.getLogProcessClass(), processConfig.getLabelField(), PageType.PROCESS);
+    }
+    
+    private void generateEntityExtProcessConfiguration(){
         Class entityClass= processConfig.getLogProcessClass();
         
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
         fcba.orderPropertyDescriptor(propertyDescriptors, entityClass, processConfig.getLabelField());
         
-        HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, entityClass);
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, entityClass);
         HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, entityClass);
         HashSet<String> hideFields= fcba.getHideFields(entityClass);
         HashSet<String> fieldsNN= fcba.getNotNullFields(entityClass);
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(entityClass);
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(entityClass);
+        titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, entityClass);
         
         JSONObject numbererColumn= new JSONObject();
         numbererColumn.put("xtype", "rownumberer");
@@ -439,12 +453,6 @@ public abstract class ExtProcessController extends ExtController {
             
             jsonInternalViewButtons.put(internalViewButton);
         }
-        
-        mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
-        mav.addObject("jsonTypeChildExtViews", new Gson().toJson(processConfig.getTypeChildExtViews()));
     }
 
 }

@@ -128,19 +128,6 @@ public abstract class ExtEntityController extends ExtReportController {
     public ModelAndView extModel() {
         ModelAndView mav= new ModelAndView("scripts/entity/ExtModel");
         
-        //Process Models
-        /*if(viewConfig.getProcessButtons().size()>0){
-            Map<String, String> jsonProcessModelMap= new HashMap();
-            Map<String, String> jsonProcessModelValidationsMap= new HashMap();
-
-            for(ProcessButton processButton: viewConfig.getProcessButtons()){
-                JSONArray jsonProcessModel = jm.getJSONRecursiveModel("", processButton.getDtoClass());
-                JSONArray jsonProcessModelValidations= jm.getJSONRecursiveModelValidations("",processButton.getDtoClass());
-                jsonProcessModelMap.put(processButton.getProcessName(), jsonProcessModel.toString());
-                jsonProcessModelValidationsMap.put(processButton.getProcessName(), jsonProcessModelValidations.toString());
-            }
-        }*/
-        
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());

@@ -47,13 +47,41 @@ public abstract class ExtEntityExplorerController extends ExtController {
     @Autowired
     public JSONFilters jf;
     
+    private final JSONArray jsonFormFields= new JSONArray();
+    
+    private final JSONArray jsonRenderReplacements= new JSONArray();
+    
+    private final JSONArray jsonGridColumns= new JSONArray();
+    
+    private final JSONArray sortColumns= new JSONArray();
+    
+    private final JSONObject jsonEmptyModel= new JSONObject();
+    
+    private JSONArray jsonModel;
+    
+    private final JSONArray jsonTemplateModel = new JSONArray();
+    
+    private JSONArray jsonModelValidations;
+    
+    private JSONArray jsonFieldsFilters;
+    
+    private final List<String> modelsEntityRef= new ArrayList<>();
+    
+    private final List<String> interfacesEntityRef= new ArrayList<>();
+    
+    private HashMap<String, String> titledFieldsMap;
+    
     
     protected void addControlMapping(EntityExplorerConfig viewConfig) {
         this.viewConfig= viewConfig;
+        generateGeneralObjects();
+        generateEntityExtViewConfiguration();
     }
 
     protected void addControlMapping(String entityRef, EntityService entityService, Class dtoClass) {
         viewConfig= new EntityExplorerConfig(entityRef, entityService, dtoClass);
+        generateGeneralObjects();
+        generateEntityExtViewConfiguration();
     }
 
     @RequestMapping(value = "/entityExplorer.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -79,7 +107,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){
-            JSONArray jsonFieldsFilters= jf.getFieldsFilters(viewConfig.getDtoClass(), viewConfig.getLabelField(), PageType.ENTITY_EXPLORER);
             mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         }
         
@@ -99,21 +126,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
     @RequestMapping(value = "/ExtModel.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView extModel() {
         ModelAndView mav= new ModelAndView("scripts/entityExplorer/ExtModel");
-        
-        JSONArray jsonModel = jm.getJSONModel(viewConfig.getDtoClass());
-        JSONArray jsonTemplateModel = new JSONArray();
-        JSONArray jsonModelValidations= jm.getJSONModelValidations(viewConfig.getDtoClass());
-        
-        if(viewConfig.isActiveGridTemplateAsParent() || viewConfig.isActiveGridTemplateAsChild()){
-            if(viewConfig.getGridTemplate()!=null){
-                for(int i=0; i<viewConfig.getGridTemplate().getNumColumns(); i++){
-                    JSONObject field= new JSONObject();
-                    field.put("name", "column"+i);
-                    field.put("type", "string");
-                    jsonTemplateModel.put(field);
-                }
-            }
-        }
         
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
@@ -149,7 +161,13 @@ public abstract class ExtEntityExplorerController extends ExtController {
         }
         mav.addObject("typeView",typeView);
         addGeneralObjects(mav);
-        addEntityExtViewConfiguration(mav);
+        
+        mav.addObject("titledFieldsMap", titledFieldsMap);
+        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
+        mav.addObject("sortColumns", sortColumns.toString());
         
         return mav;
     }
@@ -177,23 +195,40 @@ public abstract class ExtEntityExplorerController extends ExtController {
     }
     
     private void addGeneralObjects(ModelAndView mav){
-        List<String> modelsEntityRef= new ArrayList<>();
-        List<String> interfacesEntityRef= new ArrayList<>();
-        
-        modelsEntityRef.add(viewConfig.getEntityRef());
-        
-        List<String> associatedEntityRef= getAssociatedEntityRef(viewConfig.getEntityService().getEntityClass());
-        for(String er: associatedEntityRef){
-            modelsEntityRef.add(er);
-            interfacesEntityRef.add(er);
-        }
-        
         mav.addObject("viewConfig", viewConfig);
         mav.addObject("entityRef", viewConfig.getEntityRef());
         mav.addObject("entityName", viewConfig.getEntityName());
         mav.addObject("labelField", viewConfig.getLabelField());
         mav.addObject("modelsEntityRef", modelsEntityRef);
         mav.addObject("interfacesEntityRef", interfacesEntityRef);
+    }
+    
+    private void generateGeneralObjects(){
+        modelsEntityRef.add(viewConfig.getEntityRef());
+        
+        List<String> associatedEntityRef= getAssociatedEntityRef(viewConfig.getEntityService().getEntityClass());
+        for(String er: associatedEntityRef){
+            if(!modelsEntityRef.contains(er)){
+                modelsEntityRef.add(er);
+            }
+            interfacesEntityRef.add(er);
+        }
+        
+        jsonModel = jm.getJSONModel(viewConfig.getDtoClass());
+        jsonModelValidations= jm.getJSONModelValidations(viewConfig.getDtoClass());
+        
+        if(viewConfig.isActiveGridTemplateAsParent() || viewConfig.isActiveGridTemplateAsChild()){
+            if(viewConfig.getGridTemplate()!=null){
+                for(int i=0; i<viewConfig.getGridTemplate().getNumColumns(); i++){
+                    JSONObject field= new JSONObject();
+                    field.put("name", "column"+i);
+                    field.put("type", "string");
+                    jsonTemplateModel.put(field);
+                }
+            }
+        }
+        
+        jsonFieldsFilters= jf.getFieldsFilters(viewConfig.getDtoClass(), viewConfig.getLabelField(), PageType.ENTITY_EXPLORER);
     }
     
     private List<String> getAssociatedEntityRef(Class entityClass){
@@ -216,23 +251,17 @@ public abstract class ExtEntityExplorerController extends ExtController {
         return associatedEntityRef;
     }
     
-    private void addEntityExtViewConfiguration(ModelAndView mav){
-        JSONArray jsonFormFields= new JSONArray();
-        JSONArray jsonRenderReplacements= new JSONArray();
-        JSONArray jsonGridColumns= new JSONArray();
-        JSONArray sortColumns= new JSONArray();
-        JSONObject jsonEmptyModel= new JSONObject();
-        
+    private void generateEntityExtViewConfiguration(){
         Class entityClass= viewConfig.getEntityService().getEntityClass();
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
         fcba.orderPropertyDescriptor(propertyDescriptors, viewConfig.getDtoClass(), viewConfig.getLabelField());
         
-        HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, viewConfig.getDtoClass());
         HashSet<String> hideFields= fcba.getHideFields(viewConfig.getDtoClass());
         HashSet<String> fieldsNN= fcba.getNotNullFields(viewConfig.getDtoClass());
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(viewConfig.getDtoClass());
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(viewConfig.getDtoClass());
+        titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
@@ -605,13 +634,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
                 }
             }
         }
-        
-        mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
-        mav.addObject("sortColumns", sortColumns.toString());
     }
     
 }
