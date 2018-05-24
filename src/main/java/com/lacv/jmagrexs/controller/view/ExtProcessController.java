@@ -70,8 +70,6 @@ public abstract class ExtProcessController extends ExtController {
     
     private Map<String, String> jsonModelMap;
     
-    private Map<String, String> jsonModelValidationsMap;
-    
     
     protected void addControlMapping(ProcessConfig processConfig) {
         this.processConfig= processConfig;
@@ -124,7 +122,6 @@ public abstract class ExtProcessController extends ExtController {
         mav.addObject("entityName", processConfig.getMainProcessName());
         mav.addObject("nameProcesses", processConfig.getNameProcesses());
         mav.addObject("jsonModelMap", jsonModelMap);
-        mav.addObject("jsonModelValidationsMap", jsonModelValidationsMap);
         mav.addObject("jsonModelLogProcess", jsonModelLogProcess);
         mav.addObject("jsonModelValidationsLogProcess", jsonModelValidationsLogProcess);
         
@@ -217,13 +214,9 @@ public abstract class ExtProcessController extends ExtController {
         }
         
         jsonModelMap= new HashMap();
-        jsonModelValidationsMap= new HashMap();
-        
         for (Map.Entry<String, Class> entry : processConfig.getInDtos().entrySet()){
             JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
-            JSONArray jsonModelValidations= jm.getJSONRecursiveModelValidations("",entry.getValue());
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
-            jsonModelValidationsMap.put(entry.getKey(), jsonModelValidations.toString());
         }
         
         //
@@ -245,6 +238,7 @@ public abstract class ExtProcessController extends ExtController {
         HashSet<String> fieldsNN= fcba.getNotNullFields(entityClass);
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(entityClass);
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(entityClass);
+        HashMap<String, Integer[]> sizeColumnMap= fcba.getSizeColumnMap(entityClass);
         titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, entityClass);
         
         JSONObject numbererColumn= new JSONObject();
@@ -269,54 +263,33 @@ public abstract class ExtProcessController extends ExtController {
                     gridColumn.put("dataIndex", fieldName);
                     gridColumn.put("header", fieldTitle);
                     gridColumn.put("width", widhColumn);
+                    JSONObject field= null;
+                    JSONObject editor= null;
                     if(Formats.TYPES_LIST.contains(type)){
                         gridColumn.put("sortable", true);
                         if(typeFormFields.containsKey(fieldName)){
                             String typeForm= typeFormFields.get(fieldName)[0];
                             if(typeForm.equals(FieldType.EMAIL.name())){
-                                JSONObject editor= new JSONObject();
+                                editor= new JSONObject();
                                 editor.put("vtype", "email");
-                                if(fieldsNN.contains(fieldName)){
-                                    editor.put("allowBlank", false);
-                                }
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", editor);
-                                }
                             }else if(typeForm.equals(FieldType.PASSWORD.name())){
-                                JSONObject editor= new JSONObject();
+                                editor= new JSONObject();
                                 editor.put("inputType", "password");
-                                if(fieldsNN.contains(fieldName)){
-                                    editor.put("allowBlank", false);
-                                }
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", editor);
-                                }
                             }else if(typeForm.equals(FieldType.DATETIME.name())){
                                 gridColumn.put("xtype", "datecolumn");
                                 gridColumn.put("format", extViewConfig.getDatetimeFormat());
-                                JSONObject editor = new JSONObject();
+                                editor = new JSONObject();
                                 editor.put("xtype", "datefield");
                                 editor.put("format", extViewConfig.getDatetimeFormat());
-                                if (fieldsNN.contains(fieldName)) {
-                                    editor.put("allowBlank", false);
-                                }
-                                if (processConfig.isEditableGrid() && !readOnly) {
-                                    gridColumn.put("editor", editor);
-                                }
                             }else if(typeForm.equals(FieldType.DURATION.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
+                                
                             }else if(typeForm.equals(FieldType.PRICE.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.LIST.name())){
                                 String[] data= typeFormFields.get(fieldName);
                                 JSONArray dataArray = new JSONArray();
@@ -328,25 +301,16 @@ public abstract class ExtProcessController extends ExtController {
                                 }
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.URL.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
                             }else{
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }
                         }else{
                             if(fieldName.equals(processConfig.getLabelField())){
@@ -356,26 +320,14 @@ public abstract class ExtProcessController extends ExtController {
                                 case "java.util.Date": {
                                     gridColumn.put("xtype", "datecolumn");
                                     gridColumn.put("format", extViewConfig.getDateFormat());
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "datefield");
                                     editor.put("format", extViewConfig.getDateFormat());
-                                    if (fieldsNN.contains(fieldName)) {
-                                        editor.put("allowBlank", false);
-                                    }
-                                    if (processConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 case "java.sql.Time": {
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "timefield");
-                                    if (fieldsNN.contains(fieldName)) {
-                                        editor.put("allowBlank", false);
-                                    }
-                                    if (processConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 case "int":
@@ -387,33 +339,44 @@ public abstract class ExtProcessController extends ExtController {
                                 case "java.lang.Double":
                                 case "float":
                                 case "java.lang.Float": {
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "numberfield");
-                                    if (fieldsNN.contains(fieldName)) {
-                                        editor.put("allowBlank", false);
-                                    }
-                                    if (processConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 case "boolean":
                                 case "java.lang.Boolean": {
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "checkbox");
                                     editor.put("cls", "x-grid-checkheader-editor");
-                                    if (processConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 default:
-                                    JSONObject field = new JSONObject();
+                                    field = new JSONObject();
                                     field.put("type", "textfield");
-                                    if (processConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("field", field);
-                                    }
                                     break;
+                            }
+                        }
+                        if(field!=null){
+                            if(fieldsNN.contains(fieldName)){
+                                field.put("allowBlank", false);
+                            }
+                            if(sizeColumnMap.containsKey(fieldName)){
+                                field.put("minLength", sizeColumnMap.get(fieldName)[0]);
+                                field.put("maxLength", sizeColumnMap.get(fieldName)[1]);
+                            }
+                            if(processConfig.isEditableGrid() && !readOnly){
+                                gridColumn.put("field", field);
+                            }
+                        }else if(editor!=null){
+                            if(fieldsNN.contains(fieldName)){
+                                editor.put("allowBlank", false);
+                            }
+                            if(sizeColumnMap.containsKey(fieldName)){
+                                editor.put("minLength", sizeColumnMap.get(fieldName)[0]);
+                                editor.put("maxLength", sizeColumnMap.get(fieldName)[1]);
+                            }
+                            if(processConfig.isEditableGrid() && !readOnly){
+                                gridColumn.put("editor", editor);
                             }
                         }
                     }else{

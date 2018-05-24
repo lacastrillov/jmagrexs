@@ -12,6 +12,7 @@ import com.lacv.jmagrexs.annotation.HideField;
 import com.lacv.jmagrexs.annotation.NotNull;
 import com.lacv.jmagrexs.annotation.Order;
 import com.lacv.jmagrexs.annotation.ReadOnly;
+import com.lacv.jmagrexs.annotation.Size;
 import com.lacv.jmagrexs.annotation.TextField;
 import com.lacv.jmagrexs.annotation.TypeFormField;
 import com.lacv.jmagrexs.annotation.ValueMapField;
@@ -174,6 +175,19 @@ public class FieldConfigurationByAnnotations {
             ColumnWidth an= f.getAnnotation(ColumnWidth.class);
             String fieldName= f.getName();
             map.put(fieldName, an.value());
+        }
+        
+        return map;
+    }
+    
+    public HashMap<String, Integer[]> getSizeColumnMap(Class dtoClass){
+        List<Field> annotatedFields= EntityReflection.getEntityAnnotatedFields(dtoClass, Size.class);
+        HashMap<String, Integer[]> map= new HashMap<>();
+        
+        for(Field f: annotatedFields){
+            Size annotation= f.getAnnotation(Size.class);
+            String fieldName= f.getName();
+            map.put(fieldName, new Integer[]{annotation.min(), annotation.max()});
         }
         
         return map;

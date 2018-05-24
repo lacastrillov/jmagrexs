@@ -45,6 +45,7 @@ public class JSONForms {
         HashSet<String> fieldsNN= fcba.getNotNullFields(dtoClass);
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(dtoClass);
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
+        HashMap<String, Integer[]> sizeColumnMap= fcba.getSizeColumnMap(dtoClass);
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
@@ -231,6 +232,10 @@ public class JSONForms {
 
                         if(fieldsNN.contains(fieldName)){
                             formField.put("allowBlank", false);
+                        }
+                        if(sizeColumnMap.containsKey(fieldName)){
+                            formField.put("minLength", sizeColumnMap.get(fieldName)[0]);
+                            formField.put("maxLength", sizeColumnMap.get(fieldName)[1]);
                         }
                         if(addFormField){
                             jsonFormFields.put(formField);

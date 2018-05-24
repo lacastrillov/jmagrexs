@@ -17,8 +17,7 @@ function ${entityName}ExtModel(){
     Instance.define${processName.key}Model= function(modelName){
         Ext.define(modelName, {
             extend: 'Ext.data.Model',
-            fields: ${jsonModelMap[processName.key]},
-            validations: ${jsonModelValidationsMap[processName.key]}
+            fields: ${jsonModelMap[processName.key]}
         });
     };
     </c:forEach>

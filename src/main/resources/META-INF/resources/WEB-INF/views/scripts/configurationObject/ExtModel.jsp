@@ -9,8 +9,7 @@ function ${entityName}ExtModel(){
     Instance.define${configurationObjectName.key}Model= function(modelName){
         Ext.define(modelName, {
             extend: 'Ext.data.Model',
-            fields: ${jsonModelMap[configurationObjectName.key]},
-            validations: ${jsonModelValidationsMap[configurationObjectName.key]}
+            fields: ${jsonModelMap[configurationObjectName.key]}
         });
     };
     </c:forEach>

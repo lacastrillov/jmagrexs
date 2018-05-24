@@ -5,17 +5,14 @@
  */
 package com.lacv.jmagrexs.components;
 
-import com.lacv.jmagrexs.annotation.Size;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.Formats;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,7 +229,6 @@ public class JSONModels {
     
     public JSONArray getJSONModelValidations(Class<?> dtoClass) {
         JSONArray jsonModelValidations= new JSONArray();
-        HashMap<String,JSONObject> validation= new HashMap<>();
         
         HashSet<String> fieldsNN= fcba.getNotNullFields(dtoClass);
         for (String f : fieldsNN) {
@@ -240,34 +236,14 @@ public class JSONModels {
             field.put("type", "length");
             field.put("field", f);
             field.put("min", 1);
-            validation.put(f,field);
-        }
-        
-        List<Field> fieldsSize= EntityReflection.getEntityAnnotatedFields(dtoClass, Size.class);
-        for(Field f: fieldsSize){
-            Size annotation= f.getAnnotation(Size.class);
-            JSONObject field= new JSONObject();
-            field.put("type", "length");
-            field.put("field", f.getName());
-            if(annotation.min()==0 && fieldsNN.contains(f.getName())){
-                field.put("min", 1);
-            }else{
-                field.put("min", annotation.min());
-            }
-            field.put("max", annotation.max());
-            validation.put(f.getName(),field);
-        }
-        
-        for (Map.Entry<String,JSONObject> entry : validation.entrySet()){
-            jsonModelValidations.put(entry.getValue());
+            jsonModelValidations.put(field);
         }
 
         return jsonModelValidations;
     }
     
-    public JSONArray getJSONRecursiveModelValidations(String parent, Class entityClass) {
+    /*public JSONArray getJSONRecursiveModelValidations(String parent, Class entityClass) {
         JSONArray jsonModelValidations= new JSONArray();
-        HashMap<String,JSONObject> validation= new HashMap<>();
         
         HashSet<String> fieldsNN= fcba.getNotNullFields(entityClass);
         for (String f : fieldsNN) {
@@ -275,26 +251,7 @@ public class JSONModels {
             field.put("type", "length");
             field.put("field", parent+f);
             field.put("min", 1);
-            validation.put(f,field);
-        }
-        
-        List<Field> fieldsSize= EntityReflection.getEntityAnnotatedFields(entityClass, Size.class);
-        for(Field f: fieldsSize){
-            Size annotation= f.getAnnotation(Size.class);
-            JSONObject field= new JSONObject();
-            field.put("type", "length");
-            field.put("field", parent+f.getName());
-            if(annotation.min()==0 && fieldsNN.contains(f.getName())){
-                field.put("min", 1);
-            }else{
-                field.put("min", annotation.min());
-            }
-            field.put("max", annotation.max());
-            validation.put(f.getName(),field);
-        }
-        
-        for (Map.Entry<String,JSONObject> entry : validation.entrySet()){
-            jsonModelValidations.put(entry.getValue());
+            jsonModelValidations.put(field);
         }
         
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
@@ -315,11 +272,10 @@ public class JSONModels {
         }
 
         return jsonModelValidations;
-    }
+    }*/
     
     public JSONArray getJSONModelValidations(List<GenericTableColumn> columns) {
         JSONArray jsonModelValidations= new JSONArray();
-        HashMap<String,JSONObject> validation= new HashMap<>();
         
         HashSet<String> fieldsNN= fctc.getNotNullFields(columns);
         for (String f : fieldsNN) {
@@ -327,25 +283,7 @@ public class JSONModels {
             field.put("type", "length");
             field.put("field", f);
             field.put("min", 1);
-            validation.put(f,field);
-        }
-        
-        HashMap<String, Integer> fieldsSize= fctc.getSizeColumnMap(columns);
-        for (Map.Entry<String,Integer> entry : fieldsSize.entrySet()){
-            JSONObject field= new JSONObject();
-            field.put("type", "length");
-            field.put("field", entry.getKey());
-            if(fieldsNN.contains(entry.getKey())){
-                field.put("min", 1);
-            }else{
-                field.put("min", 0);
-            }
-            field.put("max", entry.getValue());
-            validation.put(entry.getKey(),field);
-        }
-        
-        for (Map.Entry<String,JSONObject> entry : validation.entrySet()){
-            jsonModelValidations.put(entry.getValue());
+            jsonModelValidations.put(field);
         }
 
         return jsonModelValidations;

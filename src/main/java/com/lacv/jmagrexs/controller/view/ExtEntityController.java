@@ -246,14 +246,12 @@ public abstract class ExtEntityController extends ExtReportController {
         jsonTemplateModel = new JSONArray();
         jsonModelValidations= jm.getJSONModelValidations(viewConfig.getDtoClass());
         
-        if(viewConfig.isActiveGridTemplateAsParent() || viewConfig.isActiveGridTemplateAsChild()){
-            if(viewConfig.getGridTemplate()!=null){
-                for(int i=0; i<viewConfig.getGridTemplate().getNumColumns(); i++){
-                    JSONObject field= new JSONObject();
-                    field.put("name", "column"+i);
-                    field.put("type", "string");
-                    jsonTemplateModel.put(field);
-                }
+        if(viewConfig.getGridTemplate()!=null){
+            for(int i=0; i<viewConfig.getGridTemplate().getNumColumns(); i++){
+                JSONObject field= new JSONObject();
+                field.put("name", "column"+i);
+                field.put("type", "string");
+                jsonTemplateModel.put(field);
             }
         }
         
@@ -293,6 +291,7 @@ public abstract class ExtEntityController extends ExtReportController {
         HashSet<String> fieldsNN= fcba.getNotNullFields(viewConfig.getDtoClass());
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(viewConfig.getDtoClass());
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(viewConfig.getDtoClass());
+        HashMap<String, Integer[]> sizeColumnMap= fcba.getSizeColumnMap(viewConfig.getDtoClass());
         titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
         
         if(!viewConfig.isActiveGridTemplate()){
@@ -520,6 +519,10 @@ public abstract class ExtEntityController extends ExtReportController {
                         if(fieldsNN.contains(fieldName)){
                             formField.put("allowBlank", false);
                         }
+                        if(sizeColumnMap.containsKey(fieldName)){
+                            formField.put("minLength", sizeColumnMap.get(fieldName)[0]);
+                            formField.put("maxLength", sizeColumnMap.get(fieldName)[1]);
+                        }
                         if(addFormField){
                             addFormField(formField,jsonFormFields,fieldGroups,titleGroup);
                         }
@@ -558,54 +561,32 @@ public abstract class ExtEntityController extends ExtReportController {
                     gridColumn.put("dataIndex", fieldName);
                     gridColumn.put("header", fieldTitle);
                     gridColumn.put("width", widhColumn);
+                    JSONObject field= null;
+                    JSONObject editor= null;
                     if(Formats.TYPES_LIST.contains(type)){
                         gridColumn.put("sortable", true);
                         if(typeFormFields.containsKey(fieldName)){
                             String typeForm= typeFormFields.get(fieldName)[0];
                             if(typeForm.equals(FieldType.EMAIL.name())){
-                                JSONObject editor= new JSONObject();
+                                editor= new JSONObject();
                                 editor.put("vtype", "email");
-                                if(fieldsNN.contains(fieldName)){
-                                    editor.put("allowBlank", false);
-                                }
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", editor);
-                                }
                             }else if(typeForm.equals(FieldType.PASSWORD.name())){
-                                JSONObject editor= new JSONObject();
+                                editor= new JSONObject();
                                 editor.put("inputType", "password");
-                                if(fieldsNN.contains(fieldName)){
-                                    editor.put("allowBlank", false);
-                                }
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", editor);
-                                }
                             }else if(typeForm.equals(FieldType.DURATION.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.PRICE.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.DATETIME.name())){
                                 gridColumn.put("xtype", "datecolumn");
                                 gridColumn.put("format", extViewConfig.getDatetimeFormat());
-                                JSONObject editor = new JSONObject();
+                                editor = new JSONObject();
                                 editor.put("xtype", "datefield");
                                 editor.put("format", extViewConfig.getDatetimeFormat());
-                                if (fieldsNN.contains(fieldName)) {
-                                    editor.put("allowBlank", false);
-                                }
-                                if (viewConfig.isEditableGrid() && !readOnly) {
-                                    gridColumn.put("editor", editor);
-                                }
                             }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
                                     typeForm.equals(FieldType.RADIOS.name())){
                                 String[] data= typeFormFields.get(fieldName);
@@ -621,32 +602,20 @@ public abstract class ExtEntityController extends ExtReportController {
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 
                                 gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.audioGridRender#");
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
                             }else{
-                                JSONObject field= new JSONObject();
+                                field= new JSONObject();
                                 field.put("type", "textfield");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("field", field);
-                                }
                             }
                         }else{
                             if(fieldName.equals(viewConfig.getLabelField())){
@@ -656,27 +625,15 @@ public abstract class ExtEntityController extends ExtReportController {
                                 case "java.util.Date": {
                                     gridColumn.put("xtype", "datecolumn");
                                     gridColumn.put("format", extViewConfig.getDateFormat());
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "datefield");
                                     editor.put("format", extViewConfig.getDateFormat());
-                                    if (fieldsNN.contains(fieldName)) {
-                                        editor.put("allowBlank", false);
-                                    }
-                                    if (viewConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 case "java.sql.Time": {
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "timefield");
                                     editor.put("format", extViewConfig.getTimeFormat());
-                                    if (fieldsNN.contains(fieldName)) {
-                                        editor.put("allowBlank", false);
-                                    }
-                                    if (viewConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 case "int":
@@ -688,33 +645,44 @@ public abstract class ExtEntityController extends ExtReportController {
                                 case "java.lang.Double":
                                 case "float":
                                 case "java.lang.Float": {
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "numberfield");
-                                    if (fieldsNN.contains(fieldName)) {
-                                        editor.put("allowBlank", false);
-                                    }
-                                    if (viewConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 case "boolean":
                                 case "java.lang.Boolean": {
-                                    JSONObject editor = new JSONObject();
+                                    editor = new JSONObject();
                                     editor.put("xtype", "checkbox");
                                     editor.put("cls", "x-grid-checkheader-editor");
-                                    if (viewConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("editor", editor);
-                                    }
                                     break;
                                 }
                                 default:
-                                    JSONObject field = new JSONObject();
+                                    field = new JSONObject();
                                     field.put("type", "textfield");
-                                    if (viewConfig.isEditableGrid() && !readOnly) {
-                                        gridColumn.put("field", field);
-                                    }
                                     break;
+                            }
+                        }
+                        if(field!=null){
+                            if(fieldsNN.contains(fieldName)){
+                                field.put("allowBlank", false);
+                            }
+                            if(sizeColumnMap.containsKey(fieldName)){
+                                field.put("minLength", sizeColumnMap.get(fieldName)[0]);
+                                field.put("maxLength", sizeColumnMap.get(fieldName)[1]);
+                            }
+                            if(viewConfig.isEditableGrid() && !readOnly){
+                                gridColumn.put("field", field);
+                            }
+                        }else if(editor!=null){
+                            if(fieldsNN.contains(fieldName)){
+                                editor.put("allowBlank", false);
+                            }
+                            if(sizeColumnMap.containsKey(fieldName)){
+                                editor.put("minLength", sizeColumnMap.get(fieldName)[0]);
+                                editor.put("maxLength", sizeColumnMap.get(fieldName)[1]);
+                            }
+                            if(viewConfig.isEditableGrid() && !readOnly){
+                                gridColumn.put("editor", editor);
                             }
                         }
                     }else{
