@@ -99,6 +99,18 @@ public class JSONForms {
                                     dataArray.put(data[i]);
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getRadioGroup('"+parent + fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                                formField.put("id", "form" + processName+ "_" + parent + fieldName + "LinkField");
+                                formField.put("xtype", "numberfield");
+                                formField.put("fieldLabel", "&nbsp;");
+
+                                //Add file Size Text
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("id", "form" + processName+ "_" + parent + fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");

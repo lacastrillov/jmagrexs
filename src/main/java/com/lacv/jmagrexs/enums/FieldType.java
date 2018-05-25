@@ -35,6 +35,8 @@ public enum FieldType {
     
     FILE_UPLOAD,
     
+    FILE_SIZE,
+    
     IMAGE_FILE_UPLOAD,
     
     VIDEO_YOUTUBE,

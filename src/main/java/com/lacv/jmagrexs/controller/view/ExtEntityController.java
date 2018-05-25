@@ -385,6 +385,18 @@ public abstract class ExtEntityController extends ExtReportController {
                                 }
                                 String field= "#Instance.commonExtView.getRadioGroup('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#";
                                 addFormField(field,jsonFormFields,fieldGroups,titleGroup);
+                            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                                formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
+                                formField.put("xtype", "numberfield");
+                                formField.put("fieldLabel", "&nbsp;");
+                                
+                                //Add file Size Text
+                                JSONObject renderField= new JSONObject();
+                                renderField.put("name", fieldName);
+                                renderField.put("fieldLabel", fieldTitle);
+                                renderField.put("xtype", "displayfield");
+                                renderField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
+                                jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("fieldLabel", "&nbsp;");
@@ -597,6 +609,10 @@ public abstract class ExtEntityController extends ExtReportController {
                                 if(viewConfig.isEditableGrid() && !readOnly){
                                     gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+")#");
                                 }
+                            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                                gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
+                                field= new JSONObject();
+                                field.put("type", "textfield");
                             }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.VIDEO_YOUTUBE.name()) || typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){

@@ -240,6 +240,12 @@ public abstract class ExtReportController extends ExtController {
                                 formField.put("enableColors", true);
                                 formField.put("enableAlignments", true);
                                 formField.put("height", 400);
+                            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                                //Add file Size Text
+                                formField.put("name", fieldName);
+                                formField.put("fieldLabel", fieldTitle);
+                                formField.put("xtype", "displayfield");
+                                formField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 //Add Url File
                                 formField.put("name", fieldName);
@@ -360,6 +366,8 @@ public abstract class ExtReportController extends ExtController {
                             gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
                         }else if(typeForm.equals(FieldType.PRICE.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
+                        }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                            gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
                         }else if(typeForm.equals(FieldType.DATETIME.name())){
                             gridColumn.put("xtype", "datecolumn");
                             gridColumn.put("format", extViewConfig.getDatetimeFormat());

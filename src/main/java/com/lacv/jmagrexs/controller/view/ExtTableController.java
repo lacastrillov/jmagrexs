@@ -242,29 +242,41 @@ public abstract class ExtTableController extends ExtController {
                                 dataArray.put(data[i]);
                             }
                             jsonFormFields.put("#Instance.commonExtView.getRadioGroup('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                            formField.put("id", "form" + viewConfig.getTableName() + "_" +fieldName + "LinkField");
+                            formField.put("xtype", "numberfield");
+                            formField.put("fieldLabel", "&nbsp;");
+
+                            //Add file Size Text
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                             formField.put("id", "form" + viewConfig.getTableName() + "_" +fieldName + "LinkField");
                             formField.put("fieldLabel", "&nbsp;");
                             formField.put("emptyText", "Url Youtube");
 
                             //Add Video Youtube
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
                             formField.put("fieldLabel", "&nbsp;");
                             formField.put("emptyText", "Google Maps Point");
 
                             //Add GoogleMap
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                             formField.put("name", fieldName + "_File");
                             formField.put("xtype", "filefield");
@@ -272,12 +284,12 @@ public abstract class ExtTableController extends ExtController {
                             formField.put("emptyText", "Seleccione un archivo");
 
                             //Add Url File
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.fileRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.fileRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                             formField.put("name", fieldName + "_File");
                             formField.put("xtype", "filefield");
@@ -285,12 +297,12 @@ public abstract class ExtTableController extends ExtController {
                             formField.put("emptyText", "Seleccione una imagen");
 
                             //Add Image
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.imageRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.imageRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                             formField.put("name", fieldName + "_File");
                             formField.put("xtype", "filefield");
@@ -298,12 +310,12 @@ public abstract class ExtTableController extends ExtController {
                             formField.put("emptyText", "Seleccione un video");
 
                             //Add Video
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                             formField.put("name", fieldName + "_File");
                             formField.put("xtype", "filefield");
@@ -311,12 +323,12 @@ public abstract class ExtTableController extends ExtController {
                             formField.put("emptyText", "Seleccione un audio");
 
                             //Add Video
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
+                            jsonFormFields.put(renderField);
                         }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                             formField.put("name", fieldName + "_File");
                             formField.put("xtype", "filefield");
@@ -324,12 +336,12 @@ public abstract class ExtTableController extends ExtController {
                             formField.put("emptyText", "Seleccione un archivo");
 
                             //Add Video
-                            JSONObject imageField= new JSONObject();
-                            imageField.put("name", fieldName);
-                            imageField.put("fieldLabel", fieldTitle);
-                            imageField.put("xtype", "displayfield");
-                            imageField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                            jsonFormFields.put(imageField);
+                            JSONObject renderField= new JSONObject();
+                            renderField.put("name", fieldName);
+                            renderField.put("fieldLabel", fieldTitle);
+                            renderField.put("xtype", "displayfield");
+                            renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
+                            jsonFormFields.put(renderField);
                         }
                         if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
@@ -447,6 +459,10 @@ public abstract class ExtTableController extends ExtController {
                             if(viewConfig.isEditableGrid() && !readOnly){
                                 gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+")#");
                             }
+                        }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+                            gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
+                            field= new JSONObject();
+                            field.put("type", "textfield");
                         }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||
                                 typeForm.equals(FieldType.VIDEO_YOUTUBE.name()) || typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
                                 typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){

@@ -260,6 +260,14 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.fileSizeGridRender= function(value, p, record){
+        if(value && !isNaN(value)){
+            return Instance.getFileSizeText(Number(value));
+        }else{
+            return value;
+        }
+    };
+    
     Instance.numbererGridRender= function(value, metaData, record, rowIdx, colIdx, dataSource, view){
         metaData.style="text-align:left;color:#666666;";
         return (isNaN(record.index))?"":(record.index+1);
@@ -348,6 +356,15 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.fileSizeRender= function(value, field) {
+        Instance.setLinkFieldValue(field, value);
+        if(value){
+            return "<b>"+Instance.getFileSizeText(Number(value))+"</b>";
+        }else{
+            return "";
+        }
+    };
+    
     Instance.googleMapsRender= function(value, field) {
         setTimeout(function(){
             try{
@@ -430,6 +447,26 @@ function CommonExtView(parentExtController, parentExtView, model){
         }else{
             return "";
         }
+    };
+    
+    Instance.getFileSizeText= function(bytes){
+        if(bytes<1024){
+           return bytes.toFixed(2) + " bytes";
+        }
+        var kb= bytes/1024;
+        if(kb<1024){
+           return kb.toFixed(2) + " KB";
+        }
+        var mb= kb/1024;
+        if(mb<1024){
+            return mb.toFixed(2) + " MB";
+        }
+        var gb= kb/1024;
+        if(gb<1024){
+            return gb.toFixed(2) + " GB";
+        }
+        var tb= gb/1024;
+        return tb.toFixed(2) + " TB";
     };
     
     Instance.getLoadingContent= function(){
