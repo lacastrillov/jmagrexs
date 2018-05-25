@@ -413,7 +413,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     function getComboboxLimit(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500]);
+        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500], true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.pageSize!==record.getValue()){
                 store.pageSize=record.getValue();

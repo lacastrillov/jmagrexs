@@ -371,7 +371,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                     dataArray.put(data[i]);
                                 }
                                 if(!readOnly){
-                                    String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#";
+                                    String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#";
                                     addFormField(field,jsonFormFields,fieldGroups,titleGroup);
                                 }else{
                                     addFormField=true;
@@ -607,7 +607,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                     dataArray.put(data[i]);
                                 }
                                 if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                                 }
                             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");

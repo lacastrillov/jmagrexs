@@ -405,7 +405,7 @@ public abstract class ExtReportController extends ExtController {
                         for(int i=1; i<data.length; i++){
                             dataArray.put(data[i]);
                         }
-                        jsonFormMapFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                        jsonFormMapFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+",false)#");
                     }else if (type.equals("java.util.Date")) {
                         String format=extViewConfig.getDateFormat();
                         if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){

@@ -90,7 +90,7 @@ public class JSONForms {
                                 for(int i=1; i<data.length; i++){
                                     dataArray.put(data[i]);
                                 }
-                                jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                             }else if(typeForm.equals(FieldType.RADIOS.name())){
                                 addFormField= false;
                                 String[] data= typeFormFields.get(fieldName);

@@ -297,7 +297,7 @@ public abstract class ExtProcessController extends ExtController {
                                     dataArray.put(data[i]);
                                 }
                                 if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                                 }
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.URL.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");

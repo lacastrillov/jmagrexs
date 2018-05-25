@@ -233,7 +233,7 @@ public abstract class ExtTableController extends ExtController {
                             for(int i=1; i<data.length; i++){
                                 dataArray.put(data[i]);
                             }
-                            jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                         }else if(typeForm.equals(FieldType.RADIOS.name())){
                             addFormField= false;
                             String[] data= typeFormFields.get(fieldName);
@@ -457,7 +457,7 @@ public abstract class ExtTableController extends ExtController {
                                 dataArray.put(data[i]);
                             }
                             if(viewConfig.isEditableGrid() && !readOnly){
-                                gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                             }
                         }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");

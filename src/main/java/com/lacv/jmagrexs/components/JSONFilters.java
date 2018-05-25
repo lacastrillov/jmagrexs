@@ -85,9 +85,9 @@ public class JSONFilters {
                                 dataArray.put(data[i]);
                             }
                             if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.RADIOS.name())){
-                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
                             }else{
-                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
                             }
                         }else if (type.equals("java.lang.String") || type.equals("char") || type.equals("java.lang.Character")) {
                             formField.put("name", fieldName);
@@ -313,9 +313,9 @@ public class JSONFilters {
                             dataArray.put(data[i]);
                         }
                         if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.RADIOS.name())){
-                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
                         }else{
-                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
                         }
                     }else if (type.equals("java.lang.String") || type.equals("char") || type.equals("java.lang.Character")) {
                         formField.put("name", fieldName);

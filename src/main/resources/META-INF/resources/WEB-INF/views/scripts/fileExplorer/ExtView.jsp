@@ -294,7 +294,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     function getComboboxLimit(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500]);
+        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500], true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.pageSize!==record.getValue()){
                 store.pageSize=record.getValue();
@@ -309,7 +309,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     }
     
     function getComboboxOrderBy(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('sort', 'Ordenar por', 'config', ${sortColumns});
+        var combobox= Instance.commonExtView.getSimpleCombobox('sort', 'Ordenar por', 'config', ${sortColumns}, true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.getOrderProperty()!==record.getValue()){
                 var dir= store.getOrderDir();
@@ -325,7 +325,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     }
     
     function getComboboxOrderDir(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('dir', 'Direcci&oacute;n', 'config', ["ASC", "DESC"]);
+        var combobox= Instance.commonExtView.getSimpleCombobox('dir', 'Direcci&oacute;n', 'config', ["ASC", "DESC"], true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.getOrderDir()!==record.getValue()){
                 var prop= store.getOrderProperty();
