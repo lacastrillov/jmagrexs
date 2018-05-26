@@ -5,6 +5,7 @@
  */
 package com.lacv.jmagrexs.mapper;
 
+import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.reflection.ReflectionUtils;
 
@@ -15,7 +16,7 @@ import com.lacv.jmagrexs.reflection.ReflectionUtils;
  * @param <T>
  * @param <F>
  */
-public abstract class EntityMapperImpl<T extends BaseEntity, F extends BaseEntity> {
+public abstract class EntityMapperImpl<T extends BaseEntity, F extends BaseDto> {
 
     private final Class<T> entityClass;
 

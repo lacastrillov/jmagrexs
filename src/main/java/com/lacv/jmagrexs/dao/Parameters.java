@@ -293,5 +293,5 @@ public class Parameters {
     public Long getTotalPages() {
         return totalPages;
     }
-
+    
 }

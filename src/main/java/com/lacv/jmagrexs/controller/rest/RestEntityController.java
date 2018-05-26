@@ -3,6 +3,7 @@ package com.lacv.jmagrexs.controller.rest;
 import com.lacv.jmagrexs.annotation.ImageResize;
 import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
 import com.lacv.jmagrexs.components.ServerDomain;
+import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.ItemTemplate;
 import com.lacv.jmagrexs.reflection.EntityReflection;
@@ -320,7 +321,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/create.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] create(@RequestParam(required= false) String data, HttpServletRequest request) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
 
         String resultData;
         try {
@@ -345,7 +346,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/update.htm", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
     public byte[] update(@RequestParam(required= false) String data, HttpServletRequest request) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
         
         String resultData;
         try {
@@ -400,7 +401,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public byte[] load(@RequestParam String idEntity) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
 
         String resultData;
         try {
@@ -419,7 +420,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
     public String delete(@RequestParam String idEntity) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
 
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
@@ -548,7 +549,7 @@ public abstract class RestEntityController {
     @ResponseBody
     public byte[] upload(HttpServletRequest request, @PathVariable String idEntity) {
         String result="";
-        BaseEntity dto;
+        BaseDto dto;
         //50MB
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
@@ -584,7 +585,7 @@ public abstract class RestEntityController {
     @ResponseBody
     public byte[] diskupload(HttpServletRequest request, @PathVariable String idEntity) {
         String result="";
-        BaseEntity dto;
+        BaseDto dto;
         //50MB
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 

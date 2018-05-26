@@ -29,15 +29,16 @@ import javax.validation.constraints.Size;
  */
 public class ClassGenerator {
 
-    protected final String classPath;
+    protected String classPath;
 
     protected final String groupId;
 
     protected final List<String> packages;
 
     public ClassGenerator(Class originClass, String groupId) {
-        classPath= originClass.getProtectionDomain().getCodeSource().getLocation()
-                .getPath().replaceFirst("/target/classes/", "/src/main/java/");
+        classPath= originClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+        classPath= classPath.split("/target/")[0];
+        classPath+= "/src/main/java/";
         this.groupId = groupId;
         packages = new ArrayList<>();
         packages.addAll(Arrays.asList(groupId.split("\\.")));

@@ -27,7 +27,8 @@ public class MapperGenerator extends ClassGenerator {
     public void generate(Class entityClass){
         if(BaseEntity.class.isAssignableFrom(entityClass)){
             String mappers="";
-            String setters="";
+            String settersED="";
+            String settersDE="";
             String entityName= entityClass.getSimpleName();
             String entityVar= Character.toLowerCase(entityName.charAt(0)) + entityName.substring(1);
             String entityPackage= entityClass.getPackage().getName();
@@ -45,12 +46,16 @@ public class MapperGenerator extends ClassGenerator {
                             "    @Autowired\n" +
                             "    "+fieldEntity+"Mapper "+fieldName+"Mapper;\n";
                         
-                        setters+=
+                        settersED+=
                             "            dto.set"+fieldEntity+"("+fieldName+"Mapper.entityToDto(entity.get"+fieldEntity+"()));\n";
+                        settersDE+=
+                            "            entity.set"+fieldEntity+"("+fieldName+"Mapper.dtoToEntity(dto.get"+fieldEntity+"()));\n";
                         
                     }else if(!type.equals("java.util.List")){
-                        setters+=
+                        settersED+=
                             "            dto.set"+fieldEntity+"(entity.get"+fieldEntity+"());\n";
+                        settersDE+=
+                            "            entity.set"+fieldEntity+"(dto.get"+fieldEntity+"());\n";
                     }
                 }
             }
@@ -87,7 +92,7 @@ public class MapperGenerator extends ClassGenerator {
                     "        "+entityName+"Dto dto= new "+entityName+"Dto();\n" +
                     "        if(entity!=null){\n" +
                     
-                    setters +
+                    settersED +
                     
                     "        }\n" +
                     "        return dto;\n" +
@@ -109,8 +114,33 @@ public class MapperGenerator extends ClassGenerator {
                     "        return dtos;\n" +
                     "    }\n" +
                     "    \n" +
+                    "    @Override\n" +
+                    "    public "+entityName+" dtoToEntity("+entityName+"Dto dto) {\n" +
+                    "        "+entityName+" entity= new "+entityName+"();\n" +
+                    "        if(dto!=null){\n" +
+                    
+                    settersDE +
+                    
+                    "        }\n" +
+                    "        return entity;\n" +
+                    "    }\n" +
+                    "    \n" +
+                    "    /**\n" +
+                    "     *\n" +
+                    "     * @return\n" +
+                    "     */\n" +
+                    "    @Override\n" +
+                    "    public List<"+entityName+"> listDtosToListEntities(List<"+entityName+"Dto> dtos){\n" +
+                    "        List<"+entityName+"> entities= new ArrayList<>();\n" +
+                    "        if(entities!=null){\n" +
+                    "            for("+entityName+"Dto dto: dtos){\n" +
+                    "                entities.add(dtoToEntity(dto));\n" +
+                    "            }\n" +
+                    "        }\n" +
+                    "        return entities;\n" +
+                    "    }\n"+
+                    "\n" +
                     "}\n" +
-                    ""+
                     "";
 
             createJavaFile(entityName+"Mapper.java", code);

@@ -1,6 +1,7 @@
 package com.lacv.jmagrexs.controller.rest;
 
 import com.lacv.jmagrexs.controller.view.ExtFileExplorerController;
+import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.Util;
@@ -125,7 +126,7 @@ public abstract class RestSessionController extends RestEntityController {
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] sessionCreate(@RequestParam(required= false) String data, HttpServletRequest request) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
 
         String resultData;
         try {
@@ -151,7 +152,7 @@ public abstract class RestSessionController extends RestEntityController {
     @RequestMapping(value = "/session_update.htm", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
     public byte[] sessionUpdate(@RequestParam(required= false) String data, HttpServletRequest request) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
         
         String resultData;
         try {
@@ -209,7 +210,7 @@ public abstract class RestSessionController extends RestEntityController {
     @RequestMapping(value = "/session_load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public byte[] sessionLoad(@RequestParam String idEntity) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
 
         String resultData;
         try {
@@ -231,7 +232,7 @@ public abstract class RestSessionController extends RestEntityController {
     @RequestMapping(value = "/session_delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
     public String sessionDelete(@RequestParam String idEntity) {
-        BaseEntity dto = null;
+        BaseDto dto = null;
 
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);

@@ -66,6 +66,11 @@ public class ServiceImplGenerator extends ClassGenerator {
                     "        return "+entityVar+"Jpa;\n" +
                     "    }\n" +
                     "    \n" +
+                    "    @Override\n" +
+                    "    public EntityMapper getEntityMapper(){\n" +
+                    "        return "+entityVar+"Mapper;\n" +
+                    "    }\n" +
+                    "    \n" +
                     "}" +
                     "";
 

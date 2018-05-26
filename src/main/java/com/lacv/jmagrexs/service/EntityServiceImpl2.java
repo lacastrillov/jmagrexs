@@ -4,6 +4,7 @@ import com.lacv.jmagrexs.annotation.QueryParam;
 import com.lacv.jmagrexs.dao.GenericDao;
 import com.lacv.jmagrexs.dao.Parameters;
 import com.lacv.jmagrexs.domain.BaseEntity;
+import com.lacv.jmagrexs.mapper.EntityMapper;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.reflection.ReflectionUtils;
 import com.lacv.jmagrexs.util.FilterQueryJSON;
@@ -36,7 +37,9 @@ public abstract class EntityServiceImpl2<T extends BaseEntity> implements Entity
     }
 
     public abstract GenericDao getGenericDao();
-
+    
+    public abstract EntityMapper getEntityMapper();
+    
     @Override
     public Class<T> getEntityClass() {
         return this.entityClass;

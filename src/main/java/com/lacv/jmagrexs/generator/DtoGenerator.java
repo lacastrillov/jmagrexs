@@ -122,7 +122,7 @@ public class DtoGenerator extends ClassGenerator {
                     "import com.lacv.jmagrexs.annotation.ReadOnly;\n" +
                     "import com.lacv.jmagrexs.annotation.Size;\n" +
                     "import com.lacv.jmagrexs.annotation.TextField;\n" +
-                    "import com.lacv.jmagrexs.domain.BaseEntity;\n" +
+                    "import com.lacv.jmagrexs.domain.BaseDto;\n" +
                     "import java.sql.Time;\n" +
                     "import java.util.Date;\n" +
                     "import java.util.List;\n" +
@@ -132,7 +132,7 @@ public class DtoGenerator extends ClassGenerator {
                     " * @author lcastrillo\n" +
                     " */\n" +
                     "@LabelField(\"id\")\n" +
-                    "public class "+entityName+"Dto implements BaseEntity {\n" +
+                    "public class "+entityName+"Dto implements BaseDto {\n" +
                     "\n" +
                     "    private static final long serialVersionUID = 1L;\n" +
 

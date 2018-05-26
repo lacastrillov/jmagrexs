@@ -4,6 +4,7 @@ import com.lacv.jmagrexs.annotation.QueryParam;
 import com.lacv.jmagrexs.dao.GenericDao;
 import com.lacv.jmagrexs.dao.Parameters;
 import com.lacv.jmagrexs.domain.BaseEntity;
+import com.lacv.jmagrexs.mapper.EntityMapper;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.reflection.ReflectionUtils;
 import com.lacv.jmagrexs.util.FilterQueryJSON;
@@ -36,7 +37,9 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     }
 
     public abstract GenericDao getGenericDao();
-
+    
+    public abstract EntityMapper getEntityMapper();
+    
     @Override
     public Class<T> getEntityClass() {
         return this.entityClass;
@@ -97,7 +100,7 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     }
     
     @Override
-    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public List<T> listAll() {
         return (List<T>) this.getGenericDao().listAll();
     }
@@ -154,13 +157,13 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     }
 
     @Override
-    @Transactional(value = TRANSACTION_MANAGER)
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public int updateByParameters(Parameters parameters) {
         return getGenericDao().updateByParameters(parameters);
     }
 
     @Override
-    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public int removeByParameters(Parameters parameters) {
         return getGenericDao().removeByParameters(parameters);
     }
@@ -331,6 +334,7 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     /**
      *
      * @param nameQuery
+     * @param mapParameters
      * @return
      */
     @Override

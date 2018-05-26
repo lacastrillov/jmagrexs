@@ -5,6 +5,7 @@
  */
 package com.lacv.jmagrexs.mapper;
 
+import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * @param <T>
  * @param <F>
  */
-public interface EntityMapper<T extends BaseEntity, F extends BaseEntity> {
+public interface EntityMapper<T extends BaseEntity, F extends BaseDto> {
 
     /**
      * 
@@ -40,5 +41,19 @@ public interface EntityMapper<T extends BaseEntity, F extends BaseEntity> {
      * @return
      */
     List<F> listEntitiesToListDtos(List<T> entities);
+    
+    /**
+     *
+     * @param dto
+     * @return
+     */
+    T dtoToEntity(F dto);
+
+    /**
+     *
+     * @param dtos
+     * @return
+     */
+    List<T> listDtosToListEntities(List<F> dtos);
 
 }
