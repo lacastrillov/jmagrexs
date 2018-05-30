@@ -46,7 +46,7 @@ public class JMagrexsClientService {
         this.authorization = authorization;
     }
     
-    public JSONObject find(JSONObject filter, String query, Long start, Long limit, Long page, String sort, String dir){
+    public JSONObject find(JSONObject filter, String query, Long limit, Long page, String sort, String dir){
         String endpoint= getBaseURL()+"find.htm";
         RESTServiceDto restService= new RESTServiceDto("find", endpoint, HttpMethod.GET, null);
         RESTServiceConnection restServiceConnection= new RESTServiceConnection(restService);
@@ -59,7 +59,6 @@ public class JMagrexsClientService {
         }
         addParameter(parameters, "filter", filter);
         addParameter(parameters, "query", query);
-        addParameter(parameters, "start", start);
         addParameter(parameters, "limit", limit);
         addParameter(parameters, "page", page);
         addParameter(parameters, "sort", sort);
@@ -73,7 +72,7 @@ public class JMagrexsClientService {
         }
     }
     
-    public String findXml(JSONObject filter, String query, Long start, Long limit, Long page, String sort, String dir) {
+    public String findXml(JSONObject filter, String query, Long limit, Long page, String sort, String dir) {
         String endpoint= getBaseURL()+"find/xml.htm";
         RESTServiceDto restService= new RESTServiceDto("findXml", endpoint, HttpMethod.GET, null);
         RESTServiceConnection restServiceConnection= new RESTServiceConnection(restService);
@@ -86,7 +85,6 @@ public class JMagrexsClientService {
         }
         addParameter(parameters, "filter", filter);
         addParameter(parameters, "query", query);
-        addParameter(parameters, "start", start);
         addParameter(parameters, "limit", limit);
         addParameter(parameters, "page", page);
         addParameter(parameters, "sort", sort);
@@ -100,7 +98,7 @@ public class JMagrexsClientService {
         }
     }
     
-    public JSONObject report(JSONObject filter, Long start, Long limit, Long page, String sort, String dir,
+    public JSONObject report(JSONObject filter, Long limit, Long page, String sort, String dir,
             String dtoName, String reportName){
         String endpoint= getBaseURL()+"report/"+reportName+".htm";
         RESTServiceDto restService= new RESTServiceDto("report", endpoint, HttpMethod.GET, null);
@@ -113,7 +111,6 @@ public class JMagrexsClientService {
             headers.put("Authorization", authorization);
         }
         addParameter(parameters, "filter", filter);
-        addParameter(parameters, "start", start);
         addParameter(parameters, "limit", limit);
         addParameter(parameters, "page", page);
         addParameter(parameters, "sort", sort);
@@ -129,7 +126,7 @@ public class JMagrexsClientService {
         }
     }
     
-    public String reportXml(JSONObject filter, Long start, Long limit, Long page, String sort, String dir,
+    public String reportXml(JSONObject filter, Long limit, Long page, String sort, String dir,
             String dtoName, String reportName) {
         String endpoint= getBaseURL()+"report/xml/"+reportName+".htm";
         RESTServiceDto restService= new RESTServiceDto("reportXml", endpoint, HttpMethod.GET, null);
@@ -142,7 +139,6 @@ public class JMagrexsClientService {
             headers.put("Authorization", authorization);
         }
         addParameter(parameters, "filter", filter);
-        addParameter(parameters, "start", start);
         addParameter(parameters, "limit", limit);
         addParameter(parameters, "page", page);
         addParameter(parameters, "sort", sort);
@@ -178,7 +174,6 @@ public class JMagrexsClientService {
     
     public JSONObject update(JSONObject data){
         String endpoint= getBaseURL()+"update.htm";
-        System.out.println(endpoint);
         RESTServiceDto restService= new RESTServiceDto("update", endpoint, HttpMethod.POST, null);
         RESTServiceConnection restServiceConnection= new RESTServiceConnection(restService);
         

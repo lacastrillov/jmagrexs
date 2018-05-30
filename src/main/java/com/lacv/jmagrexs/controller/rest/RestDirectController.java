@@ -54,7 +54,7 @@ public abstract class RestDirectController {
 
     @RequestMapping(value = "/{tableName}/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public HttpEntity<byte[]> find(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> find(@PathVariable String tableName, @RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) Long numColumns) {
@@ -75,7 +75,7 @@ public abstract class RestDirectController {
     }
 
     @RequestMapping(value = "/{tableName}/find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public HttpEntity<byte[]> findXml(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> findXml(@PathVariable String tableName, @RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
 
@@ -96,7 +96,7 @@ public abstract class RestDirectController {
 
     @RequestMapping(value = "/{tableName}/find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void findXls(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public void findXls(@PathVariable String tableName, @RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
@@ -116,7 +116,7 @@ public abstract class RestDirectController {
     
     @RequestMapping(value = "/{tableName}/find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void findCsv(@PathVariable String tableName, @RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public void findCsv(@PathVariable String tableName, @RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {

@@ -114,7 +114,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public HttpEntity<byte[]> find(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
-            @RequestParam(required = false) Long start,  @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
 
@@ -140,7 +140,7 @@ public abstract class RestEntityController {
 
     @RequestMapping(value = "/find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public HttpEntity<byte[]> findXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
-            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
 
         try {
@@ -162,7 +162,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public void findXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
-            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
         
@@ -181,7 +181,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public void findCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
-            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
         
@@ -200,7 +200,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public byte[] findYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
-            @RequestParam(required = false) Long start, @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
+            @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) Boolean yamlFormat) {
 
@@ -228,7 +228,7 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public HttpEntity<byte[]> report(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> report(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
@@ -256,7 +256,7 @@ public abstract class RestEntityController {
     }
     
     @RequestMapping(value = "/report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public HttpEntity<byte[]> reportXml(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public HttpEntity<byte[]> reportXml(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName,
@@ -280,7 +280,7 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void reportXls(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public void reportXls(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
@@ -300,7 +300,7 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/report/csv/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void reportCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) Long start,
+    public void reportCsv(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
