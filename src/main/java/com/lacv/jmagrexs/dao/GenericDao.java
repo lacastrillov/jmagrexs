@@ -216,6 +216,14 @@ public interface GenericDao<T extends BaseEntity> {
     
     /**
      *
+     * @param query
+     * @param mapParameters
+     * @return
+     */
+    List<Map<String, Object>> findByQuery(String query, Map<String, Object> mapParameters);
+    
+    /**
+     *
      * @param nameQuery
      * @param mapParameters
      * @param c

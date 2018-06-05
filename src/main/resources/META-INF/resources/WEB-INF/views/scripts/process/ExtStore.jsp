@@ -113,12 +113,12 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${viewConfig.mainProcessRef}/doProcess.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${viewConfig.mainProcessRef}/do/"+processName+".htm",
             method: "POST",
             headers: {
                 'Content-Type' : 'application/json'
             },
-            jsonData: {'processName': processName, 'data': util.remakeJSONObject(data)},
+            jsonData: util.remakeJSONObject(data),
             success: function(response){
                 Ext.MessageBox.hide();
                 var responseDataFormat= response.getAllResponseHeaders()['response-data-format'];

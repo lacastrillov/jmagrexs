@@ -212,6 +212,16 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
 
         return namedParameterJdbcTemplate.queryForList(query, getMapSqlParameterSource(mapParameters));
     }
+    
+    /**
+     * 
+     * @param query
+     * @param mapParameters
+     * @return 
+     */
+    public List<Map<String, Object>> findByQuery(String query, Map<String, Object> mapParameters) {
+        return namedParameterJdbcTemplate.queryForList(query, getMapSqlParameterSource(mapParameters));
+    }
 
     /**
      * 

@@ -370,6 +370,18 @@ public abstract class EntityServiceImpl1<T extends BaseEntity> implements Entity
     
     /**
      *
+     * @param query
+     * @param mapParameters
+     * @return
+     */
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
+    public List<Map<String, Object>> findByQuery(String query, Map<String, Object> mapParameters){
+        return this.getGenericDao().findByQuery(query, mapParameters);
+    }
+    
+    /**
+     *
      * @param nameQuery
      * @param mapParameters
      * @param c

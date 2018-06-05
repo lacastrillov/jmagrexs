@@ -91,14 +91,13 @@ public abstract class RestProcessController {
         }
     }
     
-    @RequestMapping(value = "/doProcess.htm", method = RequestMethod.POST)
+    @RequestMapping(value = "/do/{processName}.htm", method = RequestMethod.POST)
     @ResponseBody
-    public byte[] doProcess(HttpServletRequest request, HttpServletResponse response) {
-        String jsonBody;
+    public byte[] doProcess(@PathVariable String processName, HttpServletRequest request, HttpServletResponse response) {
+        String data;
         try {
-            jsonBody = IOUtils.toString(request.getInputStream());
-            JSONObject jsonObject= new JSONObject(jsonBody);
-            return doProcess(jsonObject.getJSONObject("data").toString(), jsonObject.getString("processName"), request, response);
+            data = IOUtils.toString(request.getInputStream());
+            return doProcess(data, processName, request, response);
         } catch (IOException ex) {
             LOGGER.error("ERROR executeProcess", ex);
         }

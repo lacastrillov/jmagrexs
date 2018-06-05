@@ -44,6 +44,7 @@ public class ServiceImplGenerator extends ClassGenerator {
                     "import "+groupId+".model.mappers."+entityName+"Mapper;\n" +
                     "import "+groupId+".services."+entityName+"Service;\n" +
                     "import com.lacv.jmagrexs.dao.GenericDao;\n" +
+                    "import com.lacv.jmagrexs.mapper.EntityMapper;\n" +
                     "import com.lacv.jmagrexs.service.EntityServiceImpl"+this.indexDataSource+";\n" +
                     "import org.springframework.beans.factory.annotation.Autowired;\n" +
                     "import org.springframework.stereotype.Service;\n" +
