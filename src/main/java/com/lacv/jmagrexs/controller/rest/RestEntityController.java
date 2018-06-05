@@ -454,7 +454,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/import.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] importData(@RequestParam(required= false) String data, HttpServletRequest request) {
-        List listDtos= new ArrayList();
+        List listDtos;
 
         String resultData;
         try {
