@@ -102,7 +102,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.loadFormData= function(id){
         if(Instance.entityExtView.formComponent!==null){
-            if(id!==null){
+            if(id!==null && id!==""){
                 var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 
                 if(activeRecord===null){
