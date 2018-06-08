@@ -413,7 +413,7 @@ public abstract class RestDirectController {
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && !item.getName().equals("")){
                     String fieldName= item.getFieldName().replaceAll("_File", "");
-                    result+= saveFilePart(tableName, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id);
+                    result+= saveFilePart(tableName, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id)+"<br>";
                 }
             }
             
