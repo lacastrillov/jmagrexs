@@ -581,6 +581,8 @@ public class JdbcDirectRepository {
                     sql.append("AUTO_INCREMENT ");
                 }else if(column.getDefaultValue()!=null){
                     sql.append("DEFAULT ").append("'").append(column.getDefaultValue()).append("'");
+                }else if(!column.isNotNull()){
+                    sql.append("DEFAULT NULL");
                 }
                 sql.append(", ");
                 if(column.isPrimaryKey()){
@@ -648,9 +650,10 @@ public class JdbcDirectRepository {
         }else if(!column.isNotNull()){
             sql.append("DEFAULT NULL");
         }
-        if(column.isUnique()){
-            sql.append(", ");
-            sql.append("ADD UNIQUE INDEX ").append(column.getColumnAlias()).append("_UNIQUE (").append(column.getColumnAlias()).append(" ASC)");
+        if(column.isPrimaryKey()){
+            sql.append(", ").append("ADD PRIMARY KEY (").append(column.getColumnAlias()).append(")");
+        }else if(column.isUnique()){
+            sql.append(", ").append("ADD UNIQUE INDEX ").append(column.getColumnAlias()).append("_UNIQUE (").append(column.getColumnAlias()).append(" ASC)");
         }
         
         System.out.println(sql.toString());
@@ -682,9 +685,10 @@ public class JdbcDirectRepository {
         }else if(!column.isNotNull()){
             sql.append("DEFAULT NULL");
         }
-        if(column.isUnique()){
-            sql.append(", ");
-            sql.append("ADD UNIQUE INDEX ").append(column.getColumnAlias()).append("_UNIQUE (").append(column.getColumnAlias()).append(" ASC)");
+        if(column.isPrimaryKey()){
+            sql.append(", ").append("ADD PRIMARY KEY (").append(column.getColumnAlias()).append(")");
+        }else if(column.isUnique()){
+            sql.append(", ").append("ADD UNIQUE INDEX ").append(column.getColumnAlias()).append("_UNIQUE (").append(column.getColumnAlias()).append(" ASC)");
         }
         
         System.out.println(sql.toString());
