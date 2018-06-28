@@ -239,10 +239,18 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     frame: false,
                     defaultType: 'textfield',
                     bodyPadding: 15,
+                    tools: [
+                        {
+                            type:'plus',
+                            scope: this,
+                            handler: this.openJsonField
+                        }
+                    ],
                     fieldDefaults: {
                         minWidth: 300,
                         anchor: '100%',
-                        labelAlign: 'right'
+                        labelAlign: 'right',
+                        labelWidth: 150
                     },
                     items: fields,
                     dockedItems: [{
@@ -282,10 +290,66 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     
             onSeeAll: function(){
                 this.doLayout();
+            },
+                    
+            openJsonField: function(){
+                if (Instance.containerJson.isVisible()) {
+                    Instance.containerJson.hide(null, function() {});
+                } else {
+                    Instance.containerJson.processName= modelName;
+                    Instance.containerJson.show(null, function() {});
+                }
             }
     
         });
     };
+    
+    function createFormJson(){
+        Instance.formJson = Ext.create('Ext.form.Panel', {
+            border: false,
+            bodyPadding: 15,
+            fieldDefaults: {
+                labelAlign: 'left',
+                anchor: '100%'
+            },
+            items: [{
+                xtype: 'textarea',
+                name: 'jsonData',
+                fieldLabel: 'Contenido JSON',
+                height: 250,
+                allowBlank: false
+            }]
+        });
+
+        Instance.containerJson = Ext.create('Ext.window.Window', {
+            autoShow: false,
+            title: 'Poblar Formulario',
+            closable: true,
+            closeAction: 'hide',
+            width: 500,
+            height: 350,
+            minWidth: 300,
+            minHeight: 200,
+            layout: 'fit',
+            plain:true,
+            items: Instance.formJson,
+            processName: '',
+
+            buttons: [{
+                text: 'Establecer',
+                handler: function(){
+                    var data= Instance.formJson.getForm().getValues();
+                    parentExtController.populateForm(Instance.containerJson.processName, data['jsonData']);
+                    Instance.containerJson.hide();
+                }
+            },{
+                text: 'Cancelar',
+                handler: function(){
+                    Instance.containerJson.hide();
+                }
+            }]
+        });
+    }
     
     </c:if>
     
@@ -571,6 +635,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.store.gridComponent= Instance.gridComponent;
         Instance.filters= getFiltersPanel();
         </c:if>
+            
+        createFormJson();
 
         Instance.tabsContainer= Ext.widget('tabpanel', {
             region: 'center',

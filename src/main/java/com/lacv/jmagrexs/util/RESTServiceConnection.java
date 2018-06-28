@@ -126,6 +126,7 @@ public class RESTServiceConnection {
         } else {
             stringResult = getStringResult(headers, pathVars, parameters);
         }
+        System.out.println("### STRING_RESULT ###\n"+stringResult);
         try {
             if(getRESTService().getOutClass().equals(String.class)){
                 return stringResult;
@@ -679,9 +680,6 @@ public class RESTServiceConnection {
     }
 
     private void addHeaders(HttpRequestBase httpRequestBase, Map<String, String> headers) throws UnsupportedEncodingException {
-        httpRequestBase.setHeader("Accept", "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8");
-        httpRequestBase.setHeader("Accept-Language", "es-CO,en-US;q=0.7,en;q=0.3");
-        httpRequestBase.setHeader("Connection", "keep-alive");
         if (headers != null) {
             for (Map.Entry<String, String> header : headers.entrySet()) {
                 httpRequestBase.addHeader(header.getKey(), header.getValue());

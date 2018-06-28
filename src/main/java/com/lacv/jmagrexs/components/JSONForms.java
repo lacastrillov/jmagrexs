@@ -279,7 +279,7 @@ public class JSONForms {
                 fieldDefaults.put("labelAlign", "right");
                 
                 JSONObject objectFieldGroup= new JSONObject();
-                objectFieldGroup.put("id", parent+fieldName);
+                objectFieldGroup.put("id", processName+"_"+parent+fieldName);
                 objectFieldGroup.put("xtype", "fieldset");
                 objectFieldGroup.put("title", fieldTitle+":");
                 objectFieldGroup.put("itemTop", 0);
@@ -292,7 +292,7 @@ public class JSONForms {
                 JSONArray jsonList= new JSONArray();
                 for(int i=0; i<MAX_LIST_ITEMS; i++){
                     JSONObject objectField= new JSONObject();
-                    objectField.put("id", parent+fieldName+"["+i+"]");
+                    objectField.put("id", processName+"_"+parent+fieldName+"["+i+"]");
                     if(!Formats.TYPES_LIST.contains(childClass.getName())){
                         objectField.put("xtype", "fieldset");
                         objectField.put("title", "Item "+i);
@@ -355,10 +355,10 @@ public class JSONForms {
                 buttonAdd.put("style", "margin:5px");
                 buttonAdd.put("width", 100);
                 buttonAdd.put("handler", "#function(){"
-                        + "                   var itemsGroup= Ext.getCmp('"+parent+fieldName+"');"
+                        + "                   var itemsGroup= Ext.getCmp('"+processName+"_"+parent+fieldName+"');"
                         + "                   if(itemsGroup.itemTop<"+(MAX_LIST_ITEMS-1)+"){"
                         + "                       itemsGroup.itemTop+= 1;"
-                        + "                       var itemEntity= Ext.getCmp('"+parent+fieldName+"['+itemsGroup.itemTop+']');"
+                        + "                       var itemEntity= Ext.getCmp('"+processName+"_"+parent+fieldName+"['+itemsGroup.itemTop+']');"
                         + "                       itemEntity.setVisible(true);"
                         + "                       itemEntity.setDisabled(false);"
                         + "                       if(itemEntity.query){"
@@ -377,9 +377,9 @@ public class JSONForms {
                 buttonQuit.put("style", "margin:5px");
                 buttonQuit.put("width", 100);
                 buttonQuit.put("handler", "#function(){"
-                        + "                   var itemsGroup= Ext.getCmp('"+parent+fieldName+"');"
+                        + "                   var itemsGroup= Ext.getCmp('"+processName+"_"+parent+fieldName+"');"
                         + "                   if(itemsGroup.itemTop>=0){"
-                        + "                       var itemEntity= Ext.getCmp('"+parent+fieldName+"['+itemsGroup.itemTop+']');"
+                        + "                       var itemEntity= Ext.getCmp('"+processName+"_"+parent+fieldName+"['+itemsGroup.itemTop+']');"
                         + "                       itemsGroup.itemTop-= 1;"
                         + "                       itemEntity.setVisible(false);"
                         + "                       itemEntity.setDisabled(true);"

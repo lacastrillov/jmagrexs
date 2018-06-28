@@ -133,7 +133,7 @@ public abstract class RestProcessController {
                 RESTServiceDto restService= externalService.getRESTService(processName);
                 responseDataFormat= restService.getResponseDataFormat();
                 Object inObject= EntityReflection.jsonToObject(jsonIn, restService.getInClass());
-                Object outObject= (String) externalService.callRESTService(processName, inObject);
+                Object outObject= externalService.callRESTService(processName, inObject);
                 if(restService.getOutClass().equals(String.class)){
                     jsonOut= (String) outObject;
                 }else{
@@ -265,7 +265,6 @@ public abstract class RestProcessController {
             String minJsonIn= JSONService.objectToJson(inObject);
             logProcess.setDataIn(minJsonIn);
             logProcess.setDataOut(dataOut);
-            logProcess.setOutputDataFormat("JSON");
             logProcess.setDuration((int)remaining);
             logProcess.setMainProcessRef(mainProcessRef);
             logProcess.setMessage(message);

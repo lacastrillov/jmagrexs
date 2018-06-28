@@ -123,8 +123,10 @@ public abstract class ExternalServiceImpl implements ExternalService {
             headers= new HashMap<>();
             for(Field field: headerFields){
                 HttpHeader an= field.getAnnotation(HttpHeader.class);
-                headers.put(an.value(), jsonData.get(field.getName()).toString());
-                jsonData.remove(field.getName());
+                if(jsonData.has(field.getName())){
+                    headers.put(an.value(), jsonData.get(field.getName()).toString());
+                    jsonData.remove(field.getName());
+                }
             }
         }
         
@@ -133,8 +135,10 @@ public abstract class ExternalServiceImpl implements ExternalService {
         if(pathVarFields.size()>0){
             pathVars= new HashMap<>();
             for(Field field: pathVarFields){
-                pathVars.put(field.getName(), jsonData.get(field.getName()).toString());
-                jsonData.remove(field.getName());
+                if(jsonData.has(field.getName())){
+                    pathVars.put(field.getName(), jsonData.get(field.getName()).toString());
+                    jsonData.remove(field.getName());
+                }
             }
         }
         
