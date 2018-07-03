@@ -344,7 +344,7 @@ public final class EntityReflection {
                 }
             }else if(type.equals("java.util.List")==false){
                 String value = null;
-                if(source.has(fieldName)){
+                if(source.has(fieldName) && !source.isNull(fieldName)){
                     value= source.get(fieldName).toString();
                 }
                 Class<?> typeWrapper = propertyDescriptor.getPropertyType();
