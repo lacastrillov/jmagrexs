@@ -255,11 +255,13 @@ public abstract class RestProcessController {
                 }
             }else if(externalService!=null && externalService.isSOAPService(processName)){
                 SOAPServiceDto soapService= externalService.getSOAPService(processName);
+                logProcess.setOutputDataFormat(RESTServiceDto.JSON);
                 inObject= EntityReflection.jsonToObject(dataIn, soapService.getInClass(), true);
                 if(!soapService.isSaveResponseInLog()){
                     logProcess.setDataOut("");
                 }
             }else{
+                logProcess.setOutputDataFormat(RESTServiceDto.JSON);
                 inObject= EntityReflection.jsonToObject(dataIn, inDtos.get(processName), true);
             }
             String minJsonIn= JSONService.objectToJson(inObject);
