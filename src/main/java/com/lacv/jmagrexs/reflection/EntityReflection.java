@@ -379,7 +379,7 @@ public final class EntityReflection {
                                 Object parseValue = Formats.castParameter(childClass.getName(), itemList.get(i).toString());
                                 if(parseValue!=null){
                                     itemsObject.add(parseValue);
-                                }else{
+                                }else if(!itemList.get(i).equals("")){
                                     Object childObject= jsonToObject(itemList.get(i).toString(), childClass, hideLogFields);
                                     itemsObject.add(childObject);
                                 }
