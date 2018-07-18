@@ -355,19 +355,25 @@ public class JSONForms {
                 buttonAdd.put("style", "margin:5px");
                 buttonAdd.put("width", 100);
                 buttonAdd.put("handler", "#function(){"
-                        + "                   var itemsGroup= Ext.getCmp('"+processName+"_"+parent+fieldName+"');"
-                        + "                   if(itemsGroup.itemTop<"+(MAX_LIST_ITEMS-1)+"){"
-                        + "                       itemsGroup.itemTop+= 1;"
-                        + "                       var itemEntity= Ext.getCmp('"+processName+"_"+parent+fieldName+"['+itemsGroup.itemTop+']');"
-                        + "                       itemEntity.setVisible(true);"
-                        + "                       itemEntity.setDisabled(false);"
-                        + "                       if(itemEntity.query){"
-                        + "                           itemEntity.query('.field').forEach(function(c){"
-                        + "                             c.setDisabled(false);"
-                        + "                           });"
-                        + "                       }"
-                        + "                   }"
-                        + "               }#");
+                                       + "    var itemsGroup= Ext.getCmp('"+processName+"_"+parent+fieldName+"');"
+                                       + "    if(itemsGroup.itemTop<"+(MAX_LIST_ITEMS-1)+"){"
+                                       + "        itemsGroup.itemTop+= 1;"
+                                       + "        var itemEntity= Ext.getCmp('"+processName+"_"+parent+fieldName+"['+itemsGroup.itemTop+']');"
+                                       + "        itemEntity.setVisible(true);"
+                                       + "        itemEntity.setDisabled(false);"
+                                       + "        if(itemEntity.query){"
+                                       + "            itemEntity.query('.field').forEach(function(c){"
+                                       + "                var visible= true;"
+                                       + "                var upFieldset=c.up('fieldset');"
+                                       + "                while(upFieldset!==undefined && visible===true){"
+                                       + "                    visible=upFieldset.isVisible();"
+                                       + "                    upFieldset= upFieldset.up('fieldset');"
+                                       + "                };"                       
+                                       + "                c.setDisabled(!c.isVisible() || !visible);"
+                                       + "            });"
+                                       + "        }"
+                                       + "    }"
+                                       + "}#");
                 jsonList.put(buttonAdd);
                 
                 

@@ -178,6 +178,17 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     if(filled){
                         itemEntity.setVisible(true);
                         itemEntity.setDisabled(false);
+                        if(itemEntity.query){
+                            itemEntity.query('.field').forEach(function(c){
+                                var visible= true;
+                                var upFieldset=c.up('fieldset');
+                                while(upFieldset!==undefined && visible===true){
+                                    visible=upFieldset.isVisible();
+                                    upFieldset= upFieldset.up('fieldset');
+                                };
+                                c.setDisabled(!c.isVisible() || !visible);
+                            });
+                        }
                         itemsGroup.itemTop=i;
                     }else{
                         itemEntity.setVisible(false);
