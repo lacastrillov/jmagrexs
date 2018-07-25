@@ -170,7 +170,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     fieldDefaults: {
                         minWidth: 300,
                         anchor: '100%',
-                        labelAlign: 'right'
+                        labelAlign: 'right',
+                        labelWidth: 150
                     },
                     items: fields,
                     dockedItems: [{
