@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  *
  * @author lacastrillov@gmail.com
@@ -401,6 +400,7 @@ public class Formats {
         if(!value.equals("")){
             switch (type) {
                 case "java.lang.String":
+                case "java.lang.Object":
                     return value;
                 case "int":
                     return Integer.parseInt(value);
