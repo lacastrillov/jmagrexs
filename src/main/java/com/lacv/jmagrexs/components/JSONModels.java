@@ -62,6 +62,7 @@ public class JSONModels {
                     case "java.lang.Character":
                         field.put("type", "string");
                         break;
+                    case "short":
                     case "int":
                     case "java.lang.Integer":
                     case "long":
@@ -125,6 +126,7 @@ public class JSONModels {
                         case "java.lang.Character":
                             field.put("type", "string");
                             break;
+                        case "short":
                         case "int":
                         case "java.lang.Integer":
                         case "long":
@@ -188,6 +190,7 @@ public class JSONModels {
                     case "java.lang.Character":
                         field.put("type", "string");
                         break;
+                    case "short":
                     case "int":
                     case "java.lang.Integer":
                     case "long":

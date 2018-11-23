@@ -222,6 +222,7 @@ public class JSONForms {
                                     formField.put("format", extViewConfig.getTimeFormat());
                                     formField.put("tooltip", "Seleccione la hora");
                                     break;
+                                case "short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":
@@ -326,6 +327,7 @@ public class JSONForms {
                                 objectField.put("format", extViewConfig.getTimeFormat());
                                 objectField.put("tooltip", "Seleccione la hora");
                                 break;
+                            case "short":
                             case "int":
                             case "java.lang.Integer":
                             case "long":

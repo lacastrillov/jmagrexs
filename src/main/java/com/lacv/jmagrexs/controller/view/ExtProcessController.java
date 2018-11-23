@@ -330,6 +330,7 @@ public abstract class ExtProcessController extends ExtController {
                                     editor.put("xtype", "timefield");
                                     break;
                                 }
+                                case "short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":

@@ -396,6 +396,7 @@ public abstract class ExtEntityExplorerController extends ExtController {
                                     formField.put("format", extViewConfig.getTimeFormat());
                                     formField.put("tooltip", "Seleccione la hora");
                                     break;
+                                case "short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":
@@ -530,6 +531,7 @@ public abstract class ExtEntityExplorerController extends ExtController {
                                     editor.put("format", extViewConfig.getTimeFormat());
                                     break;
                                 }
+                                case "short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":

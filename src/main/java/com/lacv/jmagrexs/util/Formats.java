@@ -402,6 +402,8 @@ public class Formats {
                 case "java.lang.String":
                 case "java.lang.Object":
                     return value;
+                case "short":
+                    return Short.parseShort(value);
                 case "int":
                     return Integer.parseInt(value);
                 case "java.lang.Integer":
@@ -466,6 +468,8 @@ public class Formats {
             case "char":
             case "java.lang.Character":
                 return "CHAR";
+            case "short":
+                return "SMALLINT";
             case "int":
             case "java.lang.Integer":
                 return "INT";
