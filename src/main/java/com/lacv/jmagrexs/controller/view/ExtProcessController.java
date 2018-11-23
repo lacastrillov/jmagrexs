@@ -331,6 +331,7 @@ public abstract class ExtProcessController extends ExtController {
                                     break;
                                 }
                                 case "short":
+                                case "java.lang.Short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":

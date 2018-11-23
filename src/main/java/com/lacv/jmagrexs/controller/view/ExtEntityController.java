@@ -509,6 +509,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                     formField.put("tooltip", "Seleccione la hora");
                                     break;
                                 case "short":
+                                case "java.lang.Short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":
@@ -654,6 +655,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                     break;
                                 }
                                 case "short":
+                                case "java.lang.Short":
                                 case "int":
                                 case "java.lang.Integer":
                                 case "long":
