@@ -420,8 +420,8 @@ public abstract class ExtReportController extends ExtController {
                         formField.put("xtype", "timefield");
                         formField.put("format", extViewConfig.getTimeFormat());
                         formField.put("tooltip", "Seleccione la hora");
-                    }else if(type.equals("int") || type.equals("java.lang.Integer") || type.equals("java.lang.Long") || type.equals("java.math.BigInteger") ||
-                            type.equals("double") || type.equals("java.lang.Double") || type.equals("float") || type.equals("java.lang.Float")){
+                    }else if(type.equals("short") || type.equals("java.lang.Short") || type.equals("int") || type.equals("java.lang.Integer") || type.equals("java.lang.Long") ||
+                            type.equals("java.math.BigInteger") || type.equals("double") || type.equals("java.lang.Double") || type.equals("float") || type.equals("java.lang.Float")){
                         formField.put("xtype", "numberfield");
                     }else if(type.equals("boolean") || type.equals("java.lang.Boolean")){
                         formField.put("xtype", "checkbox");
