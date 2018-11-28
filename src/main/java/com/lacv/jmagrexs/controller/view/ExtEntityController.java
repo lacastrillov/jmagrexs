@@ -24,6 +24,7 @@ import com.lacv.jmagrexs.enums.PageType;
 import com.lacv.jmagrexs.util.Formats;
 import com.google.gson.Gson;
 import java.util.LinkedHashMap;
+import javax.persistence.Embeddable;
 import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -268,7 +269,7 @@ public abstract class ExtEntityController extends ExtReportController {
             String type = propertyDescriptor.getPropertyType().getName();
             String simpleType= StringUtils.uncapitalize(propertyDescriptor.getPropertyType().getSimpleName());
             
-            if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
+            if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false && propertyDescriptor.getPropertyType().getAnnotation(Embeddable.class)==null){
                 //String fieldName= propertyDescriptor.getName();
                 if(!Formats.TYPES_LIST.contains(type) && !associatedEntityRef.contains(simpleType)){
                     associatedEntityRef.add(simpleType);

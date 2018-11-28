@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.Embeddable;
 import org.springframework.util.StringUtils;
 
 /**
@@ -59,6 +60,9 @@ public class DtoGenerator extends ClassGenerator {
                         } catch (NoSuchFieldException | SecurityException ex) {
                             Logger.getLogger(DtoGenerator.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                    }else if(propertyDescriptor.getPropertyType().getAnnotation(Embeddable.class)!=null){
+                        simpleType= "String";
+                        simpleTypeSet= "String";
                     }else if(!Formats.TYPES_LIST.contains(type)){
                         simpleType= simpleType+"Dto";
                         simpleTypeSet= simpleTypeSet+"Dto";
