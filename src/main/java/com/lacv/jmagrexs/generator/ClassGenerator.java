@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EmbeddedId;
 import javax.persistence.GeneratedValue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -75,9 +76,9 @@ public class ClassGenerator {
         }
     }
 
-    protected HashSet<String> getNotNullFields(Class dtoClass) {
+    protected HashSet<String> getNotNullFields(Class entityClass) {
         HashSet<String> fieldsNN = new HashSet<>();
-        List<Field> fieldsNotNull = EntityReflection.getEntityAnnotatedFields(dtoClass, NotNull.class);
+        List<Field> fieldsNotNull = EntityReflection.getEntityAnnotatedFields(entityClass, NotNull.class);
         for (Field f : fieldsNotNull) {
             fieldsNN.add(f.getName());
         }
@@ -85,20 +86,24 @@ public class ClassGenerator {
         return fieldsNN;
     }
     
-    protected HashSet<String> getReadOnlyFields(Class dtoClass) {
+    protected HashSet<String> getReadOnlyFields(Class entityClass) {
         HashSet<String> fieldsRO = new HashSet<>();
-        List<Field> fieldsReadOnly = EntityReflection.getEntityAnnotatedFields(dtoClass, GeneratedValue.class);
+        List<Field> fieldsReadOnly = EntityReflection.getEntityAnnotatedFields(entityClass, GeneratedValue.class);
         for (Field f : fieldsReadOnly) {
+            fieldsRO.add(f.getName());
+        }
+        List<Field> fieldsEmbeddedId = EntityReflection.getEntityAnnotatedFields(entityClass, EmbeddedId.class);
+        for (Field f : fieldsEmbeddedId) {
             fieldsRO.add(f.getName());
         }
 
         return fieldsRO;
     }
 
-    protected HashMap<String, Integer[]> getSizeColumnMap(Class dtoClass) {
+    protected HashMap<String, Integer[]> getSizeColumnMap(Class entityClass) {
         HashMap<String, Integer[]> map = new HashMap<>();
 
-        List<Field> fieldsSize = EntityReflection.getEntityAnnotatedFields(dtoClass, Size.class);
+        List<Field> fieldsSize = EntityReflection.getEntityAnnotatedFields(entityClass, Size.class);
         for (Field f : fieldsSize) {
             Size annotation = f.getAnnotation(Size.class);
             Integer[] size = {annotation.min(), annotation.max()};

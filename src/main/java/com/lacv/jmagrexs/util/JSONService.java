@@ -28,17 +28,38 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class JSONService {
     
+    private static Gson gson;
+    
+    /**
+     * 
+     * @return 
+     */
+    public static Gson getGson(){
+        if(gson==null){
+            GsonBuilder gsonB = new GsonBuilder();
+            gsonB.setDateFormat(getExtViewConfig().getDatetimeFormatJava());
+            gson = gsonB.create();
+        }
+        return gson;
+    }
+    
     /**
      * 
      * @param obj
      * @return 
      */
     public static String objectToJson(Object obj) {
-        GsonBuilder gsonB = new GsonBuilder();
-        gsonB.setDateFormat(getExtViewConfig().getDatetimeFormatJava());
-        Gson gson = gsonB.create();
-
-        return gson.toJson(obj);
+        return getGson().toJson(obj);
+    }
+    
+    /**
+     * 
+     * @param json
+     * @param objectClass
+     * @return 
+     */
+    public static Object jsonToObject(String json, Class objectClass) {
+        return getGson().fromJson(json, objectClass);
     }
     
     /**

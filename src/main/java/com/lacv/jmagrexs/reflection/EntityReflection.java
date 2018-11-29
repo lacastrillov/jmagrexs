@@ -5,6 +5,7 @@ import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.HideView;
 import com.lacv.jmagrexs.util.Formats;
+import com.lacv.jmagrexs.util.Util;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -239,6 +241,10 @@ public final class EntityReflection {
                         if(propertyDescriptor.getName().equals("id") && value.equals("0")){
                             targetWrapper.setPropertyValue(propertyDescriptor.getName(), null);
                         }
+                    } else if(typeWrapper.getAnnotation(Embeddable.class)!=null){
+                        Object embeddableId= getObjectForClass(typeWrapper);
+                        updateEntity(jsonObject, embeddableId);
+                        targetWrapper.setPropertyValue(propertyDescriptor.getName(), embeddableId);
                     } else if(value.equals("0") || value.equals("")) {
                         targetWrapper.setPropertyValue(propertyDescriptor.getName(), null);
                     } else {
@@ -487,8 +493,11 @@ public final class EntityReflection {
     public static Object getParsedFieldValue(Class entityClass, String fieldName, String value) throws ClassNotFoundException{
         PropertyDescriptor[] propertiesParam = getPropertyDescriptors(entityClass);
         Class typeParam = EntityReflection.getPropertyType(propertiesParam, fieldName);
-        
-        return Formats.castParameter(typeParam.getName(), value);
+        if(typeParam.getAnnotation(Embeddable.class)!=null){
+            return Util.decodeObject(value, typeParam);
+        }else{
+            return Formats.castParameter(typeParam.getName(), value);
+        }
     }
 
     /**

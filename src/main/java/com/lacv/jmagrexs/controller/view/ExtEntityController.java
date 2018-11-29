@@ -305,6 +305,9 @@ public abstract class ExtEntityController extends ExtReportController {
         }
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
+            if(propertyDescriptor.getPropertyType().getAnnotation(Embeddable.class)!=null){
+                type= "java.lang.String";
+            }
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
                 String fieldName= propertyDescriptor.getName();

@@ -8,12 +8,14 @@ package com.lacv.jmagrexs.util;
 import com.lacv.jmagrexs.dto.OperationCallback;
 import com.lacv.jmagrexs.dto.ResultListCallback;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -134,6 +136,31 @@ public class Util {
         try {
             return data.getBytes("UTF-8");
         } catch (UnsupportedEncodingException ex) {
+            return null;
+        }
+    }
+    
+    /**
+     * 
+     * @param object
+     * @return 
+     */
+    public static String encodeObject(Object object){
+        String json= JSONService.objectToJson(object);
+        return Base64.encodeBase64String(getStringBytes(json));
+    }
+    
+    /**
+     * 
+     * @param code
+     * @param objectClass
+     * @return 
+     */
+    public static Object decodeObject(String code, Class objectClass){
+        try{
+            String json= new String(Base64.decodeBase64(code), StandardCharsets.UTF_8);
+            return JSONService.jsonToObject(json, objectClass);
+        }catch(Exception e){
             return null;
         }
     }

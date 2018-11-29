@@ -45,14 +45,11 @@ public class MapperGenerator extends ClassGenerator {
                     String fieldEntity= StringUtils.capitalize(fieldName);
                     if(propertyDescriptor.getPropertyType().getAnnotation(Embeddable.class)!=null){
                         embeddableId= true;
-                        mappers+=""+
-                            "    \n" +
-                            "    Gson gson= new Gson();\n";
                         
                         settersED+=
-                            "            dto.set"+fieldEntity+"(gson.toJson(entity.get"+fieldEntity+"()));\n";
+                            "            dto.set"+fieldEntity+"(Util.encodeObject(entity.get"+fieldEntity+"()));\n";
                         settersDE+=
-                            "            entity.set"+fieldEntity+"(gson.fromJson(dto.get"+fieldEntity+"(),"+type+".class));\n";
+                            "            entity.set"+fieldEntity+"(Util.decodeObject(dto.get"+fieldEntity+"(),"+type+".class));\n";
                     }else if(!Formats.TYPES_LIST.contains(type)){
                         autowiredUp= true;
                         mappers+=""+
@@ -89,7 +86,7 @@ public class MapperGenerator extends ClassGenerator {
                     "import java.util.List;\n" +
                     "import org.springframework.stereotype.Component;\n" +
                     ((autowiredUp)?"import org.springframework.beans.factory.annotation.Autowired;\n":"") +
-                    ((embeddableId)?"import com.google.gson.Gson;\n":"") +
+                    ((embeddableId)?"import com.lacv.jmagrexs.util.Util;\n":"") +
                     "\n" +
                     "/**\n" +
                     " *\n" +
