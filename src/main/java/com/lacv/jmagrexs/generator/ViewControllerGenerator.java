@@ -13,10 +13,13 @@ import com.lacv.jmagrexs.domain.BaseEntity;
  */
 public class ViewControllerGenerator extends ClassGenerator {
     
+    private boolean security;
+    
     public ViewControllerGenerator(Class originClass, String groupId) {
         super(originClass, groupId);
         packages.add("controllers");
         packages.add("view");
+        security=true;
     }
     
     @Override
@@ -40,7 +43,7 @@ public class ViewControllerGenerator extends ClassGenerator {
                     "import com.lacv.jmagrexs.controller.view.ExtEntityController;\n" +
                     "import com.lacv.jmagrexs.dto.MenuItem;\n" +
                     "import com.lacv.jmagrexs.dto.config.EntityConfig;\n" +
-                    "import com.lacv.jmagrexs.modules.security.services.bussiness.SecurityService;\n" +
+                    ((!security)?"//":"")+"import com.lacv.jmagrexs.modules.security.services.bussiness.SecurityService;\n" +
                     "import java.util.List;\n" +
                     "import javax.annotation.PostConstruct;\n" +
                     "import org.springframework.beans.factory.annotation.Autowired;\n" +
@@ -61,8 +64,8 @@ public class ViewControllerGenerator extends ClassGenerator {
                     "    @Autowired\n" +
                     "    "+entityName+"Mapper "+entityVar+"Mapper;\n" +
                     "    \n" +
-                    "    @Autowired\n" +
-                    "    SecurityService securityService;\n" +
+                    "    "+((!security)?"//":"")+"@Autowired\n" +
+                    "    "+((!security)?"//":"")+"SecurityService securityService;\n" +
                     "    \n" +
                     "    \n" +
                     "    @PostConstruct\n" +
@@ -83,7 +86,7 @@ public class ViewControllerGenerator extends ClassGenerator {
                     "    \n" +
                     "    @Override\n" +
                     "    public List<MenuItem> configureVisibilityMenu(List<MenuItem> menuData){\n" +
-                    "        return securityService.configureVisibilityMenu(menuData);\n" +
+                    "        "+((!security)?"return menuData;//":"")+"return securityService.configureVisibilityMenu(menuData);"+"\n" +
                     "    }\n" +
                     "    \n" +
                     "}" +
@@ -92,5 +95,13 @@ public class ViewControllerGenerator extends ClassGenerator {
             createJavaFile(entityName+"ViewController.java", code);
         }
     }
+
+    /**
+     * @param security the security to set
+     */
+    public void setSecurity(boolean security) {
+        this.security = security;
+    }
+    
     
 }
