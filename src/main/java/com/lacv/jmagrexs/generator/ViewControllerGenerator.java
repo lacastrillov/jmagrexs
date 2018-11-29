@@ -27,6 +27,7 @@ public class ViewControllerGenerator extends ClassGenerator {
         if(BaseEntity.class.isAssignableFrom(entityClass)){
             String entityName= entityClass.getSimpleName();
             String entityVar= Character.toLowerCase(entityName.charAt(0)) + entityName.substring(1);
+            String entityTitle= splitClassName(entityName);
 
             String code= ""+
                     "/*\n" +
@@ -71,15 +72,15 @@ public class ViewControllerGenerator extends ClassGenerator {
                     "    @PostConstruct\n" +
                     "    public void init(){\n" +
                     "        EntityConfig view= new EntityConfig(\""+entityVar+"\", "+entityVar+"Service, "+entityName+"Dto.class);\n" +
-                    "        view.setSingularEntityTitle(\""+entityName+"\");\n" +
-                    "        view.setPluralEntityTitle(\""+entityName+"s\");\n" +
+                    "        view.setSingularEntityTitle(\""+entityTitle+"\");\n" +
+                    "        view.setPluralEntityTitle(\""+entityTitle+"s\");\n" +
                     "        view.setMultipartFormData(false);\n" +
                     "        view.setVisibleSeeAllButton(false);\n" +
                     "        view.setDefaultOrder(\"id\", \"DESC\");\n" +
                     "        super.addControlMapping(view);\n" +
                     "        \n" +
                     "        MenuItem menuParent= new MenuItem(\"Entidades\", 1);\n" +
-                    "        MenuItem menuItem= new MenuItem(\""+entityVar+"\", \"Gestionar "+entityName+"s\", 1);\n" +
+                    "        MenuItem menuItem= new MenuItem(\""+entityVar+"\", \"Gestionar "+entityTitle+"s\", 1);\n" +
                     "        menuParent.addSubMenu(menuItem);\n" +
                     "        menuComponent.addItemMenu(menuParent);\n" +
                     "    }\n" +

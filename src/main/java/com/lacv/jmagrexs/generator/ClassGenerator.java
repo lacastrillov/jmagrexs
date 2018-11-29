@@ -146,5 +146,26 @@ public class ClassGenerator {
         }
         return classes;
     }
+    
+    public static String splitClassName(String className){
+        String resultName="";
+        boolean blockUP= false;
+        for(int i=0; i<className.length(); i++){
+            char c0= (i>0)?className.charAt(i-1):'|';
+            char c1= className.charAt(i);
+            char c2= (i<className.length()-1)?className.charAt(i+1):'|';
+            
+            if(Character.isUpperCase(c1)){
+                if((c0!='|' && Character.isLowerCase(c0) && !blockUP) || (c2!='|' &&  Character.isLowerCase(c2))){
+                    resultName+=" ";
+                }
+                blockUP= true;
+            }else{
+                blockUP= false;
+            }
+            resultName+=c1;
+        }
+        return resultName.trim();
+    }
 
 }

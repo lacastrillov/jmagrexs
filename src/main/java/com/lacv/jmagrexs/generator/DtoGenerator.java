@@ -50,6 +50,7 @@ public class DtoGenerator extends ClassGenerator {
                     String simpleTypeSet= simpleType;
                     String fieldName= propertyDescriptor.getName();
                     String fieldEntity= StringUtils.capitalize(fieldName);
+                    String fieldTitle= splitClassName(fieldEntity);
                     String simpleListArgumentType= "";
                     if(type.equals("java.util.List")){
                         try {
@@ -90,7 +91,7 @@ public class DtoGenerator extends ClassGenerator {
                             ((fieldsRO.contains(fieldName))?"    @ReadOnly\n":"") +
                             sizeAnnotation +
                             "    @ColumnWidth("+columnWidth+")\n" +
-                            "    @TextField(\""+fieldEntity+"\")\n";
+                            "    @TextField(\""+fieldTitle+"\")\n";
                         index++;
                     }
 
