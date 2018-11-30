@@ -38,6 +38,7 @@ public class DtoGenerator extends ClassGenerator {
             String entityName= entityClass.getSimpleName();
 
             PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
+            orderPropertyDescriptor(propertyDescriptors);
             HashSet<String> fieldsNN= getNotNullFields(entityClass);
             HashSet<String> fieldsRO= getReadOnlyFields(entityClass);
             HashMap<String, Integer[]> sizeColumnMap= getSizeColumnMap(entityClass);

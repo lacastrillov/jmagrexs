@@ -7,6 +7,7 @@ package com.lacv.jmagrexs.generator;
 
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.FileService;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -73,6 +74,24 @@ public class ClassGenerator {
             System.out.println(pathFile.replace(classPath, "")+" generated...");
         } catch (IOException ex) {
             Logger.getLogger(DtoGenerator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    protected void orderPropertyDescriptor(PropertyDescriptor[] propertyDescriptors){
+        String[] defaultOrder= {"id", "nombre", "name", "razonsocial", "titulo", "title", "alias"};
+        PropertyDescriptor aux;
+        for(int i=0; i<defaultOrder.length; i++){
+            String fieldName= defaultOrder[i];
+            for(int j=0; j<propertyDescriptors.length; j++){
+                if(i!=j && fieldName.equals(propertyDescriptors[j].getName())){
+                    if(fieldName.equals(propertyDescriptors[j].getName())){
+                        aux= propertyDescriptors[i];
+                        propertyDescriptors[i]= propertyDescriptors[j];
+                        propertyDescriptors[j]= aux;
+                        break;
+                    }
+                }
+            }
         }
     }
 
