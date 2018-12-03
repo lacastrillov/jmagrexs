@@ -9,7 +9,7 @@ function EntityExtInit(){
 
         Ext.Loader.setPath('Ext.ux', ExtJSLib+'/examples/ux');
         
-        Instance.setAjaxTimeout(120000);
+        Instance.setAjaxTimeout(240000);
 
         Ext.require([
             'Ext.tip.QuickTipManager',
