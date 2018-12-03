@@ -80,14 +80,15 @@ public class ClassGenerator {
     protected void orderPropertyDescriptor(PropertyDescriptor[] propertyDescriptors){
         String[] defaultOrder= {"id", "nombre", "name", "razonsocial", "titulo", "title", "alias"};
         PropertyDescriptor aux;
-        for(int i=0; i<defaultOrder.length; i++){
-            String fieldName= defaultOrder[i];
+        int i=0;
+        for(String fieldName: defaultOrder){
             for(int j=0; j<propertyDescriptors.length; j++){
                 if(i!=j && fieldName.equals(propertyDescriptors[j].getName())){
                     if(fieldName.equals(propertyDescriptors[j].getName())){
                         aux= propertyDescriptors[i];
                         propertyDescriptors[i]= propertyDescriptors[j];
                         propertyDescriptors[j]= aux;
+                        i++;
                         break;
                     }
                 }
