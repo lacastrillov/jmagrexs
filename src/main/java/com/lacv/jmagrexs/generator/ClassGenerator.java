@@ -167,24 +167,24 @@ public class ClassGenerator {
     }
     
     public static String splitClassName(String className){
-        String resultName="";
+        StringBuilder resultName=new StringBuilder(2 * className.length());
         boolean blockUP= false;
         for(int i=0; i<className.length(); i++){
             char c0= (i>0)?className.charAt(i-1):'|';
             char c1= className.charAt(i);
             char c2= (i<className.length()-1)?className.charAt(i+1):'|';
             
-            if(Character.isUpperCase(c1)){
-                if((c0!='|' && Character.isLowerCase(c0) && !blockUP) || (c2!='|' &&  Character.isLowerCase(c2))){
-                    resultName+=" ";
+            if(!Character.isLowerCase(c1)){
+                if((c0!='|' && Character.isLowerCase(c0) && !blockUP) || (i!=0 && c2!='|' &&  Character.isLowerCase(c2))){
+                    resultName.append(' ');
                 }
                 blockUP= true;
             }else{
                 blockUP= false;
             }
-            resultName+=c1;
+            resultName.append(c1);
         }
-        return resultName.trim();
+        return resultName.toString();
     }
 
 }
