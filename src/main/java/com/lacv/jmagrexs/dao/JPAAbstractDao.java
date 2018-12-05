@@ -378,10 +378,10 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
             i = 0;
             for (Map.Entry<String, String> entry : parameters.getLikeParameters().entrySet()) {
                 String parameter = entry.getKey();
-                String value = entry.getValue();
+                String value = entry.getValue().toUpperCase();
 
                 mapParameters.put(parameter + "_l" + i, "%" + value + "%");
-                sql.append("o.").append(parameter).append(" like :").append(parameter).append("_l").append(i);
+                sql.append("UPPER(o.").append(parameter).append(") like :").append(parameter).append("_l").append(i);
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
