@@ -69,17 +69,6 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             realGridValue: null,
             listeners: {
                 change: function(record){
-                    /*console.log("CHANGE>>"+JSON.stringify(record.getValue()));
-                    console.log("component>>"+component);
-                    if(typeof record.getValue() === "object"){
-                       console.log("VALID>>"+JSON.stringify(record.getValue()));
-                       Instance.combobox["grid"].realGridValue=record.getValue();
-                    }else if(util.isNumeric(record.getValue())){
-                        console.log(record.getValue());
-                       Instance.combobox["grid"].realGridValue=record.getValue();
-                    }else{
-                        console.log("ERROR");
-                    }*/
                     if(component==='filter'){
                         if(record.getValue()!==0){
                             parentExtController.filter.eq[fieldName]= record.getValue();
@@ -113,24 +102,39 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                     scope: this
                 },
                 afterrender: function( ){
-                    if(component==='filter'){
-                        Instance.store.addListener('load', function(){
+                    Instance.store.addListener('load', function(){
+                        if(component==='filter'){
                             var rec = { id: 0, ${labelField}: '-' };
                             Instance.store.insert(0,rec);
-                        });
-                    }
+                        }
+                        <c:if test="${viewConfig.labelPlusId}">
+                        if(Instance.combobox[component].displayField!==Instance.combobox[component].valueField){
+                            Instance.store.each(function(record,id){
+                                if(record.data['id']!==0 && record.data['${labelField}'].indexOf(" - ")===-1){
+                                    record.data['${labelField}']= record.data['id']+ " - " + record.data['${labelField}'];
+                                }
+                            },this);
+                            Instance.combobox[component].bindStore(Instance.store);
+                        }
+                        </c:if>
+                    });
                 }
-            }/*,
-            getDisplayValue: function() {
-                var me = this,
-                value = me.value,
-                record = null;
-                if(value) {
-                    record = me.getStore().findRecord(me.valueField, value);
+            },
+            /*getDisplayValue: function() {
+                var me = this;
+                console.log(me);
+                var record = null;
+                var value="";
+                if(me.value) {
+                    record = me.getStore().findRecord(me.valueField, me.value);
                 }
                 if(record) {
-                    console.log(record.get(me.displayField));
-                    return util.htmlEntitiesDecode(record.get(me.displayField));
+                    if(me.displayField!==me.valueField){
+                        value= me.value + " - ";
+                    }
+                    value+= record.get(me.displayField);
+                }else{
+                    value= me.value;
                 }
                 return value;
             }*/
@@ -199,22 +203,29 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
         Instance.comboboxRender[component]= function (value, p, record){
             var displayField= Instance.combobox[component].displayField;
             var valueField= Instance.combobox[component].valueField;
+            var result="";
 
             if (typeof value === "object" && Object.getOwnPropertyNames(value).length === 0){
-                return "";
-            }else if(typeof(value[displayField]) !== 'undefined'){
-                return value[displayField];
+                result= "";
+            }else if(value[displayField] !== undefined){
+                <c:if test="${viewConfig.labelPlusId}">
+                if(displayField!==valueField){
+                    result= value[valueField] + " - ";
+                }
+                </c:if>
+                result+= value[displayField];
             }else{
-                if(typeof(value[valueField]) !== 'undefined'){
+                if(value[valueField] !== undefined){
                     value= value[valueField];
                 }
                 var record = Instance.combobox[component].findRecord(valueField, value);
                 if(record){
-                    return record.get(Instance.combobox[component].displayField);
+                    result= record.get(Instance.combobox[component].displayField);
                 }else{
-                    return value;
+                    result= value;
                 }
             }
+            return result;
         };
         
         return Instance.comboboxRender[component];

@@ -87,6 +87,8 @@ public class EntityConfig {
     
     private boolean preloadedForm;
     
+    private boolean labelPlusId;
+    
     private String entityRefNNMulticheckChild;
     
     private int gridHeightChildView;
@@ -140,6 +142,7 @@ public class EntityConfig {
         this.activeNNMulticheckChild= false;
         this.restSession= false;
         this.preloadedForm= false;
+        this.labelPlusId= false;
         this.entityRefNNMulticheckChild= null;
         this.gridHeightChildView= 0;
         this.defaultOrderBy= "id";
@@ -589,6 +592,22 @@ public class EntityConfig {
             visibleFilters= false;
             visibleGrid= false;
         }
+    }
+    
+    /**
+     * 
+     * @return labelPlusId
+     */
+    public boolean isLabelPlusId() {
+        return labelPlusId;
+    }
+
+    /**
+     * 
+     * @param labelPlusId 
+     */
+    public void setLabelPlusId(boolean labelPlusId) {
+        this.labelPlusId = labelPlusId;
     }
     
     /**
