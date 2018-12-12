@@ -612,6 +612,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 for(int i=1; i<data.length; i++){
                                     dataArray.put(data[i]);
                                 }
+                                gridColumn.put("renderer", "#Instance.commonExtView.getSimpleComboboxRender('grid','"+fieldName+"')#");
                                 if(viewConfig.isEditableGrid() && !readOnly){
                                     gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                                 }

@@ -11,6 +11,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(model!==null){
             Instance.modelNameCombobox= "ComboboxModelIn"+model;
             Instance.combobox={};
+            Instance.comboboxRender={};
             Instance.multiselect={};
             Instance.radiogroup={};
             Instance.errorGeneral= "Error de servidor";
@@ -127,6 +128,36 @@ function CommonExtView(parentExtController, parentExtView, model){
         };
         
         return Instance.multiselect[fieldName];
+    };
+    
+    Instance.getSimpleComboboxRender= function(component, fieldName){
+        Instance.comboboxRender[component+'_'+fieldName]= function (value, p, record){
+            var displayField= Instance.combobox[component+'_'+fieldName].displayField;
+            var valueField= Instance.combobox[component+'_'+fieldName].valueField;
+            var result="";
+            console.log(value);
+            if (typeof value === "object" && Object.getOwnPropertyNames(value).length === 0){
+                result= "";
+            }else if(value[displayField] !== undefined){
+                result+= value[displayField];
+            }else{
+                if(value[valueField] !== undefined){
+                    value= value[valueField];
+                }
+                result= value;
+                var items= Instance.combobox[component+'_'+fieldName].store.data.items;
+                console.log(items);
+                items.forEach(function(item){
+                    if(item.data[valueField]===value){
+                        result= item.data[displayField];
+                    }
+                });
+            }
+            console.log(result);
+            return result;
+        };
+        
+        return Instance.comboboxRender[component+'_'+fieldName];
     };
     
     Instance.getRadioGroup= function(fieldName, fieldTitle, dataArray){
