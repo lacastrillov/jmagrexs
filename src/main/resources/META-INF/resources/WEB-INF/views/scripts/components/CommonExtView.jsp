@@ -51,6 +51,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             displayField: 'text',
             valueField: 'value',
             queryMode: 'local',
+            dataStore: data,
             listeners: {
                 change: function(record){
                     if(component==='filter'){
@@ -135,25 +136,19 @@ function CommonExtView(parentExtController, parentExtView, model){
             var displayField= Instance.combobox[component+'_'+fieldName].displayField;
             var valueField= Instance.combobox[component+'_'+fieldName].valueField;
             var result="";
-            console.log(value);
-            if (typeof value === "object" && Object.getOwnPropertyNames(value).length === 0){
-                result= "";
-            }else if(value[displayField] !== undefined){
+            if(value[displayField] !== undefined){
                 result+= value[displayField];
             }else{
                 if(value[valueField] !== undefined){
                     value= value[valueField];
                 }
                 result= value;
-                var items= Instance.combobox[component+'_'+fieldName].store.data.items;
-                console.log(items);
-                items.forEach(function(item){
-                    if(item.data[valueField]===value){
-                        result= item.data[displayField];
+                Instance.combobox[component+'_'+fieldName].dataStore.forEach(function(item){
+                    if(item[valueField]===value){
+                        result= item[displayField];
                     }
                 });
             }
-            console.log(result);
             return result;
         };
         
