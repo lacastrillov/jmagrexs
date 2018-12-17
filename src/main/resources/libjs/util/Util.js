@@ -288,6 +288,16 @@ function Util() {
         
         return form;
     };
+    
+    this.eventFire= function(el, etype) {
+        if (el.fireEvent) {
+            el.fireEvent('on' + etype);
+        } else {
+            var evObj = document.createEvent('Events');
+            evObj.initEvent(etype, true, false);
+            el.dispatchEvent(evObj);
+        }
+    };
 
     this.getCookie = function (name) {
         var nameEQ = name + "=";

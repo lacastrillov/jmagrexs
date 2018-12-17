@@ -66,7 +66,11 @@ function ${entityName}ExtStore(){
             listeners: {
                 load: function() {
                     if(this.gridComponent!==null){
-                        this.gridComponent.getSelectionModel().deselectAll();
+                        try{
+                            this.gridComponent.getSelectionModel().deselectAll();
+                        }catch(e){
+                            console.error("ERROR IN this.gridComponent.getSelectionModel().deselectAll();");
+                        }
                     }
                 },
                 write: function(proxy, operation){

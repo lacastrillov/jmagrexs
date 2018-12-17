@@ -137,6 +137,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             var itemTab= null;
             if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
                 itemTab= {
+                    id: childExtController.entityRef+'SubEntity',
                     xtype:'tabpanel',
                     title: childExtController.entityExtView.pluralEntityTitle,
                     plain:true,
@@ -889,7 +890,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             if(Instance.typeView==="Parent"){
                 return "<a style='font-size: 15px;' href='#?id="+record.data.id+"&tab=1'>"+value+"</a>";
             }else{
-                return value;
+                return "<a style='font-size: 15px;' href='javascript:Ext.getCmp(\"${entityRef}TabsContainer\").clickInTab(\"Formulario\")'>"+value+"</a>";
             }
         }else{
             return value;
@@ -981,6 +982,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.propertyGrid= getPropertyGrid();
 
         Instance.tabsContainer= Ext.widget('tabpanel', {
+            id: "${entityRef}TabsContainer",
             region: 'center',
             activeTab: 0,
             style: 'background-color:#dfe8f6; margin:0px',
@@ -1004,6 +1006,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         mvcExt.navigate(url);
                     }
                 }
+            },
+            clickInTab: function(labelTab){
+                $("#${entityRef}SubEntity").find("span.x-tab-inner").each(function() {
+                    if(this.innerText===labelTab){
+                        util.eventFire(document.getElementById(this.id), "click");
+                    }
+                });
             }
         });
         <c:if test="${viewConfig.preloadedForm || onlyForm}">
