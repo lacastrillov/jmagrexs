@@ -478,16 +478,16 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
             }
             i = 0;
             for (Map.Entry<String, String[]> entry : parameters.getQueryParameters().entrySet()) {
-                String query = entry.getKey();
+                String query = entry.getKey().toUpperCase();
                 String[] params= entry.getValue();
 
                 mapParameters.put("query_"+i, "%" + query + "%");
                 
-                sql.append("concat(");
+                sql.append("upper(concat(");
                 for(String parameter: params){
                     sql.append("coalesce(concat(o.").append(parameter).append(",''),''),' ',");
                 }
-                sql.append("'') like :query_").append(i);
+                sql.append("'')) like :query_").append(i);
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
