@@ -201,8 +201,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
         }
         
         parameters.setTotalResults(countByParameters(parameters));
-        
-        System.out.println("CONSULTA SQL: "+sql);
+        System.out.println("FIND JPQL: "+sql.toString());
 
         return q.getResultList();
     }
@@ -229,7 +228,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
         if (firstResult != null) {
             q.setFirstResult(firstResult);
         }
-        System.out.println("JPQL :: "+jpql);
+        System.out.println("NAME_QUERY JPQL :: "+jpql);
 
         return q.getResultList();
     }
@@ -250,6 +249,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
         for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
             q.setParameter(entry.getKey(), entry.getValue());
         }
+        System.out.println("COUNT JPQL :: "+sql.toString());
         
         return (Long) q.getSingleResult();
     }
@@ -272,6 +272,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
         for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
             q.setParameter(entry.getKey(), entry.getValue());
         }
+        System.out.println("UPDATE JPQL: "+sql.toString());
 
         return q.executeUpdate();
     }
@@ -292,6 +293,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
         for (Map.Entry<String, Object> entry : mapParameters.entrySet()){
             q.setParameter(entry.getKey(), entry.getValue());
         }
+        System.out.println("REMOVE JPQL: "+sql.toString());
 
         return q.executeUpdate();
     }
@@ -454,8 +456,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 mapParameters.put(parameter + "_b0", range[0]);
                 mapParameters.put(parameter + "_b1", range[1]);
 
-                sql.append("o.").append(parameter).append(" between ").append(":").append(parameter).append("_b0").append(" and ").append(":")
-                        .append(parameter).append("_b1");
+                sql.append("o.").append(parameter).append(" between :").append(parameter).append("_b0 and :").append(parameter).append("_b1");
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
@@ -484,9 +485,9 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
                 
                 sql.append("concat(");
                 for(String parameter: params){
-                    sql.append("coalesce(").append("o.").append(parameter).append(",'')").append(",' ',");
+                    sql.append("coalesce(concat(o.").append(parameter).append(",''),''),' ',");
                 }
-                sql.append("'')").append(" like :query_").append(i);
+                sql.append("'') like :query_").append(i);
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
