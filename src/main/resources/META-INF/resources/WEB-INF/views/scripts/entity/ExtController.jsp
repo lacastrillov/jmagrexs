@@ -147,7 +147,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     Instance.findAssociatedEntities= function(data){
         <c:forEach var="associatedER" items="${interfacesEntityRef}">
         if("${associatedER}" in data && "id" in data["${associatedER}"]){
-            Instance.entityExtView.${associatedER}ExtInterfaces.reloadPageStore(1);
+            //Instance.entityExtView.${associatedER}ExtInterfaces.reloadPageStore(1);
         }
         </c:forEach>
     };

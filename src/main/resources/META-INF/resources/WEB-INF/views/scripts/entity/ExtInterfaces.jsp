@@ -120,16 +120,15 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                     });
                 }
             },
-            /*getDisplayValue: function() {
+            getDisplayValue: function() {
                 var me = this;
-                console.log(me);
                 var record = null;
                 var value="";
                 if(me.value) {
                     record = me.getStore().findRecord(me.valueField, me.value);
                 }
                 if(record) {
-                    if(me.displayField!==me.valueField){
+                    if(${viewConfig.labelPlusId} && me.displayField!==me.valueField && record.get(me.displayField).indexOf(" - ")===-1){
                         value= me.value + " - ";
                     }
                     value+= record.get(me.displayField);
@@ -137,7 +136,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                     value= me.value;
                 }
                 return value;
-            }*/
+            }
         });
         
         if(component!=='grid'){
