@@ -265,7 +265,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     }
                     this.getForm().loadRecord(this.activeRecord);
                     //this.getForm().setValues(this.activeRecord.data);
-                    this.renderReplaceActiveRecord(this.activeRecord);
+                    //this.renderReplaceActiveRecord(this.activeRecord);
                 } else {
                     if(this.down('#save${entityName}')!==null){
                         this.down('#save${entityName}').disable();

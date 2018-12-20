@@ -110,10 +110,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                         var record= Ext.create(Instance.modelName);
                         record.data= data;
                         Instance.entityExtView.formComponent.setActiveRecord(record || null);
-                        Instance.findAssociatedEntities(data);
                     });
-                }else{
-                    Instance.findAssociatedEntities(activeRecord.data);
                 }
                 Instance.loadChildExtControllers(id);
             }else{
@@ -139,17 +136,8 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 var record= Ext.create(Instance.modelName);
                 record.data= data;
                 Instance.setFormData(record);
-                Instance.findAssociatedEntities(data);
             }
         });
-    };
-    
-    Instance.findAssociatedEntities= function(data){
-        <c:forEach var="associatedER" items="${interfacesEntityRef}">
-        if("${associatedER}" in data && "id" in data["${associatedER}"]){
-            //Instance.entityExtView.${associatedER}ExtInterfaces.reloadPageStore(1);
-        }
-        </c:forEach>
     };
     
     Instance.loadNNMulticheckData= function(){

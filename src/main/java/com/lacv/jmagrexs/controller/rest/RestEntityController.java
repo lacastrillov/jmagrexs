@@ -363,6 +363,7 @@ public abstract class RestEntityController {
                     EntityReflection.updateEntity(jsonData, entity);
 
                     service.update(entity);
+                    entity = (BaseEntity) service.loadById(id);
                     dto = mapper.entityToDto(entity);
                     updateRelatedWebEntity(entity, request);
                     resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);

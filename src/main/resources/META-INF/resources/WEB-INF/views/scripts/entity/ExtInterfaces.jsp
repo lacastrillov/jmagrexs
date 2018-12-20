@@ -76,7 +76,6 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                             delete parentExtController.filter.eq[fieldName];
                         }
                     }
-                    
                     this.comboboxDependent.forEach(function(combobox) {
                         var filter= {"eq":{"${entityRef}":record.getValue()}};
                         combobox.store.getProxy().extraParams.filter= JSON.stringify(filter);
@@ -89,15 +88,6 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                             this.combobox[component].store.loadPage(1);
                             this.combobox[component].reloadData= false;
                         }
-                        /*if(component==="grid"){
-                            console.log("RG "+JSON.stringify(this.combobox[component].realGridValue));
-                            if(this.combobox[component].realGridValue!==null){
-                                console.log("IN SET");
-                                this.combobox[component].setValue(this.combobox[component].realGridValue);
-                            }
-                            console.log("CLICK>> "+JSON.stringify(this.combobox[component].getValue()));
-                        }
-                        console.log("end");*/
                     },
                     scope: this
                 },
@@ -122,20 +112,30 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             },
             getDisplayValue: function() {
                 var me = this;
-                var record = null;
                 var value="";
-                if(me.value) {
-                    record = me.getStore().findRecord(me.valueField, me.value);
-                }
-                if(record) {
-                    if(${viewConfig.labelPlusId} && me.displayField!==me.valueField && record.get(me.displayField).indexOf(" - ")===-1){
-                        value= me.value + " - ";
+                if(me.value!==null){
+                    if(typeof me.value === "object"){
+                        value= me.value[me.displayField];
+                        if(${viewConfig.labelPlusId} && me.displayField!==me.valueField){
+                            value= me.value[me.valueField] + " - " + value;
+                        }
+                        me.setValue(me.value[me.valueField]);
+                    }else{
+                        var record = null;
+                        if(me.value) {
+                            record = me.getStore().findRecord(me.valueField, me.value);
+                        }
+                        if(record) {
+                            if(${viewConfig.labelPlusId} && me.displayField!==me.valueField && record.get(me.displayField).indexOf(" - ")===-1){
+                                value= me.value + " - ";
+                            }
+                            value+= record.get(me.displayField);
+                        }else{
+                            value= me.value;
+                        }
                     }
-                    value+= record.get(me.displayField);
-                }else{
-                    value= me.value;
                 }
-                return value;
+                return value;                
             }
         });
         
