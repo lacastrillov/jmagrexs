@@ -100,7 +100,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                         <c:if test="${viewConfig.labelPlusId}">
                         if(Instance.combobox[component].displayField!==Instance.combobox[component].valueField){
                             Instance.store.each(function(record,id){
-                                if(record.data['id']!==0 && record.data['${labelField}'].indexOf(" - ")===-1){
+                                if(record.data['id']!==0 && record.data['${labelField}'].indexOf(record.data['id']+" - ")===-1){
                                     record.data['${labelField}']= record.data['id']+ " - " + record.data['${labelField}'];
                                 }
                             },this);
@@ -126,7 +126,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                             record = me.getStore().findRecord(me.valueField, me.value);
                         }
                         if(record) {
-                            if(${viewConfig.labelPlusId} && me.displayField!==me.valueField && record.get(me.displayField).indexOf(" - ")===-1){
+                            if(${viewConfig.labelPlusId} && me.displayField!==me.valueField && record.get(me.displayField).indexOf(me.value +" - ")===-1){
                                 value= me.value + " - ";
                             }
                             value+= record.get(me.displayField);
