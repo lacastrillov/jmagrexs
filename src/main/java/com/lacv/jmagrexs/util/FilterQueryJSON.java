@@ -24,7 +24,9 @@ public class FilterQueryJSON {
     public static Parameters processFilters(String queryJson, Class<?> entityClass) {
         JSONObject filtersJson;
         if(queryJson.startsWith("(")){
-            filtersJson = new JSONObject(queryJson.replaceAll("\\(", "{").replaceAll("\\)", "}"));
+            queryJson= queryJson.replaceAll("\\(", "{").replaceAll("\\)", "}");
+            queryJson= queryJson.replaceAll("<", "[").replaceAll(">", "]");
+            filtersJson = new JSONObject(queryJson);
         }else{
             filtersJson = new JSONObject(queryJson);
         }
