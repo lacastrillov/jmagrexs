@@ -332,6 +332,7 @@ public abstract class RestEntityController {
             BaseEntity entity = EntityReflection.readEntity(jsonData, entityClass);
 
             service.create(entity);
+            entity = (BaseEntity) service.loadById(entity.getId());
             dto = mapper.entityToDto(entity);
             updateRelatedWebEntity(entity, request);
             resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
