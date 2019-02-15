@@ -42,13 +42,19 @@ public interface EntityService<T> {
      *
      * @param entity the new entity.
      */
-    void createForce(T entity);
+    void createForced(T entity);
     
     /**
      * 
      * @param entity 
      */
     void insert(T entity);
+    
+    /**
+     * 
+     * @param entities 
+     */
+    void massiveInsert(List<T> entities);
 
     /**
      * Guarda los cambios en la entidad.

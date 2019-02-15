@@ -81,12 +81,57 @@ public class JdbcDirectRepository {
                 columnsSql.append(parameter).append(", ");
                 valuesSql.append(":").append(parameter).append(", ");
             }
+            
+            sql.append("INSERT INTO ").append(tableName);
+            sql.append(" (").append(columnsSql.substring(0, columnsSql.length()-2)).append(")");
+            sql.append(" VALUES ( ").append(valuesSql.substring(0, valuesSql.length()-2)).append(" )");
+
+            namedParameterJdbcTemplate.update(sql.toString(), mapParameters);
         }
-        sql.append("INSERT INTO ").append(tableName);
-        sql.append(" (").append(columnsSql.substring(0, columnsSql.length()-2)).append(")");
-        sql.append(" VALUES ( ").append(valuesSql.substring(0, valuesSql.length()-2)).append(" )");
+    }
+    
+    /**
+     *
+     * @param tableName
+     * @param items
+     */
+    public void massiveCreate(String tableName, List<Map<String,Object>> items) {
+        StringBuilder sql = new StringBuilder("");
+        StringBuilder columnsSql = new StringBuilder("");
+        StringBuilder valuesSql = new StringBuilder("");
+        MapSqlParameterSource mapParameters = new MapSqlParameterSource();
+        List<String> columns= new ArrayList<>();
         
-        namedParameterJdbcTemplate.update(sql.toString(), mapParameters);
+        if (items.size()>0) {
+            for (Map.Entry<String, Object> entry : items.get(0).entrySet()){
+                String parameter = entry.getKey();
+                columns.add(parameter);
+                columnsSql.append(parameter).append(", ");
+            }
+            for(int i=0; i<items.size(); i++){
+                valuesSql.append("(");
+                Map<String,Object> data= items.get(i);
+                for (int j=0; j<columns.size(); j++){
+                    String parameter= columns.get(j);
+                    Object value = data.get(parameter);
+                    mapParameters.addValue(parameter+i, value);
+                    valuesSql.append(":").append(parameter).append(i);
+                    if(j<columns.size()-1){
+                        valuesSql.append(", ");
+                    }
+                }
+                valuesSql.append(")");
+                if(i<items.size()-1){
+                    valuesSql.append(", ");
+                }
+            }
+            
+            sql.append("INSERT INTO ").append(tableName);
+            sql.append(" (").append(columnsSql.substring(0, columnsSql.length()-2)).append(")");
+            sql.append(" VALUES ").append(valuesSql);
+
+            namedParameterJdbcTemplate.update(sql.toString(), mapParameters);
+        }
     }
     
     /**

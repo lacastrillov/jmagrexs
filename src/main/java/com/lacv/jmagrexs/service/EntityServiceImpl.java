@@ -59,14 +59,20 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
-    public void createForce(T entity) {
-        this.getGenericDao().createForce(entity);
+    public void createForced(T entity) {
+        this.getGenericDao().createForced(entity);
     }
     
     @Override
     @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     public void insert(T entity){
         this.getGenericDao().insert(entity);
+    }
+    
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    public void massiveInsert(List<T> entities){
+        this.getGenericDao().massiveInsert(entities);
     }
     
     @Override

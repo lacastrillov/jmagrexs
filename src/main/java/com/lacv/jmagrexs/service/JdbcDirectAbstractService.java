@@ -44,6 +44,17 @@ public abstract class JdbcDirectAbstractService implements JdbcDirectService {
     
     /**
      * 
+     * @param tableName 
+     * @param items 
+     */
+    @Override
+    @Transactional()
+    public void massiveCreate(String tableName, List<Map<String, Object>> items) {
+        jdbcDirectRepository.massiveCreate(tableName, items);
+    }
+    
+    /**
+     * 
      * @param tableName
      * @param data
      * @param parameter

@@ -25,6 +25,13 @@ public interface JdbcDirectService {
     
     /**
      * 
+     * @param tableName 
+     * @param items 
+     */
+    void massiveCreate(String tableName, List<Map<String, Object>> items);
+    
+    /**
+     * 
      * @param tableName
      * @param data
      * @param parameter

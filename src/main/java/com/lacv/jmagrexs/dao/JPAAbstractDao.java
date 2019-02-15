@@ -63,7 +63,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      * @param entity
      */
     @Override
-    public void createForce(T entity) {
+    public void createForced(T entity) {
         this.getEntityManager().persist(entity);
         this.getEntityManager().flush();
     }

@@ -5,6 +5,7 @@ import com.lacv.jmagrexs.reflection.EntityReflection;
 import static com.lacv.jmagrexs.reflection.EntityReflection.getEntityAnnotatedFields;
 import com.lacv.jmagrexs.reflection.ReflectionUtils;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.List;
@@ -44,12 +45,21 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     
     private final Class<T> persistentClass;
     
+    private final Table table;
+    
+    private final List<Field> columnFields;
+    
+    private final List<Field> joinColumnFields;
+    
     /**
      *
      */
     public JdbcAbstractRepository() {
         jdbcDirectRepository= new JdbcDirectRepository();
         persistentClass = ReflectionUtils.getParametrizedType(this.getClass());
+        table= (Table) EntityReflection.getClassAnnotation(persistentClass, Table.class);
+        columnFields= getEntityAnnotatedFields(persistentClass, Column.class);
+        joinColumnFields= getEntityAnnotatedFields(persistentClass, JoinColumn.class);
     }
     
     /**
@@ -91,12 +101,8 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
      * @param entity
      */
     public void insert(T entity) {
-        Map<String,Object> data= new HashMap<>();
         BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(entity);
-        
-        Table tan= (Table) EntityReflection.getClassAnnotation(entity.getClass(), Table.class);
-        List<Field> columnFields= getEntityAnnotatedFields(entity.getClass(), Column.class);
-        List<Field> joinColumnFields= getEntityAnnotatedFields(entity.getClass(), JoinColumn.class);
+        Map<String,Object> data= new HashMap<>();
         
         for(Field f: columnFields){
             Column an= f.getAnnotation(Column.class);
@@ -114,7 +120,38 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
             }
         }
         
-        jdbcDirectRepository.create(tan.name(), data);
+        jdbcDirectRepository.create(table.name(), data);
+    }
+    
+    /**
+     *
+     * @param entities
+     */
+    public void massiveInsert(List<T> entities) {
+        if(entities.size()>0){
+            List<Map<String,Object>> items= new ArrayList<>();
+            for(T entity: entities){
+                BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(entity);
+                Map<String,Object> data= new HashMap<>();
+                for(Field f: columnFields){
+                    Column an= f.getAnnotation(Column.class);
+                    Object value= sourceWrapper.getPropertyValue(f.getName());
+                    if(value!=null){
+                        data.put(an.name(), value);
+                    }
+                }
+                for(Field f: joinColumnFields){
+                    JoinColumn an= f.getAnnotation(JoinColumn.class);
+                    BaseEntity joinEntity= (BaseEntity) sourceWrapper.getPropertyValue(f.getName());
+                    if(joinEntity!=null){
+                        data.put(an.name(), joinEntity.getId());
+                    }
+                }
+                items.add(data);
+            }
+            
+            jdbcDirectRepository.massiveCreate(table.name(), items);
+        }
     }
     
     /**
