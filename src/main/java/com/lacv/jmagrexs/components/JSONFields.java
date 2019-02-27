@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  * @author lacastrillov
  */
 @Component
-public class JSONField {
+public class JSONFields {
     
     @Autowired
     public ExtViewConfig extViewConfig;

@@ -33,7 +33,7 @@ public class JSONForms {
     private FieldConfigurationByAnnotations fcba;
     
     @Autowired
-    private JSONField jfi;
+    private JSONFields jfi;
     
     
     public JSONArray getJSONProcessForm(String processName, String parent, Class dtoClass){
