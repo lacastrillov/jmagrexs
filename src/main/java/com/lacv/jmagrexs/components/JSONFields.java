@@ -29,6 +29,7 @@ public class JSONFields {
         
         boolean addFormField= true;
         JSONObject formField= new JSONObject();
+        formField.put("id", processName + "_" + parent + fieldName);
         formField.put("name", parent + fieldName);
         formField.put("fieldLabel", fieldTitle);
         formField.put("readOnly", readOnly);

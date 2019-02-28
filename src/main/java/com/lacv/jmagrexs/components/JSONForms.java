@@ -103,9 +103,9 @@ public class JSONForms {
                 
                 JSONArray jsonList= new JSONArray();
                 for(int i=0; i<MAX_LIST_ITEMS; i++){
-                    JSONObject objectField= new JSONObject();
-                    objectField.put("id", processName+"_"+parent+fieldName+"["+i+"]");
                     if(!Formats.TYPES_LIST.contains(childClass.getName())){
+                        JSONObject objectField= new JSONObject();
+                        objectField.put("id", processName+"_"+parent+fieldName+"["+i+"]");
                         objectField.put("xtype", "fieldset");
                         objectField.put("title", "Item "+i);
                         objectField.put("collapsible", true);
@@ -135,26 +135,7 @@ public class JSONForms {
                 buttonAdd.put("text", "Agregar");
                 buttonAdd.put("style", "margin:5px");
                 buttonAdd.put("width", 100);
-                buttonAdd.put("handler", "#function(){"
-                                       + "    var itemsGroup= Ext.getCmp('"+processName+"_"+parent+fieldName+"');"
-                                       + "    if(itemsGroup.itemTop<"+(MAX_LIST_ITEMS-1)+"){"
-                                       + "        itemsGroup.itemTop+= 1;"
-                                       + "        var itemEntity= Ext.getCmp('"+processName+"_"+parent+fieldName+"['+itemsGroup.itemTop+']');"
-                                       + "        itemEntity.setVisible(true);"
-                                       + "        itemEntity.setDisabled(false);"
-                                       + "        if(itemEntity.query){"
-                                       + "            itemEntity.query('.field').forEach(function(c){"
-                                       + "                var visible= true;"
-                                       + "                var upFieldset=c.up('fieldset');"
-                                       + "                while(upFieldset!==undefined && visible===true){"
-                                       + "                    visible=upFieldset.isVisible();"
-                                       + "                    upFieldset= upFieldset.up('fieldset');"
-                                       + "                };"                       
-                                       + "                c.setDisabled(!c.isVisible() || !visible);"
-                                       + "            });"
-                                       + "        }"
-                                       + "    }"
-                                       + "}#");
+                buttonAdd.put("handler", "#function(){Instance.commonExtView.addListItem('"+processName+"','"+parent+"','"+fieldName+"')}#");
                 jsonList.put(buttonAdd);
                 
                 
@@ -163,20 +144,7 @@ public class JSONForms {
                 buttonQuit.put("text", "Quitar");
                 buttonQuit.put("style", "margin:5px");
                 buttonQuit.put("width", 100);
-                buttonQuit.put("handler", "#function(){"
-                        + "                   var itemsGroup= Ext.getCmp('"+processName+"_"+parent+fieldName+"');"
-                        + "                   if(itemsGroup.itemTop>=0){"
-                        + "                       var itemEntity= Ext.getCmp('"+processName+"_"+parent+fieldName+"['+itemsGroup.itemTop+']');"
-                        + "                       itemsGroup.itemTop-= 1;"
-                        + "                       itemEntity.setVisible(false);"
-                        + "                       itemEntity.setDisabled(true);"
-                        + "                       if(itemEntity.query){"
-                        + "                           itemEntity.query('.field').forEach(function(c){"
-                        + "                               c.setDisabled(true);"
-                        + "                           });"
-                        + "                       }"
-                        + "                   }"
-                        + "               }#");
+                buttonQuit.put("handler", "#function(){Instance.commonExtView.removeListItem('"+processName+"','"+parent+"','"+fieldName+"')}#");
                 jsonList.put(buttonQuit);
                 
                 objectFieldGroup.put("items", jsonList);
