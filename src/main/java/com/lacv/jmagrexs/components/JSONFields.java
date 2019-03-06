@@ -35,8 +35,9 @@ public class JSONFields {
         formField.put("readOnly", readOnly);
         formField.put("hidden", hidden);
         formField.put("disabled", disabled);
-        if(typeFormFields.containsKey(fieldName)){
-            String typeForm= typeFormFields.get(fieldName)[0];
+        String checkFieldName= fieldName.split("\\[")[0];
+        if(typeFormFields.containsKey(checkFieldName)){
+            String typeForm= typeFormFields.get(checkFieldName)[0];
             if(typeForm.equals(FieldType.EMAIL.name())){
                 formField.put("vtype", "email");
             }else if(typeForm.equals(FieldType.PASSWORD.name())){
