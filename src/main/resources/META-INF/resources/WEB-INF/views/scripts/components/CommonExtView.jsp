@@ -362,7 +362,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.textEditorRender= function(value, field){
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
-                   '<iframe src="<%=request.getContextPath()%>/webFile/ajax/plainTextEditor.htm?fileUrl='+value+'" frameborder="0" width="100%" height="100%"></iframe>';
+                   '<iframe src="${serverDomain.applicationContext}${serverDomain.adminContext}${serverDomain.adminPath}/webFile/ajax/plainTextEditor.htm?fileUrl='+value+'" frameborder="0" width="100%" height="100%"></iframe>';
         }else{
             return value;
         }
@@ -452,7 +452,9 @@ function CommonExtView(parentExtController, parentExtView, model){
             try{
                 var parentForm= field.up('form');
                 var linkFieldId= parentForm.itemId + "_" + field.name + "LinkField";
-                Ext.getCmp(linkFieldId).setValue((value)?value:"");
+                if(Ext.getCmp(linkFieldId)!==undefined){
+                    Ext.getCmp(linkFieldId).setValue((value)?value:"");
+                }
             }catch(e){
                 console.error(e);
             }

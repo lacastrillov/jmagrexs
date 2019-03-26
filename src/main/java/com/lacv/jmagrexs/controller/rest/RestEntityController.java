@@ -44,6 +44,7 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
@@ -691,7 +692,9 @@ public abstract class RestEntityController {
                     filePart= is;
                 }
             }
-
+            if(fileType.equals("")){
+                fileType= FilenameUtils.getExtension(fileName);
+            }
             LOGGER.info("IN MULTIPARTDATA: "+slice+" "+fileName+" "+fileType+" "+fileSize);
             String message= saveFilePart(slice, fieldName, fileName, fileType, fileSize, filePart, idParent);
             

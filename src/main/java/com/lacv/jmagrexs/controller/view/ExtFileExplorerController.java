@@ -197,6 +197,7 @@ public abstract class ExtFileExplorerController extends ExtController {
     @RequestMapping(value = "/ajax/plainTextEditor.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView plainTextEditor() {
         ModelAndView mav= new ModelAndView("scripts/fileExplorer/PlainTextExtEditor");
+        mav.addObject("serverDomain", serverDomain);
         
         return mav;
     }

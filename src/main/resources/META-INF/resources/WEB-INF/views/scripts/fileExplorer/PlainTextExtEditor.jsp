@@ -7,24 +7,192 @@
         <title>Text Editor</title>
         <style>
             body{margin:0px;}
-            #contentEditor {width: 99%; height: 450px; white-space: pre !important;}
-            #contentEditor:focus { background: transparent; }
-            #message {color:#15428B; font-weight: bold; font-size: 12px; margin-left: 10px; margin-top: 10px;}
+            #message {color:#15428B; font-size: 12px; margin-left: 340px; margin-top: -17px;}
+            #editor {position: absolute; top: 33px; right: 0; bottom: 0; left: 0; }
         </style>
         <script src="<%=request.getContextPath()%>/libjs/jquery/jquery-3.1.0.min.js"></script>
         <script src="<%=request.getContextPath()%>/libjs/util/Util.js"></script>
+        <script src="http://localhost/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
             function PlainTextExtEditor() {
                 
                 var Instance = this;
                 
                 var util= new Util();
+                
+                Instance.extensions={
+                    "abap":"ace/mode/abap",
+                    "abc":"ace/mode/abc",
+                    "as":"ace/mode/actionscript",
+                    "ada":"ace/mode/ada",
+                    "conf":"ace/mode/apache_conf",
+                    "adoc":"ace/mode/asciidoc",
+                    "asl":"ace/mode/asl",
+                    "asm":"ace/mode/assembly_x86",
+                    "ahk":"ace/mode/autohotkey",
+                    "apx":"ace/mode/apex",
+                    "bat":"ace/mode/batchfile",
+                    "bro":"ace/mode/bro",
+                    "c":"ace/mode/c_cpp",
+                    "cpp":"ace/mode/c_cpp",
+                    "h":"ace/mode/c_cpp",
+                    "c9s":"ace/mode/c9search",
+                    "cr":"ace/mode/cirru",
+                    "clj":"ace/mode/clojure",
+                    "cob":"ace/mode/cobol",
+                    "coffee":"ace/mode/coffee",
+                    "cfm":"ace/mode/coldfusion",
+                    "cs":"ace/mode/csharp",
+                    "csd":"ace/mode/csound_document",
+                    "csds":"ace/mode/csound_score",
+                    "css":"ace/mode/css",
+                    "curly":"ace/mode/curly",
+                    "d":"ace/mode/d",
+                    "dart":"ace/mode/dart",
+                    "diff":"ace/mode/diff",
+                    "dockerfile":"ace/mode/dockerfile",
+                    "dot":"ace/mode/dot",
+                    "drl":"ace/mode/drools",
+                    "edifact":"ace/mode/edifact",
+                    "eff":"ace/mode/eiffel",
+                    "ejs":"ace/mode/ejs",
+                    "exs":"ace/mode/elixir",
+                    "elm":"ace/mode/elm",
+                    "erl":"ace/mode/erlang",
+                    "forth":"ace/mode/forth",
+                    "f":"ace/mode/fortran",
+                    "fs":"ace/mode/fsharp",
+                    "fsl":"ace/mode/fsl",
+                    "ftl":"ace/mode/ftl",
+                    "gcode":"ace/mode/gcode",
+                    "ghe":"ace/mode/gherkin",
+                    "gitignore":"ace/mode/gitignore",
+                    "glsl":"ace/mode/glsl",
+                    "gob":"ace/mode/gobstones",
+                    "go":"ace/mode/golang",
+                    "graphql":"ace/mode/graphqlschema",
+                    "groovy":"ace/mode/groovy",
+                    "haml":"ace/mode/haml",
+                    "handlebars":"ace/mode/handlebars",
+                    "hs":"ace/mode/haskell",
+                    "cabal":"ace/mode/haskell_cabal",
+                    "haxe":"ace/mode/haxe",
+                    "hjson":"ace/mode/hjson",
+                    "html":"ace/mode/html",
+                    "html_elixir":"ace/mode/html_elixir",
+                    "html_ruby":"ace/mode/html_ruby",
+                    "ini":"ace/mode/ini",
+                    "io":"ace/mode/io",
+                    "jack":"ace/mode/jack",
+                    "jade":"ace/mode/jade",
+                    "java":"ace/mode/java",
+                    "js":"ace/mode/javascript",
+                    "json":"ace/mode/json",
+                    "jsoniq":"ace/mode/jsoniq",
+                    "jsp":"ace/mode/jsp",
+                    "jssm":"ace/mode/jssm",
+                    "jsx":"ace/mode/jsx",
+                    "jl":"ace/mode/julia",
+                    "kt":"ace/mode/kotlin",
+                    "latex":"ace/mode/latex",
+                    "less":"ace/mode/less",
+                    "liquid":"ace/mode/liquid",
+                    "lisp":"ace/mode/lisp",
+                    "lsc":"ace/mode/livescript",
+                    "logiql":"ace/mode/logiql",
+                    "lsl":"ace/mode/lsl",
+                    "lua":"ace/mode/lua",
+                    "lp":"ace/mode/luapage",
+                    "cfs":"ace/mode/lucene",
+                    "makefile":"ace/mode/makefile",
+                    "md":"ace/mode/markdown",
+                    "mask":"ace/mode/mask",
+                    "m":"ace/mode/matlab",
+                    "maz":"ace/mode/maze",
+                    "mel":"ace/mode/mel",
+                    "mix":"ace/mode/mixal",
+                    "mush":"ace/mode/mushcode",
+                    "mysql":"ace/mode/mysql",
+                    "nix":"ace/mode/nix",
+                    "nsis":"ace/mode/nsis",
+                    "mm":"ace/mode/objectivec",
+                    "mli":"ace/mode/ocaml",
+                    "pas":"ace/mode/pascal",
+                    "pl":"ace/mode/perl",
+                    "pl6":"ace/mode/perl6",
+                    "pgsql":"ace/mode/pgsql",
+                    "phplb":"ace/mode/php_laravel_blade",
+                    "php":"ace/mode/php",
+                    "pp":"ace/mode/puppet",
+                    "pig":"ace/mode/pig",
+                    "ps1":"ace/mode/powershell",
+                    "praat":"ace/mode/praat",
+                    "prolog":"ace/mode/prolog",
+                    "properties":"ace/mode/properties",
+                    "proto":"ace/mode/protobuf",
+                    "py":"ace/mode/python",
+                    "r":"ace/mode/r",
+                    "rzr":"ace/mode/razor",
+                    "rdoc":"ace/mode/rdoc",
+                    "red":"ace/mode/red",
+                    "rhtml":"ace/mode/rhtml",
+                    "rst":"ace/mode/rst",
+                    "rb":"ace/mode/ruby",
+                    "rs":"ace/mode/rust",
+                    "sass":"ace/mode/sass",
+                    "scad":"ace/mode/scad",
+                    "scala":"ace/mode/scala",
+                    "scm":"ace/mode/scheme",
+                    "scss":"ace/mode/scss",
+                    "sh":"ace/mode/sh",
+                    "sjs":"ace/mode/sjs",
+                    "slim":"ace/mode/slim",
+                    "smarty":"ace/mode/smarty",
+                    "snippet":"ace/mode/snippets",
+                    "soy":"ace/mode/soy_template",
+                    "spc":"ace/mode/space",
+                    "sql":"ace/mode/sql",
+                    "sqls":"ace/mode/sqlserver",
+                    "styl":"ace/mode/stylus",
+                    "svg":"ace/mode/svg",
+                    "swift":"ace/mode/swift",
+                    "tcl":"ace/mode/tcl",
+                    "tf":"ace/mode/terraform",
+                    "tex":"ace/mode/tex",
+                    "txt":"ace/mode/text",
+                    "textile":"ace/mode/textile",
+                    "toml":"ace/mode/toml",
+                    "tsx":"ace/mode/tsx",
+                    "twig":"ace/mode/twig",
+                    "ts":"ace/mode/typescript",
+                    "vala":"ace/mode/vala",
+                    "vbs":"ace/mode/vbscript",
+                    "vm":"ace/mode/velocity",
+                    "v":"ace/mode/verilog",
+                    "vhdl":"ace/mode/vhdl",
+                    "vf":"ace/mode/visualforce",
+                    "wollok":"ace/mode/wollok",
+                    "xml":"ace/mode/xml",
+                    "xq":"ace/mode/xquery",
+                    "yml":"ace/mode/yaml",
+                    "django":"ace/mode/django"
+                };
 
                 Instance.init = function () {
                     $(document).ready(function () {
                         Instance.fileUrl= util.getParameter(document.URL, "fileUrl");
+                        var ext = Instance.fileUrl.substr(Instance.fileUrl.lastIndexOf('.') + 1);
+                        
+                        Instance.editor = ace.edit("editor");
+                        Instance.editor.setTheme("ace/theme/eclipse");
+                        Instance.editor.session.setMode("ace/mode/text");
+                        document.getElementById('editor').style.fontSize='18px';
+                        if(ext in Instance.extensions){
+                            Instance.editor.session.setMode(Instance.extensions[ext]);
+                            console.log(Instance.extensions[ext]);
+                        }
+                        
                         Instance.loadContentFile();
-                        Instance.configureTabKeyDown();
                         
                         $("#saveButton").on("click", function(){
                             Instance.saveContentFile();
@@ -52,7 +220,7 @@
                     $("#fileLink").attr("href",Instance.fileUrl);
                     $("#fileLink").html(decodeURIComponent(Instance.fileUrl));
                     $.ajax({
-                        url: "/rest/webFile/readFile.htm",
+                        url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/readFile.htm",
                         timeout: 20000,
                         type: "POST",
                         data: "fileUrl="+Instance.fileUrl,
@@ -62,8 +230,7 @@
                             console.log(xhr.status);
                         },
                         success: function (data, status) {
-                            $("#contentEditor").val(data);
-                            console.log($("#contentEditor").text());
+                            Instance.editor.setValue(data);
                             $("#message").text("Contenido cargado");
                         }
                     });
@@ -71,9 +238,9 @@
                 
                 this.saveContentFile= function(){
                     $("#message").text("Guardando...");
-                    var content= $("#contentEditor").val();
+                    var content= Instance.editor.getValue();
                     $.ajax({
-                        url: "/rest/webFile/writeFile.htm",
+                        url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/writeFile.htm",
                         timeout: 20000,
                         type: "POST",
                         data: "fileUrl="+Instance.fileUrl+"&content="+encodeURIComponent(content),
@@ -89,34 +256,20 @@
                 };
                 
                 this.selectAll= function() {
-                    var tempval=document.getElementById("contentEditor");
-                    tempval.focus();
-                    tempval.select();
+                    Instance.editor.selectAll();
                 };
                 
-                this.configureTabKeyDown= function(){
-                    var textareaEditor= document.getElementById("contentEditor");
-                    textareaEditor.onkeydown= function(e){
-                        if(e.keyCode===9 || e.which===9){
-                            e.preventDefault();
-                            var s = this.selectionStart;
-                            this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
-                            this.selectionEnd = s+1; 
-                        }
-                    };
-                };
-
+                
                 Instance.init();
             }
             var plainTextExtEditor= new PlainTextExtEditor();
         </script>
     </head>
     <body>
-        <textarea id="contentEditor"></textarea>
-        <br>
         <input id="saveButton" type="button" value="Guardar" />
         <input id="reloadButton" type="button" value="Recargar" />
         <input id="selectAllButton" type="button" value="Seleccionar Todo" />
         <div id="message"></div>
+        <div id="editor"></div>
     </body>
 </html>

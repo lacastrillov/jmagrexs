@@ -530,6 +530,7 @@ public class Formats {
                 return "compress";
             case "application/x-java-archive":
             case "application/x-webarchive":
+            case "text/x-java":
                 return "java";
             case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
             case "application/vnd.oasis.opendocument.presentation":
