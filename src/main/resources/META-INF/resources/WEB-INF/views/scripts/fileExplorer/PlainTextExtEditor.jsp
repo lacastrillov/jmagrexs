@@ -8,11 +8,11 @@
         <style>
             body{margin:0px;}
             #message {color:#15428B; font-size: 12px; margin-left: 340px; margin-top: -17px;}
-            #editor {position: absolute; top: 33px; right: 0; bottom: 0; left: 0; }
+            #editor {position: absolute; top: 33px; right: 0; bottom: 0; left: 0; font-size: 14px;}
         </style>
         <script src="<%=request.getContextPath()%>/libjs/jquery/jquery-3.1.0.min.js"></script>
         <script src="<%=request.getContextPath()%>/libjs/util/Util.js"></script>
-        <script src="http://localhost/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="${serverDomain.domain}:8080/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
             function PlainTextExtEditor() {
                 
@@ -181,12 +181,11 @@
                 Instance.init = function () {
                     $(document).ready(function () {
                         Instance.fileUrl= util.getParameter(document.URL, "fileUrl");
-                        var ext = Instance.fileUrl.substr(Instance.fileUrl.lastIndexOf('.') + 1);
+                        var ext = ((Instance.fileUrl!==null)?Instance.fileUrl.substr(Instance.fileUrl.lastIndexOf('.') + 1):"");
                         
                         Instance.editor = ace.edit("editor");
                         Instance.editor.setTheme("ace/theme/eclipse");
                         Instance.editor.session.setMode("ace/mode/text");
-                        document.getElementById('editor').style.fontSize='18px';
                         if(ext in Instance.extensions){
                             Instance.editor.session.setMode(Instance.extensions[ext]);
                             console.log(Instance.extensions[ext]);
@@ -231,6 +230,7 @@
                         },
                         success: function (data, status) {
                             Instance.editor.setValue(data);
+                            Instance.editor.clearSelection();
                             $("#message").text("Contenido cargado");
                         }
                     });
