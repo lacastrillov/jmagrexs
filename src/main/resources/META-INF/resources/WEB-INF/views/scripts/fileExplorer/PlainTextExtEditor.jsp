@@ -181,7 +181,7 @@
                 Instance.init = function () {
                     $(document).ready(function () {
                         Instance.fileUrl= util.getParameter(document.URL, "fileUrl");
-                        var ext = ((Instance.fileUrl!==null)?Instance.fileUrl.substr(Instance.fileUrl.lastIndexOf('.') + 1):"");
+                        var ext = ((Instance.fileUrl!==null)?Instance.fileUrl.substr(Instance.fileUrl.lastIndexOf('.') + 1).toLowerCase():"");
                         
                         Instance.editor = ace.edit("editor");
                         Instance.editor.setTheme("ace/theme/eclipse");
