@@ -249,6 +249,20 @@ function Util() {
         }
     };
     
+    this.openInNewTab= function(url) {
+        var win = window.open(url, '_blank');
+        win.focus();
+    };
+    
+    this.downloadURI= function(uri){
+        var link = document.createElement("a");
+        var name= uri.substring(uri.lastIndexOf('/')+1);
+        link.download = name;
+        link.target="_blank";
+        link.href = uri;
+        link.click();
+    };
+    
     this.createForm= function(config){
         var form = document.createElement("form");
         if ('id' in config) {
