@@ -24,7 +24,10 @@ import com.lacv.jmagrexs.components.JSONModels;
 import com.lacv.jmagrexs.components.RangeFunctions;
 import com.lacv.jmagrexs.enums.PageType;
 import com.lacv.jmagrexs.util.Formats;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -195,9 +198,16 @@ public abstract class ExtFileExplorerController extends ExtController {
     }
     
     @RequestMapping(value = "/ajax/plainTextEditor.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView plainTextEditor() {
+    public ModelAndView plainTextEditor(@RequestParam(required = true) String fileUrl) {
         ModelAndView mav= new ModelAndView("scripts/fileExplorer/PlainTextExtEditor");
         mav.addObject("serverDomain", serverDomain);
+        try {
+            URL url= new URL(fileUrl);
+            mav.addObject("fileUrl", fileUrl);
+            mav.addObject("fileName", FilenameUtils.getName(url.getPath()));
+        } catch (MalformedURLException ex) {
+            LOGGER.error("ERROR plainTextEditor", ex);
+        }
         
         return mav;
     }

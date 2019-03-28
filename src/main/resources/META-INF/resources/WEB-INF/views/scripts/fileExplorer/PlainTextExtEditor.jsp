@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Text Editor</title>
+        <title>${fileName} - Text Editor</title>
         <style>
             body{margin:0px; padding-top: 2px; background: #ebebeb;}
             #message {color:#15428B; font-size: 13px; margin-left: 414px; margin-top: -17px;}
@@ -103,7 +103,7 @@
 
                 Instance.init = function () {
                     $(document).ready(function () {
-                        Instance.fileUrl= util.getParameter(document.URL, "fileUrl");
+                        Instance.fileUrl= "${fileUrl}";
                         var ext = ((Instance.fileUrl!==null)?Instance.fileUrl.substr(Instance.fileUrl.lastIndexOf('.') + 1).toLowerCase():"");
                         
                         Instance.editor = ace.edit("editor");
