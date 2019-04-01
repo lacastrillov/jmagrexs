@@ -29,7 +29,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         <c:forEach var="configurationObjectName" items="${nameConfigurationObjects}">
         Instance.entityExtModel.define${configurationObjectName.key}Model("${configurationObjectName.key}Model");
         </c:forEach>
-        
+        Instance.extInterfaces={};
         Instance.createMainView();
     };
     

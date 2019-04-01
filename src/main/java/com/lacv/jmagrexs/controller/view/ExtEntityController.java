@@ -355,13 +355,13 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("vtype", "email");
                             }else if(typeForm.equals(FieldType.PASSWORD.name())){
                                 formField.put("inputType", "password");
+                            }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
+                                formField.put("xtype", "textarea");
+                                formField.put("height", 200);
                             }else if(typeForm.equals(FieldType.DATETIME.name())){
                                 formField.put("xtype", "datefield");
                                 formField.put("format", extViewConfig.getDatetimeFormat());
                                 formField.put("tooltip", "Seleccione la fecha");
-                            }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
-                                formField.put("xtype", "textarea");
-                                formField.put("height", 200);
                             }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
                                 formField.put("xtype", "htmleditor");
                                 formField.put("enableColors", true);
@@ -469,7 +469,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un audio");
                                 
-                                //Add Video
+                                //Add Audio
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", fieldName);
                                 renderField.put("fieldLabel", fieldTitle);
@@ -482,7 +482,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un archivo");
                                 
-                                //Add Video
+                                //Add MultiFile
                                 JSONObject renderField= new JSONObject();
                                 renderField.put("name", fieldName);
                                 renderField.put("fieldLabel", fieldTitle);

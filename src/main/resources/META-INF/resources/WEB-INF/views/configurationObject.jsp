@@ -46,6 +46,12 @@
         
         <c:import url="${serverDomain.adminPath}/${entityRef}/ExtController.htm" />
         
+        <!-- ############################ IMPORT INTERFACES ################################### -->
+        
+        <c:forEach var="interfacesER" items="${interfacesEntityRef}">
+            <c:import url="${serverDomain.adminPath}/${interfacesER}/ExtInterfaces.htm"/>
+        </c:forEach>
+        
         <!-- ############################ IMPORT BASE ELEMENTES ################################### -->
         
         <c:import url="${serverDomain.adminPath}/${entityRef}/ExtViewport.htm"/>

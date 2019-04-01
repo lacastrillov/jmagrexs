@@ -6,7 +6,10 @@
 package com.lacv.jmagrexs.components;
 
 import com.lacv.jmagrexs.enums.FieldType;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,6 +197,7 @@ public class JSONFields {
                     formField.put("tooltip", "Seleccione la hora");
                     break;
                 case "short":
+                case "java.lang.Short":
                 case "int":
                 case "java.lang.Integer":
                 case "long":
@@ -225,5 +229,33 @@ public class JSONFields {
             jsonFormFields.put(formField);
         }
     }
+    
+    public void addEntityCombobox(JSONArray jsonFormFields, String processName, String parent, String simpleType, String fieldName,
+            String fieldTitle, Map<String, List<String>> interfacesEntityRefMap, boolean readOnly, boolean fieldNN, boolean hidden, boolean disabled){
+        
+        String entityRef=  Character.toLowerCase(simpleType.charAt(0)) + simpleType.substring(1,simpleType.length()-3);
+        String entityName=  simpleType.substring(0,simpleType.length()-3);
+        if(!interfacesEntityRefMap.containsKey(processName)){
+            interfacesEntityRefMap.put(processName, new ArrayList<>());
+        }
+        if(!interfacesEntityRefMap.get(processName).contains(entityRef)){
+            interfacesEntityRefMap.get(processName).add(entityRef);
+        }
+        String combobox=
+                "(function(){ "+
+                "if(Instance.extInterfaces['"+entityRef+"']===undefined){"+
+                    "Instance.extInterfaces['"+entityRef+"']= new "+entityName+"ExtInterfaces(parentExtController, Instance);"+
+                "}"+
+                "var combobox= Instance.extInterfaces['"+entityRef+"'].getCombobox('form'+util.getIndex('"+entityRef+"'), '" +processName+ "', '"+parent + fieldName+"', '"+fieldTitle+"');";
+        if(readOnly || disabled){
+            combobox+="combobox.setDisabled(true); ";
+        }
+        if(fieldNN){
+            combobox+="combobox.allowBlank=false; ";
+        }
+        combobox+="return combobox;})()";
+        jsonFormFields.put("#"+combobox+"#");
+    }
+    
     
 }

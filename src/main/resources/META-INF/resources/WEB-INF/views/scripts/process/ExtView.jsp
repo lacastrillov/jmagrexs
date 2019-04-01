@@ -35,6 +35,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         
         Instance.entityExtModel.defineModel(Instance.modelName);
         Instance.store= Instance.entityExtStore.getStore(Instance.modelName);
+        Instance.extInterfaces={};
         
         Instance.createMainView();
     };

@@ -33,6 +33,8 @@ public abstract class ExtConfigurationObjectController extends ExtController {
     
     private final Map<String, String> jsonFormFieldsMap= new HashMap();
     
+    private List<String> interfacesEntityRef= new ArrayList<>();
+    
     
     protected void addControlMapping(ConfigurationObjectConfig viewConfig) {
         this.viewConfig= viewConfig;
@@ -45,6 +47,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         
         mav.addObject("extViewConfig", extViewConfig);
         mav.addObject("serverDomain", serverDomain);
+        mav.addObject("interfacesEntityRef", interfacesEntityRef);
         addGeneralObjects(mav);
         
         return mav;
@@ -151,6 +154,10 @@ public abstract class ExtConfigurationObjectController extends ExtController {
             
             JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            
+            if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){
+                interfacesEntityRef= jfo.getInterfacesEntityRefMap().get(entry.getKey());
+            }
         }
     }
 
