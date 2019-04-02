@@ -156,7 +156,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
             
             if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){
-                interfacesEntityRef= jfo.getInterfacesEntityRefMap().get(entry.getKey());
+                interfacesEntityRef.addAll(jfo.getInterfacesEntityRefMap().get(entry.getKey()));
             }
         }
     }

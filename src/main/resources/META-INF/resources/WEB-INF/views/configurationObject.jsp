@@ -32,10 +32,20 @@
             <c:import url="${serverDomain.adminPath}/${modelER}/ExtModel.htm"/>
         </c:forEach>
         
+        <c:forEach var="modelER" items="${interfacesEntityRef}">
+            <c:import url="${serverDomain.adminPath}/${modelER}/ExtModel.htm"/>
+        </c:forEach>
+        
         <!-- ############################ IMPORT STORES ################################### -->
         
         <c:forEach var="modelER" items="${modelsEntityRef}">
             <c:import url="${serverDomain.adminPath}/${modelER}/ExtStore.htm"/>
+        </c:forEach>
+        
+        <c:forEach var="modelER" items="${interfacesEntityRef}">
+            <c:import url="${serverDomain.adminPath}/${modelER}/ExtStore.htm">
+                <c:param name="restSession" value="false"/>
+            </c:import>
         </c:forEach>
         
         <!-- ############################ IMPORT VIEWS ################################### -->
