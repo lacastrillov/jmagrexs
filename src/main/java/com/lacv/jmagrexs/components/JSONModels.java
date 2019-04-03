@@ -5,6 +5,7 @@
  */
 package com.lacv.jmagrexs.components;
 
+import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.reflection.EntityReflection;
@@ -158,6 +159,9 @@ public class JSONModels {
                             break;
                     }
 
+                    jsonModel.put(field);
+                }else if(BaseDto.class.isAssignableFrom(propertyDescriptor.getPropertyType())){
+                    // EntityModel
                     jsonModel.put(field);
                 }else{
                     Class childClass = propertyDescriptor.getPropertyType();
