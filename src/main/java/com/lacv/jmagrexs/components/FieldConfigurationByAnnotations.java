@@ -7,6 +7,7 @@ package com.lacv.jmagrexs.components;
 
 import com.lacv.jmagrexs.annotation.ColumnWidth;
 import com.lacv.jmagrexs.annotation.DefaultValue;
+import com.lacv.jmagrexs.annotation.EntityCombobox;
 import com.lacv.jmagrexs.annotation.GroupField;
 import com.lacv.jmagrexs.annotation.HideField;
 import com.lacv.jmagrexs.annotation.NotNull;
@@ -94,7 +95,7 @@ public class FieldConfigurationByAnnotations {
         return map;
     }
     
-    public HashMap<String, String> getGroupFieldsMap(PropertyDescriptor[] propertyDescriptors, Class dtoClass){
+    public HashMap<String, String> getGroupFieldsMap(Class dtoClass){
         List<Field> annotatedFields= EntityReflection.getEntityAnnotatedFields(dtoClass, GroupField.class);
         HashMap<String, String> map= new HashMap<>();
         
@@ -140,6 +141,19 @@ public class FieldConfigurationByAnnotations {
         }
         
         return fieldsRO;
+    }
+    
+    public HashMap<String, Class> getEntityComboboxFields(Class dtoClass){
+        HashMap<String, Class> fieldsEC= new HashMap<>();
+        List<Field> entityComboboxFields= EntityReflection.getEntityAnnotatedFields(dtoClass, EntityCombobox.class);
+        
+        for(Field f: entityComboboxFields){
+            EntityCombobox an= f.getAnnotation(EntityCombobox.class);
+            String fieldName= f.getName();
+            fieldsEC.put(fieldName, an.value());
+        }
+        
+        return fieldsEC;
     }
     
     public HashMap<String, String[]> getTypeFormFields(Class dtoClass){
@@ -193,7 +207,7 @@ public class FieldConfigurationByAnnotations {
         return map;
     }
     
-    public HashMap<String, String> getDefaultValueMap(PropertyDescriptor[] propertyDescriptors, Class dtoClass){
+    public HashMap<String, String> getDefaultValueMap(Class dtoClass){
         List<Field> annotatedFields= EntityReflection.getEntityAnnotatedFields(dtoClass, DefaultValue.class);
         HashMap<String, String> map= new HashMap<>();
         

@@ -5,7 +5,6 @@
  */
 package com.lacv.jmagrexs.components;
 
-import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.enums.HideView;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.reflection.ReflectionUtils;
@@ -58,6 +57,7 @@ public class JSONForms {
         HashSet<String> hideFields= fcba.getHideFields(dtoClass);
         HashSet<String> fieldsNN= fcba.getNotNullFields(dtoClass);
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(dtoClass);
+        HashMap<String,Class> fieldsEC= fcba.getEntityComboboxFields(dtoClass);
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
         HashMap<String, Integer[]> sizeColumnMap= fcba.getSizeColumnMap(dtoClass);
         
@@ -71,14 +71,14 @@ public class JSONForms {
 
                 // ADD TO jsonFormFields
                 if(!hideFields.contains(fieldName + HideView.FORM.name())){
-                    if(Formats.TYPES_LIST.contains(type)){
+                    if(fieldsEC.containsKey(fieldName)){
+                        jfi.addEntityCombobox(jsonFormFields, processName, parent, fieldsEC.get(fieldName).getSimpleName(),
+                                fieldName, fieldTitle, getInterfacesEntityRefMap(), readOnly, fieldsNN.contains(fieldName), false, false);
+                        
+                    }else if(Formats.TYPES_LIST.contains(type)){
                         jfi.addJSONField(jsonFormFields, processName, parent, type, fieldName,
                                 titledFieldsMap.get(fieldName), typeFormFields, sizeColumnMap,
                                 readOnly, fieldsNN.contains(fieldName), false, false);
-                        
-                    }else if(BaseDto.class.isAssignableFrom(propertyDescriptor.getPropertyType())){
-                        jfi.addEntityCombobox(jsonFormFields, processName, parent, propertyDescriptor.getPropertyType().getSimpleName(),
-                                fieldName, fieldTitle, getInterfacesEntityRefMap(), readOnly, fieldsNN.contains(fieldName), false, false);
                         
                     }else{
                         Class childClass = propertyDescriptor.getPropertyType();
@@ -121,15 +121,15 @@ public class JSONForms {
                 for(int i=0; i<MAX_LIST_ITEMS; i++){
                     boolean hidden= (i>0);
                     boolean disabled= (i>0);
-                    if(Formats.TYPES_LIST.contains(childClass.getName())){
+                    if(fieldsEC.containsKey(fieldName)){
+                        jfi.addEntityCombobox(jsonList, processName, parent, fieldsEC.get(fieldName).getSimpleName(),
+                                fieldName + "["+i+"]", "Item "+i, getInterfacesEntityRefMap(), false,
+                                fieldsNN.contains(fieldName), hidden, disabled);
+                        
+                    }else if(Formats.TYPES_LIST.contains(childClass.getName())){
                         jfi.addJSONField(jsonList, processName, parent, childClass.getName(),
                                 fieldName + "["+i+"]", "Item "+i, typeFormFields, sizeColumnMap,
                                 false, fieldsNN.contains(fieldName), hidden, disabled);
-                        
-                    }else if(BaseDto.class.isAssignableFrom(childClass)){
-                        jfi.addEntityCombobox(jsonList, processName, parent, childClass.getSimpleName(),
-                                fieldName + "["+i+"]", "Item "+i, getInterfacesEntityRefMap(), false,
-                                fieldsNN.contains(fieldName), hidden, disabled);
                         
                     }else{
                         JSONObject objectField= new JSONObject();

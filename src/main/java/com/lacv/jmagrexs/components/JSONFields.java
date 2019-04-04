@@ -233,8 +233,7 @@ public class JSONFields {
     public void addEntityCombobox(JSONArray jsonFormFields, String processName, String parent, String simpleType, String fieldName,
             String fieldTitle, Map<String, List<String>> interfacesEntityRefMap, boolean readOnly, boolean fieldNN, boolean hidden, boolean disabled){
         
-        String entityRef=  Character.toLowerCase(simpleType.charAt(0)) + simpleType.substring(1,simpleType.length()-3);
-        String entityName=  simpleType.substring(0,simpleType.length()-3);
+        String entityRef=  Character.toLowerCase(simpleType.charAt(0)) + simpleType.substring(1);
         if(!interfacesEntityRefMap.containsKey(processName)){
             interfacesEntityRefMap.put(processName, new ArrayList<>());
         }
@@ -243,9 +242,6 @@ public class JSONFields {
         }
         String combobox=
                 "(function(){ "+
-                "if(Instance.extInterfaces['"+entityRef+"']===undefined){"+
-                    "Instance.extInterfaces['"+entityRef+"']= new "+entityName+"ExtInterfaces(parentExtController, Instance);"+
-                "}"+
                 "var combobox= Instance.extInterfaces['"+entityRef+"'].getCombobox('form'+util.getIndex('"+entityRef+"'), '" +processName+ "', '"+parent + fieldName+"', '"+fieldTitle+"');";
         if(readOnly || disabled){
             combobox+="combobox.setDisabled(true); ";

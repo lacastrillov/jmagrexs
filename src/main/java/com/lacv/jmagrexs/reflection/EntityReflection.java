@@ -1,12 +1,10 @@
 package com.lacv.jmagrexs.reflection;
 
 import com.lacv.jmagrexs.annotation.HideField;
-import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.HideView;
 import com.lacv.jmagrexs.util.Formats;
-import com.lacv.jmagrexs.util.JSONService;
 import com.lacv.jmagrexs.util.Util;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -366,15 +364,6 @@ public final class EntityReflection {
                                     targetWrapper.setPropertyValue(fieldName, null);
                                 }
                             }
-                        } else if(BaseDto.class.isAssignableFrom(typeWrapper)){
-                            String idValue= value;
-                            if(JSONService.isJSONValid(value)){
-                                idValue= (new JSONObject(value)).get("id").toString();
-                            }
-                            Object id= getParsedFieldValue(typeWrapper, "id", idValue);
-                            BaseDto childDto = (BaseDto) getObjectForClass(typeWrapper);
-                            childDto.setId(id);
-                            targetWrapper.setPropertyValue(propertyDescriptor.getName(), childDto);
                         } else if(value.equals("0") || value.equals("")) {
                             targetWrapper.setPropertyValue(fieldName, null);
                         } else {

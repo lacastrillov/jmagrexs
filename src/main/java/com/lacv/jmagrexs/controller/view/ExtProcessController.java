@@ -66,9 +66,11 @@ public abstract class ExtProcessController extends ExtController {
     
     private HashMap<String, String> titledFieldsMap;
     
-    private Map<String, String> jsonFormFieldsMap;
+    private final Map<String, String> jsonFormFieldsMap= new HashMap();;
     
-    private Map<String, String> jsonModelMap;
+    private final Map<String, String> jsonModelMap= new HashMap();;
+    
+    private final List<String> interfacesEntityRef= new ArrayList<>();
     
     
     protected void addControlMapping(ProcessConfig processConfig) {
@@ -83,6 +85,7 @@ public abstract class ExtProcessController extends ExtController {
         
         mav.addObject("extViewConfig", extViewConfig);
         mav.addObject("serverDomain", serverDomain);
+        mav.addObject("interfacesEntityRef", interfacesEntityRef);
         addGeneralObjects(mav);
         
         return mav;
@@ -206,23 +209,20 @@ public abstract class ExtProcessController extends ExtController {
     }
     
     private void generateGeneralObjects(){
-        jsonFormFieldsMap= new HashMap();
-        
-        for (Map.Entry<String, Class> entry : processConfig.getInDtos().entrySet()){
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
-            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        }
-        
-        jsonModelMap= new HashMap();
         for (Map.Entry<String, Class> entry : processConfig.getInDtos().entrySet()){
             JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
+            
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
+            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            
+            if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){
+                interfacesEntityRef.addAll(jfo.getInterfacesEntityRefMap().get(entry.getKey()));
+            }
         }
         
-        //
         jsonModelLogProcess = jm.getJSONModel(processConfig.getLogProcessClass());
         jsonModelValidationsLogProcess= jm.getJSONModelValidations(processConfig.getLogProcessClass());
-        
         jsonFieldsFilters= jf.getFieldsFilters(processConfig.getLogProcessClass(), processConfig.getLabelField(), PageType.PROCESS);
     }
     
@@ -233,7 +233,7 @@ public abstract class ExtProcessController extends ExtController {
         fcba.orderPropertyDescriptor(propertyDescriptors, entityClass, processConfig.getLabelField());
         
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, entityClass);
-        HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, entityClass);
+        HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(entityClass);
         HashSet<String> hideFields= fcba.getHideFields(entityClass);
         HashSet<String> fieldsNN= fcba.getNotNullFields(entityClass);
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(entityClass);

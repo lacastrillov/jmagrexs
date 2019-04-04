@@ -5,7 +5,6 @@
  */
 package com.lacv.jmagrexs.components;
 
-import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.reflection.EntityReflection;
@@ -42,7 +41,7 @@ public class JSONModels {
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
-            HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, dtoClass);
+            HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(dtoClass);
             HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
@@ -159,9 +158,6 @@ public class JSONModels {
                             break;
                     }
 
-                    jsonModel.put(field);
-                }else if(BaseDto.class.isAssignableFrom(propertyDescriptor.getPropertyType())){
-                    // EntityModel
                     jsonModel.put(field);
                 }else{
                     Class childClass = propertyDescriptor.getPropertyType();

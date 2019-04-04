@@ -630,6 +630,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         <c:if test="${viewConfig.visibleForm}">
         Instance.menuProcesses= getTreeMenuProcesses();
         </c:if>
+            
+        <c:forEach var="entityRef" items="${interfacesEntityRef}">
+            <c:set var="associatedEntityName" value="${fn:toUpperCase(fn:substring(entityRef, 0, 1))}${fn:substring(entityRef, 1,fn:length(entityRef))}"></c:set>
+        Instance.extInterfaces['${entityRef}']= new ${associatedEntityName}ExtInterfaces(parentExtController, Instance);
+        Instance.extInterfaces['${entityRef}'].reloadPageStore(1);
+        </c:forEach>
         
         <c:if test="${viewConfig.visibleGrid}">
         Instance.gridContainer = getGridContainer();

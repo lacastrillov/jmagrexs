@@ -244,6 +244,50 @@ function CommonExtView(parentExtController, parentExtView, model){
         });
     };
     
+    Instance.showListItems= function(formComponent){
+        formComponent.query('.fieldset').forEach(function(c){
+            if(c.itemTop!==undefined){
+                var itemsGroup=Ext.getCmp(c.id);
+                for(var i=1; i<MAX_LIST_ITEMS; i++){
+                    var itemEntity=Ext.getCmp(c.id+'['+i+']');
+                    var filled= false;
+                    if(itemEntity.query){
+                        itemEntity.query('.field').forEach(function(c){
+                            var text=c.getValue();
+                            if(text!==null && text!=="" && text!==false){
+                                filled=true;
+                            }
+                        });
+                    }else{
+                        var text=itemEntity.getValue();
+                        if(text!==null && text!=="" && text!==false){
+                            filled=true;
+                        }
+                    }
+                    if(filled){
+                        itemEntity.setVisible(true);
+                        itemEntity.setDisabled(false);
+                        if(itemEntity.query){
+                            itemEntity.query('.field').forEach(function(c){
+                                var visible= true;
+                                var upFieldset=c.up('fieldset');
+                                while(upFieldset!==undefined && visible===true){
+                                    visible=upFieldset.isVisible();
+                                    upFieldset= upFieldset.up('fieldset');
+                                };
+                                c.setDisabled(!c.isVisible() || !visible);
+                            });
+                        }
+                        itemsGroup.itemTop=i;
+                    }else{
+                        itemEntity.setVisible(false);
+                        itemEntity.setDisabled(true);
+                    }
+                }
+            }
+        });
+    };
+    
     Instance.addListItem= function(processName, parent, fieldName){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
         if(itemsGroup.itemTop<(MAX_LIST_ITEMS-1)){

@@ -33,7 +33,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
     
     private final Map<String, String> jsonFormFieldsMap= new HashMap();
     
-    private List<String> interfacesEntityRef= new ArrayList<>();
+    private final List<String> interfacesEntityRef= new ArrayList<>();
     
     
     protected void addControlMapping(ConfigurationObjectConfig viewConfig) {

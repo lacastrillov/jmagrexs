@@ -286,8 +286,8 @@ public abstract class ExtEntityController extends ExtReportController {
         fcba.orderPropertyDescriptor(propertyDescriptors, viewConfig.getDtoClass(), viewConfig.getLabelField());
         
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, viewConfig.getDtoClass());
-        HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(propertyDescriptors, viewConfig.getDtoClass());
-        HashMap<String, String> groupFieldsMap= fcba.getGroupFieldsMap(propertyDescriptors, viewConfig.getDtoClass());
+        HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(viewConfig.getDtoClass());
+        HashMap<String, String> groupFieldsMap= fcba.getGroupFieldsMap(viewConfig.getDtoClass());
         HashSet<String> hideFields= fcba.getHideFields(viewConfig.getDtoClass());
         HashSet<String> fieldsNN= fcba.getNotNullFields(viewConfig.getDtoClass());
         HashSet<String> fieldsRO= fcba.getReadOnlyFields(viewConfig.getDtoClass());

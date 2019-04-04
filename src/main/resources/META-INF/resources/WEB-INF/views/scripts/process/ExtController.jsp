@@ -118,7 +118,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         var formComponent= Ext.getCmp('formContainer'+processName).child('#form'+processName);
         formComponent.setActiveRecord(record);
 
-        Instance.showListItems(formComponent);
+        Instance.entityExtView.commonExtView.showListItems(formComponent);
     };
     
     Instance.formSavedResponse= function(processName, dataOut, outputDataFormat){
@@ -153,50 +153,6 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             divPanel.update('<textarea readonly style="width:99%; height:400px; white-space: pre !important; '+textStyle+'">'
                             + textDataOut + '</textarea>');
         }
-    };
-    
-    Instance.showListItems= function(formComponent){
-        formComponent.query('.fieldset').forEach(function(c){
-            if(c.itemTop!==undefined){
-                var itemsGroup=Ext.getCmp(c.id);
-                for(var i=1; i<Instance.MAX_LIST_ITEMS; i++){
-                    var itemEntity=Ext.getCmp(c.id+'['+i+']');
-                    var filled= false;
-                    if(itemEntity.query){
-                        itemEntity.query('.field').forEach(function(c){
-                            var text=c.getValue();
-                            if(text!==null && text!=="" && text!==false){
-                                filled=true;
-                            }
-                        });
-                    }else{
-                        var text=itemEntity.getValue();
-                        if(text!==null && text!=="" && text!==false){
-                            filled=true;
-                        }
-                    }
-                    if(filled){
-                        itemEntity.setVisible(true);
-                        itemEntity.setDisabled(false);
-                        if(itemEntity.query){
-                            itemEntity.query('.field').forEach(function(c){
-                                var visible= true;
-                                var upFieldset=c.up('fieldset');
-                                while(upFieldset!==undefined && visible===true){
-                                    visible=upFieldset.isVisible();
-                                    upFieldset= upFieldset.up('fieldset');
-                                };
-                                c.setDisabled(!c.isVisible() || !visible);
-                            });
-                        }
-                        itemsGroup.itemTop=i;
-                    }else{
-                        itemEntity.setVisible(false);
-                        itemEntity.setDisabled(true);
-                    }
-                }
-            }
-        });
     };
     
     Instance.doFilter= function(){

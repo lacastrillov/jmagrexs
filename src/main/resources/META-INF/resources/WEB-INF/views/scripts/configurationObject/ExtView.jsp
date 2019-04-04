@@ -222,6 +222,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         <c:if test="${viewConfig.visibleForm}">
         Instance.menuConfigurationObjects= getTreeMenuConfigurationObjects();
         </c:if>
+            
+        <c:forEach var="entityRef" items="${interfacesEntityRef}">
+            <c:set var="associatedEntityName" value="${fn:toUpperCase(fn:substring(entityRef, 0, 1))}${fn:substring(entityRef, 1,fn:length(entityRef))}"></c:set>
+        Instance.extInterfaces['${entityRef}']= new ${associatedEntityName}ExtInterfaces(parentExtController, Instance);
+        Instance.extInterfaces['${entityRef}'].reloadPageStore(1);
+        </c:forEach>
 
         Instance.tabsContainer= Ext.widget('tabpanel', {
             region: 'center',
