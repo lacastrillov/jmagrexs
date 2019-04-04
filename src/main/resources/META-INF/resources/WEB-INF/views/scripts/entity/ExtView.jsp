@@ -90,11 +90,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     function getFormContainer(childExtControllers){
         var formFields= ${jsonFormFields};
 
-        var renderReplacements= ${jsonRenderReplacements};
-
         var additionalButtons= ${jsonInternalViewButtons};
 
-        Instance.defineWriterForm(formFields, renderReplacements, additionalButtons);
+        Instance.defineWriterForm(formFields, additionalButtons);
         
         var itemsForm= [{
             itemId: 'form${entityName}',
@@ -187,7 +185,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.formComponent.setActiveRecord(record || null);
     };
     
-    Instance.defineWriterForm= function(fields, renderReplacements, additionalButtons){
+    Instance.defineWriterForm= function(fields, additionalButtons){
         Ext.define('WriterForm${entityName}', {
             extend: 'Ext.form.Panel',
             alias: 'widget.writerform${entityName}',
@@ -265,7 +263,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     }
                     this.getForm().loadRecord(this.activeRecord);
                     //this.getForm().setValues(this.activeRecord.data);
-                    //this.renderReplaceActiveRecord(this.activeRecord);
                 } else {
                     if(this.down('#save${entityName}')!==null){
                         this.down('#save${entityName}').disable();
@@ -309,48 +306,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     
             onSeeAll: function(){
                 this.doLayout();
-            },
-            
-            renderReplaceActiveRecord: function(record){
-                if(renderReplacements){
-                    for(var i=0; i<renderReplacements.length; i++){
-                        var renderReplace= renderReplacements[i];
-                        var replaceField= renderReplace.replace.field;
-                        var replaceAttribute= renderReplace.replace.attribute;
-                        var value="";
-                        
-                        if (typeof record.data[replaceField] === "object" && Object.getOwnPropertyNames(record.data[replaceField]).length === 0){
-                            value= "";
-                        }else if(replaceAttribute.indexOf(".")===-1 && replaceField in record.data){
-                            value= record.data[replaceField][replaceAttribute];
-                        }else{
-                            var niveles= replaceAttribute.split(".");
-                            try{
-                                switch(niveles.length){
-                                    case 2:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]];
-                                        break;
-                                    case 3:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]][niveles[2]];
-                                        break;
-                                    case 4:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]][niveles[2]][niveles[3]];
-                                        break;
-                                    case 5:
-                                        value= record.data[replaceField][niveles[0]][niveles[1]][niveles[2]][niveles[3]][niveles[4]];
-                                        break;
-                                }
-                            }catch(err){
-                                console.log(err);
-                            }
-                            
-                        }
-                        if(typeof(value) !== 'undefined'){
-                            renderReplace.component.setValue(value);
-                        }
-                    }
-                }
-                return record;
             }
     
         });

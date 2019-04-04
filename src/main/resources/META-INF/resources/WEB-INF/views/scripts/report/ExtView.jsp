@@ -61,11 +61,9 @@ function ${reportName}ExtView(parentExtController, parentExtView){
     function getFormContainer(childExtControllers){
         var formFields= ${jsonFormFields};
 
-        var renderReplacements= [];
-
         var additionalButtons= ${jsonInternalViewButtons};
 
-        Instance.defineWriterForm(formFields, renderReplacements, additionalButtons);
+        Instance.defineWriterForm(formFields, additionalButtons);
         
         var itemsForm= [{
             itemId: 'form${reportName}',
@@ -135,7 +133,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         Instance.formComponent.setActiveRecord(record || null);
     };
     
-    Instance.defineWriterForm= function(fields, renderReplacements, additionalButtons){
+    Instance.defineWriterForm= function(fields, additionalButtons){
         Ext.define('WriterForm${reportName}', {
             extend: 'Ext.form.Panel',
             alias: 'widget.writerform${reportName}',
@@ -197,10 +195,6 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             onReset: function(){
                 this.getForm().reset();
                 parentExtController.loadFormData("");
-            },
-            
-            renderReplaceActiveRecord: function(record){
-                return record;
             }
     
         });
