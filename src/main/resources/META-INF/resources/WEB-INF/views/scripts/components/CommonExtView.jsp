@@ -248,7 +248,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         formComponent.query('.fieldset').forEach(function(c){
             if(c.itemTop!==undefined){
                 var itemsGroup=Ext.getCmp(c.id);
-                for(var i=1; i<MAX_LIST_ITEMS; i++){
+                for(var i=0; i<MAX_LIST_ITEMS; i++){
                     var itemEntity=Ext.getCmp(c.id+'['+i+']');
                     var filled= false;
                     if(itemEntity.query){
