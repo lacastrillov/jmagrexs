@@ -278,7 +278,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                                 c.setDisabled(!c.isVisible() || !visible);
                             });
                         }
-                        itemsGroup.itemTop=i;
+                        itemsGroup.itemTop=i+1;
                     }else{
                         itemEntity.setVisible(false);
                         itemEntity.setDisabled(true);
@@ -290,9 +290,9 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.addListItem= function(processName, parent, fieldName){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
-        if(itemsGroup.itemTop<(MAX_LIST_ITEMS-1)){
-            itemsGroup.itemTop+= 1;
+        if(itemsGroup.itemTop<(MAX_LIST_ITEMS)){
             var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
+            itemsGroup.itemTop+= 1;
             itemEntity.setVisible(true);
             itemEntity.setDisabled(false);
             if(itemEntity.query){
@@ -311,9 +311,9 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.removeListItem= function(processName, parent, fieldName){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
-        if(itemsGroup.itemTop>=0){
-            var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
+        if(itemsGroup.itemTop>0){
             itemsGroup.itemTop-= 1;
+            var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
             itemEntity.setVisible(false);
             itemEntity.setDisabled(true);
             if(itemEntity.query){

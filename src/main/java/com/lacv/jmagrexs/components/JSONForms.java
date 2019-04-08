@@ -121,21 +121,22 @@ public class JSONForms {
                 for(int i=0; i<MAX_LIST_ITEMS; i++){
                     boolean hidden= (i>0);
                     boolean disabled= (i>0);
+                    fieldTitle= "Item "+(i+1);
                     if(fieldsEC.containsKey(fieldName)){
                         jfi.addEntityCombobox(jsonList, processName, parent, fieldsEC.get(fieldName).getSimpleName(),
-                                fieldName + "["+i+"]", "Item "+i, getInterfacesEntityRefMap(), false,
+                                fieldName + "["+i+"]", fieldTitle, getInterfacesEntityRefMap(), false,
                                 fieldsNN.contains(fieldName), hidden, disabled);
                         
                     }else if(Formats.TYPES_LIST.contains(childClass.getName())){
                         jfi.addJSONField(jsonList, processName, parent, childClass.getName(),
-                                fieldName + "["+i+"]", "Item "+i, typeFormFields, sizeColumnMap,
+                                fieldName + "["+i+"]", fieldTitle, typeFormFields, sizeColumnMap,
                                 false, fieldsNN.contains(fieldName), hidden, disabled);
                         
                     }else{
                         JSONObject objectField= new JSONObject();
                         objectField.put("id", processName+"_"+parent+fieldName+"["+i+"]");
                         objectField.put("xtype", "fieldset");
-                        objectField.put("title", "Item "+i);
+                        objectField.put("title", fieldTitle);
                         objectField.put("collapsible", true);
                         objectField.put("layout", "anchor");
                         objectField.put("defaultType", "textfield");
