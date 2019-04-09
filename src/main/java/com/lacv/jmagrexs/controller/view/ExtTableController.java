@@ -165,7 +165,6 @@ public abstract class ExtTableController extends ExtController {
     
     private void addEntityExtViewConfiguration(ModelAndView mav, String tableName){
         JSONArray jsonFormFields= new JSONArray();
-        JSONArray jsonRenderReplacements= new JSONArray();
         JSONArray jsonGridColumns= new JSONArray();
         JSONArray sortColumns= new JSONArray();
         JSONObject jsonEmptyModel= new JSONObject();
@@ -402,18 +401,6 @@ public abstract class ExtTableController extends ExtController {
                 }
             }
 
-
-            // ADD TO jsonRenderReplacements
-            if(viewConfig.isVisibleForm() && !Formats.TYPES_LIST.contains(type)){
-                JSONObject renderReplacement= new JSONObject();
-                renderReplacement.put("component", "#Instance.formCombobox"+fieldEntity+"#");
-                JSONObject replace= new JSONObject();
-                replace.put("field", fieldName);
-                replace.put("attribute", "id");
-                renderReplacement.put("replace", replace);
-                jsonRenderReplacements.put(renderReplacement);
-            }
-
             // ADD TO jsonGridColumns
             if(viewConfig.isVisibleGrid()){
                 sortColumns.put(fieldName+":"+fieldTitle);
@@ -572,7 +559,6 @@ public abstract class ExtTableController extends ExtController {
         
         mav.addObject("titledFieldsMap", titledFieldsMap);
         mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());

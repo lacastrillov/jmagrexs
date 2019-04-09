@@ -51,6 +51,8 @@ public abstract class RestDirectController {
     
     private Long maxFileSizeToUpload=1024L;
     
+    private final String LEAD_TABLE_ERROR_MESSAGE = "No existe la tabla Lead ";
+    
 
     @RequestMapping(value = "/{tableName}/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -62,11 +64,15 @@ public abstract class RestDirectController {
         String resultData;
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
-            Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
-            
-            resultData=Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
-            resultData= cleanTimeInDateFieldList(resultData, columns);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
+                Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
+
+                resultData=Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
+                resultData= cleanTimeInDateFieldList(resultData, columns);
+            }else{
+                resultData= Util.getResultListCallback(new ArrayList(), LEAD_TABLE_ERROR_MESSAGE + tableName, false);
+            }
         } catch (Exception e) {
             LOGGER.error("find " + tableName, e);
             resultData=Util.getResultListCallback(new ArrayList(), "Error buscando " + tableName + ": " + e.getMessage(), false);
@@ -82,14 +88,18 @@ public abstract class RestDirectController {
 
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
-            Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
+                Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
 
-            String resultData = Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
-            resultData= cleanTimeInDateFieldList(resultData, columns);
-            String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
+                String resultData = Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
+                resultData= cleanTimeInDateFieldList(resultData, columns);
+                String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
 
-            return Util.getHttpEntityBytes(xml, "xml");
+                return Util.getHttpEntityBytes(xml, "xml");
+            }else{
+                return null;
+            }
         } catch (Exception e) {
             LOGGER.error("find " + tableName, e);
             return null;
@@ -103,14 +113,15 @@ public abstract class RestDirectController {
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
         
-        response.setContentType("application/xls");
-        response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.xls\"");
-
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
-            
-            ExcelService.generateExcelReport(listItems, response.getOutputStream(), columns);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
+
+                response.setContentType("application/xls");
+                response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.xls\"");
+                ExcelService.generateExcelReport(listItems, response.getOutputStream(), columns);
+            }
         } catch (Exception e) {
             LOGGER.error("find " + tableName, e);
         }
@@ -123,14 +134,15 @@ public abstract class RestDirectController {
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
         
-        response.setContentType("text/csv; charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.csv\"");
-
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
-            
-            response.getWriter().print(CSVService.generateCSVReport(listItems, columns));
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
+
+                response.setContentType("text/csv; charset=utf-8");
+                response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.csv\"");
+                response.getWriter().print(CSVService.generateCSVReport(listItems, columns));
+            }
         } catch (Exception e) {
             LOGGER.error("find " + tableName, e);
         }
@@ -142,26 +154,30 @@ public abstract class RestDirectController {
         String resultData;
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            String jsonData= data;
-            if(jsonData==null){
-                jsonData = IOUtils.toString(request.getInputStream());
-            }
-            Map<String, Object> entity = EntityReflection.readEntity(jsonData, columns);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                String jsonData= data;
+                if(jsonData==null){
+                    jsonData = IOUtils.toString(request.getInputStream());
+                }
+                Map<String, Object> entity = EntityReflection.readEntity(jsonData, columns);
 
-            directService.create(tableName, entity);
-            
-            Parameters p= new Parameters();
-            for (Map.Entry<String,Object> entry : entity.entrySet()){
-                p.whereEqual(entry.getKey(), entry.getValue());
+                directService.create(tableName, entity);
+
+                Parameters p= new Parameters();
+                for (Map.Entry<String,Object> entry : entity.entrySet()){
+                    p.whereEqual(entry.getKey(), entry.getValue());
+                }
+                p.orderBy("id", "DESC");
+                List<Map<String, Object>> recover= directService.findByParameters(tableName, p);
+                if(recover.size()>0){
+                    entity= recover.get(0);
+                }
+
+                resultData= Util.getOperationCallback(entity, "Creaci&oacute;n de " + tableName + " realizada...", true);
+                resultData= cleanTimeInDateFieldEntity(resultData, columns);
+            }else{
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
-            p.orderBy("id", "DESC");
-            List<Map<String, Object>> recover= directService.findByParameters(tableName, p);
-            if(recover.size()>0){
-                entity= recover.get(0);
-            }
-            
-            resultData= Util.getOperationCallback(entity, "Creaci&oacute;n de " + tableName + " realizada...", true);
-            resultData= cleanTimeInDateFieldEntity(resultData, columns);
         } catch (Exception e) {
             LOGGER.error("create " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en creaci&oacute;n de " + tableName + ": " + e.getMessage(), false);
@@ -175,21 +191,25 @@ public abstract class RestDirectController {
         String resultData;
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            String jsonData= data;
-            if(jsonData==null){
-                jsonData = IOUtils.toString(request.getInputStream());
-            }
-            JSONObject jsonObject= new JSONObject(jsonData);
-            
-            Map<String, Object> entity = directService.loadByParameter(tableName, "id", jsonObject.getInt("id"));
-            if(entity!=null){
-                EntityReflection.updateEntity(jsonData, entity, columns);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                String jsonData= data;
+                if(jsonData==null){
+                    jsonData = IOUtils.toString(request.getInputStream());
+                }
+                JSONObject jsonObject= new JSONObject(jsonData);
 
-                directService.updateByParameter(tableName, entity, "id", jsonObject.getInt("id"));
-                resultData= Util.getOperationCallback(entity, "Actualizaci&oacute;n de " + tableName + " realizada...", true);
-                resultData= cleanTimeInDateFieldEntity(resultData, columns);
+                Map<String, Object> entity = directService.loadByParameter(tableName, "id", jsonObject.getInt("id"));
+                if(entity!=null){
+                    EntityReflection.updateEntity(jsonData, entity, columns);
+
+                    directService.updateByParameter(tableName, entity, "id", jsonObject.getInt("id"));
+                    resultData= Util.getOperationCallback(entity, "Actualizaci&oacute;n de " + tableName + " realizada...", true);
+                    resultData= cleanTimeInDateFieldEntity(resultData, columns);
+                }else{
+                    return this.create(tableName, data, request);
+                }
             }else{
-                return this.create(tableName, data, request);
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
         } catch (Exception e) {
             LOGGER.error("update " + tableName, e);
@@ -222,10 +242,14 @@ public abstract class RestDirectController {
         String resultData;
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
-            
-            resultData= Util.getOperationCallback(entity, "Carga de " + tableName + " realizada...", true);
-            resultData= cleanTimeInDateFieldEntity(resultData, columns);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
+
+                resultData= Util.getOperationCallback(entity, "Carga de " + tableName + " realizada...", true);
+                resultData= cleanTimeInDateFieldEntity(resultData, columns);
+            }else{
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, true);
+            }
         } catch (Exception e) {
             LOGGER.error("load " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en carga de " + tableName + ": " + e.getMessage(), true);
@@ -237,10 +261,14 @@ public abstract class RestDirectController {
     @ResponseBody
     public String delete(@PathVariable String tableName, @RequestParam String idEntity) {
         try {
-            Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
-            
-            directService.removeByParameter(tableName, "id", idEntity);
-            return Util.getOperationCallback(entity, "Eliminaci&oacute;n de " + tableName + " realizada...", true);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
+
+                directService.removeByParameter(tableName, "id", idEntity);
+                return Util.getOperationCallback(entity, "Eliminaci&oacute;n de " + tableName + " realizada...", true);
+            }else{
+                return Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, true);
+            }
         } catch (Exception e) {
             LOGGER.error("delete " + tableName, e);
             return Util.getOperationCallback(null, "Error en eliminaci&oacute;n de " + tableName + ": " + e.getMessage(), true);
@@ -252,12 +280,16 @@ public abstract class RestDirectController {
     public String deleteByFilter(@PathVariable String tableName, @RequestParam String filter) {
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, null, null);
-            
-            for(Map<String, Object> entity: listItems){
-                directService.removeByParameter(tableName, "id", entity.get("id"));
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, null, null);
+
+                for(Map<String, Object> entity: listItems){
+                    directService.removeByParameter(tableName, "id", entity.get("id"));
+                }
+                return Util.getResultListCallback(listItems, (long)listItems.size(),"Eliminaci&oacute;n de " + tableName + " realizada...", true);
+            }else{
+                return Util.getResultListCallback(new ArrayList(), 0L, LEAD_TABLE_ERROR_MESSAGE + tableName, true);
             }
-            return Util.getResultListCallback(listItems, (long)listItems.size(),"Eliminaci&oacute;n de " + tableName + " realizada...", true);
         } catch (Exception e) {
             LOGGER.error("delete " + tableName, e);
             return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + tableName + ": " + e.getMessage(), true);
@@ -275,81 +307,85 @@ public abstract class RestDirectController {
         int totalRecords=0;
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
-            FileItemFactory factory = new DiskFileItemFactory();
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            upload.setSizeMax(maxFileSize);
-            
-            List items = upload.parseRequest(request);
-            Iterator iterator = items.iterator();
-            while (iterator.hasNext()) {
-                FileItem item = (FileItem) iterator.next();
-                InputStream is= item.getInputStream();
-                if(!item.isFormField() && item.getFieldName().equals("data")){
-                    String data, csvData, xlsData, jsonData=null;
-                    List<Map<String, Object>> entities= new ArrayList<>();
-                    JSONArray array;
-                    switch(format){
-                        case "csv":
-                            data= FileService.getLinesFromInputStream(is);
-                            csvData= CSVService.csvRecordsToJSON(data, columns);
-                            array= new JSONArray(csvData);
-                            for (int i = 0; i < array.length(); i++) {
-                                entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                FileItemFactory factory = new DiskFileItemFactory();
+                ServletFileUpload upload = new ServletFileUpload(factory);
+                upload.setSizeMax(maxFileSize);
+
+                List items = upload.parseRequest(request);
+                Iterator iterator = items.iterator();
+                while (iterator.hasNext()) {
+                    FileItem item = (FileItem) iterator.next();
+                    InputStream is= item.getInputStream();
+                    if(!item.isFormField() && item.getFieldName().equals("data")){
+                        String data, csvData, xlsData, jsonData=null;
+                        List<Map<String, Object>> entities= new ArrayList<>();
+                        JSONArray array;
+                        switch(format){
+                            case "csv":
+                                data= FileService.getLinesFromInputStream(is);
+                                csvData= CSVService.csvRecordsToJSON(data, columns);
+                                array= new JSONArray(csvData);
+                                for (int i = 0; i < array.length(); i++) {
+                                    entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+                                }
+                                break;
+                            case "xls":
+                                xlsData= ExcelService.xlsTableToJSON(is, columns);
+                                array= new JSONArray(xlsData);
+                                for (int i = 0; i < array.length(); i++) {
+                                    entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+                                }
+                                break;
+                            case "xml":
+                                data= FileService.getStringFromInputStream(is);
+                                jsonData= XMLMarshaller.convertXMLToJSON(data);
+                            case "json":
+                                JSONObject object= new JSONObject(jsonData);
+                                array= object.getJSONArray("data");
+                                for (int i = 0; i < array.length(); i++) {
+                                    entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
+                                }
+                                break;
+                        }
+
+                        //Buscar entidades existentes
+                        List ids= new ArrayList<>();
+                        for(Map<String, Object> newEntity: entities){
+                            ids.add(newEntity.get("id"));
+                        }
+
+                        Parameters p= new Parameters();
+                        p.whereIn("id", ids.toArray());
+                        List<Map<String, Object>> existingEntities = directService.findByParameters(tableName, p);
+                        Map<Object, Map<String, Object>> mapExistingEntities= new HashMap();
+                        for(Map<String, Object> entity: existingEntities){
+                            mapExistingEntities.put(entity.get("id"), entity);
+                        }
+
+                        //Insertar o actualizar la entidad
+                        for(Map<String, Object> entity: entities){
+                            try{
+                                if(!mapExistingEntities.containsKey(entity.get("id"))){
+                                    directService.create(tableName, entity);
+                                }else{
+                                    Map<String, Object> existingEntity= mapExistingEntities.get(entity.get("id"));
+                                    EntityReflection.updateMap(entity, existingEntity);
+                                    directService.updateByParameter(tableName, existingEntity, "id", entity.get("id"));
+                                }
+                                listDtos.add(entity);
+                                totalRecords++;
+                            }catch(Exception e){
+                                LOGGER.error("importData " + tableName, e);
                             }
-                            break;
-                        case "xls":
-                            xlsData= ExcelService.xlsTableToJSON(is, columns);
-                            array= new JSONArray(xlsData);
-                            for (int i = 0; i < array.length(); i++) {
-                                entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
-                            }
-                            break;
-                        case "xml":
-                            data= FileService.getStringFromInputStream(is);
-                            jsonData= XMLMarshaller.convertXMLToJSON(data);
-                        case "json":
-                            JSONObject object= new JSONObject(jsonData);
-                            array= object.getJSONArray("data");
-                            for (int i = 0; i < array.length(); i++) {
-                                entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
-                            }
-                            break;
-                    }
-                    
-                    //Buscar entidades existentes
-                    List ids= new ArrayList<>();
-                    for(Map<String, Object> newEntity: entities){
-                        ids.add(newEntity.get("id"));
-                    }
-                    
-                    Parameters p= new Parameters();
-                    p.whereIn("id", ids.toArray());
-                    List<Map<String, Object>> existingEntities = directService.findByParameters(tableName, p);
-                    Map<Object, Map<String, Object>> mapExistingEntities= new HashMap();
-                    for(Map<String, Object> entity: existingEntities){
-                        mapExistingEntities.put(entity.get("id"), entity);
-                    }
-                    
-                    //Insertar o actualizar la entidad
-                    for(Map<String, Object> entity: entities){
-                        try{
-                            if(!mapExistingEntities.containsKey(entity.get("id"))){
-                                directService.create(tableName, entity);
-                            }else{
-                                Map<String, Object> existingEntity= mapExistingEntities.get(entity.get("id"));
-                                EntityReflection.updateMap(entity, existingEntity);
-                                directService.updateByParameter(tableName, existingEntity, "id", entity.get("id"));
-                            }
-                            listDtos.add(entity);
-                            totalRecords++;
-                        }catch(Exception e){
-                            LOGGER.error("importData " + tableName, e);
                         }
                     }
                 }
+
+                resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+totalRecords+" registros tipo " + tableName + " finalizada...", true);
+            }else{
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
-            
-            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+totalRecords+" registros tipo " + tableName + " finalizada...", true);
         } catch (Exception e) {
             LOGGER.error("importData " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + tableName + ": " + e.getMessage(), false);
@@ -366,24 +402,28 @@ public abstract class RestDirectController {
 
         String resultData;
         try {
-            Object id = Integer.parseInt(idEntity);
-            
-            ServletFileUpload upload = new ServletFileUpload();
-            upload.setSizeMax(maxFileSize);
-            
-            FileItemIterator iterator;
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                Object id = Integer.parseInt(idEntity);
 
-            iterator = upload.getItemIterator(request);
-            while (iterator.hasNext()) {
-                FileItemStream fileIS = iterator.next();
-                if (fileIS.getName()!=null && !fileIS.getName().equals("")){
-                    result+= saveFile(tableName, fileIS, id);
+                ServletFileUpload upload = new ServletFileUpload();
+                upload.setSizeMax(maxFileSize);
+
+                FileItemIterator iterator;
+
+                iterator = upload.getItemIterator(request);
+                while (iterator.hasNext()) {
+                    FileItemStream fileIS = iterator.next();
+                    if (fileIS.getName()!=null && !fileIS.getName().equals("")){
+                        result+= saveFile(tableName, fileIS, id);
+                    }
                 }
+
+                Map<String, Object> entity = directService.loadByParameter(tableName, "id", id);
+
+                resultData= Util.getOperationCallback(entity, result, true);
+            }else{
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
-            
-            Map<String, Object> entity = directService.loadByParameter(tableName, "id", id);
-            
-            resultData= Util.getOperationCallback(entity, result, true);
         } catch (Exception e) {
             LOGGER.error("upload " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + tableName + ": " + e.getMessage(), false);
@@ -400,26 +440,30 @@ public abstract class RestDirectController {
 
         String resultData;
         try {
-            Integer id = Integer.parseInt(idEntity);
-            
-            FileItemFactory factory = new DiskFileItemFactory();
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            upload.setSizeMax(maxFileSize);
-            
-            List items = upload.parseRequest(request);
-            Iterator iterator = items.iterator();
-            while (iterator.hasNext()) {
-                FileItem item = (FileItem) iterator.next();
-                InputStream is= item.getInputStream();
-                if(!item.isFormField() && !item.getName().equals("")){
-                    String fieldName= item.getFieldName().replaceAll("_File", "");
-                    result+= saveFilePart(tableName, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id)+"<br>";
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                Integer id = Integer.parseInt(idEntity);
+
+                FileItemFactory factory = new DiskFileItemFactory();
+                ServletFileUpload upload = new ServletFileUpload(factory);
+                upload.setSizeMax(maxFileSize);
+
+                List items = upload.parseRequest(request);
+                Iterator iterator = items.iterator();
+                while (iterator.hasNext()) {
+                    FileItem item = (FileItem) iterator.next();
+                    InputStream is= item.getInputStream();
+                    if(!item.isFormField() && !item.getName().equals("")){
+                        String fieldName= item.getFieldName().replaceAll("_File", "");
+                        result+= saveFilePart(tableName, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id)+"<br>";
+                    }
                 }
+
+                Map<String, Object> entity = directService.loadByParameter(tableName, "id", id);
+
+                resultData= Util.getOperationCallback(entity, result, true);
+            }else{
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
-            
-            Map<String, Object> entity = directService.loadByParameter(tableName, "id", id);
-            
-            resultData= Util.getOperationCallback(entity, result, true);
         } catch (Exception e) {
             LOGGER.error("upload " + tableName, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + tableName + ": " + e.getMessage(), false);

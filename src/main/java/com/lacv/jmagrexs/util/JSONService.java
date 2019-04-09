@@ -8,7 +8,15 @@ package com.lacv.jmagrexs.util;
 import com.lacv.jmagrexs.components.ExtViewConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.lacv.jmagrexs.annotation.TypeFormField;
+import com.lacv.jmagrexs.enums.FieldType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,12 +43,40 @@ public class JSONService {
      * @return 
      */
     public static Gson getGson(){
+        
+        Gson g= new Gson();
+        JsonSerializer<Date> ser1 = new JsonSerializer<Date>() {
+            @Override
+            public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+                System.out.println("serialize :"+src+", Type: "+typeOfSrc.getTypeName());
+                return src == null ? null : new JsonPrimitive(src.getTime());
+            }
+        };
+
+        JsonSerializer<UsuarioPDto> ser2 = new JsonSerializer<UsuarioPDto>() {
+            @Override
+            public JsonElement serialize(UsuarioPDto src, Type typeOfSrc, JsonSerializationContext context) {
+                System.out.println("serialize :"+g.toJson(src)+", Type: "+typeOfSrc.getTypeName());
+                return g.toJsonTree(src);
+            }
+        };
         if(gson==null){
             GsonBuilder gsonB = new GsonBuilder();
+            //gsonB.registerTypeAdapter(Date.class, ser1);
+            //gsonB.registerTypeAdapter(UsuarioPDto.class, ser2);
             gsonB.setDateFormat(getExtViewConfig().getDatetimeFormatJava());
             gson = gsonB.create();
         }
         return gson;
+    }
+    
+    public static void main(String args[]){
+        Gson gs= getGson();
+        UsuarioPDto u= new UsuarioPDto();
+        u.setFecha(new Date());
+        u.setFechaYHora(new Date());
+        
+        System.out.println("\n\n#### "+gs.toJson(u, UsuarioPDto.class));
     }
     
     /**
@@ -279,6 +315,47 @@ public class JSONService {
         ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
         
         return extViewConfig;
+    }
+    
+    static class UsuarioPDto{
+        
+        private Date fecha;
+        
+        @TypeFormField(FieldType.DATETIME)
+        private Date fechaYHora;
+        
+        public UsuarioPDto(){
+            
+        }
+
+        /**
+         * @return the fecha
+         */
+        public Date getFecha() {
+            return fecha;
+        }
+
+        /**
+         * @param fecha the fecha to set
+         */
+        public void setFecha(Date fecha) {
+            this.fecha = fecha;
+        }
+
+        /**
+         * @return the fechaYHora
+         */
+        public Date getFechaYHora() {
+            return fechaYHora;
+        }
+
+        /**
+         * @param fechaYHora the fechaYHora to set
+         */
+        public void setFechaYHora(Date fechaYHora) {
+            this.fechaYHora = fechaYHora;
+        }
+        
     }
     
 }

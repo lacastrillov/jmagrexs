@@ -278,7 +278,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                     export: function(typeReport){
                         var filterData= JSON.stringify(parentExtController.filter);
                         filterData= filterData.replaceAll("{","(").replaceAll("}",")");
-                        filterData= filterData.replaceAll("[","<").replaceAll("]",">");
+                        filterData= filterData.replaceAll("\\[","<").replaceAll("\\]",">");
                         var data= "?filter="+filterData;
                         data+="&limit="+store.pageSize+"&page="+store.currentPage;
                         if(store.sorters.items.length>0){

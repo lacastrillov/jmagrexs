@@ -899,7 +899,7 @@ public abstract class RestEntityController {
         return data;
     }
     
-    private String cleanTimeInDateFieldEntity(String data, Class dtoClass){
+    protected String cleanTimeInDateFieldEntity(String data, Class dtoClass){
         if(!dateFields.containsKey(dtoClass)){
             initDateFields(dtoClass);
         }

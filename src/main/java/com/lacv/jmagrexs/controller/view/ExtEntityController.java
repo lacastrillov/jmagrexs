@@ -49,8 +49,6 @@ public abstract class ExtEntityController extends ExtReportController {
     
     private final JSONArray jsonFormFields= new JSONArray();
     
-    private final JSONArray jsonRenderReplacements= new JSONArray();
-    
     private final JSONArray jsonInternalViewButtons= new JSONArray();
     
     private final JSONArray jsonGridColumns= new JSONArray();
@@ -172,7 +170,6 @@ public abstract class ExtEntityController extends ExtReportController {
         //addEntityExtViewConfiguration(mav);
         mav.addObject("titledFieldsMap", titledFieldsMap);
         mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
@@ -556,18 +553,6 @@ public abstract class ExtEntityController extends ExtReportController {
                                         "})()";
                         addFormField("#"+combobox+"#",jsonFormFields,fieldGroups,titleGroup);
                     }
-                }
-                
-                
-                // ADD TO jsonRenderReplacements
-                if(viewConfig.isVisibleForm() && !Formats.TYPES_LIST.contains(type)){
-                    JSONObject renderReplacement= new JSONObject();
-                    renderReplacement.put("component", "#Instance.formCombobox"+fieldEntity+"#");
-                    JSONObject replace= new JSONObject();
-                    replace.put("field", fieldName);
-                    replace.put("attribute", "id");
-                    renderReplacement.put("replace", replace);
-                    jsonRenderReplacements.put(renderReplacement);
                 }
                 
                 // ADD TO jsonGridColumns

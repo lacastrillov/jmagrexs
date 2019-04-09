@@ -48,11 +48,13 @@ public class TableColumnsConfig {
         p.whereEqual("tableAlias", tableName);
         p.orderBy("columnOrder", "ASC");
         List<Object> result= jdbcDirectService.findByParameters("("+columsConfigQuerySource+")", p, GenericTableColumn.class);
-        List<GenericTableColumn> columns= new ArrayList<>();
-        for(Object item: result){
-            columns.add((GenericTableColumn)item);
+        if(result.size()>0){
+            List<GenericTableColumn> columns= new ArrayList<>();
+            for(Object item: result){
+                columns.add((GenericTableColumn)item);
+            }
+            mapTableColumns.put(tableName, columns);
         }
-        mapTableColumns.put(tableName, columns);
     }
     
     public List<GenericTableColumn> getColumnsFromTableName(String tableName){
@@ -60,6 +62,10 @@ public class TableColumnsConfig {
             updateColumnsConfig(tableName);
         }
         return mapTableColumns.get(tableName);
+    }
+    
+    public boolean existLeadTable(String tableName){
+        return mapTableColumns.containsKey(tableName);
     }
     
 }

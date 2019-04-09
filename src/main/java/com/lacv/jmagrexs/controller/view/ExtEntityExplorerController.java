@@ -49,8 +49,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
     
     private final JSONArray jsonFormFields= new JSONArray();
     
-    private final JSONArray jsonRenderReplacements= new JSONArray();
-    
     private final JSONArray jsonGridColumns= new JSONArray();
     
     private final JSONArray sortColumns= new JSONArray();
@@ -164,7 +162,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
         
         mav.addObject("titledFieldsMap", titledFieldsMap);
         mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonRenderReplacements", jsonRenderReplacements.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());
@@ -437,18 +434,6 @@ public abstract class ExtEntityExplorerController extends ExtController {
                                         "})()";
                         jsonFormFields.put("#"+combobox+"#");
                     }
-                }
-                
-                
-                // ADD TO jsonRenderReplacements
-                if(viewConfig.isVisibleForm() && !Formats.TYPES_LIST.contains(type)){
-                    JSONObject renderReplacement= new JSONObject();
-                    renderReplacement.put("component", "#Instance.formCombobox"+fieldEntity+"#");
-                    JSONObject replace= new JSONObject();
-                    replace.put("field", fieldName);
-                    replace.put("attribute", "id");
-                    renderReplacement.put("replace", replace);
-                    jsonRenderReplacements.put(renderReplacement);
                 }
                 
                 // ADD TO jsonGridColumns
