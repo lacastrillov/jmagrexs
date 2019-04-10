@@ -79,6 +79,8 @@ public abstract class RestEntityController {
     
     protected Class dtoClass;
     
+    protected Map<String, Class> enabledReports;
+    
     private final String TEMPLATES_DIR ="/ext/gridtemplates/";
     
     private Map<Class, List<String>> dateFields;
@@ -110,6 +112,7 @@ public abstract class RestEntityController {
         this.entityClass= service.getEntityClass();
         this.dtoClass= mapper.getDtoClass();
         this.dateFields= new HashMap<>();
+        this.enabledReports= new HashMap<>();
     }
     
     @RequestMapping(value = "/find.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -238,15 +241,19 @@ public abstract class RestEntityController {
 
         String resultData;
         try {
-            Class dtoReportClass= Class.forName(dtoName);
-            List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
-            Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
-            
-            if(templateName!=null){
-                resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
+            if(this.enabledReports.containsKey(reportName)){
+                Class dtoReportClass= this.enabledReports.get(reportName);
+                List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
+                Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
+
+                if(templateName!=null){
+                    resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
+                }else{
+                    resultData= Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
+                    resultData= cleanTimeInDateFieldList(resultData, dtoReportClass);
+                }
             }else{
-                resultData= Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-                resultData= cleanTimeInDateFieldList(resultData, dtoReportClass);
+                resultData= Util.getResultListCallback(new ArrayList(), "El reporte " + reportName + " no se encuentra habilitado", false);
             }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
@@ -264,15 +271,19 @@ public abstract class RestEntityController {
             @PathVariable String reportName) {
 
         try {
-            Class dtoReportClass= Class.forName(dtoName);
-            List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
-            Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
+            if(this.enabledReports.containsKey(reportName)){
+                Class dtoReportClass= this.enabledReports.get(reportName);
+                List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
+                Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
 
-            String resultData = Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-            resultData= cleanTimeInDateFieldList(resultData, dtoClass);
-            String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
-            
-            return Util.getHttpEntityBytes(xml, "xml");
+                String resultData = Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
+                resultData= cleanTimeInDateFieldList(resultData, dtoClass);
+                String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
+
+                return Util.getHttpEntityBytes(xml, "xml");
+            }else{
+                return null;
+            }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
             return null;
@@ -286,14 +297,15 @@ public abstract class RestEntityController {
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
         
-        response.setContentType("application/xls");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.xls\"");
-
         try {
-            Class dtoReportClass= Class.forName(dtoName);
-            List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
-            
-            ExcelService.generateExcelReport(listDtos, response.getOutputStream(), dtoReportClass);
+            if(this.enabledReports.containsKey(reportName)){
+                Class dtoReportClass= this.enabledReports.get(reportName);
+                List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
+                
+                response.setContentType("application/xls");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.xls\"");
+                ExcelService.generateExcelReport(listDtos, response.getOutputStream(), dtoReportClass);
+            }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
         }
@@ -306,14 +318,15 @@ public abstract class RestEntityController {
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
         
-        response.setContentType("text/csv; charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.csv\"");
-
         try {
-            Class dtoReportClass= Class.forName(dtoName);
-            List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
-            
-            response.getWriter().print(CSVService.generateCSVReport(listDtos, dtoReportClass));
+            if(this.enabledReports.containsKey(reportName)){
+                Class dtoReportClass= this.enabledReports.get(reportName);
+                List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
+
+                response.setContentType("text/csv; charset=utf-8");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.csv\"");
+                response.getWriter().print(CSVService.generateCSVReport(listDtos, dtoReportClass));
+            }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef + " - " + reportName, e);
         }
@@ -813,6 +826,15 @@ public abstract class RestEntityController {
      */
     protected void setMaxFileSizeToUpload(Long maxFileSizeToUpload) {
         this.maxFileSizeToUpload = maxFileSizeToUpload;
+    }
+    
+    /**
+     * 
+     * @param reportName 
+     * @param dtoReportClass 
+     */
+    protected void enableReport(String reportName, Class dtoReportClass){
+        this.enabledReports.put(reportName, dtoReportClass);
     }
 
     protected String generateTemplateData(List<Object> listDtos, Long totalCount, String entityRef,

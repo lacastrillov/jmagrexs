@@ -284,7 +284,6 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                         if(store.sorters.items.length>0){
                             data+="&sort="+store.getOrderProperty()+"&dir="+store.getOrderDir();
                         }
-                        data+="&dtoName=${reportConfig.dtoName}";
                         
                         switch(typeReport){
                             case "json":

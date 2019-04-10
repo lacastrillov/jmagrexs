@@ -36,8 +36,7 @@ function ${reportName}ExtStore(){
                     messageProperty: 'message'
                 },
                 extraParams: {
-                    filter: null,
-                    dtoName: '${reportConfig.dtoName}'
+                    filter: null
                 },
                 listeners: {
                     exception: function(proxy, response, operation){
@@ -120,7 +119,6 @@ function ${reportName}ExtStore(){
                 },
                 extraParams: {
                     filter: null,
-                    dtoName: '${reportConfig.dtoName}',
                     templateName: '${reportConfig.gridTemplate.templateName}',
                     numColumns: ${reportConfig.gridTemplate.numColumns}
                 },
@@ -190,7 +188,7 @@ function ${reportName}ExtStore(){
         Ext.Ajax.request({
             url:  "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"report/${reportName}.htm",
             method: "GET",
-            params: 'filter='+encodeURIComponent('{eq:{"${reportConfig.idColumnName}":"'+idRecord+'"}}')+'&dtoName=${reportConfig.dtoName}',
+            params: 'filter='+encodeURIComponent('{eq:{"${reportConfig.idColumnName}":"'+idRecord+'"}}'),
             success: function(response){
                 Ext.MessageBox.hide();
                 var responseText= Ext.decode(response.responseText);
