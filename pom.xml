@@ -10,8 +10,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.springframework.version>5.0.6.RELEASE</org.springframework.version>
-        <spring.security.version>5.0.5.RELEASE</spring.security.version>
+        <org.springframework.version>5.1.6.RELEASE</org.springframework.version>
+        <spring.security.version>5.1.5.RELEASE</spring.security.version>
         <appengine.target.version>1.9.38</appengine.target.version>
     </properties>
 
