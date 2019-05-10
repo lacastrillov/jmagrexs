@@ -5,14 +5,11 @@
  */
 package com.lacv.jmagrexs.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author lacastrillov
  */
-public class ProcessButton {
+public class ProcessGlobalAction {
     
     private String mainProcessRef;
     
@@ -20,17 +17,14 @@ public class ProcessButton {
     
     private String processTitle;
     
-    private final Map<String, String> sourceByDestinationFields;
-    
     private String iconUrl;
     
     private Class dtoClass;
     
     
-    public ProcessButton(){
+    public ProcessGlobalAction(){
         this.processTitle= "Proceso";
         this.iconUrl= "/img/process_icons/settings.png";
-        this.sourceByDestinationFields= new HashMap<>();
     }
 
     /**
@@ -74,23 +68,7 @@ public class ProcessButton {
     public void setProcessTitle(String processTitle) {
         this.processTitle = processTitle;
     }
-
-    /**
-     * @return the sourceByDestinationFields
-     */
-    public Map<String, String> getSourceByDestinationFields() {
-        return sourceByDestinationFields;
-    }
     
-    /**
-     * 
-     * @param sourceField
-     * @param destinationField 
-     */
-    public void addSourceByDestinationField(String sourceField, String destinationField) {
-        sourceByDestinationFields.put(sourceField, destinationField);
-    }
-
     /**
      * @return the iconUrl
      */

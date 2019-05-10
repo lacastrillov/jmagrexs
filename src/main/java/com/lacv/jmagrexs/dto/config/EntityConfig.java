@@ -8,6 +8,7 @@ package com.lacv.jmagrexs.dto.config;
 import com.lacv.jmagrexs.annotation.LabelField;
 import com.lacv.jmagrexs.dto.GridTemplate;
 import com.lacv.jmagrexs.dto.ProcessButton;
+import com.lacv.jmagrexs.dto.ProcessGlobalAction;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.service.EntityService;
 import java.util.ArrayList;
@@ -109,6 +110,8 @@ public class EntityConfig {
     
     private final List<ProcessButton> processButtons;
     
+    private List<ProcessGlobalAction> processGlobalActions;
+    
     private GridTemplate gridTemplate;
     
     
@@ -153,6 +156,7 @@ public class EntityConfig {
         this.typeChildExtViews= new HashMap<>();
         this.comboboxChildDependent= new HashMap<>();
         this.processButtons= new ArrayList<>();
+        this.processGlobalActions= new ArrayList<>();
         this.gridTemplate= new GridTemplate("");
         LabelField ann= (LabelField) EntityReflection.getClassAnnotation(dtoClass, LabelField.class);
         if(ann!=null){
@@ -780,6 +784,14 @@ public class EntityConfig {
         
         processButtons.add(processButton);
     }
+
+    /**
+     * 
+     * @return processButtons
+     */
+    public List<ProcessButton> getProcessButtons() {
+        return processButtons;
+    }
     
     /**
      * 
@@ -790,12 +802,17 @@ public class EntityConfig {
     }
 
     /**
-     * 
-     * @return processButtons
+     * @return the processGlobalActions
      */
-    public List<ProcessButton> getProcessButtons() {
-        return processButtons;
+    public List<ProcessGlobalAction> getProcessGlobalActions() {
+        return processGlobalActions;
     }
     
+    /**
+     * @param processGlobalAction
+     */
+    public void addProcessGlobalActions(ProcessGlobalAction processGlobalAction) {
+        this.processGlobalActions.add(processGlobalAction);
+    }
     
 }
