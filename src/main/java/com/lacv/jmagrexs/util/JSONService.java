@@ -50,11 +50,11 @@ public class JSONService {
      */
     public static String objectToJson(Object obj) {
         String json= getGson().toJson(obj);
-        if(json.contains(" 00:00:00")){
-            json= json.replaceAll(" 00:00:00", "");
+        if(json.contains(" 00:00:00\"")){
+            json= json.replaceAll(" 00:00:00\"", "\"");
         }
-        if(json.contains(" 12:00:00 AM")){
-            json= json.replaceAll(" 12:00:00 AM", "");
+        if(json.contains(" 12:00:00 AM\"")){
+            json= json.replaceAll(" 12:00:00 AM\"", "\"");
         }
         return json;
     }
