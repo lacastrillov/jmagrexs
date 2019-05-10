@@ -28,6 +28,13 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.typeController= "";
         mvcExt.mappingController(Instance.id, Instance);
         Instance.initFilter();
+        Instance.configObjects=[];
+        <c:forEach var="configurationObjectName" items="${nameConfigurationObjects}">
+        Instance.configObjects.push('${configurationObjectName.key}');
+        </c:forEach>
+        if(util.getParameter(document.URL,"configObj")===null && Instance.configObjects.length>0){
+            mvcExt.navigate("?configObj="+Instance.configObjects[0]);
+        }
     };
     
     Instance.initFilter= function(){

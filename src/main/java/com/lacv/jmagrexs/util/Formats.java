@@ -316,6 +316,7 @@ public class Formats {
         String dateValue= value.replaceAll("/", "-");
         String[] inFormats= new String[]{
             "dd-MM-yyyy",
+            "yyyy-MM-dd",
             "dd-MM-yyyy HH:mm:ss",
             "dd-MM-yyyy hh:mm:ss a",
             "yyyy-MM-dd'T'HH:mm:ss",

@@ -11,7 +11,6 @@ import com.lacv.jmagrexs.service.EntityService;
 import com.lacv.jmagrexs.util.Util;
 import com.lacv.jmagrexs.util.XMLMarshaller;
 import com.lacv.jmagrexs.dto.ResultListCallback;
-import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.interfaces.WebEntityInterface;
 import com.lacv.jmagrexs.mapper.EntityMapper;
 import com.lacv.jmagrexs.util.CSVService;
@@ -19,7 +18,6 @@ import com.lacv.jmagrexs.util.ExcelService;
 import com.lacv.jmagrexs.util.FileService;
 import com.lacv.jmagrexs.util.JSONService;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,11 +27,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,8 +79,6 @@ public abstract class RestEntityController {
     
     private final String TEMPLATES_DIR ="/ext/gridtemplates/";
     
-    private Map<Class, List<String>> dateFields;
-    
     @Autowired
     public ServerDomain serverDomain;
     
@@ -111,7 +105,6 @@ public abstract class RestEntityController {
         this.mapper= entityMapper;
         this.entityClass= service.getEntityClass();
         this.dtoClass= mapper.getDtoClass();
-        this.dateFields= new HashMap<>();
         this.enabledReports= new HashMap<>();
     }
     
@@ -132,7 +125,6 @@ public abstract class RestEntityController {
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
             }else{
                 resultData=Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-                resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             }
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
@@ -153,7 +145,6 @@ public abstract class RestEntityController {
             Long totalCount = service.countByJSONFilters(filter, query);
 
             String resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-            resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
             
             return Util.getHttpEntityBytes(xml, "xml");
@@ -215,7 +206,6 @@ public abstract class RestEntityController {
             Long totalCount = service.countByJSONFilters(filter, query);
             
             resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
-            resultData= cleanTimeInDateFieldList(resultData, dtoClass);
             resultData= JSONService.jsonToYaml(resultData);
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
@@ -250,7 +240,6 @@ public abstract class RestEntityController {
                     resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
                 }else{
                     resultData= Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-                    resultData= cleanTimeInDateFieldList(resultData, dtoReportClass);
                 }
             }else{
                 resultData= Util.getResultListCallback(new ArrayList(), "El reporte " + reportName + " no se encuentra habilitado", false);
@@ -277,7 +266,6 @@ public abstract class RestEntityController {
                 Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
 
                 String resultData = Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
-                resultData= cleanTimeInDateFieldList(resultData, dtoClass);
                 String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
 
                 return Util.getHttpEntityBytes(xml, "xml");
@@ -350,7 +338,6 @@ public abstract class RestEntityController {
             dto = mapper.entityToDto(entity);
             updateRelatedWebEntity(entity, request);
             resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
-            resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
         } catch (Exception e) {
             LOGGER.error("create " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
@@ -382,7 +369,6 @@ public abstract class RestEntityController {
                     dto = mapper.entityToDto(entity);
                     updateRelatedWebEntity(entity, request);
                     resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
-                    resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
                 }else{
                     return this.create(data, request);
                 }
@@ -425,7 +411,6 @@ public abstract class RestEntityController {
             BaseEntity entity = (BaseEntity) service.loadById(id);
             dto = mapper.entityToDto(entity);
             resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
-            resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
         } catch (Exception e) {
             LOGGER.error("load " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en carga de " + entityRef + ": " + e.getMessage(), true);
@@ -898,66 +883,6 @@ public abstract class RestEntityController {
         }
         
         return Util.getResultListCallback(items, totalCount, "Busqueda de " + entityRef + " realizada...", success);
-    }
-    
-    private String cleanTimeInDateFieldList(String data, Class dtoClass){
-        if(!dateFields.containsKey(dtoClass)){
-            initDateFields(dtoClass);
-        }
-        if(dateFields.get(dtoClass).size()>0){
-            JSONObject result= new JSONObject(data);
-            for(int i=0; i<result.getJSONArray("data").length(); i++){
-                JSONObject entityJson= result.getJSONArray("data").getJSONObject(i);
-                for(int j=0; j<dateFields.get(dtoClass).size(); j++){
-                    String fieldName= dateFields.get(dtoClass).get(j);
-                    if(!entityJson.isNull(fieldName)){
-                        String date= entityJson.getString(fieldName);
-                        result.getJSONArray("data").getJSONObject(i).put(fieldName, date.split(" ")[0]);
-                    }
-                }
-            }
-            return result.toString();
-        }
-        return data;
-    }
-    
-    protected String cleanTimeInDateFieldEntity(String data, Class dtoClass){
-        if(!dateFields.containsKey(dtoClass)){
-            initDateFields(dtoClass);
-        }
-        JSONObject result= new JSONObject(data);
-        JSONObject entityJson= result.getJSONObject("data");
-        if(dateFields.get(dtoClass).size()>0){
-            for(int j=0; j<dateFields.get(dtoClass).size(); j++){
-                String fieldName= dateFields.get(dtoClass).get(j);
-                if(!entityJson.isNull(fieldName)){
-                    String date= entityJson.getString(fieldName);
-                    result.getJSONObject("data").put(fieldName, date.split(" ")[0]);
-                }
-            }
-            return result.toString();
-        }
-        return data;
-    }
-    
-    private void initDateFields(Class dtoClass){
-        dateFields.put(dtoClass, new ArrayList());
-        PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
-        Set<String> datetimeFields= new HashSet<>();
-        HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
-        for (Map.Entry<String, String[]> entry : typeFormFields.entrySet()) {
-            String typeForm= entry.getValue()[0];
-            if(typeForm.equals(FieldType.DATETIME.name())){
-                datetimeFields.add(entry.getKey());
-            }
-        }
-        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-            String fieldName= propertyDescriptor.getName();
-            String type = propertyDescriptor.getPropertyType().getName();
-            if(type.equals("java.util.Date") && !datetimeFields.contains(fieldName)){
-                dateFields.get(dtoClass).add(fieldName);
-            }
-        }
     }
     
 }

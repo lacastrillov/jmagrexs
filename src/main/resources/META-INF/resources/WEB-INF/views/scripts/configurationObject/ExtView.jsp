@@ -44,7 +44,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 children: [
                     <c:forEach var="configurationObjectName" items="${nameConfigurationObjects}">
                     {
-                        id: 'formContainer${configurationObjectName.key}',
+                        id: '${configurationObjectName.key}',
                         text: '${configurationObjectName.value}',
                         leaf: true
                     },
@@ -69,7 +69,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         
         treePanelConfigurationObjects.getSelectionModel().on('select', function(selModel, record) {
             if (record.get('leaf')) {
-                Ext.getCmp('content-configurationObjects').layout.setActiveItem(record.getId());
+                mvcExt.navigate("?configObj="+record.getId());
             }
         });
         
@@ -119,12 +119,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         Instance.commonExtView.enableManagementTabHTMLEditor();
                     }
                 }
-            }],
+            }]/*,
             listeners:{
                 activate: function(panel) {
                     parentExtController.loadFormData('${configurationObjectName.key}');
                 }
-            }
+            }*/
         });
     };
     </c:forEach>

@@ -119,6 +119,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
         ModelAndView mav= new ModelAndView("scripts/configurationObject/ExtController");
         
         addGeneralObjects(mav);
+        mav.addObject("nameConfigurationObjects", viewConfig.getNameConfigurationObjects());
         
         return mav;
     }

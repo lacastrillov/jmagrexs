@@ -139,7 +139,6 @@ public abstract class RestSessionController extends RestEntityController {
                 service.create(entity);
                 dto = mapper.entityToDto(entity);
                 resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
-                resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
             }else{
                 resultData= "{\"success\":false,\"message\":\"Error, no puede crear la entidad " + entityRef + "\"}";
             }
@@ -172,7 +171,6 @@ public abstract class RestSessionController extends RestEntityController {
                     service.update(entity);
                     dto = mapper.entityToDto(entity);
                     resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
-                    resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
                 }else{
                     resultData= "{\"success\":false,\"message\":\"Error, no puede actualizar la entidad " + entityRef + " con id "+jsonObject.get("id").toString() + "\"}";
                 }
@@ -221,7 +219,6 @@ public abstract class RestSessionController extends RestEntityController {
             if(canLoad(entity)){
                 dto = mapper.entityToDto(entity);
                 resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
-                resultData= cleanTimeInDateFieldEntity(resultData, entityClass);
             }else{
                 resultData= "{\"success\":false,\"message\":\"Error, no puede cargar el " + entityRef + " con id "+idEntity+"\"}";
             }

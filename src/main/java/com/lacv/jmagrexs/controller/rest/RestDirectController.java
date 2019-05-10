@@ -69,7 +69,6 @@ public abstract class RestDirectController {
                 Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
 
                 resultData=Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
-                resultData= cleanTimeInDateFieldList(resultData, columns);
             }else{
                 resultData= Util.getResultListCallback(new ArrayList(), LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
@@ -93,7 +92,6 @@ public abstract class RestDirectController {
                 Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
 
                 String resultData = Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
-                resultData= cleanTimeInDateFieldList(resultData, columns);
                 String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
 
                 return Util.getHttpEntityBytes(xml, "xml");
@@ -174,7 +172,6 @@ public abstract class RestDirectController {
                 }
 
                 resultData= Util.getOperationCallback(entity, "Creaci&oacute;n de " + tableName + " realizada...", true);
-                resultData= cleanTimeInDateFieldEntity(resultData, columns);
             }else{
                 resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
@@ -204,7 +201,6 @@ public abstract class RestDirectController {
 
                     directService.updateByParameter(tableName, entity, "id", jsonObject.getInt("id"));
                     resultData= Util.getOperationCallback(entity, "Actualizaci&oacute;n de " + tableName + " realizada...", true);
-                    resultData= cleanTimeInDateFieldEntity(resultData, columns);
                 }else{
                     return this.create(tableName, data, request);
                 }
@@ -246,7 +242,6 @@ public abstract class RestDirectController {
                 Map<String, Object> entity = directService.loadByParameter(tableName, "id", idEntity);
 
                 resultData= Util.getOperationCallback(entity, "Carga de " + tableName + " realizada...", true);
-                resultData= cleanTimeInDateFieldEntity(resultData, columns);
             }else{
                 resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, true);
             }
@@ -486,52 +481,6 @@ public abstract class RestDirectController {
      */
     protected void setMaxFileSizeToUpload(Long maxFileSizeToUpload) {
         this.maxFileSizeToUpload = maxFileSizeToUpload;
-    }
-    
-    private String cleanTimeInDateFieldList(String data, List<GenericTableColumn> columns){
-        List<String>dateFields= new ArrayList<>();
-        for(GenericTableColumn column: columns){
-            if(column.getDataType().equals("java.util.Date") && column.getFieldType()==null){
-                dateFields.add(column.getColumnAlias());
-            }
-        }
-        if(dateFields.size()>0){
-            JSONObject result= new JSONObject(data);
-            for(int i=0; i<result.getJSONArray("data").length(); i++){
-                JSONObject entityJson= result.getJSONArray("data").getJSONObject(i);
-                for(int j=0; j<dateFields.size(); j++){
-                    String fieldName= dateFields.get(j);
-                    if(!entityJson.isNull(fieldName)){
-                        String date= entityJson.getString(fieldName);
-                        result.getJSONArray("data").getJSONObject(i).put(fieldName, date.split(" ")[0]);
-                    }
-                }
-            }
-            return result.toString();
-        }
-        return data;
-    }
-    
-    private String cleanTimeInDateFieldEntity(String data, List<GenericTableColumn> columns){
-        List<String>dateFields= new ArrayList<>();
-        for(GenericTableColumn column: columns){
-            if(column.getDataType().equals("java.util.Date") && column.getFieldType()==null){
-                dateFields.add(column.getColumnAlias());
-            }
-        }
-        JSONObject result= new JSONObject(data);
-        JSONObject entityJson= result.getJSONObject("data");
-        if(dateFields.size()>0){
-            for(int j=0; j<dateFields.size(); j++){
-                String fieldName= dateFields.get(j);
-                if(!entityJson.isNull(fieldName)){
-                    String date= entityJson.getString(fieldName);
-                    result.getJSONObject("data").put(fieldName, date.split(" ")[0]);
-                }
-            }
-            return result.toString();
-        }
-        return data;
     }
 
 }
