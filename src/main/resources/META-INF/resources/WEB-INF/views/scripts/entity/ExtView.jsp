@@ -511,6 +511,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             handler: this.onSync
                         },
                         </c:if>
+                        <c:if test="${fn:length(viewConfig.processGlobalActions)>0}">
+                        {
+                            text: 'Acciones Globales',
+                            //iconCls: 'add16',
+                            menu: ${jsonGlobalActions}
+                        },
+                        </c:if>
                         getComboboxLimit(this.store),
                         {
                             text: 'Ordenar',
@@ -747,11 +754,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         return pg;
     };
     
-    <c:forEach var="processButton" items="${viewConfig.processButtons}">
-    function getForm${processButton.processName}Process(){
+    <c:forEach var="processForm" items="${viewConfig.processForms}">
+    function getForm${processForm.processName}Process(){
         
         var processForm = Ext.create('Ext.form.Panel', {
-            itemId: 'form${processButton.processName}Process',
+            itemId: 'form${processForm.processName}Process',
             defaultType: 'textfield',
             border: false,
             bodyPadding: 15,
@@ -762,12 +769,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 labelAlign: 'right'
             },
 
-            items: ${jsonFormFieldsProcessMap[processButton.processName]}
+            items: ${jsonFormFieldsProcessMap[processForm.processName]}
         });
 
         var win = Ext.create('Ext.window.Window', {
             autoShow: false,
-            title: '${processButton.processTitle}',
+            title: '${processForm.processTitle}',
             closable: true,
             closeAction: 'hide',
             width: '50%',
@@ -784,7 +791,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 text: 'Ejecutar',
                 handler: function(){
                     var jsonData= processForm.getForm().getValues();
-                    Instance.entityExtStore.doProcess('${processButton.mainProcessRef}', '${processButton.processName}', jsonData, function(responseText){
+                    Instance.entityExtStore.doProcess('${processForm.mainProcessRef}', '${processForm.processName}', jsonData, function(responseText){
                         Ext.MessageBox.alert('Status', responseText);
                         win.hide();
                     });
@@ -835,6 +842,35 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             }
             
         }
+        Instance.processForms[processName].show(null, function() {});
+        var processForm= Instance.processForms[processName].child('#form'+processName+'Process');
+        processForm.getForm().reset();
+        processForm.getForm().setValues(initData);
+    };
+    
+    Instance.showGlobalProcessForm= function(processName, idsField){
+        var initData={};
+        var ids= "";
+        var selection = Instance.gridComponent.getSelectionModel().getSelection();
+        if (selection.length>0) {
+            for(var i=0; i<selection.length; i++){
+                ids+=selection[i].data.id;
+                if(i<selection.length-1){
+                    ids+=",";
+                }
+            }
+        }else{
+            var check_items= document.getElementsByClassName("item_check");
+            for(var i=0; i<check_items.length; i++){
+                if(check_items[i].checked){
+                    ids+=check_items[i].value;
+                    if(i<selection.length-1){
+                        ids+=",";
+                    }
+                }
+            }
+        }
+        initData[idsField]= ids;
         Instance.processForms[processName].show(null, function() {});
         var processForm= Instance.processForms[processName].child('#form'+processName+'Process');
         processForm.getForm().reset();
@@ -931,8 +967,8 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         </c:if>
         
         Instance.processForms={};
-        <c:forEach var="processButton" items="${viewConfig.processButtons}">
-        Instance.processForms["${processButton.processName}"]= getForm${processButton.processName}Process();
+        <c:forEach var="processForm" items="${viewConfig.processForms}">
+        Instance.processForms["${processForm.processName}"]= getForm${processForm.processName}Process();
         </c:forEach>
         
         Instance.propertyGrid= getPropertyGrid();

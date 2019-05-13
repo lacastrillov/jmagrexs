@@ -8,6 +8,7 @@ package com.lacv.jmagrexs.dto.config;
 import com.lacv.jmagrexs.annotation.LabelField;
 import com.lacv.jmagrexs.dto.GridTemplate;
 import com.lacv.jmagrexs.dto.ProcessButton;
+import com.lacv.jmagrexs.dto.ProcessForm;
 import com.lacv.jmagrexs.dto.ProcessGlobalAction;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.service.EntityService;
@@ -110,7 +111,9 @@ public class EntityConfig {
     
     private final List<ProcessButton> processButtons;
     
-    private List<ProcessGlobalAction> processGlobalActions;
+    private final List<ProcessGlobalAction> processGlobalActions;
+    
+    private final List<ProcessForm> processForms;
     
     private GridTemplate gridTemplate;
     
@@ -157,6 +160,7 @@ public class EntityConfig {
         this.comboboxChildDependent= new HashMap<>();
         this.processButtons= new ArrayList<>();
         this.processGlobalActions= new ArrayList<>();
+        this.processForms= new ArrayList<>();
         this.gridTemplate= new GridTemplate("");
         LabelField ann= (LabelField) EntityReflection.getClassAnnotation(dtoClass, LabelField.class);
         if(ann!=null){
@@ -799,6 +803,8 @@ public class EntityConfig {
      */
     public void addProcessButton(ProcessButton processButton){
         processButtons.add(processButton);
+        ProcessForm processForm= new ProcessForm(processButton.getMainProcessRef(), processButton.getProcessName(), processButton.getProcessTitle());
+        getProcessForms().add(processForm);
     }
 
     /**
@@ -813,6 +819,15 @@ public class EntityConfig {
      */
     public void addProcessGlobalActions(ProcessGlobalAction processGlobalAction) {
         this.processGlobalActions.add(processGlobalAction);
+        ProcessForm processForm= new ProcessForm(processGlobalAction.getMainProcessRef(), processGlobalAction.getProcessName(), processGlobalAction.getProcessTitle());
+        getProcessForms().add(processForm);
+    }
+
+    /**
+     * @return the processForms
+     */
+    public List<ProcessForm> getProcessForms() {
+        return processForms;
     }
     
 }

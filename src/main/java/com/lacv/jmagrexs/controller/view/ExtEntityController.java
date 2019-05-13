@@ -56,6 +56,8 @@ public abstract class ExtEntityController extends ExtReportController {
     
     private final JSONArray sortColumns= new JSONArray();
     
+    private final JSONArray jsonGlobalActions= new JSONArray();
+    
     private final LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
     
     private final JSONObject jsonEmptyModel= new JSONObject();
@@ -173,6 +175,7 @@ public abstract class ExtEntityController extends ExtReportController {
         mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonGlobalActions", jsonGlobalActions.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
@@ -781,45 +784,22 @@ public abstract class ExtEntityController extends ExtReportController {
         }
         
         if(viewConfig.getProcessGlobalActions().size()>0){
-            Gson gs= new Gson();
-            JSONObject gridColumn= new JSONObject();
-            gridColumn.put("xtype", "actioncolumn");
-            gridColumn.put("width", (viewConfig.getProcessButtons().size()*33));
-            gridColumn.put("sortable", false);
-            gridColumn.put("menuDisabled", true);
-            JSONArray gridActions= new JSONArray();
             for(ProcessGlobalAction processGlobalActions: viewConfig.getProcessGlobalActions()){
-                /*String sourceByDestinationFields= gs.toJson(processButton.getSourceByDestinationFields()).replaceAll("\"", "'");
-                //ADD Button in Grid
-                JSONObject gridAction= new JSONObject();
-                gridAction.put("tooltip", processButton.getProcessTitle());
-                gridAction.put("scope", "#this#");
-                gridAction.put("icon", processButton.getIconUrl());
-                gridAction.put("handler", "#function (grid, rowIndex, colIndex) {" +
-                                          "     Instance.showProcessForm('"+processButton.getProcessName()+"', "+sourceByDestinationFields+", rowIndex);" +
+                //ADD Global Action
+                JSONObject globalAction= new JSONObject();
+                globalAction.put("text", processGlobalActions.getProcessTitle());
+                globalAction.put("scope", "#this#");
+                globalAction.put("icon", processGlobalActions.getIconUrl());
+                globalAction.put("handler", "#function () {" +
+                                          "     Instance.showGlobalProcessForm('"+processGlobalActions.getProcessName()+"', '"+processGlobalActions.getIdsField()+"');" +
                                           "}#");
                 
-                gridActions.put(gridAction);
-                gridActions.put("-");
-                
-                //ADD Button in Form
-                JSONObject internalViewButton= new JSONObject();
-                internalViewButton.put("text", processButton.getProcessTitle());
-                internalViewButton.put("scope", "#this#");
-                internalViewButton.put("scale", "medium");
-                internalViewButton.put("style", "background-image: url("+processButton.getIconUrl()+") !important;background-position: left center;background-repeat: no-repeat;background-size: 25px 25px;padding-left: 20px;");
-                internalViewButton.put("handler", "#function(){"+
-                                                  "     Instance.showProcessForm('"+processButton.getProcessName()+"', "+sourceByDestinationFields+", -1);"+
-                                                  "}#");
-                
-                jsonInternalViewButtons.put(internalViewButton);
+                jsonGlobalActions.put(globalAction);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass());
-                jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));*/
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processGlobalActions.getProcessName(), "", processGlobalActions.getDtoClass());
+                jsonFormFieldsProcessMap.put(processGlobalActions.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
             }
-            gridColumn.put("items", gridActions);
-            jsonGridColumns.put(gridColumn);
         }
         
     }

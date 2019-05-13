@@ -9,7 +9,7 @@ package com.lacv.jmagrexs.dto;
  *
  * @author lacastrillov
  */
-public class ProcessGlobalAction {
+public class ProcessForm {
     
     private String mainProcessRef;
     
@@ -17,17 +17,16 @@ public class ProcessGlobalAction {
     
     private String processTitle;
     
-    private String idsField;
-    
-    private String iconUrl;
-    
-    private Class dtoClass;
     
     
-    public ProcessGlobalAction(){
+    public ProcessForm(){
         this.processTitle= "Proceso";
-        this.idsField= "ids";
-        this.iconUrl= "/img/process_icons/settings.png";
+    }
+    
+    public ProcessForm(String mainProcessRef, String processName, String processTitle){
+        this.mainProcessRef= mainProcessRef;
+        this.processName= processName;
+        this.processTitle= processTitle;
     }
 
     /**
@@ -70,48 +69,6 @@ public class ProcessGlobalAction {
      */
     public void setProcessTitle(String processTitle) {
         this.processTitle = processTitle;
-    }
-    
-    /**
-     * @return the idsField
-     */
-    public String getIdsField() {
-        return idsField;
-    }
-
-    /**
-     * @param idsField the idsField to set
-     */
-    public void setIdsField(String idsField) {
-        this.idsField = idsField;
-    }
-    
-    /**
-     * @return the iconUrl
-     */
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    /**
-     * @param iconUrl the iconUrl to set
-     */
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
-    /**
-     * @return the dtoClass
-     */
-    public Class getDtoClass() {
-        return dtoClass;
-    }
-
-    /**
-     * @param dtoClass the dtoClass to set
-     */
-    public void setDtoClass(Class dtoClass) {
-        this.dtoClass = dtoClass;
     }
     
 }
