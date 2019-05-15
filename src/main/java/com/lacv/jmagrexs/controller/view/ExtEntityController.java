@@ -347,6 +347,7 @@ public abstract class ExtEntityController extends ExtReportController {
                         JSONObject formField= new JSONObject();
                         formField.put("name", fieldName);
                         formField.put("fieldLabel", fieldTitle);
+                        formField.put("allowBlank", !fieldsNN.contains(fieldName));
                         if(!viewConfig.isEditableForm() || readOnly){
                             formField.put("readOnly", true);
                         }
@@ -494,11 +495,14 @@ public abstract class ExtEntityController extends ExtReportController {
                             if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                                
+                                formField.put("allowBlank", true);
                                 //Add link Field
                                 JSONObject linkField= new JSONObject();
                                 linkField.put("id", "form"+entityClass.getSimpleName()+"_"+fieldName + "LinkField");
                                 linkField.put("name", fieldName);
                                 linkField.put("fieldLabel", "&nbsp;");
+                                linkField.put("allowBlank", !fieldsNN.contains(fieldName));
                                 addFormField(linkField,jsonFormFields,fieldGroups,titleGroup);
                             }
                         }else{
@@ -533,10 +537,6 @@ public abstract class ExtEntityController extends ExtReportController {
                                     formField.put("uncheckedValue", "false");
                                     break;
                             }
-                        }
-                        
-                        if(fieldsNN.contains(fieldName)){
-                            formField.put("allowBlank", false);
                         }
                         if(sizeColumnMap.containsKey(fieldName)){
                             formField.put("minLength", sizeColumnMap.get(fieldName)[0]);

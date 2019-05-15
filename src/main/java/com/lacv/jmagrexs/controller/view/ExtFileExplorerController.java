@@ -292,6 +292,7 @@ public abstract class ExtFileExplorerController extends ExtController {
                         JSONObject formField= new JSONObject();
                         formField.put("name", fieldName);
                         formField.put("fieldLabel", fieldTitle);
+                        formField.put("allowBlank", !fieldsNN.contains(fieldName));
                         if(!viewConfig.isEditableForm() || readOnly){
                             formField.put("readOnly", true);
                         }
@@ -437,10 +438,6 @@ public abstract class ExtFileExplorerController extends ExtController {
                                     formField.put("uncheckedValue", "false");
                                     break;
                             }
-                        }
-                        
-                        if(fieldsNN.contains(fieldName)){
-                            formField.put("allowBlank", false);
                         }
                         if(sizeColumnMap.containsKey(fieldName)){
                             formField.put("minLength", sizeColumnMap.get(fieldName)[0]);

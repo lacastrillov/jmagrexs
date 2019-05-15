@@ -38,6 +38,7 @@ public class JSONFields {
         formField.put("readOnly", readOnly);
         formField.put("hidden", hidden);
         formField.put("disabled", disabled);
+        formField.put("allowBlank", !fieldNN);
         String checkFieldName= fieldName.split("\\[")[0];
         if(typeFormFields.containsKey(checkFieldName)){
             String typeForm= typeFormFields.get(checkFieldName)[0];
@@ -177,11 +178,14 @@ public class JSONFields {
             if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
                     typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+                
+                formField.put("allowBlank", true);
                 //Add link Field
                 JSONObject linkField= new JSONObject();
                 linkField.put("id", "form" + processName+ "_" +parent + fieldName + "LinkField");
                 linkField.put("name", parent + fieldName);
                 linkField.put("fieldLabel", "&nbsp;");
+                linkField.put("allowBlank", !fieldNN);
                 jsonFormFields.put(linkField);
             }
         }else{
@@ -216,10 +220,6 @@ public class JSONFields {
                     formField.put("uncheckedValue", "false");
                     break;
             }
-        }
-
-        if(fieldNN){
-            formField.put("allowBlank", false);
         }
         if(sizeColumnMap.containsKey(fieldName)){
             formField.put("minLength", sizeColumnMap.get(fieldName)[0]);
