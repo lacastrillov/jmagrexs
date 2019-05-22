@@ -7,8 +7,8 @@
         <title>${fileName} - Text Editor</title>
         <style>
             body{margin:0px; padding-top: 2px; background: #ebebeb;}
-            #message {color:#15428B; font-size: 13px; margin-left: 414px; margin-top: -17px;}
-            #editor {position: absolute; top: 26px; right: 0; bottom: 0; left: 0; font-size: 14px;}
+            #message {color:#15428B; font-size: 13px; margin-left: 527px; margin-top: -17px;}
+            #editor {position: absolute; top: 34px; right: 0; bottom: 0; left: 0; font-size: 14px;}
         </style>
         <script src="<%=request.getContextPath()%>/libjs/jquery/jquery-3.1.0.min.js"></script>
         <script src="<%=request.getContextPath()%>/libjs/util/Util.js"></script>
