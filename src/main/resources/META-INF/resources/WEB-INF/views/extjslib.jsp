@@ -32,3 +32,4 @@
     <script src="${ExtJSLib}/examples/classic/shared/include-ext.js"></script>
     <!--<script src="${ExtJSLib}/examples/classic/shared/options-toolbar.js"></script>-->
 </c:if>
+    <!-- ### JMAGREXS BUILD CODE ::: ${extViewConfig.jmagrexsBuildCode} ### -->

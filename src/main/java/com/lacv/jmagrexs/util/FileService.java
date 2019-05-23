@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -210,6 +211,22 @@ public class FileService {
         }
         br.close();
         return sb.toString();
+    }
+    
+    public static String getPropertyInClasspath(Class classRef, String propertiesFile, String property){
+        try (InputStream input = classRef.getClassLoader().getResourceAsStream(propertiesFile)){
+            Properties prop = new Properties();
+            if (input == null) {
+                System.out.println("ERROR, unable to find "+propertiesFile);
+                return null;
+            }else{
+                prop.load(input);
+                return prop.getProperty(property);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(FileService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
 }

@@ -5,6 +5,8 @@
  */
 package com.lacv.jmagrexs.components;
 
+import com.lacv.jmagrexs.util.FileService;
+
 /**
  *
  * @author lcastrillo
@@ -12,6 +14,8 @@ package com.lacv.jmagrexs.components;
 public class ExtViewConfig {
     
     private String appName;
+    
+    private String jmagrexsBuildCode;
     
     private String extJsLib4;
     
@@ -36,6 +40,7 @@ public class ExtViewConfig {
     
     public ExtViewConfig(){
         this.appName="";
+        this.jmagrexsBuildCode="";
         this.extJsLib4="";
         this.extJsLib6="";
         this.extJsVersion= 4;
@@ -60,6 +65,17 @@ public class ExtViewConfig {
      */
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+    
+    /**
+     * 
+     * @return jmagrexsBuildCode
+     */
+    public String getJmagrexsBuildCode() {
+        if(jmagrexsBuildCode.equals("")){
+            jmagrexsBuildCode= FileService.getPropertyInClasspath(ExtViewConfig.class, "config/library.properties", "jmagrexs.buildcode");
+        }
+        return jmagrexsBuildCode;
     }
 
     /**
