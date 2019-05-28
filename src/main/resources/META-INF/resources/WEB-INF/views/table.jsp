@@ -18,7 +18,6 @@
         <jsp:include page="extjslib.jsp"></jsp:include>
         
         <style>
-            .x-html-editor-input textarea{white-space: pre !important;}
         </style>
         
         <!-- ############################ IMPORT LAYOUTS ################################ -->

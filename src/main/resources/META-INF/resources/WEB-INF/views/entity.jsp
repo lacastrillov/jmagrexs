@@ -19,7 +19,7 @@
         
         <style>
             .x-html-editor-input textarea{white-space: pre !important;}
-            .my-fieldset {width: 50% !important; min-width: 300px;}
+            .my-fieldset {width: 99% !important; min-width: 300px;}
             .x-grid-cell-name {width: 160px !important;}
         </style>
         

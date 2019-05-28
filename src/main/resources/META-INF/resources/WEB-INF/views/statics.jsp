@@ -11,3 +11,9 @@
     <link href="<%=request.getContextPath()%>/libcss/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/libcss/navegador.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/libcss/gridTemplateStyles.css" rel="stylesheet" type="text/css">
+    <style>
+        .x-html-editor-input textarea{white-space: pre !important;}
+        .x-form-item-label {color: #666666 !important;
+                            -webkit-user-select: auto !important; -moz-user-select: auto !important;
+                            -ms-user-select: auto !important; user-select: auto !important;}
+    </style>

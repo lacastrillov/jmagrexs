@@ -18,7 +18,6 @@
         <jsp:include page="extjslib.jsp"></jsp:include>
         
         <style>
-            .x-html-editor-input textarea{white-space: pre !important;}
             .x-tree-icon-leaf {background-image: url("http://jsonviewer.stack.hu/blue.gif") !important; }
             .x-tree-icon-parent, .x-tree-icon-parent-expanded {background-image: url("http://jsonviewer.stack.hu/object.gif") !important;background-repeat:no-repeat;}
         </style>

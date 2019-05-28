@@ -93,6 +93,8 @@ public class EntityConfig {
     
     private String entityRefNNMulticheckChild;
     
+    private int numColumnsForm;
+    
     private int gridHeightChildView;
     
     private String defaultOrderBy;
@@ -150,6 +152,7 @@ public class EntityConfig {
         this.preloadedForm= false;
         this.labelPlusId= false;
         this.entityRefNNMulticheckChild= null;
+        this.numColumnsForm= 1;
         this.gridHeightChildView= 0;
         this.defaultOrderBy= "id";
         this.defaultOrderDir= "DESC";
@@ -630,6 +633,22 @@ public class EntityConfig {
      */
     public void setEntityRefNNMulticheckChild(String entityRefNNMulticheckChild) {
         this.entityRefNNMulticheckChild = entityRefNNMulticheckChild;
+    }
+
+    /**
+     * 
+     * @return numColumnsForm
+     */
+    public int getNumColumnsForm() {
+        return numColumnsForm;
+    }
+
+    /**
+     * 
+     * @param numColumnsForm 
+     */
+    public void setNumColumnsForm(int numColumnsForm) {
+        this.numColumnsForm = numColumnsForm;
     }
     
     /**
