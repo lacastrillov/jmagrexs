@@ -143,7 +143,7 @@ public abstract class ExtEntityController extends ExtReportController {
     }
     
     @RequestMapping(value = "/ExtStore.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView extStore(@RequestParam(required = false) Boolean restSession) {
+    public ModelAndView extStore(@RequestParam(required = false) Boolean restSession, @RequestParam(required = false) Boolean jsLib) {
         ModelAndView mav= new ModelAndView("scripts/entity/ExtStore");
         
         mav.addObject("viewConfig", viewConfig);
@@ -153,6 +153,10 @@ public abstract class ExtEntityController extends ExtReportController {
             mav.addObject("restSession", viewConfig.isRestSession());
         }else{
             mav.addObject("restSession", restSession);
+        }
+        mav.addObject("jsLib", jsLib);
+        if(jsLib!=null){
+            mav.addObject("serverDomain", serverDomain);
         }
         
         return mav;

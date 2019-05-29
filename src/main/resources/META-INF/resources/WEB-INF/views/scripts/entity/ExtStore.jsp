@@ -1,6 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:if test="${jsLib}">
+<%@ page language="java" contentType="application/javascript; charset=UTF-8" pageEncoding="UTF-8"%>
+</c:if>
+<c:if test="${!jsLib}">
 <script>
-
+</c:if>
 function ${entityName}ExtStore(){
     
     var Instance = this;
@@ -44,9 +48,7 @@ function ${entityName}ExtStore(){
                 },
                 writer: {
                     type: 'json',
-                    //encode: true,
                     writeAllFields: false
-                    //root: 'data'
                 },
                 extraParams: {
                     filter: null,
@@ -320,4 +322,6 @@ function ${entityName}ExtStore(){
     };
 
 }
+<c:if test="${!jsLib}">
 </script>
+</c:if>
