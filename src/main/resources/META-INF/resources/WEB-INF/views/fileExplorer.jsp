@@ -18,6 +18,8 @@
         <jsp:include page="extjslib.jsp"></jsp:include>
         
         <style>
+            .x-tool-left {background-position: 0 -112px !important;}
+            .x-tool-right {background-position: 0 -128px !important;}
         </style>
         
         <!-- ############################ IMPORT LAYOUTS ################################ -->

@@ -114,6 +114,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 }
                 Instance.loadChildExtControllers(id);
             }else{
+                Instance.entityExtView.formComponent.getForm().reset();
                 Instance.idEntitySelected= "";
                 if(Object.keys(Instance.filter.eq).length !== 0){
                     var record= Ext.create(Instance.modelName);

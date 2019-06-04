@@ -325,7 +325,7 @@ public abstract class ExtFileExplorerController extends ExtController {
                             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                                 formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("xtype", "numberfield");
-                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("fieldLabel", fieldTitle+" (bytes)");
                                 
                                 //Add file Size Text
                                 JSONObject renderField= new JSONObject();
@@ -395,7 +395,7 @@ public abstract class ExtFileExplorerController extends ExtController {
                                 jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("fieldLabel", "Cargar");
                                 formField.put("emptyText", "Seleccione un archivo");
                                 
                                 //Add Video

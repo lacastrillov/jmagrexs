@@ -300,7 +300,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onReset: function(){
-                this.getForm().reset();
                 parentExtController.loadFormData("");
             },
                     
@@ -476,10 +475,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         }, '|',
                         <c:if test="${viewConfig.editableGrid && viewConfig.visibleAddButtonInGrid}">
                         {
-                            //iconCls: 'icon-add',
-                            text: 'Agregar',
-                            scope: this,
-                            handler: this.onAddClick
+                            xtype: 'splitbutton',
+                            text: 'Nuevo',
+                            handler: this.onNewClick,
+                            menu: [{
+                                text: 'Agregar',
+                                scope: this,
+                                handler: this.onAddClick
+                            }]
                         },
                         </c:if>
                         <c:if test="${viewConfig.visibleRemoveButtonInGrid}">
@@ -602,6 +605,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             Instance.reloadPageStore(Instance.store.currentPage);
                         });
                     }
+                }
+            },
+            
+            onNewClick: function(){
+                parentExtController.loadFormData(null);
+                if(Instance.typeView==="Parent"){
+                    mvcExt.navigate("?tab=1");
+                }else{
+                    Ext.getCmp("${entityRef}TabsContainer").clickInTab("Formulario");
                 }
             },
 

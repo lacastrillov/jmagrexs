@@ -402,7 +402,7 @@ public abstract class ExtEntityController extends ExtReportController {
                             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                                 formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("xtype", "numberfield");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
+                                formField.put("fieldLabel", fieldTitle+" (bytes)");
                                 
                                 //Add file Size Text
                                 JSONObject renderField= new JSONObject();
@@ -413,7 +413,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 jsonFormFields.put(renderField);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
+                                formField.put("fieldLabel", "Link "+fieldTitle);
                                 formField.put("emptyText", "Url Youtube");
                                 
                                 //Add Video Youtube
@@ -424,7 +424,7 @@ public abstract class ExtEntityController extends ExtReportController {
                                 renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
                                 addFormField(renderField,jsonFormFields,fieldGroups,titleGroup);
                             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
+                                formField.put("fieldLabel", "Coordenadas "+fieldTitle);
                                 formField.put("emptyText", "Google Maps Point");
                                 
                                 //Add GoogleMap

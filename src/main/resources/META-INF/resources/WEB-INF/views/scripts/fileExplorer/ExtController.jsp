@@ -72,7 +72,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             </c:forEach>
         }
         
-        if(activeTab!=="1" && (Instance.entityExtView.store.totalCount===undefined || changedFilters)){
+        if(activeTab!=="1" && (Instance.entityExtView.gridStore.totalCount===undefined || changedFilters)){
             Instance.loadGridData();
             Instance.appliedFilters= filter;
         }
@@ -94,16 +94,12 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         if(Instance.entityExtView.formComponent!==null){
             if(id!==null){
                 Instance.idEntitySelected= id;
-                var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
-
-                if(activeRecord===null){
-                    Instance.entityExtView.entityExtStore.load(id, function(data){
-                        var record= Ext.create(Instance.modelName);
-                        record.data= data;
-                        Instance.entityExtView.formComponent.setActiveRecord(record || null);
-                        Instance.entityExtView.webFileExtInterfaces.addLevel(data);
-                    });
-                }
+                Instance.entityExtView.entityExtStore.load(id, function(data){
+                    var record= Ext.create(Instance.modelName);
+                    record.data= data;
+                    Instance.entityExtView.formComponent.setActiveRecord(record || null);
+                    Instance.entityExtView.webFileExtInterfaces.addLevel(data);
+                });
             }else{
                 Instance.idEntitySelected= "";
                 if(Object.keys(Instance.filter.eq).length !== 0){
@@ -113,6 +109,36 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     }
                     Instance.entityExtView.formComponent.setActiveRecord(record || null);
                 }
+            }
+        }
+    };
+    
+    Instance.generateIndexItems= function(){
+        if(Instance.entityExtView.pageReloaded){
+            var check_items= document.getElementsByClassName("item_check");
+            Instance.indexItems={};
+            for(var i=0; i<check_items.length; i++){
+                Instance.indexItems[check_items[i].value]= i;
+            }
+            Instance.entityExtView.pageReloaded= false;
+        }
+    };
+    
+    Instance.loadLateralItem= function(direction){
+        Instance.generateIndexItems();
+        var check_items= document.getElementsByClassName("item_check");
+        var index= Instance.indexItems[Instance.idEntitySelected];
+        if(index!==-1){
+            do{
+                index= (direction==="left")?index-1:index+1;
+                if(index<0){
+                    index= check_items.length-1;
+                }else if(index>=check_items.length){
+                    index=0;
+                }
+            }while(check_items[index].className.indexOf("icon_folder")!==-1);
+            if(Instance.idEntitySelected!==check_items[index].value){
+                mvcExt.navigate("?id="+check_items[index].value+"&tab=1");
             }
         }
     };

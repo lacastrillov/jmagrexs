@@ -58,6 +58,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         <c:if test="${viewConfig.activeGridTemplate}">
             Instance.gridStore.loadPage(page);
         </c:if>
+        Instance.pageReloaded= true;
     };
     
     <c:if test="${viewConfig.visibleForm}">
@@ -751,9 +752,38 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             xtype : 'panel',
                             region: 'center',
                             width: '70%',
-                            
                             autoScroll: true,
                             html  : Instance.commonExtView.getLoadingContent()
+                       },
+                       {
+                            xtype : 'panel',
+                            region: 'south',
+                            height: 35,
+                            border: true,
+                            dockedItems: [{
+                                xtype: 'toolbar',
+                                ui: 'footer',
+                                layout : {
+                                    type  : 'hbox',
+                                    pack  : 'center'
+                                },
+                                items: [
+                                    {
+                                        text: 'Anterior',
+                                        iconCls: 'x-tool-img x-tool-left',
+                                        handler: function(){
+                                            parentExtController.loadLateralItem('left');
+                                        }
+                                    },'-',
+                                    {
+                                        text: 'Siguiente',
+                                        iconCls: 'x-tool-img x-tool-right',
+                                        handler: function(){
+                                            parentExtController.loadLateralItem('right');
+                                        }
+                                    }
+                                ]
+                            }]
                        },
                        {
                             id: 'content-processes',

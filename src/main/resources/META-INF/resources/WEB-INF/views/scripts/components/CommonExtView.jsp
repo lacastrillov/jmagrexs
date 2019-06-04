@@ -416,7 +416,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         Instance.setLinkFieldValue(field, value);
         if(value){
             return '<a href="'+value+'" target="_blank">'+
-                   '<img style="max-width:150%" src="'+value+'"></a>';
+                   '<img style="max-width:100%" src="'+value+'"></a>';
         }else{
             return "";
         }
@@ -427,7 +427,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(value){
             return '<h2>'+fileName+'</h2>'+
                    '<a href="'+value+'" target="_blank">'+
-                   '<img title="Descargar" style="max-width:150%" src="/img/icon_types/download.png" />'+
+                   '<img title="Descargar" style="max-width:150%" src="/libimg/icon_types/download.png" />'+
                    '</a>';
         }else{
             return "";
@@ -539,6 +539,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                 case "xml":
                 case "json":
                 case "conf":
+                case "log":
                     htmlView= Instance.textEditorRender(value, field);
                     break;
                 default:

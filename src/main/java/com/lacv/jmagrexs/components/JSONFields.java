@@ -77,7 +77,7 @@ public class JSONFields {
             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                 formField.put("id", "form" + processName+ "_" + parent + fieldName + "LinkField");
                 formField.put("xtype", "numberfield");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", fieldTitle+" (bytes)");
 
                 //Add file Size Text
                 JSONObject renderField= new JSONObject();
@@ -88,7 +88,7 @@ public class JSONFields {
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                 formField.put("id", "form" + processName+ "_" + parent + fieldName + "LinkField");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Link "+fieldTitle);
                 formField.put("emptyText", "Url Youtube");
 
                 //Add Video Youtube
@@ -99,7 +99,7 @@ public class JSONFields {
                 renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Coordenadas "+fieldTitle);
                 formField.put("emptyText", "Google Maps Point");
 
                 //Add GoogleMap
@@ -112,7 +112,7 @@ public class JSONFields {
             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Subir "+fieldTitle);
                 formField.put("emptyText", "Seleccione un archivo");
 
                 //Add Url File
@@ -125,7 +125,7 @@ public class JSONFields {
             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Subir "+fieldTitle);
                 formField.put("emptyText", "Seleccione una imagen");
 
                 //Add Image
@@ -138,7 +138,7 @@ public class JSONFields {
             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Subir "+fieldTitle);
                 formField.put("emptyText", "Seleccione un video");
 
                 //Add Video
@@ -151,7 +151,7 @@ public class JSONFields {
             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Subir "+fieldTitle);
                 formField.put("emptyText", "Seleccione un audio");
 
                 //Add Audio
@@ -164,7 +164,7 @@ public class JSONFields {
             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
-                formField.put("fieldLabel", "&nbsp;");
+                formField.put("fieldLabel", "Subir "+fieldTitle);
                 formField.put("emptyText", "Seleccione un archivo");
 
                 //Add MultiFile
@@ -184,7 +184,7 @@ public class JSONFields {
                 JSONObject linkField= new JSONObject();
                 linkField.put("id", "form" + processName+ "_" +parent + fieldName + "LinkField");
                 linkField.put("name", parent + fieldName);
-                linkField.put("fieldLabel", "&nbsp;");
+                linkField.put("fieldLabel", "Link "+fieldTitle);
                 linkField.put("allowBlank", !fieldNN);
                 jsonFormFields.put(linkField);
             }

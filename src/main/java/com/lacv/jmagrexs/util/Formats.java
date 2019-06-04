@@ -506,7 +506,7 @@ public class Formats {
      */
     public static String getSimpleContentType(String contentType){
         List extensions= Arrays.asList(
-                new String[] {"conf","css","csv","html","java","js","json","jsp","php","properties","txt","vm","xml"});
+                new String[] {"conf","css","csv","html","java","js","json","jsp","php","properties","log","txt","vm","xml"});
         if(extensions.contains(contentType)){
             return contentType;
         }
@@ -553,6 +553,8 @@ public class Formats {
                 return "php";
             case "text/xml":
                 return "xml";
+            case "text/x-log":
+                return "log";
             case "application/json":
                 return "json";
             default:
