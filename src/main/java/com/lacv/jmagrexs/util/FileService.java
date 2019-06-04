@@ -21,6 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -151,6 +156,16 @@ public class FileService {
         File f = new File(fileName);
         return f.exists();
     }
+    
+    public static boolean existsFileUrl(String fileUrl) throws MalformedURLException, IOException, URISyntaxException {
+        URI uri = new URI(fileUrl.replace(" ", "%20"));
+        URL u = uri.toURL();
+        HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+        huc.connect();
+        int code = huc.getResponseCode();
+        return (code != 403 && code != 404);
+    }
+
 
     public static BufferedWriter writeFile(String fileName) throws IOException {
         // Assume default encoding.
