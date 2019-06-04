@@ -506,7 +506,7 @@ public class Formats {
      */
     public static String getSimpleContentType(String contentType){
         List extensions= Arrays.asList(
-                new String[] {"conf","css","csv","html","java","js","json","jsp","php","properties","log","txt","vm","xml"});
+                new String[] {"conf","css","csv","class","html","java","js","json","jsp","php","properties","log","txt","vm","xml"});
         if(extensions.contains(contentType)){
             return contentType;
         }
@@ -524,15 +524,23 @@ public class Formats {
                 return "xls";
             case "application/pdf":
                 return "pdf";
+            case "7z":
+            case "rar":
+            case "application/zip":
             case "application/gzip":
             case "application/x-tar":
             case "application/x-rar":
-            case "application/zip":
+            case "application/x-gzip":
+            case "application/x-zip-compressed":
                 return "compress";
-            case "application/x-java-archive":
-            case "application/x-webarchive":
             case "text/x-java":
                 return "java";
+            case "jar":
+            case "application/x-java-archive":
+                return "jar";
+            case "war":
+            case "application/x-webarchive":
+                return "war";
             case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
             case "application/vnd.oasis.opendocument.presentation":
             case "application/vnd.ms-powerpoint":
