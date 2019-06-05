@@ -526,24 +526,12 @@ function CommonExtView(parentExtController, parentExtView, model){
                 case "pdf":
                     htmlView= Instance.pdfRender(value, field);
                     break;
-                case "html":
-                case "vm":
-                case "php":
-                case "java":
-                case "jsp":
-                case "js":
-                case "txt":
-                case "properties":
-                case "css":
-                case "csv":
-                case "xml":
-                case "json":
-                case "conf":
-                case "log":
-                    htmlView= Instance.textEditorRender(value, field);
-                    break;
                 default:
-                    htmlView= Instance.downloadRender(value, field);
+                    if(extension in util.PLAIN_EXTENSIONS){
+                        htmlView= Instance.textEditorRender(value, field);
+                    }else{
+                        htmlView= Instance.downloadRender(value, field);
+                    }
                     break;
             }
             try{

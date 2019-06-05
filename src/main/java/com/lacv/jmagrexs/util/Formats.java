@@ -42,6 +42,10 @@ public class Formats {
                 "java.math.BigInteger","double","java.lang.Double","float","java.lang.Float","boolean","java.lang.Boolean","java.util.Date","java.sql.Time"};
     
     public static final List TYPES_LIST= Arrays.asList(TYPES);
+    
+    public static final List FILE_EXTENSIONS= Arrays.asList(
+                new String[] {"bat","conf","css","csv","class","html","java","jar","js","json","jsp","php","properties","log",
+                    "sql","sh","txt","vm","war","xml","yml"});
 
     /**
      * Metodo que recupera la cantidad de dias entre dos fechas
@@ -388,6 +392,25 @@ public class Formats {
         }
         return true;
     }
+    
+    /**
+     * 
+     * @param format
+     * @param value
+     * @return 
+     */
+    public static Date validDateFormat(String format, String value) {
+        Date date;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            date = sdf.parse(value);
+            if (value.equals(sdf.format(date))){
+                return date;
+            }
+        } catch (ParseException ex) {
+        }
+        return null;
+    }
 
     /**
      * Cast to
@@ -444,19 +467,6 @@ public class Formats {
         return null;
     }
     
-    public static Date validDateFormat(String format, String value) {
-        Date date;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat(format);
-            date = sdf.parse(value);
-            if (value.equals(sdf.format(date))){
-                return date;
-            }
-        } catch (ParseException ex) {
-        }
-        return null;
-    }
-    
     /**
      * Cast to
      *
@@ -505,10 +515,8 @@ public class Formats {
      * @return 
      */
     public static String getSimpleContentType(String contentType){
-        List extensions= Arrays.asList(
-                new String[] {"conf","css","csv","class","html","java","js","json","jsp","php","properties","log","txt","vm","xml"});
-        if(extensions.contains(contentType)){
-            return contentType;
+        if(FILE_EXTENSIONS.contains(contentType.toLowerCase())){
+            return contentType.toLowerCase();
         }
         switch(contentType){
             case "image/gif":
@@ -535,10 +543,8 @@ public class Formats {
                 return "compress";
             case "text/x-java":
                 return "java";
-            case "jar":
             case "application/x-java-archive":
                 return "jar";
-            case "war":
             case "application/x-webarchive":
                 return "war";
             case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
