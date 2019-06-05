@@ -459,11 +459,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             onRenameFile: function(){
                 var check_items= document.getElementsByClassName("item_check");
                 var checkedValue;
+                var checkedName;
                 var totalChecked= 0;
                 for(var i=0; i<check_items.length; i++){
                     if(check_items[i].checked){
                         totalChecked++;
                         checkedValue=check_items[i].value;
+                        checkedName= document.getElementById("item_check_"+checkedValue).innerHTML;
                     }
                 }
                 if(totalChecked===1){
@@ -474,7 +476,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 Instance.reloadPageStore(Instance.store.currentPage);
                             });
                         }
-                    });
+                    }, this, false, checkedName);
                 }else{
                     Ext.MessageBox.show({
                         title: 'Renombrar',
