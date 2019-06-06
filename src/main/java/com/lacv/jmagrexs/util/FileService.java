@@ -192,6 +192,15 @@ public class FileService {
         FileUtils.writeStringToFile(file, text);
     }
     
+    public static String getDomainFromURL(String link) throws URISyntaxException, MalformedURLException{
+        if(link!=null){
+            URI uri = new URI(link.replace(" ", "%20"));
+            URL url = uri.toURL();
+            return url.getProtocol()+"://"+url.getHost()+((url.getPort()!=-1)?":"+url.getPort():"");
+        }
+        return null;
+    }
+    
     public static BufferedImage resizeImage(BufferedImage resizeMe, int maxWidth, int maxHeight) throws IOException{
         Dimension newMaxSize = new Dimension(maxWidth, maxHeight);
         BufferedImage resizedImg = Scalr.resize(resizeMe, Method.QUALITY, newMaxSize.width, newMaxSize.height);
@@ -269,5 +278,5 @@ public class FileService {
         }
         return null;
     }
-    
+
 }
