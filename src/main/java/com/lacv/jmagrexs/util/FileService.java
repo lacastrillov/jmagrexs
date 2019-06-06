@@ -236,7 +236,33 @@ public class FileService {
                 return null;
             }else{
                 prop.load(input);
-                return prop.getProperty(property);
+                if(prop.containsKey(property)){
+                    return prop.getProperty(property);
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(FileService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static Map<String,String> getPropertiesInClasspath(Class classRef, String propertiesFile, String[] properties){
+        try (InputStream input = classRef.getClassLoader().getResourceAsStream(propertiesFile)){
+            Properties prop = new Properties();
+            if (input == null) {
+                System.out.println("ERROR, unable to find "+propertiesFile);
+                return null;
+            }else{
+                prop.load(input);
+                Map<String,String> mapProperties= new HashMap<>();
+                for(String property: properties){
+                    if(prop.containsKey(property)){
+                        mapProperties.put(property, prop.getProperty(property));
+                    }else{
+                        mapProperties.put(property, null);
+                    }
+                }
+                return mapProperties;
             }
         } catch (IOException ex) {
             Logger.getLogger(FileService.class.getName()).log(Level.SEVERE, null, ex);

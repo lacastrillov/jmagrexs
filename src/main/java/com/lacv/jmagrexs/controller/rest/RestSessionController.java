@@ -333,8 +333,8 @@ public abstract class RestSessionController extends RestEntityController {
         String content="";
         try {
             String userPath= "/ucp"+getUserCode();
-            String pathFile= fileUrl.replace(LOCAL_DOMAIN + userPath, LOCAL_DIR + userPath);
-            content= (pathFile.startsWith(LOCAL_DIR))?FileService.getTextFile(pathFile):"";
+            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
+            content= (pathFile.startsWith(explorerConstants.getLocalStaticFolder()+ userPath))?FileService.getTextFile(pathFile):"";
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -346,8 +346,8 @@ public abstract class RestSessionController extends RestEntityController {
     public String sessionWriteFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
         try {
             String userPath= "/ucp"+getUserCode();
-            String pathFile= fileUrl.replace(LOCAL_DOMAIN + userPath, LOCAL_DIR + userPath);
-            if(pathFile.startsWith(LOCAL_DIR)){
+            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
+            if(pathFile.startsWith(explorerConstants.getLocalStaticFolder()+ userPath)){
                 FileService.setTextFile(content, pathFile);
                 return "Contenido guardado";
             }else{

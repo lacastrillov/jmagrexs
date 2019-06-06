@@ -1,6 +1,7 @@
 package com.lacv.jmagrexs.controller.rest;
 
 import com.lacv.jmagrexs.annotation.ImageResize;
+import com.lacv.jmagrexs.components.ExplorerConstants;
 import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
 import com.lacv.jmagrexs.components.ServerDomain;
 import com.lacv.jmagrexs.domain.BaseDto;
@@ -86,12 +87,7 @@ public abstract class RestEntityController {
     private VelocityEngine velocityEngine;
     
     @Autowired
-    @Value("${static.domain.url}")
-    public String LOCAL_DOMAIN;
-    
-    @Autowired
-    @Value("${static.folder}")
-    public String LOCAL_DIR;
+    protected ExplorerConstants explorerConstants;
     
     protected Long maxFileSizeToUpload=1024L;
     
@@ -714,8 +710,8 @@ public abstract class RestEntityController {
     public byte[] readFile(@RequestParam(required = true) String fileUrl) {
         String content="";
         try {
-            String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
-            content= (pathFile.startsWith(LOCAL_DIR))?FileService.getTextFile(pathFile):"";
+            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
+            content= (pathFile.startsWith(explorerConstants.getLocalStaticFolder()))?FileService.getTextFile(pathFile):"";
         } catch (IOException ex) {
             LOGGER.error("readFile ",ex);
         }
@@ -726,8 +722,8 @@ public abstract class RestEntityController {
     @ResponseBody
     public String writeFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
         try {
-            String pathFile= fileUrl.replace(LOCAL_DOMAIN, LOCAL_DIR);
-            if(pathFile.startsWith(LOCAL_DIR)){
+            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
+            if(pathFile.startsWith(explorerConstants.getLocalStaticFolder())){
                 FileService.setTextFile(content, pathFile);
                 return "Contenido guardado";
             }else{
