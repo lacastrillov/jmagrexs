@@ -42,7 +42,7 @@
                             Instance.loadContentFile();
                         });
                         $("#selectAllButton").on("click", function(){
-                            Instance.selectAll();
+                            Instance.editor.selectAll();
                         });
                         $("#downloadButton").on("click", function(){
                             util.downloadURI(Instance.fileUrl, "Descargar archivo");
@@ -61,7 +61,7 @@
                 };
                 
                 this.loadContentFile= function(){
-                    $("#message").text("Cargado...");
+                    Instance.setMessage("Cargado...");
                     $("#fileLink").attr("href",Instance.fileUrl);
                     $("#fileLink").html(decodeURIComponent(Instance.fileUrl));
                     $.ajax({
@@ -77,13 +77,13 @@
                         success: function (data, status) {
                             Instance.editor.setValue(data);
                             Instance.editor.clearSelection();
-                            $("#message").text("Contenido cargado");
+                            Instance.setMessage("Contenido cargado");
                         }
                     });
                 };
                 
                 this.saveContentFile= function(){
-                    $("#message").text("Guardando...");
+                    Instance.setMessage("Guardando...");
                     var content= Instance.editor.getValue();
                     $.ajax({
                         url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/writeFile.htm",
@@ -96,15 +96,18 @@
                             console.log(xhr.status);
                         },
                         success: function (data, status) {
-                            $("#message").text(data);
+                            Instance.setMessage(data);
                         }
                     });
                 };
                 
-                this.selectAll= function() {
-                    Instance.editor.selectAll();
+                this.setMessage= function(message){
+                    $("#message").text(message);
+                    $("#message").show();
+                    setTimeout(function(){
+                        $("#message").hide();
+                    },2000);
                 };
-                
                 
                 Instance.init();
             }
