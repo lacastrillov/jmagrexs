@@ -192,10 +192,9 @@ public class FileService {
         FileUtils.writeStringToFile(file, text);
     }
     
-    public static String getDomainFromURL(String link) throws URISyntaxException, MalformedURLException{
+    public static String getDomainFromURL(String link) throws MalformedURLException{
         if(link!=null){
-            URI uri = new URI(link.replace(" ", "%20"));
-            URL url = uri.toURL();
+            URL url = new URL(link.replace(" ", "%20"));
             return url.getProtocol()+"://"+url.getHost()+((url.getPort()!=-1)?":"+url.getPort():"");
         }
         return null;
