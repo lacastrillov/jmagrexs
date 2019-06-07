@@ -55,12 +55,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             border: false,
             width: '100%',
             listeners: {
-                create: function(form, data){
-                    Instance.entityExtStore.save('create', JSON.stringify(data), parentExtController.formSavedResponse);
-                },
-                update: function(form, data){
-                    Instance.entityExtStore.save('update', JSON.stringify(data), parentExtController.formSavedResponse);
-                },
                 render: function(panel) {
                     Instance.commonExtView.enableManagementTabHTMLEditor();
                 }
@@ -98,7 +92,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     text: 'Actualizar',
                     disabled: true,
                     scope: this,
-                    handler: this.onSave
+                    handler: this.onUpdate
                 }, {
                     //iconCls: 'icon-user-add',
                     text: 'Crear',
@@ -160,7 +154,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 return this.activeRecord;
             },
             
-            onSave: function(){
+            onUpdate: function(){
                 var active = this.activeRecord,
                     form = this.getForm();
             
@@ -168,7 +162,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     return;
                 }
                 if (form.isValid()) {
-                    this.fireEvent('update', this, form.getValues());
+                    parentExtController.saveFormData('update', form.getValues());
                     //form.updateRecord(active);
                     //this.onReset();
                 }
@@ -178,7 +172,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 var form = this.getForm();
 
                 if (form.isValid()) {
-                    this.fireEvent('create', this, form.getValues());
+                    parentExtController.saveFormData('create', form.getValues());
                     //form.reset();
                 }
 
@@ -227,11 +221,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 flex: 1,
                 store: store,
                 listeners: {
-                    selectionchange: function(selModel, selected) {
+                    /*selectionchange: function(selModel, selected) {
                         if(selected[0]){
                             Instance.setFormActiveRecord(selected[0]);
                         }
-                    },
+                    },*/
                     export: function(typeReport){
                         var filterData= JSON.stringify(parentExtController.filter);
                         filterData= filterData.replaceAll("{","(").replaceAll("}",")");
@@ -354,10 +348,22 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         }, '|',
                         <c:if test="${viewConfig.editableGrid && viewConfig.visibleAddButtonInGrid}">
                         {
-                            //iconCls: 'icon-add',
-                            text: 'Agregar',
+                            xtype: 'splitbutton',
+                            text: 'Nuevo',
+                            handler: this.onNewClick,
+                            menu: [{
+                                text: 'Agregar',
+                                scope: this,
+                                handler: this.onAddClick
+                            }]
+                        },
+                        </c:if>
+                        <c:if test="${viewConfig.editableGrid && !viewConfig.defaultAutoSave}">
+                        {
+                            iconCls: 'icon-save',
+                            text: 'Guardar',
                             scope: this,
-                            handler: this.onAddClick
+                            handler: this.onSync
                         },
                         </c:if>
                         <c:if test="${viewConfig.visibleRemoveButtonInGrid}">
@@ -368,23 +374,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             itemId: 'delete',
                             scope: this,
                             handler: this.onDeleteClick
-                        },
-                        </c:if>
-                        <c:if test="${viewConfig.editableGrid}">
-                        {
-                            text: 'Auto-Guardar',
-                            enableToggle: ${viewConfig.defaultAutoSave},
-                            pressed: true,
-                            tooltip: 'When enabled, Store will execute Ajax requests as soon as a Record becomes dirty.',
-                            scope: this,
-                            toggleHandler: function(btn, pressed){
-                                this.store.autoSync = pressed;
-                            }
-                        }, {
-                            iconCls: 'icon-save',
-                            text: 'Guardar',
-                            scope: this,
-                            handler: this.onSync
                         },
                         </c:if>
                         getComboboxLimit(this.store),
@@ -443,35 +432,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onDeleteClick: function(){
-                var selection = this.getView().getSelectionModel().getSelection();
-                if (selection.length>0) {
-                    if(selection.length===1){
-                        this.store.getProxy().extraParams.idEntity= selection[0].data.id;
-                        this.store.remove(selection[0]);
-                        parentExtController.loadFormData("");
-                    }else{
-                        var filter={"in":{"id":[]}};
-                        for(var i=0; i<selection.length; i++){
-                            filter.in.id.push(selection[i].data.id);
-                        }
-                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                        });
-                    }
-                }else{
-                    var check_items= document.getElementsByClassName("item_check");
-                    var filter={"in":{"id":[]}};
-                    for(var i=0; i<check_items.length; i++){
-                        if(check_items[i].checked){
-                            filter.in.id.push(check_items[i].value);
-                        }
-                    }
-                    if(filter.in.id.length>0){
-                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                        });
-                    }
-                }
+                parentExtController.deleteRecords();
+            },
+            
+            onNewClick: function(){
+                parentExtController.idEntitySelected= null;
+                mvcExt.navigate("?tab=1&id=");
             },
 
             onAddClick: function(){

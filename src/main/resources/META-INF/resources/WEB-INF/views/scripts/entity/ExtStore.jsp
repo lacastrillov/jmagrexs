@@ -299,6 +299,28 @@ function ${entityName}ExtStore(){
         });
     };
     
+    Instance.deleteById= function(idEntity, func){
+        Ext.MessageBox.show({
+            msg: 'Eliminando...',
+            width:200,
+            wait:true,
+            waitConfig: {interval:200}
+        });
+        Ext.Ajax.request({
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"delete.htm",
+            method: "GET",
+            params: 'idEntity='+idEntity,
+            success: function(response){
+                var responseText= Ext.decode(response.responseText);
+                func(responseText);
+                Ext.MessageBox.hide();
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
+    
     Instance.deleteByFilter= function(filter, func){
         Ext.MessageBox.show({
             msg: 'Eliminando...',

@@ -391,25 +391,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onDeleteClick: function(){
-                var selection = this.getView().getSelectionModel().getSelection()[0];
-                if (selection) {
-                    this.store.getProxy().extraParams.idEntity= selection.data.id;
-                    this.store.remove(selection);
-                    parentExtController.loadFormData("");
-                }else{
-                    var check_items= document.getElementsByClassName("item_check");
-                    var filter={"in":{"id":[]}};
-                    for(var i=0; i<check_items.length; i++){
-                        if(check_items[i].checked){
-                            filter.in.id.push(check_items[i].value);
-                        }
-                    }
-                    if(filter.in.id.length>0){
-                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                        });
-                    }
-                }
+                parentExtController.deleteRecords();
             },
 
             onAddClick: function(){

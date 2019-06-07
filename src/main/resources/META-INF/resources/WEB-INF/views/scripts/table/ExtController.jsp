@@ -64,7 +64,10 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             Instance.appliedFilters= filter;
         }
         if(activeTab==="1"){
-            Instance.loadFormData(id);
+            if(id!==null && id!==Instance.idEntitySelected){
+                Instance.idEntitySelected= id;
+                Instance.loadFormData(Instance.idEntitySelected);
+            }
         }
     };
     
@@ -73,13 +76,25 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.entityExtView.reloadPageStore(1);
     };
     
+    Instance.setFormData= function(record){
+        if(Instance.entityExtView.formComponent!==null){
+            Instance.entityExtView.formComponent.setActiveRecord(record || null);
+            Instance.idEntitySelected= record.data.id;
+        }
+    };
+    
     Instance.loadFormData= function(id){
         if(Instance.entityExtView.formComponent!==null){
-            if(id!==null){
-                Instance.idEntitySelected= id;
-                var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
-
-                if(activeRecord===null){
+            if(id!==null && id!==""){
+                var loaded = false;
+                if(Instance.entityExtView.gridComponent!==null){
+                    var selection = Instance.entityExtView.gridComponent.getSelectionModel().getSelection();
+                    if(selection.length===1 && selection[0].data.id+""===id){
+                        Instance.setFormData(selection[0]);
+                        loaded=true;
+                    }
+                }
+                if(!loaded){
                     Instance.entityExtView.entityExtStore.load(id, function(data){
                         var record= Ext.create(Instance.modelName);
                         record.data= data;
@@ -87,6 +102,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     });
                 }
             }else{
+                Instance.entityExtView.formComponent.getForm().reset();
                 Instance.idEntitySelected= "";
                 if(Object.keys(Instance.filter.eq).length !== 0){
                     var record= Ext.create(Instance.modelName);
@@ -97,6 +113,10 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 }
             }
         }
+    };
+    
+    Instance.saveFormData= function(action, data){
+        Instance.entityExtView.entityExtStore.save(action, JSON.stringify(data), Instance.formSavedResponse);
     };
     
     Instance.formSavedResponse= function(responseText){
@@ -117,8 +137,49 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             Instance.entityExtView.formComponent.setActiveRecord(record || null);
             Ext.MessageBox.alert('Status', responseText.message);
             </c:if>
+            Instance.loadGridData();
         }else{
             Ext.MessageBox.alert('Status', responseText.message);
+        }
+    };
+    
+    Instance.getSelectedIds= function(){
+        var selection = Instance.entityExtView.gridComponent.getSelectionModel().getSelection();
+        var ids=[];
+        if (selection.length>0) {
+            for(var i=0; i<selection.length; i++){
+                ids.push(selection[i].data.id);
+            }
+        }else{
+            var check_items= document.getElementsByClassName("item_check");
+            for(var i=0; i<check_items.length; i++){
+                if(check_items[i].checked){
+                    ids.push(check_items[i].value);
+                }
+            }
+        }
+        return ids;
+    };
+    
+    Instance.deleteRecords= function(){
+        var ids= Instance.getSelectedIds();
+        if(ids.length>0){
+            var filter={"in":{"id":ids}};
+            if(ids.length===1){
+                Instance.entityExtView.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                    Instance.loadFormData("");
+                    Instance.entityExtView.reloadPageStore(Instance.entityExtView.store.currentPage);
+                });
+            }else{
+                Ext.MessageBox.confirm('Confirmar', 'Esta seguro que desea eliminar '+ids.length+' registros?', function(result){
+                    if(result==="yes"){
+                        Instance.entityExtView.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                            Instance.loadFormData("");
+                            Instance.entityExtView.reloadPageStore(Instance.entityExtView.store.currentPage);
+                        });
+                    }
+                });
+            }
         }
     };
     

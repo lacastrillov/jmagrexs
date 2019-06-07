@@ -523,6 +523,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             xtype: 'tbtext',
                             text: '<b>@lacv</b>'
                         }, '|',
+                        <c:if test="${viewConfig.editableGrid && !viewConfig.defaultAutoSave}">
+                        {
+                            iconCls: 'icon-save',
+                            text: 'Guardar',
+                            scope: this,
+                            handler: this.onSync
+                        },
+                        </c:if>
                         <c:if test="${viewConfig.editableGrid && viewConfig.visibleRemoveButtonInGrid}">
                         {
                             //iconCls: 'icon-delete',
@@ -531,23 +539,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             itemId: 'delete',
                             scope: this,
                             handler: this.onDeleteClick
-                        },
-                        </c:if>
-                        <c:if test="${viewConfig.editableGrid}">
-                        {
-                            text: 'Auto-Guardar',
-                            enableToggle: ${viewConfig.defaultAutoSave},
-                            pressed: true,
-                            tooltip: 'When enabled, Store will execute Ajax requests as soon as a Record becomes dirty.',
-                            scope: this,
-                            toggleHandler: function(btn, pressed){
-                                this.store.autoSync = pressed;
-                            }
-                        }, {
-                            iconCls: 'icon-save',
-                            text: 'Guardar',
-                            scope: this,
-                            handler: this.onSync
                         },
                         </c:if>
                         getComboboxLimit(this.store)
@@ -589,21 +580,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onDeleteClick: function(){
-                var selection = this.getView().getSelectionModel().getSelection();
-                if (selection.length>0) {
-                    if(selection.length===1){
-                        this.store.getProxy().extraParams.idEntity= selection[0].data.id;
-                        this.store.remove(selection[0]);
-                    }else{
-                        var filter={"in":{"id":[]}};
-                        for(var i=0; i<selection.length; i++){
-                            filter.in.id.push(selection[i].data.id);
-                        }
-                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                        });
-                    }
-                }
+                parentExtController.deleteRecords();
             },
             
             exportTo: function(type){

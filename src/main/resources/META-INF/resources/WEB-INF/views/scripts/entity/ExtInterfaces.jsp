@@ -112,14 +112,16 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             },
             getDisplayValue: function() {
                 var me = this;
-                var value="";
+                var displayValue="";
                 if(me.value!==null){
                     if(typeof me.value === "object"){
-                        value= me.value[me.displayField];
-                        if(${viewConfig.labelPlusId} && me.displayField!==me.valueField){
-                            value= me.value[me.valueField] + " - " + value;
+                        displayValue= me.value[me.displayField];
+                        if(displayValue!==undefined){
+                            if(${viewConfig.labelPlusId} && me.displayField!==me.valueField){
+                                displayValue= me.value[me.valueField] + " - " + displayValue;
+                            }
+                            me.setValue(me.value[me.valueField]);
                         }
-                        me.setValue(me.value[me.valueField]);
                     }else{
                         var record = null;
                         if(me.value) {
@@ -127,15 +129,15 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                         }
                         if(record) {
                             if(${viewConfig.labelPlusId} && me.displayField!==me.valueField && record.get(me.displayField).indexOf(me.value +" - ")===-1){
-                                value= me.value + " - ";
+                                displayValue= me.value + " - ";
                             }
-                            value+= record.get(me.displayField);
+                            displayValue+= record.get(me.displayField);
                         }else{
-                            value= me.value;
+                            displayValue= me.value;
                         }
                     }
                 }
-                return value;                
+                return displayValue;                
             }
         });
         

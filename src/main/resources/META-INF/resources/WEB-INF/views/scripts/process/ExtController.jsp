@@ -155,6 +155,45 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
     };
     
+    Instance.getSelectedIds= function(){
+        var selection = Instance.entityExtView.gridComponent.getSelectionModel().getSelection();
+        var ids=[];
+        if (selection.length>0) {
+            for(var i=0; i<selection.length; i++){
+                ids.push(selection[i].data.id);
+            }
+        }else{
+            var check_items= document.getElementsByClassName("item_check");
+            for(var i=0; i<check_items.length; i++){
+                if(check_items[i].checked){
+                    ids.push(check_items[i].value);
+                }
+            }
+        }
+        return ids;
+    };
+    
+    Instance.deleteRecords= function(){
+        var ids= Instance.getSelectedIds();
+        if(ids.length>0){
+            var filter={"in":{"id":ids}};
+            if(ids.length===1){
+                Instance.entityExtView.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                    Instance.entityExtView.reloadPageStore(Instance.entityExtView.store.currentPage);
+                });
+            }else{
+                Ext.MessageBox.confirm('Confirmar', 'Esta seguro que desea eliminar '+ids.length+' registros?', function(result){
+                    if(result==="yes"){
+                        Instance.entityExtView.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                            Instance.loadFormData("");
+                            Instance.entityExtView.reloadPageStore(Instance.entityExtView.store.currentPage);
+                        });
+                    }
+                });
+            }
+        }
+    };
+    
     Instance.doFilter= function(){
         var url= "?filter="+JSON.stringify(Instance.filter)+"&tab=1";
         console.log(url);

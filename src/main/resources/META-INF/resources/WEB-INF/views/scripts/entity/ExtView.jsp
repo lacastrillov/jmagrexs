@@ -103,12 +103,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             border: false,
             width: '100%',
             listeners: {
-                create: function(form, data){
-                    Instance.entityExtStore.save('create', JSON.stringify(data), parentExtController.formSavedResponse);
-                },
-                update: function(form, data){
-                    Instance.entityExtStore.save("update", JSON.stringify(data), parentExtController.formSavedResponse);
-                },
                 render: function(panel) {
                     Instance.commonExtView.enableManagementTabHTMLEditor();
                 }
@@ -203,7 +197,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     text: 'Actualizar',
                     disabled: true,
                     scope: this,
-                    handler: this.onSave
+                    handler: this.onUpdate
                 },
                 <c:if test="${not viewConfig.preloadedForm}">
                 {
@@ -262,7 +256,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         this.down('#save${entityName}').enable();
                     }
                     this.getForm().loadRecord(this.activeRecord);
-                    //this.getForm().setValues(this.activeRecord.data);
                 } else {
                     if(this.down('#save${entityName}')!==null){
                         this.down('#save${entityName}').disable();
@@ -275,7 +268,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 return this.activeRecord;
             },
             
-            onSave: function(){
+            onUpdate: function(){
                 var active = this.activeRecord,
                     form = this.getForm();
             
@@ -283,7 +276,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     return;
                 }
                 if (form.isValid()) {
-                    this.fireEvent('update', this, form.getValues());
+                    parentExtController.saveFormData('update', form.getValues());
                     //form.updateRecord(active);
                     //this.onReset();
                 }
@@ -293,7 +286,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 var form = this.getForm();
 
                 if (form.isValid()) {
-                    this.fireEvent('create', this, form.getValues());
+                    parentExtController.saveFormData('create', form.getValues());
                     //form.reset();
                 }
 
@@ -349,11 +342,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 disableSelection: ${viewConfig.activeGridTemplate},
                 trackMouseOver: !${viewConfig.activeGridTemplate},
                 listeners: {
-                    selectionchange: function(selModel, selected) {
+                    /*selectionchange: function(selModel, selected) {
                         if(selected[0]){
                             parentExtController.setFormData(selected[0]);
                         }
-                    },
+                    },*/
                     export: function(typeReport){
                         var filterData= JSON.stringify(parentExtController.filter);
                         filterData= filterData.replaceAll("{","(").replaceAll("}",")");
@@ -485,6 +478,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             }]
                         },
                         </c:if>
+                        <c:if test="${viewConfig.editableGrid && !viewConfig.defaultAutoSave}">
+                        {
+                            iconCls: 'icon-save',
+                            text: 'Guardar',
+                            scope: this,
+                            handler: this.onSync
+                        },
+                        </c:if>
                         <c:if test="${viewConfig.visibleRemoveButtonInGrid}">
                         {
                             //iconCls: 'icon-delete',
@@ -495,23 +496,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             itemId: 'delete',
                             scope: this,
                             handler: this.onDeleteClick
-                        },
-                        </c:if>
-                        <c:if test="${viewConfig.editableGrid}">
-                        {
-                            text: 'Auto-Guardar',
-                            enableToggle: ${viewConfig.defaultAutoSave},
-                            pressed: true,
-                            tooltip: 'When enabled, Store will execute Ajax requests as soon as a Record becomes dirty.',
-                            scope: this,
-                            toggleHandler: function(btn, pressed){
-                                this.store.autoSync = pressed;
-                            }
-                        }, {
-                            iconCls: 'icon-save',
-                            text: 'Guardar',
-                            scope: this,
-                            handler: this.onSync
                         },
                         </c:if>
                         <c:if test="${fn:length(viewConfig.processGlobalActions)>0}">
@@ -577,54 +561,30 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             onDeleteClick: function(){
-                var selection = this.getView().getSelectionModel().getSelection();
-                if (selection.length>0) {
-                    if(selection.length===1){
-                        this.store.getProxy().extraParams.idEntity= selection[0].data.id;
-                        this.store.remove(selection[0]);
-                        parentExtController.loadFormData("");
-                    }else{
-                        var filter={"in":{"id":[]}};
-                        for(var i=0; i<selection.length; i++){
-                            filter.in.id.push(selection[i].data.id);
-                        }
-                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                        });
-                    }
-                }else{
-                    var check_items= document.getElementsByClassName("item_check");
-                    var filter={"in":{"id":[]}};
-                    for(var i=0; i<check_items.length; i++){
-                        if(check_items[i].checked){
-                            filter.in.id.push(check_items[i].value);
-                        }
-                    }
-                    if(filter.in.id.length>0){
-                        Instance.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
-                            Instance.reloadPageStore(Instance.store.currentPage);
-                        });
-                    }
-                }
+                parentExtController.deleteRecords();
             },
             
             onNewClick: function(){
-                parentExtController.loadFormData(null);
+                parentExtController.idEntitySelected= null;
                 if(Instance.typeView==="Parent"){
-                    mvcExt.navigate("?tab=1");
+                    mvcExt.navigate("?tab=1&id=");
                 }else{
                     Ext.getCmp("${entityRef}TabsContainer").clickInTab("Formulario");
                 }
             },
 
             onAddClick: function(){
-                var rec = Instance.getEmptyRec(), edit = this.editing;
-                edit.cancelEdit();
-                this.store.insert(0, rec);
-                edit.startEditByPosition({
-                    row: 0,
-                    column: 0
-                });
+                if(parentExtController.typeController==="Child" && parentExtController.parentEntityId===null){
+                    Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No se ha seleccionado "+parentExtController.parentEntityTitle+" padre!!!");
+                }else{
+                    var rec = Instance.getEmptyRec(), edit = this.editing;
+                    edit.cancelEdit();
+                    this.store.insert(0, rec);
+                    edit.startEditByPosition({
+                        row: 0,
+                        column: 0
+                    });
+                }
             },
             
             exportTo: function(type){
@@ -715,9 +675,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         }
                         record.data[checkbox.name]= checkbox.inputValue;
                         if(isChecked){
-                            Instance.entityExtStore.save('create', JSON.stringify(record.data), function(responseText){
-                                console.log(responseText.data);
-                            });
+                            parentExtController.saveFormData('create', record.data);
                         }else{
                             var filter= record.data;
                             delete filter["id"];
@@ -805,6 +763,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     var jsonData= processForm.getForm().getValues();
                     Instance.entityExtStore.doProcess('${processForm.mainProcessRef}', '${processForm.processName}', jsonData, function(responseText){
                         Ext.MessageBox.alert('Status', responseText);
+                        parentExtController.loadGridData();
                         win.hide();
                     });
                 }
@@ -954,6 +913,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         <c:forEach var="childExtViewER" items="${viewsChildEntityRef}">
             <c:set var="childExtViewEN" value="${fn:toUpperCase(fn:substring(childExtViewER, 0, 1))}${fn:substring(childExtViewER, 1,fn:length(childExtViewER))}"></c:set>
             var ${childExtViewER}ExtController= new ${childExtViewEN}ExtController(parentExtController, Instance);
+            ${childExtViewER}ExtController.parentEntityTitle= "${viewConfig.singularEntityTitle}";
             ${childExtViewER}ExtController.entityExtView.hideParentField("${entityRef}");
             Instance.childExtControllers.push(${childExtViewER}ExtController);
         </c:forEach>

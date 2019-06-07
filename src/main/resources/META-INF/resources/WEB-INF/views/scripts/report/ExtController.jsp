@@ -78,7 +78,7 @@ function ${reportName}ExtController(parentExtView){
     
     Instance.loadFormData= function(id){
         if(Instance.entityExtView.formComponent!==null){
-            if(id!==null){
+            if(id!==null && id!==""){
                 Instance.idEntitySelected= id;
                 var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 
