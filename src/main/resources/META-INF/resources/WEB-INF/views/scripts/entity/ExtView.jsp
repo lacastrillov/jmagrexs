@@ -577,6 +577,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 if(parentExtController.typeController==="Child" && parentExtController.parentEntityId===null){
                     Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No se ha seleccionado "+parentExtController.parentEntityTitle+" padre!!!");
                 }else{
+                    this.store.proxy.writer.writeAllFields= true;
                     var rec = Instance.getEmptyRec(), edit = this.editing;
                     edit.cancelEdit();
                     this.store.insert(0, rec);

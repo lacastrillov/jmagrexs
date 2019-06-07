@@ -5,6 +5,7 @@ import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.HideView;
 import com.lacv.jmagrexs.util.Formats;
+import com.lacv.jmagrexs.util.JSONService;
 import com.lacv.jmagrexs.util.Util;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -165,7 +166,7 @@ public final class EntityReflection {
                     } else {
                         BaseEntity currentChildEntity= (BaseEntity) targetWrapper.getPropertyValue(propertyDescriptor.getName());
                         Object id= getParsedFieldValue(typeWrapper, "id", value);
-                        if(!currentChildEntity.getId().equals(id)){
+                        if(currentChildEntity==null || !currentChildEntity.getId().equals(id)){
                             BaseEntity childEntity = (BaseEntity) getObjectForClass(typeWrapper);
                             childEntity.setId(id);
                             targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
@@ -496,7 +497,11 @@ public final class EntityReflection {
         if(typeParam.getAnnotation(Embeddable.class)!=null){
             return Util.decodeObject(value, typeParam);
         }else{
-            return Formats.castParameter(typeParam.getName(), value);
+            if(!JSONService.isJSONObject(value)){
+                return Formats.castParameter(typeParam.getName(), value);
+            }else{
+                return Formats.castParameter(typeParam.getName(), JSONService.getJSONValue(value, fieldName).toString());
+            }
         }
     }
 

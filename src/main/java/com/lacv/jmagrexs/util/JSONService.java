@@ -75,14 +75,33 @@ public class JSONService {
      * @return 
      */
     public static boolean isJSONValid(String test) {
+        return (isJSONObject(test) || isJSONArray(test));
+    }
+    
+    /**
+     * 
+     * @param test
+     * @return 
+     */
+    public static boolean isJSONObject(String test) {
         try {
             JSONObject jsonObject = new JSONObject(test);
         } catch (JSONException ex) {
-            try {
-                JSONArray jsonArray = new JSONArray(test);
-            } catch (JSONException ex1) {
-                return false;
-            }
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * 
+     * @param test
+     * @return 
+     */
+    public static boolean isJSONArray(String test) {
+        try {
+            JSONArray jsonArray = new JSONArray(test);
+        } catch (JSONException ex) {
+            return false;
         }
         return true;
     }
@@ -231,6 +250,24 @@ public class JSONService {
             finalObject.put(level, object);
         }
     };
+    
+    /**
+     * 
+     * @param json
+     * @param key
+     * @return 
+     */
+    public static Object getJSONValue(String json, String key){
+        if(isJSONObject(json)){
+            JSONObject jsonObject= new JSONObject(json);
+            if(jsonObject.has(key)){
+                return jsonObject.get(key);
+            }else{
+                return null;
+            }
+        }
+        return null;
+    }
     
     /**
      * 

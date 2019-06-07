@@ -366,10 +366,10 @@ public abstract class RestEntityController {
                     updateRelatedWebEntity(entity, request);
                     resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
                 }else{
-                    return this.create(data, request);
+                    return this.create(jsonData, request);
                 }
             }else{
-                return this.create(data, request);
+                return this.create(jsonData, request);
             }
         } catch (Exception e) {
             LOGGER.error("update " + entityRef, e);
