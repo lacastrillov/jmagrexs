@@ -342,11 +342,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 disableSelection: ${viewConfig.activeGridTemplate},
                 trackMouseOver: !${viewConfig.activeGridTemplate},
                 listeners: {
-                    /*selectionchange: function(selModel, selected) {
-                        if(selected[0]){
+                    selectionchange: function(selModel, selected) {
+                        if(selected[0] && parentExtController.typeController==="Child"){
                             parentExtController.setFormData(selected[0]);
                         }
-                    },*/
+                    },
                     export: function(typeReport){
                         var filterData= JSON.stringify(parentExtController.filter);
                         filterData= filterData.replaceAll("{","(").replaceAll("}",")");
