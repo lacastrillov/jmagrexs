@@ -17,6 +17,8 @@ function UserAuthentication() {
 
     Instance.init = function () {
         $(document).ready(function () {
+            Instance.ALL_MODULES = Instance.MODULES;
+            Instance.ALL_MODULES.push(Instance.portalContext);
             
             $("#j_username, #j_password").keypress(function(e) {
                 if(e.which === 13) {
@@ -46,9 +48,7 @@ function UserAuthentication() {
     
     Instance.ajaxAuthenticate = function (idForm, callback) {
         Instance.userData=null;
-        var all_modules= Instance.MODULES;
-        all_modules.push(Instance.portalContext);
-        Instance.preAuthenticate(0, $("#"+idForm).serialize(), all_modules, function(){
+        Instance.preAuthenticate(0, $("#"+idForm).serialize(), Instance.ALL_MODULES, function(){
             callback(Instance.userData);
         });
     };
@@ -90,9 +90,7 @@ function UserAuthentication() {
     
     Instance.ajaxLogout= function (callback) {
         Instance.userData=null;
-        var all_modules= Instance.MODULES;
-        all_modules.push(Instance.portalContext);
-        Instance.preLogout(0, all_modules, function(){
+        Instance.preLogout(0, Instance.ALL_MODULES, function(){
             callback();
         });
     };
@@ -100,7 +98,7 @@ function UserAuthentication() {
     Instance.preLogout= function(index, modules, callback){
         if(index<modules.length){
             $.ajax({
-                url: Instance.applicationContext+modules[index]+"/security_logout",
+                url: Instance.applicationContext+modules[index]+"/account/ajax/logout",
                 timeout: 5000,
                 type: "GET",
                 cache: false,
@@ -118,10 +116,8 @@ function UserAuthentication() {
     
     Instance.replicateAuthentication= function(callback){
         Instance.userData= null;
-        var all_modules= Instance.MODULES;
-        all_modules.push("");
         Instance.sessionModules= {};
-        Instance.scanActiveSessions(0, all_modules, function(){
+        Instance.scanActiveSessions(0, Instance.ALL_MODULES, function(){
             var totalOffModules= 0;
             var offModules= [];
             for(var key in Instance.sessionModules){
