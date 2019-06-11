@@ -1,24 +1,23 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
+<%@ page language="java" contentType="application/javascript; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:if test="${false}">
+<script>
+</c:if>
 function UserAuthentication() {
 
     var Instance = this;
     
-    Instance.applicationContext= "";
+    Instance.applicationContext= "${serverDomain.applicationContext}";
     
-    Instance.portalContext= "";
+    Instance.portalContext= "${serverDomain.portalContext}";
     
-    Instance.MODULES= [];
+    Instance.MODULES= ${serverDomain.modulesJson};
+    
+    Instance.ALL_MODULES= Instance.MODULES;
 
     Instance.init = function () {
+        Instance.ALL_MODULES.push(Instance.portalContext);
         $(document).ready(function () {
-            Instance.ALL_MODULES = Instance.MODULES;
-            Instance.ALL_MODULES.push(Instance.portalContext);
             
             $("#j_username, #j_password").keypress(function(e) {
                 if(e.which === 13) {
@@ -31,6 +30,14 @@ function UserAuthentication() {
                 Instance.changeForm("changePasswordDiv");
             }
         });
+    };
+    
+    Instance.getAllModules= function(){
+        if(Instance.ALL_MODULES===null){
+            Instance.ALL_MODULES = Instance.MODULES;
+            Instance.ALL_MODULES.push(Instance.portalContext);
+        }
+        return Instance.ALL_MODULES;
     };
     
     Instance.authenticate= function(idForm){
@@ -217,3 +224,6 @@ function UserAuthentication() {
 
     Instance.init();
 }
+<c:if test="${false}">
+</script>
+</c:if>

@@ -6,7 +6,7 @@
     <script src="<%=request.getContextPath()%>/libjs/util/FileUploader.js"></script>
     <script src="<%=request.getContextPath()%>/libjs/util/GoogleMaps.js"></script>
     <script src="<%=request.getContextPath()%>/libjs/util/vkbeautify.0.99.00.beta.js"></script>
-    <script src="<%=request.getContextPath()%>/libjs/user/UserAuthentication.js"></script>
+    <script src="<%=request.getContextPath()%>/account/UserAuthentication"></script>
 
     <link href="<%=request.getContextPath()%>/libcss/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/libcss/navegador.css" rel="stylesheet" type="text/css">

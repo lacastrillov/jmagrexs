@@ -72,7 +72,7 @@ function MVCExtController(){
     };
     
     Instance.redirect= function(url){
-        location.href= "<%=request.getContextPath()%>"+url;
+        location.href= url;
     };
     
     Instance.loadView= function(idView){
