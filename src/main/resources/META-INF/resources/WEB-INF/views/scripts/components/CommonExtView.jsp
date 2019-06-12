@@ -250,6 +250,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                 var itemsGroup=Ext.getCmp(c.id);
                 for(var i=0; i<MAX_LIST_ITEMS; i++){
                     var itemEntity=Ext.getCmp(c.id+'['+i+']');
+                    var itemEntityRenderer=Ext.getCmp(c.id+'['+i+']Renderer');
                     var filled= false;
                     if(itemEntity.query){
                         itemEntity.query('.field').forEach(function(c){
@@ -278,10 +279,16 @@ function CommonExtView(parentExtController, parentExtView, model){
                                 c.setDisabled(!c.isVisible() || !visible);
                             });
                         }
+                        if(itemEntityRenderer){
+                            itemEntityRenderer.setVisible(true);
+                        }
                         itemsGroup.itemTop=i+1;
                     }else{
                         itemEntity.setVisible(false);
                         itemEntity.setDisabled(true);
+                        if(itemEntityRenderer){
+                            itemEntityRenderer.setVisible(false);
+                        }
                     }
                 }
             }
@@ -292,6 +299,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
         if(itemsGroup.itemTop<(MAX_LIST_ITEMS)){
             var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
+            var itemEntityRenderer=Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
             itemsGroup.itemTop+= 1;
             itemEntity.setVisible(true);
             itemEntity.setDisabled(false);
@@ -306,6 +314,9 @@ function CommonExtView(parentExtController, parentExtView, model){
                     c.setDisabled(!c.isVisible() || !visible);
                 });
             }
+            if(itemEntityRenderer){
+                itemEntityRenderer.setVisible(true);
+            }
         }
     };
     
@@ -314,12 +325,16 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(itemsGroup.itemTop>0){
             itemsGroup.itemTop-= 1;
             var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
+            var itemEntityRenderer= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
             itemEntity.setVisible(false);
             itemEntity.setDisabled(true);
             if(itemEntity.query){
                 itemEntity.query('.field').forEach(function(c){
                     c.setDisabled(true);
                 });
+            }
+            if(itemEntityRenderer){
+                itemEntityRenderer.setVisible(false);
             }
         }
     };

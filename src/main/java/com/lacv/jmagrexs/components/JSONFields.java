@@ -39,6 +39,13 @@ public class JSONFields {
         formField.put("hidden", hidden);
         formField.put("disabled", disabled);
         formField.put("allowBlank", !fieldNN);
+        
+        JSONObject renderField= new JSONObject();
+        renderField.put("id", processName + "_" + parent + fieldName + "Renderer");
+        renderField.put("name", parent + fieldName);
+        renderField.put("fieldLabel", fieldTitle);
+        renderField.put("xtype", "displayfield");
+        
         String checkFieldName= fieldName.split("\\[")[0];
         if(typeFormFields.containsKey(checkFieldName)){
             String typeForm= typeFormFields.get(checkFieldName)[0];
@@ -80,10 +87,6 @@ public class JSONFields {
                 formField.put("fieldLabel", fieldTitle+" (bytes)");
 
                 //Add file Size Text
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
@@ -92,10 +95,6 @@ public class JSONFields {
                 formField.put("emptyText", "Url Youtube");
 
                 //Add Video Youtube
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
@@ -103,10 +102,6 @@ public class JSONFields {
                 formField.put("emptyText", "Google Maps Point");
 
                 //Add GoogleMap
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
@@ -116,10 +111,6 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un archivo");
 
                 //Add Url File
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.fileRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
@@ -129,10 +120,6 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione una imagen");
 
                 //Add Image
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.imageRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
@@ -142,10 +129,6 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un video");
 
                 //Add Video
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
@@ -155,10 +138,6 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un audio");
 
                 //Add Audio
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
                 jsonFormFields.put(renderField);
             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
@@ -168,10 +147,6 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un archivo");
 
                 //Add MultiFile
-                JSONObject renderField= new JSONObject();
-                renderField.put("name", parent + fieldName);
-                renderField.put("fieldLabel", fieldTitle);
-                renderField.put("xtype", "displayfield");
                 renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
                 jsonFormFields.put(renderField);
             }
