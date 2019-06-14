@@ -67,8 +67,11 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.entityExtView.commonExtView.showListItems(formComponent);
     };
     
-    Instance.formSavedResponse= function(result){
-        Ext.MessageBox.alert('Status', result.message);
+    Instance.formSavedResponse= function(configurationObjectRef, message, result){
+        Ext.MessageBox.alert('Status', message);
+        if(result.success){
+            Instance.populateForm(configurationObjectRef, result.data);
+        }
     };
     
 

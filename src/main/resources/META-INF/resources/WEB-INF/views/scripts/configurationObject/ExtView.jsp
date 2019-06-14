@@ -101,14 +101,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             var formComponent= Ext.getCmp('formContainer'+configurationObjectRef).child('#form'+configurationObjectRef);
                             Instance.entityExtStore.upload(formComponent, configurationObjectRef, function(responseUpload){
                                 Ext.MessageBox.alert('Status', responseUpload.message);
-                                if(responseUpload.success){
-                                    parentExtController.populateForm(configurationObjectRef, JSON.parse(responseUpload.data));
-                                    parentExtController.formSavedResponse(result);
-                                }
+                                parentExtController.formSavedResponse(configurationObjectRef, result.message, responseUpload);
                             });
                             </c:if>
                             <c:if test="${!fn:contains(viewConfig.multipartFormConfig, configurationObjectName.key)}">
-                            parentExtController.formSavedResponse(result);
+                            parentExtController.formSavedResponse(configurationObjectRef, result.message, result);
                             </c:if>
                         });
                     },

@@ -59,6 +59,7 @@ function ${entityName}ExtStore(){
             url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/diskupload/"+configurationObjectRef+".htm",
             waitMsg: 'Subiendo archivo...',
             success: function(form, action) {
+                action.result.data= Ext.decode(action.result.data);
                 func(action.result);
             },
             failure: function(response){

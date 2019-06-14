@@ -48,7 +48,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             data: data
         });
         Instance.combobox[component+'_'+fieldName]= new Ext.form.ComboBox({
-            //id: component+'Combobox'+fieldName+'In'+model,
+            id: component+'_'+fieldName,
             name: fieldName,
             editable: false,
             allowBlank: allowBlank,
@@ -249,27 +249,32 @@ function CommonExtView(parentExtController, parentExtView, model){
             if(c.itemTop!==undefined){
                 var itemsGroup=Ext.getCmp(c.id);
                 for(var i=0; i<MAX_LIST_ITEMS; i++){
-                    var itemEntity=Ext.getCmp(c.id+'['+i+']');
-                    var itemEntityRenderer=Ext.getCmp(c.id+'['+i+']Renderer');
+                    var itemField= Ext.getCmp(c.id+'['+i+']');
+                    var rendererField= Ext.getCmp(c.id+'['+i+']Renderer');
+                    var linkField= Ext.getCmp(c.id+'['+i+']Link');
+                    
                     var filled= false;
-                    if(itemEntity.query){
-                        itemEntity.query('.field').forEach(function(c){
+                    if(itemField.query){
+                        itemField.query('.field').forEach(function(c){
                             var text=c.getValue();
                             if(text!==null && text!=="" && text!==false){
                                 filled=true;
                             }
                         });
                     }else{
-                        var text=itemEntity.getValue();
+                        var text= itemField.getValue();
+                        if(linkField){
+                            text= linkField.getValue();
+                        }
                         if(text!==null && text!=="" && text!==false){
                             filled=true;
                         }
                     }
                     if(filled){
-                        itemEntity.setVisible(true);
-                        itemEntity.setDisabled(false);
-                        if(itemEntity.query){
-                            itemEntity.query('.field').forEach(function(c){
+                        itemField.setVisible(true);
+                        itemField.setDisabled(false);
+                        if(itemField.query){
+                            itemField.query('.field').forEach(function(c){
                                 var visible= true;
                                 var upFieldset=c.up('fieldset');
                                 while(upFieldset!==undefined && visible===true){
@@ -279,15 +284,25 @@ function CommonExtView(parentExtController, parentExtView, model){
                                 c.setDisabled(!c.isVisible() || !visible);
                             });
                         }
-                        if(itemEntityRenderer){
-                            itemEntityRenderer.setVisible(true);
+                        if(rendererField){
+                            rendererField.setVisible(true);
+                            rendererField.setDisabled(false);
+                        }
+                        if(linkField){
+                            linkField.setVisible(true);
+                            linkField.setDisabled(false);
                         }
                         itemsGroup.itemTop=i+1;
                     }else{
-                        itemEntity.setVisible(false);
-                        itemEntity.setDisabled(true);
-                        if(itemEntityRenderer){
-                            itemEntityRenderer.setVisible(false);
+                        itemField.setVisible(false);
+                        itemField.setDisabled(true);
+                        if(rendererField){
+                            rendererField.setVisible(false);
+                            rendererField.setDisabled(true);
+                        }
+                        if(linkField){
+                            linkField.setVisible(false);
+                            linkField.setDisabled(true);
                         }
                     }
                 }
@@ -297,14 +312,16 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.addListItem= function(processName, parent, fieldName){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
-        if(itemsGroup.itemTop<(MAX_LIST_ITEMS)){
-            var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
-            var itemEntityRenderer=Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
+        if(itemsGroup.itemTop<MAX_LIST_ITEMS){
+            var itemField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
+            var rendererField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
+            var linkField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Link");
+            
             itemsGroup.itemTop+= 1;
-            itemEntity.setVisible(true);
-            itemEntity.setDisabled(false);
-            if(itemEntity.query){
-                itemEntity.query('.field').forEach(function(c){
+            itemField.setVisible(true);
+            itemField.setDisabled(false);
+            if(itemField.query){
+                itemField.query('.field').forEach(function(c){
                     var visible= true;
                     var upFieldset=c.up('fieldset');
                     while(upFieldset!==undefined && visible===true){
@@ -314,8 +331,13 @@ function CommonExtView(parentExtController, parentExtView, model){
                     c.setDisabled(!c.isVisible() || !visible);
                 });
             }
-            if(itemEntityRenderer){
-                itemEntityRenderer.setVisible(true);
+            if(rendererField){
+                rendererField.setVisible(true);
+                rendererField.setDisabled(false);
+            }
+            if(linkField){
+                linkField.setVisible(true);
+                linkField.setDisabled(false);
             }
         }
     };
@@ -324,17 +346,24 @@ function CommonExtView(parentExtController, parentExtView, model){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
         if(itemsGroup.itemTop>0){
             itemsGroup.itemTop-= 1;
-            var itemEntity= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
-            var itemEntityRenderer= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
-            itemEntity.setVisible(false);
-            itemEntity.setDisabled(true);
-            if(itemEntity.query){
-                itemEntity.query('.field').forEach(function(c){
+            var itemField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
+            var rendererField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
+            var linkField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Link");
+            
+            itemField.setVisible(false);
+            itemField.setDisabled(true);
+            if(itemField.query){
+                itemField.query('.field').forEach(function(c){
                     c.setDisabled(true);
                 });
             }
-            if(itemEntityRenderer){
-                itemEntityRenderer.setVisible(false);
+            if(rendererField){
+                rendererField.setVisible(false);
+                rendererField.setDisabled(true);
+            }
+            if(linkField){
+                linkField.setVisible(false);
+                linkField.setDisabled(true);
             }
         }
     };
@@ -492,6 +521,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.googleMapsRender= function(value, field) {
+        Instance.setLinkFieldValue(field, value);
         setTimeout(function(){
             try{
                 googleMaps.load(field.name, value);
@@ -507,17 +537,19 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.setLinkFieldValue= function(field, value){
-        setTimeout(function(){
-            try{
-                var parentForm= field.up('form');
-                var linkFieldId= parentForm.itemId + "_" + field.name + "LinkField";
-                if(Ext.getCmp(linkFieldId)!==undefined){
-                    Ext.getCmp(linkFieldId).setValue((value)?value:"");
-                }
-            }catch(e){
-                console.error(e);
+        //setTimeout(function(){
+        try{
+            var linkFieldId= (field.id+"").replaceAll("Renderer", "Link");
+            var fieldId= (field.id+"").replaceAll("Renderer", "");
+            if(Ext.getCmp(linkFieldId)!==undefined){
+                Ext.getCmp(linkFieldId).setValue((value)?value:"");
+            }else if(Ext.getCmp(fieldId)!==undefined){
+                Ext.getCmp(fieldId).setValue((value)?value:"");
             }
-        },1000);
+        }catch(e){
+            console.error(e);
+        }
+        //},1000);
     };
     
     Instance.multiFileRender= function(value, field) {
@@ -578,12 +610,16 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(mb<1024){
             return mb.toFixed(2) + " MB";
         }
-        var gb= kb/1024;
+        var gb= mb/1024;
         if(gb<1024){
             return gb.toFixed(2) + " GB";
         }
         var tb= gb/1024;
-        return tb.toFixed(2) + " TB";
+        if(tb<1024){
+            return tb.toFixed(2) + " TB";
+        }
+        var pb= tb/1024;
+        return pb.toFixed(2) + " PB";
     };
     
     Instance.getLoadingContent= function(){

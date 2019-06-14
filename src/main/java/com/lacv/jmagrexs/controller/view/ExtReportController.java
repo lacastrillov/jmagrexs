@@ -219,6 +219,7 @@ public abstract class ExtReportController extends ExtController {
                 if(reportConfig.isVisibleForm() && !hideFields.contains(fieldName + HideView.FORM.name())){
                     if(Formats.TYPES_LIST.contains(type)){
                         JSONObject formField= new JSONObject();
+                        formField.put("id", reportName + "_" +fieldName);
                         formField.put("name", fieldName);
                         formField.put("fieldLabel", fieldTitle);
                         formField.put("readOnly", true);
@@ -231,7 +232,6 @@ public abstract class ExtReportController extends ExtController {
                             }else if(typeForm.equals(FieldType.DATETIME.name())){
                                 formField.put("xtype", "datefield");
                                 formField.put("format", extViewConfig.getDatetimeFormat());
-                                formField.put("tooltip", "Seleccione la fecha");
                             }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
                                 formField.put("xtype", "textarea");
                                 formField.put("height", 200);
@@ -242,20 +242,14 @@ public abstract class ExtReportController extends ExtController {
                                 formField.put("height", 400);
                             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                                 //Add file Size Text
-                                formField.put("name", fieldName);
-                                formField.put("fieldLabel", fieldTitle);
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 //Add Url File
-                                formField.put("name", fieldName);
-                                formField.put("fieldLabel", fieldTitle);
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.fileRender#");
                             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                                 //Add Image
-                                formField.put("name", fieldName);
-                                formField.put("fieldLabel", fieldTitle);
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.imageRender#");
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
@@ -263,39 +257,35 @@ public abstract class ExtReportController extends ExtController {
                                 formField.put("emptyText", "Url Youtube");
                                 
                                 //Add Video Youtube
-                                JSONObject youtubeField= new JSONObject();
-                                youtubeField.put("name", fieldName);
-                                youtubeField.put("fieldLabel", fieldTitle);
-                                youtubeField.put("xtype", "displayfield");
-                                youtubeField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                                jsonFormFields.put(youtubeField);
+                                JSONObject rendererField= new JSONObject();
+                                rendererField.put("id", reportName + "_" + fieldName + "Renderer");
+                                rendererField.put("name", fieldName);
+                                rendererField.put("fieldLabel", fieldTitle);
+                                rendererField.put("xtype", "displayfield");
+                                rendererField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                                 //Add Video
-                                formField.put("name", fieldName);
-                                formField.put("fieldLabel", fieldTitle);
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
                             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                                 //Add Audio
-                                formField.put("name", fieldName);
-                                formField.put("fieldLabel", fieldTitle);
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
                             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
-                                formField.put("fieldLabel", "&nbsp;");
+                                formField.put("fieldLabel", "Coordenadas "+fieldTitle);
                                 formField.put("emptyText", "Google Maps Point");
                                 
                                 //Add GoogleMap
-                                JSONObject mapField= new JSONObject();
-                                mapField.put("name", fieldName);
-                                mapField.put("fieldLabel", fieldTitle);
-                                mapField.put("xtype", "displayfield");
-                                mapField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                                jsonFormFields.put(mapField);
+                                JSONObject rendererField= new JSONObject();
+                                rendererField.put("id", reportName + "_" + fieldName + "Renderer");
+                                rendererField.put("name", fieldName);
+                                rendererField.put("fieldLabel", fieldTitle);
+                                rendererField.put("xtype", "displayfield");
+                                rendererField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 //Add File
-                                formField.put("name", fieldName);
-                                formField.put("fieldLabel", fieldTitle);
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.multiFileRender#");
                             }
@@ -305,7 +295,7 @@ public abstract class ExtReportController extends ExtController {
                                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 //Add link Field
                                 JSONObject linkField= new JSONObject();
-                                linkField.put("id", "form" + reportName + "_" +fieldName + "LinkField");
+                                linkField.put("id", reportName + "_" +fieldName + "Link");
                                 linkField.put("name", fieldName);
                                 linkField.put("fieldLabel", "&nbsp;");
                                 jsonFormFields.put(linkField);

@@ -290,9 +290,17 @@ public abstract class ExtFileExplorerController extends ExtController {
                     if(Formats.TYPES_LIST.contains(type)){
                         boolean addFormField= true;
                         JSONObject formField= new JSONObject();
+                        formField.put("id", entityClass.getSimpleName() + "_" +fieldName);
                         formField.put("name", fieldName);
                         formField.put("fieldLabel", fieldTitle);
                         formField.put("allowBlank", !fieldsNN.contains(fieldName));
+                        
+                        JSONObject rendererField= new JSONObject();
+                        rendererField.put("id", entityClass.getSimpleName() + "_" + fieldName + "Renderer");
+                        rendererField.put("name", fieldName);
+                        rendererField.put("fieldLabel", fieldTitle);
+                        rendererField.put("xtype", "displayfield");
+                        
                         if(!viewConfig.isEditableForm() || readOnly){
                             formField.put("readOnly", true);
                         }
@@ -323,88 +331,59 @@ public abstract class ExtFileExplorerController extends ExtController {
                                 }
                                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
                             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
-                                formField.put("id", "form" + entityClass.getSimpleName() + "_" +fieldName + "LinkField");
                                 formField.put("xtype", "numberfield");
                                 formField.put("fieldLabel", fieldTitle+" (bytes)");
                                 
                                 //Add file Size Text
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un archivo");
                                 
                                 //Add Url File
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.fileRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.fileRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione una imagen");
                                 
                                 //Add Image
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.imageRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.imageRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Url Youtube");
                                 
                                 //Add Video Youtube
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un video");
                                 
                                 //Add Video
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "&nbsp;");
                                 formField.put("emptyText", "Seleccione un audio");
                                 
                                 //Add Video
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
+                                jsonFormFields.put(rendererField);
                             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                                 formField.put("xtype", "filefield");
                                 formField.put("fieldLabel", "Cargar");
                                 formField.put("emptyText", "Seleccione un archivo");
                                 
                                 //Add Video
-                                JSONObject renderField= new JSONObject();
-                                renderField.put("name", fieldName);
-                                renderField.put("fieldLabel", fieldTitle);
-                                renderField.put("xtype", "displayfield");
-                                renderField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                                jsonFormFields.put(renderField);
+                                rendererField.put("renderer", "#Instance.commonExtView.multiFileRender#");
+                                jsonFormFields.put(rendererField);
                             }
                         }else{
                             switch (type) {

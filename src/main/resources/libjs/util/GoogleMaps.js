@@ -29,9 +29,8 @@ function GoogleMaps() {
 
             center = new GLatLng(latitude, longitude);
             
-            var fields= document.getElementsByName(fieldName);
-            fields[fields.length-1].value= latitude+","+longitude;
-
+            //var fields= document.getElementsByName(fieldName);
+            //fields[fields.length-1].value= latitude+","+longitude;
             map.setCenter(center, 13);
             geocoder = new GClientGeocoder();
             var marker = new GMarker(center, {draggable: true});
@@ -40,7 +39,7 @@ function GoogleMaps() {
             GEvent.addListener(marker, "dragend", function () {
                 var point = marker.getPoint();
                 map.panTo(point);
-                fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
+                //fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
             });
 
             GEvent.addListener(map, "moveend", function () {
@@ -48,12 +47,12 @@ function GoogleMaps() {
                 var center = map.getCenter();
                 var marker = new GMarker(center, {draggable: true});
                 map.addOverlay(marker);
-                fields[fields.length-1].value= center.lat().toFixed(5)+","+center.lng().toFixed(5);
+                //fields[fields.length-1].value= center.lat().toFixed(5)+","+center.lng().toFixed(5);
 
                 GEvent.addListener(marker, "dragend", function () {
                     var point = marker.getPoint();
                     map.panTo(point);
-                    fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
+                    //fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
                 });
             });
         }
