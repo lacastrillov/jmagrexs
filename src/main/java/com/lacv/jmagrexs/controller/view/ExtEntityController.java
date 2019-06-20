@@ -306,7 +306,7 @@ public abstract class ExtEntityController extends ExtReportController {
         if(!viewConfig.isActiveGridTemplate()){
             JSONObject numbererColumn= new JSONObject();
             numbererColumn.put("xtype", "rownumberer");
-            numbererColumn.put("width", 40);
+            numbererColumn.put("width", 20);
             numbererColumn.put("sortable", false);
             numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
             jsonGridColumns.put(numbererColumn);

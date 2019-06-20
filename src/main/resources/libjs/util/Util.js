@@ -127,7 +127,7 @@ function Util() {
             "jssm": "ace/mode/jssm", "jsx": "ace/mode/jsx", "jl": "ace/mode/julia",
             "kt": "ace/mode/kotlin", "latex": "ace/mode/latex", "less": "ace/mode/less",
             "liquid": "ace/mode/liquid", "lisp": "ace/mode/lisp", "lsc": "ace/mode/livescript",
-            "logiql": "ace/mode/logiql", "lsl": "ace/mode/lsl", "lua": "ace/mode/lua",
+            "logiql": "ace/mode/logiql", "log":"ace/mode/text", "lsl": "ace/mode/lsl", "lua": "ace/mode/lua",
             "lp": "ace/mode/luapage", "cfs": "ace/mode/lucene", "makefile": "ace/mode/makefile",
             "md": "ace/mode/markdown", "mask": "ace/mode/mask", "m": "ace/mode/matlab",
             "maz": "ace/mode/maze", "mel": "ace/mode/mel", "mix": "ace/mode/mixal",
@@ -309,12 +309,21 @@ function Util() {
     };
     
     this.downloadURI= function(uri){
-        var link = document.createElement("a");
-        var name= uri.substring(uri.lastIndexOf('/')+1);
-        link.download = name;
-        link.target="_blank";
-        link.href = uri;
-        link.click();
+        var fileName= uri.substring(uri.lastIndexOf('/')+1);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", uri, true);
+        xhr.responseType = "blob";
+        xhr.onload = function(){
+            var urlCreator = window.URL || window.webkitURL;
+            var imageUrl = urlCreator.createObjectURL(this.response);
+            var tag = document.createElement('a');
+            tag.href = imageUrl;
+            tag.download = fileName;
+            document.body.appendChild(tag);
+            tag.click();
+            document.body.removeChild(tag);
+        }
+        xhr.send();
     };
     
     this.createForm= function(config){

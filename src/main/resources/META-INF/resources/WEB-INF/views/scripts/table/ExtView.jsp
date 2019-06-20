@@ -184,7 +184,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
                     
             onSeeAll: function(){
-                this.doLayout();
+                if(ExtJSVersion===4){
+                    this.doLayout();
+                }else{
+                    this.updateLayout();
+                }
             }
     
         });

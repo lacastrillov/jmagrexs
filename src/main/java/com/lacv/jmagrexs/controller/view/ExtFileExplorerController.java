@@ -195,13 +195,14 @@ public abstract class ExtFileExplorerController extends ExtController {
     }
     
     @RequestMapping(value = "/ajax/plainTextEditor.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView plainTextEditor(@RequestParam(required = true) String fileUrl) {
+    public ModelAndView plainTextEditor(@RequestParam(required = true) String fileUrl, @RequestParam(required = false) Boolean extractButton) {
         ModelAndView mav= new ModelAndView("scripts/fileExplorer/PlainTextExtEditor");
         mav.addObject("serverDomain", serverDomain);
         try {
             URL url= new URL(fileUrl);
             mav.addObject("fileUrl", fileUrl);
             mav.addObject("fileName", FilenameUtils.getName(url.getPath()));
+            mav.addObject("extractButton", ((extractButton!=null)?extractButton:false));
         } catch (MalformedURLException ex) {
             LOGGER.error("ERROR plainTextEditor", ex);
         }

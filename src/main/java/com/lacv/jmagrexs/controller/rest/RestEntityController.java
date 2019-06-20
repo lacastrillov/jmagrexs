@@ -50,7 +50,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
@@ -703,37 +702,6 @@ public abstract class RestEntityController {
             LOGGER.error("upload " + entityRef, e);
             return "{message:\"Error en cargue de archivos\", success:false}";
         }
-    }
-    
-    @RequestMapping(value = "/readFile.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public byte[] readFile(@RequestParam(required = true) String fileUrl) {
-        String content="";
-        try {
-            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
-            content= (pathFile.startsWith(explorerConstants.getLocalStaticFolder()))?FileService.getTextFile(pathFile):"";
-        } catch (IOException ex) {
-            LOGGER.error("readFile ",ex);
-        }
-        return Util.getStringBytes(content);
-    }
-    
-    @RequestMapping(value = "/writeFile.htm", method = RequestMethod.POST)
-    @ResponseBody
-    public String writeFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
-        try {
-            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
-            if(pathFile.startsWith(explorerConstants.getLocalStaticFolder())){
-                FileService.setTextFile(content, pathFile);
-                return "Contenido guardado";
-            }else{
-                return "El contenido no pudo ser guardado";
-            }
-        } catch (IOException ex) {
-            LOGGER.error("writeFile ",ex);
-        }
-        
-        return "Error al guardar";
     }
     
     private List importEntities(List<BaseEntity> entities){

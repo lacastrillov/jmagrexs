@@ -13,11 +13,57 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.lacv.jmagrexs.dto.UserByToken;
 import java.io.UnsupportedEncodingException;
+import org.json.JSONObject;
 /**
  *
  * @author grupot
  */
 public class JwtUtil {
+    
+    /**
+     * Generates a JWT token containing username as subject, and userId and role as additional claims. These properties are taken from the specified
+     * User object. Tokens validity is infinite.
+     * 
+     * @param jsonObject
+     * @param secret
+     * @return the JWT token
+     */
+    public String generateJSONToken(JSONObject jsonObject, String secret) {
+        try {
+            String token = JWT.create()
+                .withClaim("jsonData", jsonObject.toString())
+                .sign(Algorithm.HMAC256(secret));
+            
+            return token;
+        } catch (UnsupportedEncodingException | JWTCreationException exception){
+            //UTF-8 encoding not supported
+        }
+        //Invalid Signing configuration / Couldn't convert Claims.
+        return null;
+    }
+    
+    /**
+     * Tries to parse specified String as a JWT token. If successful, returns User object with username, id and role prefilled (extracted from token).
+     * If unsuccessful (token is invalid or not containing all required user properties), simply returns null.
+     * 
+     * @param token the JWT token to parse
+     * @param secret
+     * @return the User object extracted from specified token or null if a token is invalid.
+     */
+    public JSONObject parseJSONToken(String token, String secret) {
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
+            DecodedJWT jwt = verifier.verify(token);
+            
+            JSONObject u = new JSONObject(jwt.getClaim("jsonData").asString());
+            
+            return u;
+        } catch (UnsupportedEncodingException | JWTVerificationException ex){
+            //UTF-8 encoding not supported
+        }
+        //Invalid signature/claims
+        return null;
+    }
 
     /**
      * Generates a JWT token containing username as subject, and userId and role as additional claims. These properties are taken from the specified

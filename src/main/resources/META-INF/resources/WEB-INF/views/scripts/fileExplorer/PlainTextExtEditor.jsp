@@ -48,7 +48,7 @@
                             util.downloadURI(Instance.fileUrl, "Descargar archivo");
                         });
                         $("#extractButton").on("click", function(){
-                            util.openInNewTab(document.URL);
+                            util.openInNewTab(document.URL.replace("&extractButton=1",""));
                         });
                         
                         $(window).keypress(function(event) {
@@ -118,7 +118,9 @@
         <input id="saveButton" type="button" value="Guardar" />
         <input id="reloadButton" type="button" value="Recargar" />
         <input id="selectAllButton" type="button" value="Seleccionar Todo" />
+        <c:if test="${extractButton}">
         <input id="extractButton" type="button" value="Extraer" />
+        </c:if>
         <input id="downloadButton" type="button" value="Descargar" />
         <div id="message"></div>
         <div id="editor"></div>

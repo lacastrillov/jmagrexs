@@ -10,7 +10,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,6 +48,8 @@ public class Formats {
     public static final List FILE_EXTENSIONS= Arrays.asList(
                 new String[] {"bat","conf","css","csv","class","html","java","jar","js","json","jsp","php","properties","log",
                     "sql","sh","txt","vm","war","xml","yml"});
+    
+    private static Map<String,String> contentTypeByExtension= null;
 
     /**
      * Metodo que recupera la cantidad de dias entre dos fechas
@@ -574,6 +578,19 @@ public class Formats {
             default:
                 return "file";
         }
+    }
+    
+    public static String getContentTypeByExtension(String extension){
+        if(contentTypeByExtension==null){
+            contentTypeByExtension= new HashMap<>();
+            contentTypeByExtension.put("xml", "application/xml");
+            contentTypeByExtension.put("json", "application/json");
+            contentTypeByExtension.put("mp4", "video/mp4");
+        }
+        if(contentTypeByExtension.containsKey(extension)){
+            return contentTypeByExtension.get(extension);
+        }
+        return null;
     }
 
 }

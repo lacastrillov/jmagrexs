@@ -297,7 +297,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
                     
             onSeeAll: function(){
-                this.doLayout();
+                if(ExtJSVersion===4){
+                    this.doLayout();
+                }else{
+                    this.updateLayout();
+                }
             }
     
         });
@@ -392,7 +396,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     function getComboboxLimit(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', 'config', [50, 100, 200, 500], true);
+        var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', '${entityRef}config', [50, 100, 200, 500], true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.pageSize!==record.getValue()){
                 store.pageSize=record.getValue();
@@ -407,7 +411,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     }
     
     function getComboboxOrderBy(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('sort', 'Ordenar por', 'config', ${sortColumns}, true);
+        var combobox= Instance.commonExtView.getSimpleCombobox('sort', 'Ordenar por', '${entityRef}config', ${sortColumns}, true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.getOrderProperty()!==record.getValue()){
                 var dir= store.getOrderDir();
@@ -421,7 +425,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     }
     
     function getComboboxOrderDir(store){
-        var combobox= Instance.commonExtView.getSimpleCombobox('dir', 'Direcci&oacute;n', 'config', ["ASC", "DESC"], true);
+        var combobox= Instance.commonExtView.getSimpleCombobox('dir', 'Direcci&oacute;n', '${entityRef}config', ["ASC", "DESC"], true);
         combobox.addListener('change',function(record){
             if(record.getValue()!=="" && store.getOrderDir()!==record.getValue()){
                 var prop= store.getOrderProperty();

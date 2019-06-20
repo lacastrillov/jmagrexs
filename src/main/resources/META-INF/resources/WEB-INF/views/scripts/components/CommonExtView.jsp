@@ -450,7 +450,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.textEditorRender= function(value, field){
         if(value){
             return '<a id="linkFile" href="'+value+'" target="_blank">'+value+'</a>'+
-                   '<iframe src="${serverDomain.applicationContext}${serverDomain.adminContext}${serverDomain.adminPath}/webFile/ajax/plainTextEditor.htm?fileUrl='+value+'" frameborder="0" width="100%" height="100%"></iframe>';
+                   '<iframe src="${serverDomain.applicationContext}${serverDomain.adminContext}${serverDomain.adminPath}/webFile/ajax/plainTextEditor.htm?fileUrl='+value+'&extractButton=1" frameborder="0" width="100%" height="100%"></iframe>';
         }else{
             return value;
         }
@@ -491,10 +491,11 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.videoFileUploadRender= function(value, field) {
         Instance.setLinkFieldValue(field, value);
         if(value){
-            return '<video style="width:528px;height:297px" controls>'+
+            return '<iframe frameborder="0" width="100%" height="100%" src="'+value+'" allowfullscreen></iframe>';
+            /*return '<video style="width:528px;height:297px" controls>'+
                    '    <source src="'+value+'" type="video/'+value.split('.').pop()+'">'+
                    '    Your browser does not support the video tag.'+
-                   '</video>';
+                   '</video>';*/
         }else{
             return "";
         }
