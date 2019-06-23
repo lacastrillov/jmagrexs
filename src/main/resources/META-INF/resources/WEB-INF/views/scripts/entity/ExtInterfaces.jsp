@@ -6,7 +6,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
     
     var Instance= this;
     
-    Instance.modelName="${entityName}Model";
+    Instance.modelName="${entityName}ModelInt";
     
     // MODELS **********************************************
     

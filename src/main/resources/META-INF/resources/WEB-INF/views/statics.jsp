@@ -16,4 +16,7 @@
         .x-form-item-label {color: #666666 !important;
                             -webkit-user-select: auto !important; -moz-user-select: auto !important;
                             -ms-user-select: auto !important; user-select: auto !important;}
+        .x-boundlist-floating{-webkit-box-shadow: 0px 2px 10px -5px rgba(0,0,0,1);
+                              -moz-box-shadow: 0px 2px 10px -5px rgba(0,0,0,1);
+                              box-shadow: 0px 2px 10px -5px rgba(0,0,0,1);}
     </style>
