@@ -23,6 +23,12 @@ public enum FieldType {
     
     TEXT_AREA,
     
+    PERCENTAJE,
+    
+    COLOR,
+    
+    CONDITIONAL_COLOR,
+    
     LIST,
     
     MULTI_SELECT,

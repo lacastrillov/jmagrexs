@@ -88,6 +88,13 @@ public class JSONFields {
                 //Add file Size Text
                 rendererField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
                 jsonFormFields.put(rendererField);
+            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+                formField.put("xtype", "numberfield");
+                formField.put("fieldLabel", fieldTitle+" (%)");
+                formField.put("minValue", 0);
+                formField.put("maxValue", 100);
+            }else if(typeForm.equals(FieldType.COLOR.name())){
+                formField.put("xtype", "customcolorpicker");
             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                 formField.put("fieldLabel", "Link "+fieldTitle);
                 formField.put("emptyText", "Url Youtube");

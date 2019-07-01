@@ -6,11 +6,13 @@
     <script src="<%=request.getContextPath()%>/libjs/util/FileUploader.js"></script>
     <script src="<%=request.getContextPath()%>/libjs/util/GoogleMaps.js"></script>
     <script src="<%=request.getContextPath()%>/libjs/util/vkbeautify.0.99.00.beta.js"></script>
+    <script src="<%=request.getContextPath()%>/libjs/util/CustomColorPicker.js"></script>
     <script src="<%=request.getContextPath()%>/account/UserAuthentication"></script>
 
     <link href="<%=request.getContextPath()%>/libcss/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/libcss/navegador.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/libcss/gridTemplateStyles.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/libcss/Ext.ux.ColorPicker.css" rel="stylesheet" type="text/css">
     <style>
         .x-html-editor-input textarea{white-space: pre !important;}
         .x-form-item-label {color: #666666 !important;
@@ -19,4 +21,8 @@
         .x-boundlist-floating{-webkit-box-shadow: 0px 2px 10px -5px rgba(0,0,0,1);
                               -moz-box-shadow: 0px 2px 10px -5px rgba(0,0,0,1);
                               box-shadow: 0px 2px 10px -5px rgba(0,0,0,1);}
+        .x-color-picker-box{width:100%; color:white; text-shadow:0px 1px 3px #000000; padding:2px; font-weight:bold;}
+        .x-progress-default .x-progress-bar-default{background-image: -webkit-linear-gradient(top, #a5df41, #4ca916) !important;
+            box-shadow: 0 0px 5px rgba(255, 255, 255, .7) inset, 0 0px 0px rgba(255, 255, 255, .7) inset;
+        }
     </style>

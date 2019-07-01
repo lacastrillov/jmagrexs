@@ -24,8 +24,9 @@ function ${reportName}ExtController(parentExtView){
     Instance.init= function(){
         Instance.reportName= "${reportName}";
         Instance.typeController= "${typeController}";
-        mvcExt.mappingController(Instance.id, Instance);
         Instance.requireValueMap= ${reportConfig.visibleValueMapForm};
+        Instance.reloadGrid= false;
+        mvcExt.mappingController(Instance.id, Instance);
         Instance.initFilter();
     };
     
@@ -49,18 +50,17 @@ function ${reportName}ExtController(parentExtView){
             Instance.entityExtView.tabsContainer.setActiveTab(0);
         }
         
-        var changedFilters= false;
         if(filter!==null){
             Instance.initFilter();
             var currentFilter= JSON.parse(filter);
             for (var key in currentFilter) {
                 if(Instance.filter[key]!==currentFilter[key]){
                     Instance.filter[key]= currentFilter[key];
-                    changedFilters= true;
+                    Instance.reloadGrid= true;
                 }
             }
         }
-        if(activeTab!=="1" && (Instance.entityExtView.store.totalCount===undefined || changedFilters)){
+        if(activeTab!=="1" && (Instance.entityExtView.store.totalCount===undefined || Instance.reloadGrid)){
             Instance.loadGridData();
             Instance.appliedFilters= filter;
         }
@@ -73,6 +73,7 @@ function ${reportName}ExtController(parentExtView){
         if(!Instance.requireValueMap || Object.getOwnPropertyNames(Instance.filter.vm).length !== 0){
             Instance.entityExtView.setFilterStore(JSON.stringify(Instance.filter));
             Instance.entityExtView.reloadPageStore(1);
+            Instance.reloadGrid= false;
         }
     };
     

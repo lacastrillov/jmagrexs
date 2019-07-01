@@ -16,6 +16,7 @@ function EntityExtInit(){
             'Ext.container.ButtonGroup',
             'Ext.container.Viewport',
             'Ext.layout.*',
+            'Ext.form.field.Trigger',
             'Ext.form.Panel',
             'Ext.form.Label',
             'Ext.grid.*',

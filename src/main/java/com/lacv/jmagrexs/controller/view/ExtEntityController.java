@@ -414,6 +414,13 @@ public abstract class ExtEntityController extends ExtReportController {
                                 //Add file Size Text
                                 rendererField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
                                 jsonFormFields.put(rendererField);
+                            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+                                formField.put("xtype", "numberfield");
+                                formField.put("fieldLabel", fieldTitle+" (%)");
+                                formField.put("minValue", 0);
+                                formField.put("maxValue", 100);
+                            }else if(typeForm.equals(FieldType.COLOR.name())){
+                                formField.put("xtype", "customcolorpicker");
                             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                                 formField.put("fieldLabel", "Link "+fieldTitle);
                                 formField.put("emptyText", "Url Youtube");
@@ -592,6 +599,14 @@ public abstract class ExtEntityController extends ExtReportController {
                                 }
                             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                                 gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
+                                field= new JSONObject();
+                                field.put("type", "textfield");
+                            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+                                gridColumn.put("renderer", "#Instance.commonExtView.percentageGridRender#");
+                                field= new JSONObject();
+                                field.put("type", "textfield");
+                            }else if(typeForm.equals(FieldType.COLOR.name())){
+                                gridColumn.put("renderer", "#Instance.commonExtView.colorGridRender#");
                                 field= new JSONObject();
                                 field.put("type", "textfield");
                             }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||

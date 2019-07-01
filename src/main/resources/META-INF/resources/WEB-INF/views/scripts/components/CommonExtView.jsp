@@ -6,6 +6,8 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     var util= new Util();
     
+    var customColorPicker= new CustomColorPicker();
+    
     var MAX_LIST_ITEMS= 20;
     
     Instance.init= function(){
@@ -24,6 +26,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                     'text'
                 ]
             });
+            customColorPicker.define();
         }
     };
     
@@ -426,6 +429,30 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.numbererGridRender= function(value, metaData, record, rowIdx, colIdx, dataSource, view){
         metaData.style="text-align:left;color:#666666;";
         return (isNaN(record.index))?"":(record.index+1);
+    };
+    
+    Instance.percentageGridRender = function (value, metaData, record) {
+        var id = Ext.id();
+        Ext.defer(function () {
+            if(util.getHtml(id)!==null){
+                Ext.widget('progressbar', {
+                    renderTo: id,
+                    value: value / 100,
+                    width: "100%",
+                    text: value + " %"
+                });
+            }
+        }, 50);
+        return Ext.String.format('<div id="{0}"></div>', id);
+    };
+    
+    Instance.colorGridRender = function (v, metaData, record) {
+        if(v){
+            return '<div class="x-color-picker-box" style="background-color:'+v+';">'+
+                    v+'</div>';
+        }else{
+            return v;
+        }
     };
     
     Instance.fileRender= function(value, field){

@@ -26,6 +26,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     Instance.init= function(){
         Instance.entityRef= "${entityRef}";
         Instance.typeController= "${typeController}";
+        Instance.reloadGrid= false;
         mvcExt.mappingController(Instance.id, Instance);
         Instance.initFilter();
     };
@@ -50,14 +51,13 @@ function ${entityName}ExtController(parentExtController, parentExtView){
             Instance.entityExtView.tabsContainer.setActiveTab(0);
         }*/
         
-        var changedFilters= false;
         if(filter!==null){
             Instance.initFilter();
             var currentFilter= JSON.parse(filter);
             for (var key in currentFilter) {
                 if(Instance.filter[key]!==currentFilter[key]){
                     Instance.filter[key]= currentFilter[key];
-                    changedFilters= true;
+                    Instance.reloadGrid= true;
                 }
             }
         }
@@ -71,7 +71,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
         </c:forEach>
         
-        if(activeTab==="1" && (Instance.entityExtView.store.totalCount===undefined || changedFilters)){
+        if(activeTab==="1" && (Instance.entityExtView.store.totalCount===undefined || Instance.reloadGrid)){
             Instance.loadGridData();
         }
         if(activeTab==="0"){
@@ -82,6 +82,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     Instance.loadGridData= function(){
         Instance.entityExtView.setFilterStore(JSON.stringify(Instance.filter));
         Instance.entityExtView.reloadPageStore(1);
+        Instance.reloadGrid= false;
     };
     
     Instance.loadFormData= function(id){

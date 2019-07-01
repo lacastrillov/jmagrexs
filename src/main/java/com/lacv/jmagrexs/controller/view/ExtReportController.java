@@ -244,6 +244,11 @@ public abstract class ExtReportController extends ExtController {
                                 //Add file Size Text
                                 formField.put("xtype", "displayfield");
                                 formField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
+                            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+                                formField.put("xtype", "numberfield");
+                                formField.put("fieldLabel", fieldTitle+" (%)");
+                            }else if(typeForm.equals(FieldType.COLOR.name())){
+                                formField.put("xtype", "customcolorpicker");
                             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                                 //Add Url File
                                 formField.put("xtype", "displayfield");
@@ -360,6 +365,10 @@ public abstract class ExtReportController extends ExtController {
                             gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
                         }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                             gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
+                        }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+                            gridColumn.put("renderer", "#Instance.commonExtView.percentageGridRender#");
+                        }else if(typeForm.equals(FieldType.COLOR.name())){
+                            gridColumn.put("renderer", "#Instance.commonExtView.colorGridRender#");
                         }else if(typeForm.equals(FieldType.DATETIME.name())){
                             gridColumn.put("xtype", "datecolumn");
                             gridColumn.put("format", extViewConfig.getDatetimeFormat());

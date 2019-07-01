@@ -12,8 +12,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     
     var util= new Util();
     
-    var fileUploader= new FileUploader();
-    
     // MODELS **********************************************
     
     Instance.entityExtModel= new ${entityName}ExtModel();

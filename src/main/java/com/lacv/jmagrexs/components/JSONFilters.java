@@ -129,7 +129,7 @@ public class JSONFilters {
                             JSONObject itemTitle= new JSONObject();
                             itemTitle.put("html", fieldTitle+":&nbsp;");
                             itemTitle.put("columnWidth", 0.30);
-                            itemTitle.put("style", "text-align:right; color:#666666;");
+                            itemTitle.put("bodyStyle", "text-align:right; color:#666666;");
                             
                             JSONObject itemSeparator= new JSONObject();
                             itemSeparator.put("html", "&nbsp;-&nbsp;");
@@ -228,7 +228,7 @@ public class JSONFilters {
                                 JSONObject itemTitle= new JSONObject();
                                 itemTitle.put("html", fieldTitle+":&nbsp;");
                                 itemTitle.put("columnWidth", 0.30);
-                                itemTitle.put("style", "text-align:right; color:#666666;");
+                                itemTitle.put("bodyStyle", "text-align:right; color:#666666;");
 
                                 JSONObject itemSeparator= new JSONObject();
                                 itemSeparator.put("html", "&nbsp;-&nbsp;");
@@ -357,7 +357,7 @@ public class JSONFilters {
                         JSONObject itemTitle= new JSONObject();
                         itemTitle.put("html", fieldTitle+":&nbsp;");
                         itemTitle.put("columnWidth", 0.30);
-                        itemTitle.put("style", "text-align:right; color:#666666;");
+                        itemTitle.put("bodyStyle", "text-align:right; color:#666666;");
 
                         JSONObject itemSeparator= new JSONObject();
                         itemSeparator.put("html", "&nbsp;-&nbsp;");
@@ -404,7 +404,7 @@ public class JSONFilters {
                         JSONObject itemTitle= new JSONObject();
                         itemTitle.put("html", fieldTitle+":&nbsp;");
                         itemTitle.put("columnWidth", 0.30);
-                        itemTitle.put("style", "text-align:right; color:#666666;");
+                        itemTitle.put("bodyStyle", "text-align:right; color:#666666;");
 
                         JSONObject itemSeparator= new JSONObject();
                         itemSeparator.put("html", "&nbsp;-&nbsp;");
@@ -456,7 +456,7 @@ public class JSONFilters {
                             JSONObject itemTitle= new JSONObject();
                             itemTitle.put("html", fieldTitle+":&nbsp;");
                             itemTitle.put("columnWidth", 0.30);
-                            itemTitle.put("style", "text-align:right; color:#666666;");
+                            itemTitle.put("bodyStyle", "text-align:right; color:#666666;");
 
                             JSONObject itemSeparator= new JSONObject();
                             itemSeparator.put("html", "&nbsp;-&nbsp;");
