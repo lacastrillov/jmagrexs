@@ -78,6 +78,9 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
         if(activeTab==="1"){
             Instance.loadFormData(id);
+            Instance.checkKeyPress(true);
+        }else{
+            Instance.checkKeyPress(false);
         }
     };
     
@@ -198,6 +201,23 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     }
                 });
             }
+        }
+    };
+    
+    Instance.checkKeyPress= function(active){
+        if(active){
+            document.onkeydown = function(e) {
+                switch (e.keyCode) {
+                    case 37:
+                        Instance.loadLateralItem('left');
+                        break;
+                    case 39:
+                        Instance.loadLateralItem('right');
+                        break;
+                }
+            };
+        }else{
+            document.onkeydown = function(e) {};
         }
     };
     

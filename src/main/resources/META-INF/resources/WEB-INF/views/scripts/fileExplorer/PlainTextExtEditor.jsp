@@ -20,6 +20,11 @@
                 
                 var util= new Util();
                 
+                var baseAction= "";    
+                <c:if test="${restSession}">
+                baseAction= "session_";
+                </c:if>
+                
                 Instance.init = function () {
                     $(document).ready(function () {
                         Instance.fileUrl= "${fileUrl}";
@@ -65,7 +70,7 @@
                     $("#fileLink").attr("href",Instance.fileUrl);
                     $("#fileLink").html(decodeURIComponent(Instance.fileUrl));
                     $.ajax({
-                        url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/readFile.htm",
+                        url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/"+baseAction+"readFile.htm",
                         timeout: 20000,
                         type: "POST",
                         data: "fileUrl="+Instance.fileUrl,
@@ -86,7 +91,7 @@
                     Instance.setMessage("Guardando...");
                     var content= Instance.editor.getValue();
                     $.ajax({
-                        url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/writeFile.htm",
+                        url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/webFile/"+baseAction+"writeFile.htm",
                         timeout: 20000,
                         type: "POST",
                         data: "fileUrl="+Instance.fileUrl+"&content="+encodeURIComponent(content),

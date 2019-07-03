@@ -70,6 +70,8 @@ public class ReportConfig {
     
     private String defaultOrderDir;
     
+    private int numColumnsForm;
+    
     private Long maxResultsPerPage;
     
     private GridTemplate gridTemplate;
@@ -106,6 +108,7 @@ public class ReportConfig {
         this.restSession= false;
         this.defaultOrderBy= "";
         this.defaultOrderDir= "";
+        this.numColumnsForm= 1;
         this.maxResultsPerPage= 50L;
         this.gridTemplate= new GridTemplate("");
         this.childExtReports= new LinkedHashMap<>();
@@ -451,6 +454,22 @@ public class ReportConfig {
      */
     public void setDefaultOrderDir(String defaultOrderDir) {
         this.defaultOrderDir = defaultOrderDir;
+    }
+    
+    /**
+     * 
+     * @return numColumnsForm
+     */
+    public int getNumColumnsForm() {
+        return numColumnsForm;
+    }
+
+    /**
+     * 
+     * @param numColumnsForm 
+     */
+    public void setNumColumnsForm(int numColumnsForm) {
+        this.numColumnsForm = numColumnsForm;
     }
 
     /**

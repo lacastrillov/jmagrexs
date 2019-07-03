@@ -137,8 +137,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 //this.addEvents('create');
                 
                 var buttons= [];
+                buttons= [
                 <c:if test="${viewConfig.editableForm}">
-                buttons= [{
+                {
                     itemId: 'save'+modelName,
                     text: 'Guardar',
                     scope: this,
@@ -149,6 +150,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     scope: this,
                     handler: this.onCancel
                 },
+                </c:if>
                 <c:if test="${viewConfig.visibleSeeAllButton}">
                 {
                     text: '&#x25BC; Ver todo',
@@ -157,7 +159,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 },
                 </c:if>
                 '|'];
-                </c:if>
                 Ext.apply(this, {
                     activeRecord: null,
                     //iconCls: 'icon-user',

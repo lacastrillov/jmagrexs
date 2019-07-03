@@ -190,8 +190,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 //this.addEvents('create');
                 
                 var buttons= [];
+                buttons= [
                 <c:if test="${viewConfig.editableForm}">
-                buttons= [{
+                {
                     itemId: 'save${entityName}',
                     iconCls: 'icon-save',
                     text: 'Actualizar',
@@ -213,6 +214,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     handler: this.onReset
                 },
                 </c:if>
+                </c:if>
                 <c:if test="${viewConfig.visibleSeeAllButton}">
                 {
                     text: '&#x25BC; Ver todo',
@@ -221,7 +223,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 },
                 </c:if>
                 '|'];
-                </c:if>
                 if(additionalButtons){
                     for(var i=0; i<additionalButtons.length; i++){
                         buttons.push(additionalButtons[i]);

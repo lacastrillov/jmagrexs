@@ -6,7 +6,14 @@
 package com.lacv.jmagrexs.controller.view;
 
 import com.lacv.jmagrexs.components.ExtViewConfig;
+import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
+import com.lacv.jmagrexs.components.JSONColumns;
+import com.lacv.jmagrexs.components.JSONEntityFields;
+import com.lacv.jmagrexs.components.JSONFilters;
+import com.lacv.jmagrexs.components.JSONForms;
+import com.lacv.jmagrexs.components.JSONModels;
 import com.lacv.jmagrexs.components.MenuComponent;
+import com.lacv.jmagrexs.components.RangeFunctions;
 import com.lacv.jmagrexs.components.ServerDomain;
 import com.lacv.jmagrexs.dto.MenuItem;
 import java.util.List;
@@ -29,6 +36,27 @@ public abstract class ExtController {
     
     @Autowired
     public ServerDomain serverDomain;
+    
+    @Autowired
+    public FieldConfigurationByAnnotations fcba;
+    
+    @Autowired
+    public RangeFunctions rf;
+    
+    @Autowired
+    public JSONModels jm;
+    
+    @Autowired
+    public JSONFilters jf;
+    
+    @Autowired
+    public JSONForms jfo;
+    
+    @Autowired
+    public JSONEntityFields jfef;
+    
+    @Autowired
+    public JSONColumns jc;
     
     
     public JSONArray getMenuItems(HttpSession session, MenuComponent globalMenuComponent){

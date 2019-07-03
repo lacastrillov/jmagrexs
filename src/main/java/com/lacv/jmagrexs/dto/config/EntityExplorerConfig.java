@@ -42,6 +42,8 @@ public class EntityExplorerConfig {
     
     private boolean visibleExportButton;
     
+    private boolean editableGrid;
+    
     private boolean editableForm;
     
     private boolean collapsedFilters;
@@ -87,6 +89,7 @@ public class EntityExplorerConfig {
         this.visibleHeader= true;
         this.visibleRemoveButtonInGrid= true;
         this.visibleExportButton= true;
+        this.editableGrid= true;
         this.editableForm= true;
         this.collapsedFilters= true;
         this.defaultAutoSave= true;
@@ -270,6 +273,23 @@ public class EntityExplorerConfig {
      */
     public void setVisibleRemoveButtonInGrid(boolean visibleRemoveButtonInGrid) {
         this.visibleRemoveButtonInGrid = visibleRemoveButtonInGrid;
+    }
+    
+    /**
+     * @return the editableGrid
+     */
+    public boolean isEditableGrid() {
+        if(this.activeGridTemplate){
+            return false;
+        }
+        return editableGrid;
+    }
+
+    /**
+     * @param editableGrid the editableGrid to set
+     */
+    public void setEditableGrid(boolean editableGrid) {
+        this.editableGrid = editableGrid;
     }
 
     /**

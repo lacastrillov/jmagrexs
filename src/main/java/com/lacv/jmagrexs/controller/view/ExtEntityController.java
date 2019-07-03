@@ -1,7 +1,6 @@
 package com.lacv.jmagrexs.controller.view;
 
 import com.lacv.jmagrexs.dto.config.EntityConfig;
-import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.enums.HideView;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.service.EntityService;
@@ -292,7 +291,7 @@ public abstract class ExtEntityController extends ExtReportController {
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(entityClass);
         fcba.orderPropertyDescriptor(propertyDescriptors, viewConfig.getDtoClass(), viewConfig.getLabelField());
         
-        HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, viewConfig.getDtoClass());
+        HashMap<String, Integer> widthColumnMap= fcba.getWidthColumnMap(propertyDescriptors, viewConfig.getDtoClass());
         HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(viewConfig.getDtoClass());
         HashMap<String, String> groupFieldsMap= fcba.getGroupFieldsMap(viewConfig.getDtoClass());
         HashSet<String> hideFields= fcba.getHideFields(viewConfig.getDtoClass());
@@ -321,7 +320,7 @@ public abstract class ExtEntityController extends ExtReportController {
                 String fieldName= propertyDescriptor.getName();
                 String fieldEntity= StringUtils.capitalize(fieldName);
                 String fieldTitle= titledFieldsMap.get(fieldName);
-                Integer widhColumn= widhColumnMap.get(fieldName);
+                Integer widthColumn= widthColumnMap.get(fieldName);
                 boolean readOnly= fieldsRO.contains(fieldName);
                 
                 // ADD TO jsonFormFields
@@ -351,203 +350,16 @@ public abstract class ExtEntityController extends ExtReportController {
                     }
                     
                     if(Formats.TYPES_LIST.contains(type)){
-                        boolean addFormField= true;
-                        JSONObject formField= new JSONObject();
-                        formField.put("id", entityClass.getSimpleName() + "_" +fieldName);
-                        formField.put("name", fieldName);
-                        formField.put("fieldLabel", fieldTitle);
-                        formField.put("allowBlank", !fieldsNN.contains(fieldName));
+                        jfef.addJSONField(jsonFormFields, entityClass.getSimpleName(), type, fieldName,
+                                fieldTitle, titleGroup, typeFormFields, sizeColumnMap, fieldGroups,
+                                positionColumnForm, viewConfig.getNumColumnsForm(), viewConfig.isEditableForm(),
+                                readOnly, fieldsNN.contains(fieldName));
                         
-                        JSONObject rendererField= new JSONObject();
-                        rendererField.put("id", entityClass.getSimpleName() + "_" + fieldName + "Renderer");
-                        rendererField.put("name", fieldName);
-                        rendererField.put("fieldLabel", fieldTitle);
-                        rendererField.put("xtype", "displayfield");
-                        
-                        if(!viewConfig.isEditableForm() || readOnly){
-                            formField.put("readOnly", true);
-                        }
-                        if(typeFormFields.containsKey(fieldName)){
-                            String typeForm= typeFormFields.get(fieldName)[0];
-                            if(typeForm.equals(FieldType.EMAIL.name())){
-                                formField.put("vtype", "email");
-                            }else if(typeForm.equals(FieldType.PASSWORD.name())){
-                                formField.put("inputType", "password");
-                            }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
-                                formField.put("xtype", "textarea");
-                                formField.put("height", 200);
-                            }else if(typeForm.equals(FieldType.DATETIME.name())){
-                                formField.put("xtype", "datefield");
-                                formField.put("format", extViewConfig.getDatetimeFormat());
-                                formField.put("tooltip", "Seleccione la fecha");
-                            }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
-                                formField.put("xtype", "htmleditor");
-                                formField.put("enableColors", true);
-                                formField.put("enableAlignments", true);
-                                formField.put("height", 400);
-                            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
-                                addFormField= false;
-                                String[] data= typeFormFields.get(fieldName);
-                                JSONArray dataArray = new JSONArray();
-                                for(int i=1; i<data.length; i++){
-                                    dataArray.put(data[i]);
-                                }
-                                if(!readOnly){
-                                    String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#";
-                                    addFormField(field,jsonFormFields,fieldGroups,titleGroup);
-                                }else{
-                                    addFormField=true;
-                                }
-                            }else if(typeForm.equals(FieldType.RADIOS.name())){
-                                addFormField= false;
-                                String[] data= typeFormFields.get(fieldName);
-                                JSONArray dataArray = new JSONArray();
-                                for(int i=1; i<data.length; i++){
-                                    dataArray.put(data[i]);
-                                }
-                                String field= "#Instance.commonExtView.getRadioGroup('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#";
-                                addFormField(field,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
-                                formField.put("xtype", "numberfield");
-                                formField.put("fieldLabel", fieldTitle+" (bytes)");
-                                
-                                //Add file Size Text
-                                rendererField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
-                                jsonFormFields.put(rendererField);
-                            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
-                                formField.put("xtype", "numberfield");
-                                formField.put("fieldLabel", fieldTitle+" (%)");
-                                formField.put("minValue", 0);
-                                formField.put("maxValue", 100);
-                            }else if(typeForm.equals(FieldType.COLOR.name())){
-                                formField.put("xtype", "customcolorpicker");
-                            }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
-                                formField.put("fieldLabel", "Link "+fieldTitle);
-                                formField.put("emptyText", "Url Youtube");
-                                
-                                //Add Video Youtube
-                                rendererField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
-                                formField.put("fieldLabel", "Coordenadas "+fieldTitle);
-                                formField.put("emptyText", "Google Maps Point");
-                                
-                                //Add GoogleMap
-                                rendererField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
-                                formField.put("name", fieldName + "_File");
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
-                                formField.put("emptyText", "Seleccione un archivo");
-                                
-                                //Add Url File
-                                rendererField.put("renderer", "#Instance.commonExtView.fileRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
-                                formField.put("name", fieldName + "_File");
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
-                                formField.put("emptyText", "Seleccione una imagen");
-                                
-                                //Add Image
-                                rendererField.put("renderer", "#Instance.commonExtView.imageRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
-                                formField.put("name", fieldName + "_File");
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
-                                formField.put("emptyText", "Seleccione un video");
-                                
-                                //Add Video
-                                rendererField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
-                                formField.put("name", fieldName + "_File");
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
-                                formField.put("emptyText", "Seleccione un audio");
-                                
-                                //Add Audio
-                                rendererField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
-                                formField.put("name", fieldName + "_File");
-                                formField.put("xtype", "filefield");
-                                formField.put("fieldLabel", "Subir "+fieldTitle);
-                                formField.put("emptyText", "Seleccione un archivo");
-                                
-                                //Add MultiFile
-                                rendererField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                                addFormField(rendererField,jsonFormFields,fieldGroups,titleGroup);
-                            }
-                            if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
-                                    typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
-                                    typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
-                                
-                                formField.put("allowBlank", true);
-                                //Add link Field
-                                JSONObject linkField= new JSONObject();
-                                linkField.put("id", entityClass.getSimpleName()+"_"+fieldName + "Link");
-                                linkField.put("name", fieldName);
-                                linkField.put("fieldLabel", "Link "+fieldTitle);
-                                linkField.put("allowBlank", !fieldsNN.contains(fieldName));
-                                addFormField(linkField,jsonFormFields,fieldGroups,titleGroup);
-                            }
-                        }else{
-                            switch (type) {
-                                case "java.util.Date":
-                                    formField.put("xtype", "datefield");
-                                    formField.put("format", extViewConfig.getDateFormat());
-                                    formField.put("tooltip", "Seleccione la fecha");
-                                    break;
-                                case "java.sql.Time":
-                                    formField.put("xtype", "timefield");
-                                    formField.put("format", extViewConfig.getTimeFormat());
-                                    formField.put("tooltip", "Seleccione la hora");
-                                    break;
-                                case "short":
-                                case "java.lang.Short":
-                                case "int":
-                                case "java.lang.Integer":
-                                case "long":
-                                case "java.lang.Long":
-                                case "java.math.BigInteger":
-                                case "double":
-                                case "java.lang.Double":
-                                case "float":
-                                case "java.lang.Float":
-                                    formField.put("xtype", "numberfield");
-                                    break;
-                                case "boolean":
-                                case "java.lang.Boolean":
-                                    formField.put("xtype", "checkbox");
-                                    formField.put("inputValue", "true");
-                                    formField.put("uncheckedValue", "false");
-                                    break;
-                            }
-                        }
-                        if(sizeColumnMap.containsKey(fieldName)){
-                            formField.put("minLength", sizeColumnMap.get(fieldName)[0]);
-                            formField.put("maxLength", sizeColumnMap.get(fieldName)[1]);
-                        }
-                        if(addFormField){
-                            if(!viewConfig.isEditableForm()){
-                                formField.put("xtype", "displayfield");
-                            }
-                            addFormField(formField,jsonFormFields,fieldGroups,titleGroup);
-                        }
                     }else{
-                        String combobox="(function(){ ";
-                        if(!viewConfig.isEditableForm() || readOnly){
-                            combobox+="Instance.formCombobox"+fieldEntity+".setDisabled(true); ";
-                        }
-                        if(fieldsNN.contains(fieldName)){
-                            combobox+="Instance.formCombobox"+fieldEntity+".allowBlank=false; ";
-                        }
-                        combobox+="return Instance.formCombobox"+fieldEntity+";" +
-                                        "})()";
-                        addFormField("#"+combobox+"#",jsonFormFields,fieldGroups,titleGroup);
+                        jfef.addEntityCombobox(jsonFormFields, fieldEntity, viewConfig.isEditableForm(),
+                                viewConfig.getNumColumnsForm(), titleGroup, fieldGroups, positionColumnForm,
+                                readOnly, fieldsNN.contains(fieldName));
+                        
                     }
                 }
                 
@@ -556,156 +368,16 @@ public abstract class ExtEntityController extends ExtReportController {
                     sortColumns.put(fieldName+":"+fieldTitle);
                 }
                 if(viewConfig.isVisibleGrid() && !hideFields.contains(fieldName + HideView.GRID.name()) && !viewConfig.isActiveGridTemplate()){
-                    JSONObject gridColumn= new JSONObject();
-                    gridColumn.put("dataIndex", fieldName);
-                    gridColumn.put("header", fieldTitle);
-                    gridColumn.put("width", widhColumn);
-                    JSONObject field= null;
-                    JSONObject editor= null;
+                    
                     if(Formats.TYPES_LIST.contains(type)){
-                        gridColumn.put("sortable", true);
-                        if(typeFormFields.containsKey(fieldName)){
-                            String typeForm= typeFormFields.get(fieldName)[0];
-                            if(typeForm.equals(FieldType.EMAIL.name())){
-                                editor= new JSONObject();
-                                editor.put("vtype", "email");
-                            }else if(typeForm.equals(FieldType.PASSWORD.name())){
-                                editor= new JSONObject();
-                                editor.put("inputType", "password");
-                            }else if(typeForm.equals(FieldType.DURATION.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.PRICE.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.DATETIME.name())){
-                                gridColumn.put("xtype", "datecolumn");
-                                gridColumn.put("format", extViewConfig.getDatetimeFormat());
-                                editor = new JSONObject();
-                                editor.put("xtype", "datefield");
-                                editor.put("format", extViewConfig.getDatetimeFormat());
-                            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
-                                    typeForm.equals(FieldType.RADIOS.name())){
-                                String[] data= typeFormFields.get(fieldName);
-                                JSONArray dataArray = new JSONArray();
-                                for(int i=1; i<data.length; i++){
-                                    dataArray.put(data[i]);
-                                }
-                                gridColumn.put("renderer", "#Instance.commonExtView.getSimpleComboboxRender('grid','"+fieldName+"')#");
-                                if(viewConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
-                                }
-                            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.percentageGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.COLOR.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.colorGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||
-                                    typeForm.equals(FieldType.VIDEO_YOUTUBE.name()) || typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
-                                    typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
-                                
-                                gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.audioGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
-                            }else{
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }
-                        }else{
-                            if(fieldName.equals(viewConfig.getLabelField())){
-                                gridColumn.put("renderer", "#"+viewConfig.getLabelField()+"EntityRender#");
-                            }
-                            switch (type) {
-                                case "java.util.Date": {
-                                    gridColumn.put("xtype", "datecolumn");
-                                    gridColumn.put("format", extViewConfig.getDateFormat());
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "datefield");
-                                    editor.put("format", extViewConfig.getDateFormat());
-                                    break;
-                                }
-                                case "java.sql.Time": {
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "timefield");
-                                    editor.put("format", extViewConfig.getTimeFormat());
-                                    break;
-                                }
-                                case "short":
-                                case "java.lang.Short":
-                                case "int":
-                                case "java.lang.Integer":
-                                case "long":
-                                case "java.lang.Long":
-                                case "java.math.BigInteger":
-                                case "double":
-                                case "java.lang.Double":
-                                case "float":
-                                case "java.lang.Float": {
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "numberfield");
-                                    break;
-                                }
-                                case "boolean":
-                                case "java.lang.Boolean": {
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "checkbox");
-                                    editor.put("cls", "x-grid-checkheader-editor");
-                                    break;
-                                }
-                                default:
-                                    field = new JSONObject();
-                                    field.put("type", "textfield");
-                                    break;
-                            }
-                        }
-                        if(field!=null){
-                            if(fieldsNN.contains(fieldName)){
-                                field.put("allowBlank", false);
-                            }
-                            if(sizeColumnMap.containsKey(fieldName)){
-                                field.put("minLength", sizeColumnMap.get(fieldName)[0]);
-                                field.put("maxLength", sizeColumnMap.get(fieldName)[1]);
-                            }
-                            if(viewConfig.isEditableGrid() && !readOnly){
-                                gridColumn.put("field", field);
-                            }
-                        }else if(editor!=null){
-                            if(fieldsNN.contains(fieldName)){
-                                editor.put("allowBlank", false);
-                            }
-                            if(sizeColumnMap.containsKey(fieldName)){
-                                editor.put("minLength", sizeColumnMap.get(fieldName)[0]);
-                                editor.put("maxLength", sizeColumnMap.get(fieldName)[1]);
-                            }
-                            if(viewConfig.isEditableGrid() && !readOnly){
-                                gridColumn.put("editor", editor);
-                            }
-                        }
+                        jc.addJSONColumn(jsonGridColumns, type, fieldName, fieldTitle, widthColumn, typeFormFields, viewConfig.getLabelField(),
+                                sizeColumnMap, viewConfig.isEditableGrid(), readOnly, fieldsNN.contains(fieldName));
+                        
                     }else{
-                        gridColumn.put("renderer", "#Instance.combobox"+fieldEntity+"Render#");
-                        if(viewConfig.isEditableGrid() && !readOnly){
-                            gridColumn.put("editor", "#Instance.gridCombobox"+fieldEntity+"#");
-                        }
+                        jc.addEntityCombobox(jsonGridColumns, fieldName, fieldTitle, fieldEntity, widthColumn,
+                                viewConfig.isEditableGrid(), readOnly, fieldsNN.contains(fieldName));
+                        
                     }
-                    jsonGridColumns.put(gridColumn);
                 }
                     
                 // ADD TO jsonEmptyModel
@@ -804,48 +476,6 @@ public abstract class ExtEntityController extends ExtReportController {
         
     }
     
-    private void addFormField(Object field, JSONArray jsonFormFields, LinkedHashMap<String,JSONObject> fieldGroups, String titleGroup){
-        if(viewConfig.getNumColumnsForm()<=1){
-            if(titleGroup.equals("")){
-                jsonFormFields.put(field);
-            }else{
-                fieldGroups.get(titleGroup).getJSONArray("items").put(field);
-            }
-        }else{ 
-            if(positionColumnForm.get(titleGroup)==0 || positionColumnForm.get(titleGroup)==viewConfig.getNumColumnsForm()){
-                JSONObject defaults= new JSONObject();
-                double columnWidth= (double)1/viewConfig.getNumColumnsForm()-0.02;
-                defaults.put("columnWidth", (double)Math.round(columnWidth * 100d) / 100d);
-                defaults.put("margin", 7);
-                
-                JSONObject objectColumn= new JSONObject();
-                objectColumn.put("xtype", "container");
-                objectColumn.put("layout", "column");
-                objectColumn.put("defaultType", "textfield");
-                objectColumn.put("defaults", defaults);
-                objectColumn.put("items", new JSONArray());
-                if(titleGroup.equals("")){
-                    jsonFormFields.put(objectColumn);
-                }else{
-                    fieldGroups.get(titleGroup).getJSONArray("items").put(objectColumn);
-                }
-                if(positionColumnForm.get(titleGroup)==viewConfig.getNumColumnsForm()){
-                    positionColumnForm.put(titleGroup,0);
-                }
-            }
-            if(positionColumnForm.get(titleGroup) < viewConfig.getNumColumnsForm()){
-                if(titleGroup.equals("")){
-                    int index= jsonFormFields.length()-1;
-                    jsonFormFields.getJSONObject(index).getJSONArray("items").put(field);
-                }else{
-                    int index= fieldGroups.get(titleGroup).getJSONArray("items").length()-1;
-                    fieldGroups.get(titleGroup).getJSONArray("items").getJSONObject(index).getJSONArray("items").put(field);
-                }
-            }
-            positionColumnForm.put(titleGroup,positionColumnForm.get(titleGroup)+1);
-        }
-    }
-
     public Object getFormRecordId(){
         return null;
     }

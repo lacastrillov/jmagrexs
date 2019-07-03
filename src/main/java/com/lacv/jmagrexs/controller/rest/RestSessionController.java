@@ -1,14 +1,10 @@
 package com.lacv.jmagrexs.controller.rest;
 
-import com.lacv.jmagrexs.controller.view.ExtFileExplorerController;
 import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.Util;
-import com.lacv.jmagrexs.util.FileService;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItemStream;
@@ -36,7 +32,7 @@ public abstract class RestSessionController extends RestEntityController {
         
         String sessionFilter= getSessionFilters(filter, null);
             
-        return super.find(sessionFilter, query, limit, page, sort, dir, templateName, numColumns);
+        return find(sessionFilter, query, limit, page, sort, dir, templateName, numColumns);
     }
 
     @RequestMapping(value = "/session_find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -46,7 +42,7 @@ public abstract class RestSessionController extends RestEntityController {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return super.findXml(sessionFilter, query, limit, page, sort, dir);
+        return findXml(sessionFilter, query, limit, page, sort, dir);
     }
 
     @RequestMapping(value = "/session_find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -58,7 +54,7 @@ public abstract class RestSessionController extends RestEntityController {
         
         String sessionFilter= getSessionFilters(filter, null);
         
-        super.findXls(sessionFilter, query, limit, page, sort, dir, response);
+        findXls(sessionFilter, query, limit, page, sort, dir, response);
     }
     
     @RequestMapping(value = "/session_find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -70,7 +66,7 @@ public abstract class RestSessionController extends RestEntityController {
         
         String sessionFilter= getSessionFilters(filter, null);
         
-        super.findCsv(sessionFilter, query, limit, page, sort, dir, response);
+        findCsv(sessionFilter, query, limit, page, sort, dir, response);
     }
     
     @RequestMapping(value = "/session_find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -82,7 +78,7 @@ public abstract class RestSessionController extends RestEntityController {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return super.findYaml(sessionFilter, query, limit, page, sort, dir, yalmFormat);
+        return findYaml(sessionFilter, query, limit, page, sort, dir, yalmFormat);
     }
     
     @RequestMapping(value = "/session_report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -96,7 +92,7 @@ public abstract class RestSessionController extends RestEntityController {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return super.report(sessionFilter, limit, page, sort, dir, templateName, numColumns, dtoName, reportName);
+        return report(sessionFilter, limit, page, sort, dir, templateName, numColumns, dtoName, reportName);
     }
     
     @RequestMapping(value = "/session_report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -108,7 +104,7 @@ public abstract class RestSessionController extends RestEntityController {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return super.reportXml(sessionFilter, limit, page, sort, dir, dtoName, reportName);
+        return reportXml(sessionFilter, limit, page, sort, dir, dtoName, reportName);
     }
     
     @RequestMapping(value = "/session_report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -120,7 +116,7 @@ public abstract class RestSessionController extends RestEntityController {
         
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        super.reportXls(sessionFilter, limit, page, sort, dir, dtoName, reportName, response);
+        reportXls(sessionFilter, limit, page, sort, dir, dtoName, reportName, response);
     }
 
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)
@@ -256,7 +252,7 @@ public abstract class RestSessionController extends RestEntityController {
         String sessionFilter= getSessionFilters(filter, null);
         
         if(canDeleteByFilters(new JSONObject(sessionFilter))){
-            return super.deleteByFilter(sessionFilter);
+            return deleteByFilter(sessionFilter);
         }else{
             return "{\"success\":false,\"message\":\"Error, no puede eliminar la entidad " + entityRef + " por filtros\"}";
         }
@@ -266,7 +262,7 @@ public abstract class RestSessionController extends RestEntityController {
     @ResponseBody
     public byte[] sessionImportData(@RequestParam(required= false) String data, HttpServletRequest request) {
         if(canImportData()){
-            return super.importData(data, request);
+            return importData(data, request);
         }else{
             return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
         }
@@ -276,7 +272,7 @@ public abstract class RestSessionController extends RestEntityController {
     @ResponseBody
     public byte[] sessionImportData(HttpServletRequest request, @PathVariable String format) {
         if(canImportData()){
-            return super.importData(request, format);
+            return importData(request, format);
         }else{
             return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
         }
@@ -289,7 +285,7 @@ public abstract class RestSessionController extends RestEntityController {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canUpdate(entity)){
-                return super.upload(request, idEntity);
+                return upload(request, idEntity);
             }
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
@@ -304,7 +300,7 @@ public abstract class RestSessionController extends RestEntityController {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canUpdate(entity)){
-                return super.diskupload(request, idEntity);
+                return diskupload(request, idEntity);
             }
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
@@ -319,47 +315,14 @@ public abstract class RestSessionController extends RestEntityController {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idParent);
             BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canUpdate(entity)){
-                return super.multipartupload(request, idParent);
+                return multipartupload(request, idParent);
             }
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
         return "{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idParent+ "\"}";
     }
-    
-    @RequestMapping(value = "/session_readFile.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public byte[] sessionReadFile(@RequestParam(required = true) String fileUrl) {
-        String content="";
-        try {
-            String userPath= "/ucp"+getUserCode();
-            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
-            content= (pathFile.startsWith(explorerConstants.getLocalStaticFolder()+ userPath))?FileService.getTextFile(pathFile):"";
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return Util.getStringBytes(content);
-    }
-    
-    @RequestMapping(value = "/session_writeFile.htm", method = RequestMethod.POST)
-    @ResponseBody
-    public String sessionWriteFile(@RequestParam(required = true) String fileUrl, @RequestParam(required = true) String content) {
-        try {
-            String userPath= "/ucp"+getUserCode();
-            String pathFile= fileUrl.replace(explorerConstants.getLocalStaticDomain(), explorerConstants.getLocalStaticFolder());
-            if(pathFile.startsWith(explorerConstants.getLocalStaticFolder()+ userPath)){
-                FileService.setTextFile(content, pathFile);
-                return "Contenido guardado";
-            }else{
-                return "El contenido no pudo ser guardado";
-            }
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(ExtFileExplorerController.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-        return "Error al guardar";
-    }
-    
     private String getSessionFilters(String filter, String reportName){
         String sessionFilter;
         JSONObject jsonFilter;

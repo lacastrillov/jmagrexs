@@ -91,12 +91,12 @@ public class FieldConfigurationByTableColumns {
         return map;
     }
     
-    public HashMap<String, Integer> getSizeColumnMap(List<GenericTableColumn> columns){
-        HashMap<String, Integer> map= new HashMap<>();
+    public HashMap<String, Integer[]> getSizeColumnMap(List<GenericTableColumn> columns){
+        HashMap<String, Integer[]> map= new HashMap<>();
         
         for(GenericTableColumn column: columns){
             if(column.getColumnSize()!=null && column.getColumnSize()!=0){
-                map.put(column.getColumnAlias(), column.getColumnSize());
+                map.put(column.getColumnAlias(), new Integer[]{0, column.getColumnSize()});
             }
         }
         

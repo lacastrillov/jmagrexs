@@ -1,7 +1,6 @@
 package com.lacv.jmagrexs.controller.view;
 
 import com.lacv.jmagrexs.dto.config.ProcessConfig;
-import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.enums.HideView;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import java.beans.PropertyDescriptor;
@@ -18,16 +17,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
-import com.lacv.jmagrexs.components.JSONFilters;
-import com.lacv.jmagrexs.components.JSONForms;
-import com.lacv.jmagrexs.components.JSONModels;
-import com.lacv.jmagrexs.components.RangeFunctions;
 import com.lacv.jmagrexs.enums.PageType;
 import com.lacv.jmagrexs.util.Formats;
 import com.google.gson.Gson;
 import javax.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -36,21 +29,6 @@ public abstract class ExtProcessController extends ExtController {
     protected static final Logger LOGGER = Logger.getLogger(ExtProcessController.class);
     
     private ProcessConfig processConfig;
-    
-    @Autowired
-    private FieldConfigurationByAnnotations fcba;
-    
-    @Autowired
-    public RangeFunctions rf;
-    
-    @Autowired
-    public JSONModels jm;
-    
-    @Autowired
-    public JSONFilters jf;
-    
-    @Autowired
-    public JSONForms jfo;
     
     private final JSONArray jsonInternalViewButtons= new JSONArray();
     
@@ -254,140 +232,21 @@ public abstract class ExtProcessController extends ExtController {
                 String fieldName= propertyDescriptor.getName();
                 String fieldEntity= StringUtils.capitalize(fieldName);
                 String fieldTitle= titledFieldsMap.get(fieldName);
-                Integer widhColumn= widhColumnMap.get(fieldName);
+                Integer widthColumn= widhColumnMap.get(fieldName);
                 boolean readOnly= fieldsRO.contains(fieldName);
                 
                 // ADD TO jsonGridColumns
                 if(processConfig.isVisibleGrid() && !hideFields.contains(fieldName + HideView.GRID.name()) && !processConfig.isActiveGridTemplate()){
-                    JSONObject gridColumn= new JSONObject();
-                    gridColumn.put("dataIndex", fieldName);
-                    gridColumn.put("header", fieldTitle);
-                    gridColumn.put("width", widhColumn);
-                    JSONObject field= null;
-                    JSONObject editor= null;
+                    
                     if(Formats.TYPES_LIST.contains(type)){
-                        gridColumn.put("sortable", true);
-                        if(typeFormFields.containsKey(fieldName)){
-                            String typeForm= typeFormFields.get(fieldName)[0];
-                            if(typeForm.equals(FieldType.EMAIL.name())){
-                                editor= new JSONObject();
-                                editor.put("vtype", "email");
-                            }else if(typeForm.equals(FieldType.PASSWORD.name())){
-                                editor= new JSONObject();
-                                editor.put("inputType", "password");
-                            }else if(typeForm.equals(FieldType.DATETIME.name())){
-                                gridColumn.put("xtype", "datecolumn");
-                                gridColumn.put("format", extViewConfig.getDatetimeFormat());
-                                editor = new JSONObject();
-                                editor.put("xtype", "datefield");
-                                editor.put("format", extViewConfig.getDatetimeFormat());
-                            }else if(typeForm.equals(FieldType.DURATION.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                                
-                            }else if(typeForm.equals(FieldType.PRICE.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.LIST.name())){
-                                String[] data= typeFormFields.get(fieldName);
-                                JSONArray dataArray = new JSONArray();
-                                for(int i=1; i<data.length; i++){
-                                    dataArray.put(data[i]);
-                                }
-                                if(processConfig.isEditableGrid() && !readOnly){
-                                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldsNN.contains(fieldName))+")#");
-                                }
-                            }else if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.URL.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
-                                gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
-                            }else{
-                                field= new JSONObject();
-                                field.put("type", "textfield");
-                            }
-                        }else{
-                            if(fieldName.equals(processConfig.getLabelField())){
-                                gridColumn.put("renderer", "#"+processConfig.getLabelField()+"EntityRender#");
-                            }
-                            switch (type) {
-                                case "java.util.Date": {
-                                    gridColumn.put("xtype", "datecolumn");
-                                    gridColumn.put("format", extViewConfig.getDateFormat());
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "datefield");
-                                    editor.put("format", extViewConfig.getDateFormat());
-                                    break;
-                                }
-                                case "java.sql.Time": {
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "timefield");
-                                    break;
-                                }
-                                case "short":
-                                case "java.lang.Short":
-                                case "int":
-                                case "java.lang.Integer":
-                                case "long":
-                                case "java.lang.Long":
-                                case "java.math.BigInteger":
-                                case "double":
-                                case "java.lang.Double":
-                                case "float":
-                                case "java.lang.Float": {
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "numberfield");
-                                    break;
-                                }
-                                case "boolean":
-                                case "java.lang.Boolean": {
-                                    editor = new JSONObject();
-                                    editor.put("xtype", "checkbox");
-                                    editor.put("cls", "x-grid-checkheader-editor");
-                                    break;
-                                }
-                                default:
-                                    field = new JSONObject();
-                                    field.put("type", "textfield");
-                                    break;
-                            }
-                        }
-                        if(field!=null){
-                            if(fieldsNN.contains(fieldName)){
-                                field.put("allowBlank", false);
-                            }
-                            if(sizeColumnMap.containsKey(fieldName)){
-                                field.put("minLength", sizeColumnMap.get(fieldName)[0]);
-                                field.put("maxLength", sizeColumnMap.get(fieldName)[1]);
-                            }
-                            if(processConfig.isEditableGrid() && !readOnly){
-                                gridColumn.put("field", field);
-                            }
-                        }else if(editor!=null){
-                            if(fieldsNN.contains(fieldName)){
-                                editor.put("allowBlank", false);
-                            }
-                            if(sizeColumnMap.containsKey(fieldName)){
-                                editor.put("minLength", sizeColumnMap.get(fieldName)[0]);
-                                editor.put("maxLength", sizeColumnMap.get(fieldName)[1]);
-                            }
-                            if(processConfig.isEditableGrid() && !readOnly){
-                                gridColumn.put("editor", editor);
-                            }
-                        }
+                        jc.addJSONColumn(jsonGridColumns, type, fieldName, fieldTitle, widthColumn, typeFormFields, processConfig.getLabelField(),
+                                sizeColumnMap, processConfig.isEditableGrid(), readOnly, fieldsNN.contains(fieldName));
+                        
                     }else{
-                        gridColumn.put("renderer", "#Instance.combobox"+fieldEntity+"Render#");
-                        if(processConfig.isEditableGrid() && !readOnly){
-                            gridColumn.put("editor", "#Instance.gridCombobox"+fieldEntity+"#");
-                        }
+                        jc.addEntityCombobox(jsonGridColumns, fieldName, fieldTitle, fieldEntity, widthColumn,
+                                processConfig.isEditableGrid(), readOnly, fieldsNN.contains(fieldName));
+                        
                     }
-                    jsonGridColumns.put(gridColumn);
                 }
                     
                 // ADD TO jsonEmptyModel

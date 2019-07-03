@@ -214,7 +214,7 @@ function ${entityName}ExtStore(){
             waitConfig: {interval:200}
         });
         Ext.Ajax.request({
-            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/getNavigationTreeData.htm",
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"getNavigationTreeData.htm",
             method: "GET",
             params: "",
             success: function(response){

@@ -18,8 +18,6 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
     
     //*******************************************************
     
-    var util= new Util();
-    
     
     Instance.init= function(){
         Instance.pluralEntityTitle= '${viewConfig.pluralEntityTitle}';
