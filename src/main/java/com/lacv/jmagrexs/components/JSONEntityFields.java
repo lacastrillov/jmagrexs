@@ -28,7 +28,8 @@ public class JSONEntityFields {
             LinkedHashMap<String,JSONObject> fieldGroups, HashMap<String, Integer> positionColumnForm, int numColumnsForm,
             boolean isEditableForm, boolean readOnly, boolean fieldNN){
         
-        boolean addFormField= true;
+        boolean addField= true;
+        boolean visible= true;
         JSONObject formField= new JSONObject();
         formField.put("id", entityName + "_" +fieldName);
         formField.put("name", fieldName);
@@ -63,7 +64,7 @@ public class JSONEntityFields {
                 formField.put("enableAlignments", true);
                 formField.put("height", 400);
             }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
-                addFormField= false;
+                addField= false;
                 String[] data= typeFormFields.get(fieldName);
                 JSONArray dataArray = new JSONArray();
                 for(int i=1; i<data.length; i++){
@@ -71,19 +72,19 @@ public class JSONEntityFields {
                 }
                 if(!readOnly && isEditableForm){
                     String field= "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','form',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")#";
-                    addFormField(field,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                    addFormField(field,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
                 }else{
-                    addFormField=true;
+                    addField=true;
                 }
             }else if(typeForm.equals(FieldType.RADIOS.name())){
-                addFormField= false;
+                addField= false;
                 String[] data= typeFormFields.get(fieldName);
                 JSONArray dataArray = new JSONArray();
                 for(int i=1; i<data.length; i++){
                     dataArray.put(data[i]);
                 }
                 String field= "#Instance.commonExtView.getRadioGroup('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#";
-                addFormField(field,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(field,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                 formField.put("xtype", "numberfield");
                 formField.put("fieldLabel", fieldTitle+" (bytes)");
@@ -92,7 +93,7 @@ public class JSONEntityFields {
                 rendererField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
                 jsonFormFields.put(rendererField);
                 if(!isEditableForm){
-                    addFormField= false;
+                    addField= false;
                 }
             }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
                 formField.put("xtype", "numberfield");
@@ -101,20 +102,30 @@ public class JSONEntityFields {
                 formField.put("maxValue", 100);
             }else if(typeForm.equals(FieldType.COLOR.name())){
                 formField.put("xtype", "customcolorpicker");
+            }else if(typeForm.equals(FieldType.ON_OFF.name())){
+                formField.put("xtype", "checkbox");
+                formField.put("inputValue", "true");
+                formField.put("uncheckedValue", "false");
+                formField.put("cls", "hidden");
+                
+                //Add Button ON/OFF
+                rendererField.put("renderer", "#Instance.commonExtView.onOffRender#");
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
+                visible= false;
             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                 formField.put("fieldLabel", "Link "+fieldTitle);
                 formField.put("emptyText", "Url Youtube");
 
                 //Add Video Youtube
                 rendererField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
                 formField.put("fieldLabel", "Coordenadas "+fieldTitle);
                 formField.put("emptyText", "Google Maps Point");
 
                 //Add GoogleMap
                 rendererField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                 formField.put("name", fieldName + "_File");
                 formField.put("xtype", "filefield");
@@ -123,9 +134,9 @@ public class JSONEntityFields {
 
                 //Add Url File
                 rendererField.put("renderer", "#Instance.commonExtView.fileRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
                 if(!isEditableForm){
-                    addFormField= false;
+                    addField= false;
                 }
             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                 formField.put("name", fieldName + "_File");
@@ -135,9 +146,9 @@ public class JSONEntityFields {
 
                 //Add Image
                 rendererField.put("renderer", "#Instance.commonExtView.imageRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
                 if(!isEditableForm){
-                    addFormField= false;
+                    addField= false;
                 }
             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                 formField.put("name", fieldName + "_File");
@@ -147,9 +158,9 @@ public class JSONEntityFields {
 
                 //Add Video
                 rendererField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
                 if(!isEditableForm){
-                    addFormField= false;
+                    addField= false;
                 }
             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                 formField.put("name", fieldName + "_File");
@@ -159,9 +170,9 @@ public class JSONEntityFields {
 
                 //Add Audio
                 rendererField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
                 if(!isEditableForm){
-                    addFormField= false;
+                    addField= false;
                 }
             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                 formField.put("name", fieldName + "_File");
@@ -171,9 +182,9 @@ public class JSONEntityFields {
 
                 //Add MultiFile
                 rendererField.put("renderer", "#Instance.commonExtView.multiFileRender#");
-                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(rendererField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
                 if(!isEditableForm){
-                    addFormField= false;
+                    addField= false;
                 }
             }
             if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
@@ -191,7 +202,7 @@ public class JSONEntityFields {
                 if(!isEditableForm){
                     linkField.put("xtype", "displayfield");
                 }
-                addFormField(linkField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+                addFormField(linkField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
             }
         }else{
             switch (type) {
@@ -230,11 +241,11 @@ public class JSONEntityFields {
             formField.put("minLength", sizeColumnMap.get(fieldName)[0]);
             formField.put("maxLength", sizeColumnMap.get(fieldName)[1]);
         }
-        if(addFormField){
+        if(addField){
             if(!isEditableForm){
                 formField.put("xtype", "displayfield");
             }
-            addFormField(formField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+            addFormField(formField,jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,visible);
         }
     }
     
@@ -251,11 +262,11 @@ public class JSONEntityFields {
         }
         combobox+="return Instance.formCombobox"+fieldEntity+";" +
                         "})()";
-        addFormField("#"+combobox+"#",jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm);
+        addFormField("#"+combobox+"#",jsonFormFields,numColumnsForm,titleGroup,fieldGroups,positionColumnForm,true);
     }
     
     private void addFormField(Object field, JSONArray jsonFormFields, int numColumnsForm, String titleGroup,
-            LinkedHashMap<String,JSONObject> fieldGroups, HashMap<String,Integer> positionColumnForm){
+            LinkedHashMap<String,JSONObject> fieldGroups, HashMap<String,Integer> positionColumnForm, boolean visible){
         
         if(numColumnsForm<=1){
             if(titleGroup.equals("")){
@@ -264,7 +275,7 @@ public class JSONEntityFields {
                 fieldGroups.get(titleGroup).getJSONArray("items").put(field);
             }
         }else{ 
-            if(positionColumnForm.get(titleGroup)==0 || positionColumnForm.get(titleGroup)==numColumnsForm){
+            if((positionColumnForm.get(titleGroup)==0 || positionColumnForm.get(titleGroup)==numColumnsForm) && visible){
                 JSONObject defaults= new JSONObject();
                 double columnWidth= (double)1/numColumnsForm-0.02;
                 defaults.put("columnWidth", (double)Math.round(columnWidth * 100d) / 100d);
@@ -285,7 +296,7 @@ public class JSONEntityFields {
                     positionColumnForm.put(titleGroup,0);
                 }
             }
-            if(positionColumnForm.get(titleGroup) < numColumnsForm){
+            if(positionColumnForm.get(titleGroup) < numColumnsForm || !visible){
                 if(titleGroup.equals("")){
                     int index= jsonFormFields.length()-1;
                     jsonFormFields.getJSONObject(index).getJSONArray("items").put(field);
@@ -294,7 +305,9 @@ public class JSONEntityFields {
                     fieldGroups.get(titleGroup).getJSONArray("items").getJSONObject(index).getJSONArray("items").put(field);
                 }
             }
-            positionColumnForm.put(titleGroup,positionColumnForm.get(titleGroup)+1);
+            if(visible){
+                positionColumnForm.put(titleGroup,positionColumnForm.get(titleGroup)+1);
+            }
         }
     }
     

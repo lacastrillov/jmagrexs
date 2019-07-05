@@ -29,6 +29,8 @@ public enum FieldType {
     
     CONDITIONAL_COLOR,
     
+    ON_OFF,
+    
     LIST,
     
     MULTI_SELECT,

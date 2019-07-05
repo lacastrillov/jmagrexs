@@ -79,11 +79,15 @@ public class JSONColumns {
                 gridColumn.put("renderer", "#Instance.commonExtView.colorGridRender#");
                 field= new JSONObject();
                 field.put("type", "textfield");
+            }else if(typeForm.equals(FieldType.ON_OFF.name())){
+                gridColumn.put("xtype", "checkcolumn");
+                gridColumn.put("disabled", readOnly);
+                gridColumn.put("renderer", "#Instance.commonExtView.onOffGridRender#");
             }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||
                     typeForm.equals(FieldType.VIDEO_YOUTUBE.name()) || typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
 
-                gridColumn.put("renderer", "#Instance.commonExtView.urlRender#");
+                gridColumn.put("renderer", "#Instance.commonExtView.urlGridRender#");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){

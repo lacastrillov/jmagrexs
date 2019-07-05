@@ -30,7 +30,7 @@ public class JSONFields {
             String fieldTitle, HashMap<String,String[]> typeFormFields, HashMap<String, Integer[]> sizeColumnMap, 
             boolean readOnly, boolean fieldNN, boolean hidden, boolean disabled){
         
-        boolean addFormField= true;
+        boolean addField= true;
         JSONObject formField= new JSONObject();
         formField.put("id", processName + "_" + parent + fieldName);
         formField.put("name", parent + fieldName);
@@ -66,7 +66,7 @@ public class JSONFields {
                 formField.put("enableAlignments", true);
                 formField.put("height", 400);
             }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
-                addFormField= false;
+                addField= false;
                 String[] data= typeFormFields.get(checkFieldName);
                 JSONArray dataArray = new JSONArray();
                 for(int i=1; i<data.length; i++){
@@ -74,7 +74,7 @@ public class JSONFields {
                 }
                 jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','"+processName+"',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")#");
             }else if(typeForm.equals(FieldType.RADIOS.name())){
-                addFormField= false;
+                addField= false;
                 String[] data= typeFormFields.get(checkFieldName);
                 JSONArray dataArray = new JSONArray();
                 for(int i=1; i<data.length; i++){
@@ -95,6 +95,15 @@ public class JSONFields {
                 formField.put("maxValue", 100);
             }else if(typeForm.equals(FieldType.COLOR.name())){
                 formField.put("xtype", "customcolorpicker");
+            }else if(typeForm.equals(FieldType.ON_OFF.name())){
+                formField.put("xtype", "checkbox");
+                formField.put("inputValue", "true");
+                formField.put("uncheckedValue", "false");
+                formField.put("cls", "hidden");
+                
+                //Add Button ON/OFF
+                rendererField.put("renderer", "#Instance.commonExtView.onOffRender#");
+                jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                 formField.put("fieldLabel", "Link "+fieldTitle);
                 formField.put("emptyText", "Url Youtube");
@@ -205,7 +214,7 @@ public class JSONFields {
             formField.put("minLength", sizeColumnMap.get(fieldName)[0]);
             formField.put("maxLength", sizeColumnMap.get(fieldName)[1]);
         }
-        if(addFormField){
+        if(addField){
             jsonFormFields.put(formField);
         }
     }

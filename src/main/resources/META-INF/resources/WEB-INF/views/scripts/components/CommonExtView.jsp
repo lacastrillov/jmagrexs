@@ -371,7 +371,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
-    Instance.urlRender= function(value, p, record){
+    Instance.urlGridRender= function(value, p, record){
         if(value){
             return "<a target='_blank' href='"+value+"'>"+value+"</a>";
         }else{
@@ -455,6 +455,11 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.onOffGridRender = function (v, metaData, record) {
+        var check=(v===true)?"checked":"unchecked";
+        return '<label class="on_off '+check+'"></label>';
+    };
+    
     Instance.fileRender= function(value, field){
         Instance.setLinkFieldValue(field, value);
         if(value){
@@ -515,14 +520,23 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.onOffRender= function(value, field){
+        var checkboxId= field.id.replaceAll("Renderer", "");
+        var check= (value===true || value==="true")?"checked":"unchecked";
+        Ext.getCmp(checkboxId).setValue(value);
+        var forAttr= checkboxId+'-inputEl';
+        var onclickAttr= "util.switchClassElement(this,'checked','unchecked')";
+        if(Ext.getCmp(checkboxId).readOnly){
+            forAttr='';
+            onclickAttr='javascript:void(0)';
+        }
+        return '<label for="'+forAttr+'" class="on_off '+check+'" onclick="'+onclickAttr+'"></label>';
+    }
+    
     Instance.videoFileUploadRender= function(value, field) {
         Instance.setLinkFieldValue(field, value);
         if(value){
             return '<iframe frameborder="0" width="100%" height="100%" src="'+value+'" allowfullscreen></iframe>';
-            /*return '<video style="width:528px;height:297px" controls>'+
-                   '    <source src="'+value+'" type="video/'+value.split('.').pop()+'">'+
-                   '    Your browser does not support the video tag.'+
-                   '</video>';*/
         }else{
             return "";
         }
