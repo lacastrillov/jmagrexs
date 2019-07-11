@@ -11,7 +11,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     var MAX_LIST_ITEMS= 20;
     
     Instance.init= function(){
-        if(model!==null){
+        if(model!==undefined && model!==null){
             Instance.modelNameCombobox= "ComboboxModelIn"+model;
             Instance.combobox={};
             Instance.comboboxRender={};
@@ -379,6 +379,14 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.passwordGridRender= function(value, p, record){
+        if(value){
+            return "*****";
+        }else{
+            return value;
+        }
+    };
+    
     Instance.imageGridRender= function(value, p, record){
         if(value){
             return '<img style="max-height: 200px;" src="'+value+'" />';
@@ -449,6 +457,33 @@ function CommonExtView(parentExtController, parentExtView, model){
     Instance.colorGridRender = function (v, metaData, record) {
         if(v){
             return '<div class="x-color-picker-box" style="background-color:'+v+';">'+
+                    v+'</div>';
+        }else{
+            return v;
+        }
+    };
+    
+    Instance.conditionalColorGridRender = function (v, metaData, record, rowIndex, colIndex, store) {
+        if(v){
+            var background= "";
+            var color= "";
+            if('conditionalColor' in parentExtView.gridComponent.columns[colIndex-1]){
+                var conditionalColor= parentExtView.gridComponent.columns[colIndex-1].conditionalColor;
+                conditionalColor.forEach(function (item, index) {
+                    var match= false;
+                    if('eq' in item) match=(v===item.eq);
+                    else if('lk' in item) match=(v.indexOf(item.lk)!==-1);
+                    else if('lt' in item) match=(v<item.lt);
+                    else if('lte' in item) match=(v<=item.lte);
+                    else if('gt' in item) match=(v>item.gt);
+                    else if('gte' in item) match=(v>=item.gte);
+                    if(match){
+                        background= ('bg' in item)?'background-color:'+item.bg+';':background;
+                        color= ('c' in item)?'color:'+item.c+';':color;
+                    }
+                });
+            }
+            return '<div style="'+background+color+'padding:2px;text-align:center;">'+
                     v+'</div>';
         }else{
             return v;
@@ -531,7 +566,7 @@ function CommonExtView(parentExtController, parentExtView, model){
             onclickAttr='javascript:void(0)';
         }
         return '<label for="'+forAttr+'" class="on_off '+check+'" onclick="'+onclickAttr+'"></label>';
-    }
+    };
     
     Instance.videoFileUploadRender= function(value, field) {
         Instance.setLinkFieldValue(field, value);

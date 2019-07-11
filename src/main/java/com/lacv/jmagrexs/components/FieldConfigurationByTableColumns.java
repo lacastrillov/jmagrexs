@@ -79,8 +79,14 @@ public class FieldConfigurationByTableColumns {
         for(GenericTableColumn column: columns){
             String[] typeData= new String[]{column.getFieldType()};
             if(column.getFieldType()!=null){
-                if(column.getFieldType().equals("LIST") || column.getFieldType().equals("MULTI_SELECT") || column.getFieldType().equals("RADIOS")){
-                    String[] options= column.getOptions().replaceAll(", ", ",").split(",");
+                if(column.getFieldType().equals("LIST") || column.getFieldType().equals("MULTI_SELECT")
+                        || column.getFieldType().equals("RADIOS") || column.getFieldType().equals("CONDITIONAL_COLOR")){
+                    String[] options;
+                    if(column.getOptions().contains(";")){
+                        options=column.getOptions().replaceAll("; ", ";").split(";");
+                    }else{
+                        options=column.getOptions().replaceAll(", ", ",").split(",");
+                    }
                     map.put(column.getColumnAlias(), (String[]) ArrayUtils.addAll(typeData, options));
                 }else{
                     map.put(column.getColumnAlias(), typeData);

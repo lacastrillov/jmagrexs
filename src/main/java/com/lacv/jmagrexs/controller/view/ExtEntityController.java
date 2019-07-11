@@ -111,7 +111,7 @@ public abstract class ExtEntityController extends ExtReportController {
         JSONArray menuItems= getMenuItems(session, menuComponent);
         mav.addObject("menuItems",menuItems.toString());
         if(viewConfig.isVisibleFilters()){
-            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         }
         
         return mav;
@@ -177,10 +177,10 @@ public abstract class ExtEntityController extends ExtReportController {
         
         //addEntityExtViewConfiguration(mav);
         mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGlobalActions", jsonGlobalActions.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonGlobalActions", jsonGlobalActions.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
@@ -307,7 +307,7 @@ public abstract class ExtEntityController extends ExtReportController {
             numbererColumn.put("xtype", "rownumberer");
             numbererColumn.put("width", 40);
             numbererColumn.put("sortable", false);
-            numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
+            numbererColumn.put("renderer", "@Instance.commonExtView.numbererGridRender@");
             jsonGridColumns.put(numbererColumn);
         }
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -406,9 +406,9 @@ public abstract class ExtEntityController extends ExtReportController {
         for (Map.Entry<String, String> entry : viewConfig.getInternalViewButton().entrySet()) {
             JSONObject internalViewButton= new JSONObject();
             internalViewButton.put("text", entry.getValue());
-            internalViewButton.put("scope", "#this#");
+            internalViewButton.put("scope", "@this@");
             internalViewButton.put("scale", "medium");
-            internalViewButton.put("handler", "#function(){parentExtController.viewInternalPage('"+serverDomain.getApplicationContext() + serverDomain.getAdminContext() + serverDomain.getAdminPath()+"/"+entry.getKey()+"/entity.htm')}#");
+            internalViewButton.put("handler", "@function(){parentExtController.viewInternalPage('"+serverDomain.getApplicationContext() + serverDomain.getAdminContext() + serverDomain.getAdminPath()+"/"+entry.getKey()+"/entity.htm')}@");
             
             jsonInternalViewButtons.put(internalViewButton);
         }
@@ -426,11 +426,11 @@ public abstract class ExtEntityController extends ExtReportController {
                 //ADD Button in Grid
                 JSONObject gridAction= new JSONObject();
                 gridAction.put("tooltip", processButton.getProcessTitle());
-                gridAction.put("scope", "#this#");
+                gridAction.put("scope", "@this@");
                 gridAction.put("icon", processButton.getIconUrl());
-                gridAction.put("handler", "#function (grid, rowIndex, colIndex) {" +
+                gridAction.put("handler", "@function (grid, rowIndex, colIndex) {" +
                                           "     Instance.showProcessForm('"+processButton.getProcessName()+"', "+sourceByDestinationFields+", rowIndex);" +
-                                          "}#");
+                                          "}@");
                 
                 gridActions.put(gridAction);
                 gridActions.put("-");
@@ -438,18 +438,18 @@ public abstract class ExtEntityController extends ExtReportController {
                 //ADD Button in Form
                 JSONObject internalViewButton= new JSONObject();
                 internalViewButton.put("text", processButton.getProcessTitle());
-                internalViewButton.put("scope", "#this#");
+                internalViewButton.put("scope", "@this@");
                 internalViewButton.put("scale", "medium");
                 internalViewButton.put("style", "background-image: url("+processButton.getIconUrl()+") !important;background-position: left center;background-repeat: no-repeat;background-size: 25px 25px;padding-left: 20px;");
-                internalViewButton.put("handler", "#function(){"+
+                internalViewButton.put("handler", "@function(){"+
                                                   "     Instance.showProcessForm('"+processButton.getProcessName()+"', "+sourceByDestinationFields+", -1);"+
-                                                  "}#");
+                                                  "}@");
                 
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
                 JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass());
-                jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+                jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             }
             gridColumn.put("items", gridActions);
             jsonGridColumns.put(gridColumn);
@@ -460,17 +460,17 @@ public abstract class ExtEntityController extends ExtReportController {
                 //ADD Global Action
                 JSONObject globalAction= new JSONObject();
                 globalAction.put("text", processGlobalActions.getProcessTitle());
-                globalAction.put("scope", "#this#");
+                globalAction.put("scope", "@this@");
                 globalAction.put("icon", processGlobalActions.getIconUrl());
-                globalAction.put("handler", "#function () {" +
+                globalAction.put("handler", "@function () {" +
                                           "     Instance.showGlobalProcessForm('"+processGlobalActions.getProcessName()+"', '"+processGlobalActions.getIdsField()+"');" +
-                                          "}#");
+                                          "}@");
                 
                 jsonGlobalActions.put(globalAction);
                 
                 //Add Form Fields by Process
                 JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processGlobalActions.getProcessName(), "", processGlobalActions.getDtoClass());
-                jsonFormFieldsProcessMap.put(processGlobalActions.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+                jsonFormFieldsProcessMap.put(processGlobalActions.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             }
         }
         

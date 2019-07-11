@@ -88,7 +88,7 @@ public abstract class ExtEntityExplorerController extends ExtController {
             mav.addObject("menuItems",menuItems.toString());
         }
         if(viewConfig.isVisibleFilters()){
-            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         }
         
         return mav;
@@ -144,8 +144,8 @@ public abstract class ExtEntityExplorerController extends ExtController {
         addGeneralObjects(mav);
         
         mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());
         

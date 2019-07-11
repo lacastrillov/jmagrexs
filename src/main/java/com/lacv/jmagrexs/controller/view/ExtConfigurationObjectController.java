@@ -154,7 +154,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
             
             JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
-            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             
             if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){
                 interfacesEntityRef.addAll(jfo.getInterfacesEntityRefMap().get(entry.getKey()));

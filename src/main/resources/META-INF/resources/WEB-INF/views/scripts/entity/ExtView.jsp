@@ -33,6 +33,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.singularEntityTitle= '${viewConfig.singularEntityTitle}';
         Instance.entityExtModel.defineModel(Instance.modelName);
         Instance.store= Instance.entityExtStore.getStore(Instance.modelName);
+        Instance.massiveUpdateExecuteInProgress= false;
         <c:if test="${viewConfig.activeGridTemplate}">
         Instance.gridModelName= "${entityName}TemplateModel";
         Instance.entityExtModel.defineTemplateModel(Instance.gridModelName);
@@ -396,6 +397,19 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         };
     };
     
+    Instance.createEmptyRecUpdater= function(){
+        if(Instance.emptyModelUpdater===undefined){
+            Instance.emptyModelUpdater= ${jsonEmptyModel};
+            for (var property in Instance.emptyModelUpdater) {
+                Instance.emptyModelUpdater[property]="-";
+            }
+            Instance.emptyModelUpdater["id"]= "-1";
+            Instance.getEmptyRecUpdater= function(){
+                return new ${entityName}Model(Instance.emptyModelUpdater);
+            };
+        }
+    };
+    
     function getComboboxLimit(store){
         var combobox= Instance.commonExtView.getSimpleCombobox('limit', 'L&iacute;mite', '${entityRef}config', [50, 100, 200, 500], true);
         combobox.addListener('change',function(record){
@@ -452,16 +466,15 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             ],
 
             initComponent: function(){
-
-                this.editing = Ext.create('Ext.grid.plugin.CellEditing');
                 
-
+                Instance.cellEditing = Ext.create('Ext.grid.plugin.CellEditing');
+                
                 Ext.apply(this, {
                     //iconCls: 'icon-grid',
                     hideHeaders:${viewConfig.hideHeadersGrid},
                     frame: false,
                     selType: 'checkboxmodel',
-                    plugins: [this.editing],
+                    plugins: [Instance.cellEditing],
                     dockedItems: [{
                         weight: 2,
                         xtype: 'toolbar',
@@ -480,6 +493,25 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 text: 'Agregar',
                                 scope: this,
                                 handler: this.onAddClick
+                            }]
+                        },
+                        </c:if>
+                        <c:if test="${viewConfig.editableGrid && viewConfig.visibleMassiveUpdateButton}">
+                        {
+                            itemId: 'massiveUpdateButton',
+                            iconCls: 'icon-save',
+                            xtype: 'splitbutton',
+                            text: 'Actualizaci&oacute;n masiva',
+                            scope: this,
+                            handler: this.onMassiveUpdate,
+                            menu: [{
+                                text: 'Ejecutar',
+                                scope: this,
+                                handler: this.onMassiveUpdateExecute
+                            },{
+                                text: 'Cancelar',
+                                scope: this,
+                                handler: this.onMassiveUpdateCancel
                             }]
                         },
                         </c:if>
@@ -564,7 +596,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             onSync: function(){
                 this.store.sync();
             },
-
+            
             onDeleteClick: function(){
                 parentExtController.deleteRecords();
             },
@@ -575,6 +607,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     mvcExt.navigate("?tab=1&id=");
                 }else{
                     Ext.getCmp("${entityRef}TabsContainer").clickInTab("Formulario");
+                    parentExtController.loadFormData("");
                 }
             },
 
@@ -583,13 +616,71 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No se ha seleccionado "+parentExtController.parentEntityTitle+" padre!!!");
                 }else{
                     this.store.proxy.writer.writeAllFields= true;
-                    var rec = Instance.getEmptyRec(), edit = this.editing;
+                    var edit = Instance.cellEditing;
+                    var rec = Instance.getEmptyRec();
                     edit.cancelEdit();
                     this.store.insert(0, rec);
-                    edit.startEditByPosition({
-                        row: 0,
-                        column: 0
+                    edit.startEditByPosition({row:0, column:0});
+                }
+            },
+                
+            onMassiveUpdate: function(){
+                if(!Instance.massiveUpdateExecuteInProgress){
+                    if(parentExtController.typeController==="Child" && parentExtController.parentEntityId===null){
+                        Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No se ha seleccionado "+parentExtController.parentEntityTitle+" padre!!!");
+                    }else{
+                        Instance.massiveUpdateExecuteInProgress= true;
+                        Instance.gridComponent.store.autoSync= false;
+                        Instance.gridComponent.down('#massiveUpdateButton').setIconCls('icon-red');
+                        var apiUpdate= Instance.gridComponent.store.proxy.api.update;
+                        Instance.gridComponent.store.proxy.api.update= apiUpdate.replaceAll("update.htm","update/byfilter.htm");
+                        console.log(Instance.gridComponent.store.proxy.api.update);
+
+                        //Agregar registro en editor
+                        Instance.createEmptyRecUpdater();
+                        var edit= Instance.cellEditing;
+                        edit.cancelEdit();
+                        var rec = Instance.getEmptyRecUpdater();
+                        this.store.insert(0, rec);
+                        edit.startEdit();
+                    }
+                    
+                }
+            },
+            
+            onMassiveUpdateExecute: function(){
+                if(Instance.massiveUpdateExecuteInProgress){
+                    Ext.MessageBox.confirm('Confirmar', 'Esta seguro que desea actualizar '+this.store.getTotalCount()+' registros?', function(result){
+                        if(result==="yes"){
+                            Instance.gridComponent.store.sync({
+                                success: function(){
+                                    Instance.reloadPageStore(1);
+                                    console.log("success!!");
+                                },
+                                scope: this
+                            });
+                            Instance.gridComponent.down('#massiveUpdateButton').setIconCls('icon-save');
+                            Instance.massiveUpdateExecuteInProgress= false;
+                            Instance.gridComponent.store.autoSync= ${viewConfig.defaultAutoSave};
+                            var apiUpdateByFilter= Instance.gridComponent.store.proxy.api.update;
+                            Instance.gridComponent.store.proxy.api.update= apiUpdateByFilter.replaceAll("update/byfilter.htm","update.htm");
+                        }
                     });
+                }else{
+                    Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No hay Actualizaci&oacute;n masiva en progreso!!!");
+                }
+            },
+            
+            onMassiveUpdateCancel: function(){
+                var apiUpdate= Instance.gridComponent.store.proxy.api.update;
+                if(Instance.massiveUpdateExecuteInProgress || apiUpdate.indexOf("update/byfilter.htm")!==-1){
+                    Instance.gridComponent.down('#massiveUpdateButton').setIconCls('icon-save');
+                    Instance.massiveUpdateExecuteInProgress= false;
+                    Instance.gridComponent.store.autoSync= ${viewConfig.defaultAutoSave};
+                    Instance.gridComponent.store.proxy.api.update= apiUpdate.replaceAll("update.htm","update/byfilter.htm");
+                    Instance.reloadPageStore(1);
+                }else{
+                    Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No hay Actualizaci&oacute;n masiva en progreso!!!");
                 }
             },
             

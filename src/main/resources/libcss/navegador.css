@@ -101,6 +101,9 @@ body {
 .icon-send {
     background-image:url(https://ext-js-4-dot-proven-signal-88616.appspot.com/ext/examples/layout-browser/images/email_go.png) !important;
 }
+.icon-red {
+    background-image:url(/libimg/ext/icon-red.png) !important;
+}
 .icon-save {
     background-image:url(https://ext-js-4-dot-proven-signal-88616.appspot.com/ext/examples/layout-browser/images/disk.png) !important;
 }

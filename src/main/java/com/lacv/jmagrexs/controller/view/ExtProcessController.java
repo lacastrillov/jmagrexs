@@ -139,13 +139,13 @@ public abstract class ExtProcessController extends ExtController {
         mav.addObject("jsonFormFieldsMap", jsonFormFieldsMap);
         
         mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(processConfig.getTypeChildExtViews()));
         
         if(processConfig.isVisibleFilters()){
-            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         }
         
         return mav;
@@ -192,7 +192,7 @@ public abstract class ExtProcessController extends ExtController {
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
             
             JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
-            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             
             if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){
                 interfacesEntityRef.addAll(jfo.getInterfacesEntityRefMap().get(entry.getKey()));
@@ -223,7 +223,7 @@ public abstract class ExtProcessController extends ExtController {
         numbererColumn.put("xtype", "rownumberer");
         numbererColumn.put("width", 40);
         numbererColumn.put("sortable", false);
-        numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
+        numbererColumn.put("renderer", "@Instance.commonExtView.numbererGridRender@");
         jsonGridColumns.put(numbererColumn);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
@@ -271,9 +271,9 @@ public abstract class ExtProcessController extends ExtController {
         for (Map.Entry<String, String> entry : processConfig.getInternalViewButton().entrySet()) {
             JSONObject internalViewButton= new JSONObject();
             internalViewButton.put("text", entry.getValue());
-            internalViewButton.put("scope", "#this#");
+            internalViewButton.put("scope", "@this@");
             internalViewButton.put("scale", "medium");
-            internalViewButton.put("handler", "#function(){parentExtController.viewInternalPage('/vista/"+entry.getKey()+"/table.htm')}#");
+            internalViewButton.put("handler", "@function(){parentExtController.viewInternalPage('/vista/"+entry.getKey()+"/table.htm')}@");
             
             jsonInternalViewButtons.put(internalViewButton);
         }

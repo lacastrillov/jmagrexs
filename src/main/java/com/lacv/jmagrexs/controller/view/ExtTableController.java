@@ -74,7 +74,7 @@ public abstract class ExtTableController extends ExtController {
         }
         if(viewConfig.isVisibleFilters()){
             JSONArray jsonFieldsFilters= jf.getFieldsFilters(columns);
-            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         }
         
         addGeneralObjects(mav, tableName);
@@ -168,7 +168,7 @@ public abstract class ExtTableController extends ExtController {
         numbererColumn.put("xtype", "rownumberer");
         numbererColumn.put("width", 40);
         numbererColumn.put("sortable", false);
-        numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
+        numbererColumn.put("renderer", "@Instance.commonExtView.numbererGridRender@");
         jsonGridColumns.put(numbererColumn);
         for (GenericTableColumn column : columns) {
             String type = column.getDataType();
@@ -218,8 +218,8 @@ public abstract class ExtTableController extends ExtController {
         }
         
         mav.addObject("titledFieldsMap", titledFieldsMap);
-        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());
     }

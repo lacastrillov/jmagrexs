@@ -11,6 +11,7 @@ import com.lacv.jmagrexs.service.JdbcDirectService;
 import com.lacv.jmagrexs.util.CSVService;
 import com.lacv.jmagrexs.util.ExcelService;
 import com.lacv.jmagrexs.util.FileService;
+import com.lacv.jmagrexs.util.JSONService;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -214,23 +215,38 @@ public abstract class RestDirectController {
         return Util.getStringBytes(resultData);
     }
     
-    /*@RequestMapping(value = "/{tableName}/update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = "/{tableName}/update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
-    public byte[] updateByFilter(@PathVariable String tableName, @RequestParam(required= false) String filter, HttpServletRequest request) {
+    public byte[] updateByFilter(@PathVariable String tableName, @RequestParam(required= false) String filter,
+            @RequestParam(required= false) String data, HttpServletRequest request) {
+        
         String resultData;
         try {
-            String jsonData= filter;
-            if(jsonData==null){
-                jsonData = IOUtils.toString(request.getInputStream());
+            List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
+            if(tableColumnsConfig.existLeadTable(tableName)){
+                String jsonData= filter;
+                String updateData= data;
+                if(updateData==null){
+                    updateData= IOUtils.toString(request.getInputStream());
+                }
+                if(JSONService.isJSONObject(updateData)){
+                    JSONObject jsonFilter= new JSONObject(filter);
+                    JSONObject jsonUpdate=new JSONObject(updateData);
+                    jsonUpdate.remove("id");
+                    jsonFilter.put("uv", jsonUpdate);
+                    jsonData= jsonFilter.toString();
+                }
+                Integer updatedRecords= directService.updateByJSONFilters(tableName, columns, jsonData);
+                resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + tableName + " realizada...", true);
+            }else{
+                resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
             }
-            Integer updatedRecords= directService.updateByJSONFilters(tableName, jsonData);
-            resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);
         } catch (Exception e) {
-            LOGGER.error("update " + entityRef, e);
-            resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n masiva de " + entityRef + ": " + e.getMessage(), false);
+            LOGGER.error("update " + tableName, e);
+            resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n masiva de " + tableName + ": " + e.getMessage(), false);
         }
-        return getStringBytes(resultData);
-    }*/
+        return Util.getStringBytes(resultData);
+    }
 
     @RequestMapping(value = "/{tableName}/load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody

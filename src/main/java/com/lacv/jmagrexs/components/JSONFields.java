@@ -72,7 +72,7 @@ public class JSONFields {
                 for(int i=1; i<data.length; i++){
                     dataArray.put(data[i]);
                 }
-                jsonFormFields.put("#Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','"+processName+"',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")#");
+                jsonFormFields.put("@Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','"+processName+"',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")@");
             }else if(typeForm.equals(FieldType.RADIOS.name())){
                 addField= false;
                 String[] data= typeFormFields.get(checkFieldName);
@@ -80,13 +80,13 @@ public class JSONFields {
                 for(int i=1; i<data.length; i++){
                     dataArray.put(data[i]);
                 }
-                jsonFormFields.put("#Instance.commonExtView.getRadioGroup('"+parent + fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")#");
+                jsonFormFields.put("@Instance.commonExtView.getRadioGroup('"+parent + fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")@");
             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
                 formField.put("xtype", "numberfield");
                 formField.put("fieldLabel", fieldTitle+" (bytes)");
 
                 //Add file Size Text
-                rendererField.put("renderer", "#Instance.commonExtView.fileSizeRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.fileSizeRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
                 formField.put("xtype", "numberfield");
@@ -102,21 +102,21 @@ public class JSONFields {
                 formField.put("cls", "hidden");
                 
                 //Add Button ON/OFF
-                rendererField.put("renderer", "#Instance.commonExtView.onOffRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.onOffRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
                 formField.put("fieldLabel", "Link "+fieldTitle);
                 formField.put("emptyText", "Url Youtube");
 
                 //Add Video Youtube
-                rendererField.put("renderer", "#Instance.commonExtView.videoYoutubeRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.videoYoutubeRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
                 formField.put("fieldLabel", "Coordenadas "+fieldTitle);
                 formField.put("emptyText", "Google Maps Point");
 
                 //Add GoogleMap
-                rendererField.put("renderer", "#Instance.commonExtView.googleMapsRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.googleMapsRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
@@ -125,7 +125,7 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un archivo");
 
                 //Add Url File
-                rendererField.put("renderer", "#Instance.commonExtView.fileRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.fileRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
@@ -134,7 +134,7 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione una imagen");
 
                 //Add Image
-                rendererField.put("renderer", "#Instance.commonExtView.imageRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.imageRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
@@ -143,7 +143,7 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un video");
 
                 //Add Video
-                rendererField.put("renderer", "#Instance.commonExtView.videoFileUploadRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.videoFileUploadRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
@@ -152,7 +152,7 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un audio");
 
                 //Add Audio
-                rendererField.put("renderer", "#Instance.commonExtView.audioFileUploadRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.audioFileUploadRender@");
                 jsonFormFields.put(rendererField);
             }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
                 formField.put("name", parent + fieldName + "_File");
@@ -161,7 +161,7 @@ public class JSONFields {
                 formField.put("emptyText", "Seleccione un archivo");
 
                 //Add MultiFile
-                rendererField.put("renderer", "#Instance.commonExtView.multiFileRender#");
+                rendererField.put("renderer", "@Instance.commonExtView.multiFileRender@");
                 jsonFormFields.put(rendererField);
             }
             if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
@@ -239,7 +239,7 @@ public class JSONFields {
             combobox+="combobox.allowBlank=false; ";
         }
         combobox+="return combobox;})()";
-        jsonFormFields.put("#"+combobox+"#");
+        jsonFormFields.put("@"+combobox+"@");
     }
     
     

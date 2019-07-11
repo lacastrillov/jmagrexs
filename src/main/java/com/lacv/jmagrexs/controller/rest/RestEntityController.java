@@ -379,12 +379,20 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
-    public byte[] updateByFilter(@RequestParam(required= false) String filter, HttpServletRequest request) {
+    public byte[] updateByFilter(@RequestParam String filter, @RequestParam(required= false) String data, HttpServletRequest request) {
         String resultData;
         try {
             String jsonData= filter;
-            if(jsonData==null){
-                jsonData = IOUtils.toString(request.getInputStream());
+            String updateData= data;
+            if(updateData==null){
+                updateData= IOUtils.toString(request.getInputStream());
+            }
+            if(JSONService.isJSONObject(updateData)){
+                JSONObject jsonFilter= new JSONObject(filter);
+                JSONObject jsonUpdate=new JSONObject(updateData);
+                jsonUpdate.remove("id");
+                jsonFilter.put("uv", jsonUpdate);
+                jsonData= jsonFilter.toString();
             }
             Integer updatedRecords= service.updateByJSONFilters(jsonData);
             resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);

@@ -69,7 +69,7 @@ public abstract class ExtReportController extends ExtController {
         if(reportsConfig.get(reportName).isVisibleFilters()){
             JSONArray jsonFieldsFilters= jf.getFieldsFilters(
                     reportsConfig.get(reportName).getDtoClass(), "name", PageType.REPORT);
-            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         }
         
         return mav;
@@ -186,7 +186,7 @@ public abstract class ExtReportController extends ExtController {
             numbererColumn.put("xtype", "rownumberer");
             numbererColumn.put("width", 40);
             numbererColumn.put("sortable", false);
-            numbererColumn.put("renderer", "#Instance.commonExtView.numbererGridRender#");
+            numbererColumn.put("renderer", "@Instance.commonExtView.numbererGridRender@");
             jsonGridColumns.put(numbererColumn);
         }
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -235,7 +235,7 @@ public abstract class ExtReportController extends ExtController {
                         for(int i=1; i<data.length; i++){
                             dataArray.put(data[i]);
                         }
-                        jsonFormMapFields.put("#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+",false)#");
+                        jsonFormMapFields.put("@Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','valueMap',"+dataArray.toString().replaceAll("\"", "'")+",false)@");
                     }else if (type.equals("java.util.Date")) {
                         String format=extViewConfig.getDateFormat();
                         if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){
@@ -289,11 +289,11 @@ public abstract class ExtReportController extends ExtController {
                 //ADD Button in Grid
                 JSONObject gridAction= new JSONObject();
                 gridAction.put("tooltip", processButton.getProcessTitle());
-                gridAction.put("scope", "#this#");
+                gridAction.put("scope", "@this@");
                 gridAction.put("icon", processButton.getIconUrl());
-                gridAction.put("handler", "#function (grid, rowIndex, colIndex) {" +
+                gridAction.put("handler", "@function (grid, rowIndex, colIndex) {" +
                                           "     Instance.showProcessForm('"+processButton.getProcessName()+"', "+sourceByDestinationFields+", rowIndex);" +
-                                          "}#");
+                                          "}@");
                 
                 gridActions.put(gridAction);
                 gridActions.put("-");
@@ -301,27 +301,27 @@ public abstract class ExtReportController extends ExtController {
                 //ADD Button in Form
                 JSONObject internalViewButton= new JSONObject();
                 internalViewButton.put("text", processButton.getProcessTitle());
-                internalViewButton.put("scope", "#this#");
+                internalViewButton.put("scope", "@this@");
                 internalViewButton.put("scale", "medium");
                 internalViewButton.put("style", "background-image: url("+processButton.getIconUrl()+") !important;background-position: left center;background-repeat: no-repeat;background-size: 25px 25px;padding-left: 20px;");
-                internalViewButton.put("handler", "#function(){"+
+                internalViewButton.put("handler", "@function(){"+
                                                   "     Instance.showProcessForm('"+processButton.getProcessName()+"', "+sourceByDestinationFields+", -1);"+
-                                                  "}#");
+                                                  "}@");
                 
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
                 JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass());
-                jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+                jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             }
             gridColumn.put("items", gridActions);
             jsonGridColumns.put(gridColumn);
         }
         
-        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonFormMapFields", jsonFormMapFields.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
-        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"#", "").replaceAll("#\"", ""));
+        mav.addObject("jsonFormFields", jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonFormMapFields", jsonFormMapFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonInternalViewButtons", jsonInternalViewButtons.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("sortColumns", sortColumns.toString());
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("jsonFormFieldsProcessMap", jsonFormFieldsProcessMap);

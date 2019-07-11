@@ -156,7 +156,7 @@ public class JSONForms {
                 buttonAdd.put("text", "Agregar");
                 buttonAdd.put("style", "margin:5px");
                 buttonAdd.put("width", 100);
-                buttonAdd.put("handler", "#function(){Instance.commonExtView.addListItem('"+processName+"','"+parent+"','"+fieldName+"')}#");
+                buttonAdd.put("handler", "@function(){Instance.commonExtView.addListItem('"+processName+"','"+parent+"','"+fieldName+"')}@");
                 jsonList.put(buttonAdd);
                 
                 JSONObject buttonQuit= new JSONObject();
@@ -164,7 +164,7 @@ public class JSONForms {
                 buttonQuit.put("text", "Quitar");
                 buttonQuit.put("style", "margin:5px");
                 buttonQuit.put("width", 100);
-                buttonQuit.put("handler", "#function(){Instance.commonExtView.removeListItem('"+processName+"','"+parent+"','"+fieldName+"')}#");
+                buttonQuit.put("handler", "@function(){Instance.commonExtView.removeListItem('"+processName+"','"+parent+"','"+fieldName+"')}@");
                 jsonList.put(buttonQuit);
                 
                 objectFieldGroup.put("items", jsonList);

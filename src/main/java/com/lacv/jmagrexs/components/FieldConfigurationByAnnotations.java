@@ -166,7 +166,8 @@ public class FieldConfigurationByAnnotations {
             FieldType ft= an.value();
             String[] typeData= new String[]{ft.name()};
             
-            if(ft.equals(FieldType.LIST) || ft.equals(FieldType.MULTI_SELECT) || ft.equals(FieldType.RADIOS)){
+            if(ft.equals(FieldType.LIST) || ft.equals(FieldType.MULTI_SELECT) ||
+                    ft.equals(FieldType.RADIOS) || ft.equals(FieldType.CONDITIONAL_COLOR)){
                 map.put(fieldName, (String[]) ArrayUtils.addAll(typeData, an.data()));
             }else{
                 map.put(fieldName, typeData);

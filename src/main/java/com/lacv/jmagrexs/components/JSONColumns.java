@@ -40,14 +40,15 @@ public class JSONColumns {
                 editor= new JSONObject();
                 editor.put("vtype", "email");
             }else if(typeForm.equals(FieldType.PASSWORD.name())){
+                gridColumn.put("renderer", "@Instance.commonExtView.passwordGridRender@");
                 editor= new JSONObject();
                 editor.put("inputType", "password");
             }else if(typeForm.equals(FieldType.DURATION.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.durationGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.durationGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.PRICE.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.priceGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.priceGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.DATETIME.name())){
@@ -64,38 +65,48 @@ public class JSONColumns {
                     dataArray.put(data[i]);
                 }
                 if(isEditableGrid && !readOnly){
-                    gridColumn.put("renderer", "#Instance.commonExtView.getSimpleComboboxRender('grid','"+fieldName+"')#");
-                    gridColumn.put("editor", "#Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")#");
+                    gridColumn.put("renderer", "@Instance.commonExtView.getSimpleComboboxRender('grid','"+fieldName+"')@");
+                    gridColumn.put("editor", "@Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")@");
                 }
             }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.fileSizeGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.fileSizeGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.percentageGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.percentageGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.COLOR.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.colorGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.colorGridRender@");
+                field= new JSONObject();
+                field.put("type", "textfield");
+            }else if(typeForm.equals(FieldType.CONDITIONAL_COLOR.name())){
+                String[] data= typeFormFields.get(fieldName);
+                JSONArray dataArray = new JSONArray();
+                for(int i=1; i<data.length; i++){
+                    dataArray.put(new JSONObject(data[i]));
+                }
+                gridColumn.put("conditionalColor", dataArray);
+                gridColumn.put("renderer", "@Instance.commonExtView.conditionalColorGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.ON_OFF.name())){
                 gridColumn.put("xtype", "checkcolumn");
                 gridColumn.put("disabled", readOnly);
-                gridColumn.put("renderer", "#Instance.commonExtView.onOffGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.onOffGridRender@");
             }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||
                     typeForm.equals(FieldType.VIDEO_YOUTUBE.name()) || typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
                     typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
 
-                gridColumn.put("renderer", "#Instance.commonExtView.urlGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.urlGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.imageGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.imageGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
-                gridColumn.put("renderer", "#Instance.commonExtView.audioGridRender#");
+                gridColumn.put("renderer", "@Instance.commonExtView.audioGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
             }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
@@ -105,7 +116,7 @@ public class JSONColumns {
             }
         }else{
             if(fieldName.equals(labelField)){
-                gridColumn.put("renderer", "#"+labelField+"EntityRender#");
+                gridColumn.put("renderer", "@"+labelField+"EntityRender@");
             }
             switch (type) {
                 case "java.util.Date": {
@@ -184,7 +195,7 @@ public class JSONColumns {
         gridColumn.put("header", fieldTitle);
         gridColumn.put("width", widthColumn);
         gridColumn.put("sortable", true);
-        gridColumn.put("renderer", "#Instance.combobox"+fieldEntity+"Render#");
+        gridColumn.put("renderer", "@Instance.combobox"+fieldEntity+"Render@");
         String combobox="(function(){ ";
         if(!isEditableGrid || readOnly){
             combobox+="Instance.gridCombobox"+fieldEntity+".setDisabled(true); ";
@@ -192,9 +203,9 @@ public class JSONColumns {
         if(fieldNN){
             combobox+="Instance.gridCombobox"+fieldEntity+".allowBlank=false; ";
         }
-        combobox+="return Instance.formCombobox"+fieldEntity+";" +
+        combobox+="return Instance.gridCombobox"+fieldEntity+";" +
                         "})()";
-        gridColumn.put("editor", "#"+combobox+"#");
+        gridColumn.put("editor", "@"+combobox+"@");
         jsonGridColumns.put(gridColumn);
     }
     

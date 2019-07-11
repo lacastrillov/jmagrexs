@@ -36,6 +36,8 @@ public class TableConfig {
     
     private boolean visibleAddButtonInGrid;
     
+    private boolean visibleMassiveUpdateButton;
+    
     private boolean visibleRemoveButtonInGrid;
     
     private boolean visibleExportButton;
@@ -73,6 +75,7 @@ public class TableConfig {
         this.visibleMenu= true;
         this.visibleHeader= true;
         this.visibleAddButtonInGrid= true;
+        this.visibleMassiveUpdateButton= true;
         this.visibleRemoveButtonInGrid= true;
         this.visibleExportButton= true;
         this.visibleSeeAllButton= false;
@@ -270,6 +273,22 @@ public class TableConfig {
      */
     public void setVisibleAddButtonInGrid(boolean visibleAddButtonInGrid) {
         this.visibleAddButtonInGrid = visibleAddButtonInGrid;
+    }
+    
+    /**
+     * 
+     * @return the visibleMassiveUpdateButton
+     */
+    public boolean isVisibleMassiveUpdateButton() {
+        return visibleMassiveUpdateButton;
+    }
+
+    /**
+     * 
+     * @param visibleMassiveUpdateButton the visibleMassiveUpdateButton to set
+     */
+    public void setVisibleMassiveUpdateButton(boolean visibleMassiveUpdateButton) {
+        this.visibleMassiveUpdateButton = visibleMassiveUpdateButton;
     }
 
     /**

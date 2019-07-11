@@ -85,9 +85,9 @@ public class JSONFilters {
                                 dataArray.put(data[i]);
                             }
                             if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.RADIOS.name())){
-                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
+                                jsonFieldsFilters.put("@"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+", true)@");
                             }else{
-                                jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
+                                jsonFieldsFilters.put("@"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+", true)@");
                             }
                         }else if (type.equals("java.lang.String") || type.equals("char") || type.equals("java.lang.Character")) {
                             formField.put("name", fieldName);
@@ -111,7 +111,7 @@ public class JSONFilters {
 
                             JSONObject listeners0= new JSONObject();
                             String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "date", format, pageType);
-                            listeners0.put("change", "#"+functionOnChange0+"#");
+                            listeners0.put("change", "@"+functionOnChange0+"@");
                             formField0.put("listeners", listeners0);
 
                             JSONObject formField1= new JSONObject();
@@ -123,7 +123,7 @@ public class JSONFilters {
                             
                             JSONObject listeners1= new JSONObject();
                             String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "date", format, pageType);
-                            listeners1.put("change", "#"+functionOnChange1+"#");
+                            listeners1.put("change", "@"+functionOnChange1+"@");
                             formField1.put("listeners", listeners1);
                             
                             JSONObject itemTitle= new JSONObject();
@@ -159,7 +159,7 @@ public class JSONFilters {
 
                             JSONObject listeners0= new JSONObject();
                             String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "time", format, pageType);
-                            listeners0.put("change", "#"+functionOnChange0+"#");
+                            listeners0.put("change", "@"+functionOnChange0+"@");
                             formField0.put("listeners", listeners0);
 
                             JSONObject formField1= new JSONObject();
@@ -170,7 +170,7 @@ public class JSONFilters {
                             
                             JSONObject listeners1= new JSONObject();
                             String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "time", format, pageType);
-                            listeners1.put("change", "#"+functionOnChange1+"#");
+                            listeners1.put("change", "@"+functionOnChange1+"@");
                             formField1.put("listeners", listeners1);
                             
                             JSONObject itemTitle= new JSONObject();
@@ -212,7 +212,7 @@ public class JSONFilters {
 
                                 JSONObject listeners0= new JSONObject();
                                 String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "", "", pageType);
-                                listeners0.put("change", "#"+functionOnChange0+"#");
+                                listeners0.put("change", "@"+functionOnChange0+"@");
                                 formField0.put("listeners", listeners0);
 
                                 JSONObject formField1= new JSONObject();
@@ -222,7 +222,7 @@ public class JSONFilters {
                                 
                                 JSONObject listeners1= new JSONObject();
                                 String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "", "", pageType);
-                                listeners1.put("change", "#"+functionOnChange1+"#");
+                                listeners1.put("change", "@"+functionOnChange1+"@");
                                 formField1.put("listeners", listeners1);
                                 
                                 JSONObject itemTitle= new JSONObject();
@@ -257,15 +257,15 @@ public class JSONFilters {
 
                         if(addFormField){
                             JSONObject listeners= new JSONObject();
-                            listeners.put("change", "#"+functionOnChange+"#");
+                            listeners.put("change", "@"+functionOnChange+"@");
                             formField.put("listeners", listeners);
                             jsonFieldsFilters.put(formField);
                         }
                     }else{
                         if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.MULTI_SELECT.name())){
-                            jsonFieldsFilters.put("#"+container+".filterMultiselect"+fieldEntity+"#");
+                            jsonFieldsFilters.put("@"+container+".filterMultiselect"+fieldEntity+"@");
                         }else{
-                            jsonFieldsFilters.put("#"+container+".filterCombobox"+fieldEntity+"#");
+                            jsonFieldsFilters.put("@"+container+".filterCombobox"+fieldEntity+"@");
                         }
                     }
                 }
@@ -313,9 +313,9 @@ public class JSONFilters {
                             dataArray.put(data[i]);
                         }
                         if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.RADIOS.name())){
-                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
+                            jsonFieldsFilters.put("@"+container+".commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','filter',"+dataArray.toString().replaceAll("\"", "'")+", true)@");
                         }else{
-                            jsonFieldsFilters.put("#"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+", true)#");
+                            jsonFieldsFilters.put("@"+container+".commonExtView.getSimpleMultiselect('"+fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+", true)@");
                         }
                     }else if (type.equals("java.lang.String") || type.equals("char") || type.equals("java.lang.Character")) {
                         formField.put("name", fieldName);
@@ -339,7 +339,7 @@ public class JSONFilters {
 
                         JSONObject listeners0= new JSONObject();
                         String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "date", format, PageType.ENTITY);
-                        listeners0.put("change", "#"+functionOnChange0+"#");
+                        listeners0.put("change", "@"+functionOnChange0+"@");
                         formField0.put("listeners", listeners0);
 
                         JSONObject formField1= new JSONObject();
@@ -351,7 +351,7 @@ public class JSONFilters {
 
                         JSONObject listeners1= new JSONObject();
                         String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "date", format, PageType.ENTITY);
-                        listeners1.put("change", "#"+functionOnChange1+"#");
+                        listeners1.put("change", "@"+functionOnChange1+"@");
                         formField1.put("listeners", listeners1);
 
                         JSONObject itemTitle= new JSONObject();
@@ -387,7 +387,7 @@ public class JSONFilters {
 
                         JSONObject listeners0= new JSONObject();
                         String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "time", format, PageType.ENTITY);
-                        listeners0.put("change", "#"+functionOnChange0+"#");
+                        listeners0.put("change", "@"+functionOnChange0+"@");
                         formField0.put("listeners", listeners0);
 
                         JSONObject formField1= new JSONObject();
@@ -398,7 +398,7 @@ public class JSONFilters {
 
                         JSONObject listeners1= new JSONObject();
                         String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "time", format, PageType.ENTITY);
-                        listeners1.put("change", "#"+functionOnChange1+"#");
+                        listeners1.put("change", "@"+functionOnChange1+"@");
                         formField1.put("listeners", listeners1);
 
                         JSONObject itemTitle= new JSONObject();
@@ -440,7 +440,7 @@ public class JSONFilters {
 
                             JSONObject listeners0= new JSONObject();
                             String functionOnChange0= rf.getListenerFuntionRangeValue(0, fieldName, "", "", PageType.ENTITY);
-                            listeners0.put("change", "#"+functionOnChange0+"#");
+                            listeners0.put("change", "@"+functionOnChange0+"@");
                             formField0.put("listeners", listeners0);
 
                             JSONObject formField1= new JSONObject();
@@ -450,7 +450,7 @@ public class JSONFilters {
 
                             JSONObject listeners1= new JSONObject();
                             String functionOnChange1= rf.getListenerFuntionRangeValue(1, fieldName, "", "", PageType.ENTITY);
-                            listeners1.put("change", "#"+functionOnChange1+"#");
+                            listeners1.put("change", "@"+functionOnChange1+"@");
                             formField1.put("listeners", listeners1);
 
                             JSONObject itemTitle= new JSONObject();
@@ -485,12 +485,12 @@ public class JSONFilters {
 
                     if(addFormField){
                         JSONObject listeners= new JSONObject();
-                        listeners.put("change", "#"+functionOnChange+"#");
+                        listeners.put("change", "@"+functionOnChange+"@");
                         formField.put("listeners", listeners);
                         jsonFieldsFilters.put(formField);
                     }
                 }else{
-                    jsonFieldsFilters.put("#"+container+".filterCombobox"+fieldEntity+"#");
+                    jsonFieldsFilters.put("@"+container+".filterCombobox"+fieldEntity+"@");
                 }
                     
             }
