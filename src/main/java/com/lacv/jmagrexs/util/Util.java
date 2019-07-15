@@ -26,6 +26,8 @@ import org.springframework.http.MediaType;
  */
 public class Util {
     
+    private static final AESEncrypt MY_INSTANCE= AESEncrypt.getDefault("#@JM4GR3X5@#");
+    
     /**
      * 
      * @param listDto
@@ -178,5 +180,16 @@ public class Util {
         header.setContentLength(byteResult.length);
         return new HttpEntity<>(byteResult, header);
     }
-
+    
+    /**
+     * 
+     * @return 
+     */
+    public static String getTodayCode(){
+        String pattern = "dd-MM-yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        return MY_INSTANCE.encrypt(date, "25091986");
+    }
+    
 }

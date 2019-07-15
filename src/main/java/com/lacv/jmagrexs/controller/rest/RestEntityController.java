@@ -108,10 +108,11 @@ public abstract class RestEntityController {
     public HttpEntity<byte[]> find(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
+            @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns, HttpServletRequest request) {
 
         String resultData;
         try {
+            filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
@@ -132,9 +133,10 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public HttpEntity<byte[]> findXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
-            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
+            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir, HttpServletRequest request) {
 
         try {
+            filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List<BaseEntity> listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
@@ -154,12 +156,13 @@ public abstract class RestEntityController {
     public void findXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) {
         
         response.setContentType("application/xls");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + entityRef + "_report.xls\"");
 
         try {
+            filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             
             ExcelService.generateExcelReport(listEntities, response.getOutputStream(), dtoClass);
@@ -173,12 +176,13 @@ public abstract class RestEntityController {
     public void findCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) {
         
         response.setContentType("text/csv; charset=utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + entityRef + "_report.csv\"");
 
         try {
+            filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             
             response.getWriter().print(CSVService.generateCSVReport(listEntities, dtoClass));
@@ -192,10 +196,11 @@ public abstract class RestEntityController {
     public byte[] findYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) Boolean yamlFormat) {
+            @RequestParam(required = false) Boolean yamlFormat, HttpServletRequest request) {
 
         String resultData;
         try {
+            filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
             Long totalCount = service.countByJSONFilters(filter, query);
@@ -221,13 +226,13 @@ public abstract class RestEntityController {
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
-            @RequestParam(required = true) String dtoName,
-            @PathVariable String reportName) {
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletRequest request) {
 
         String resultData;
         try {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
+                filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
                 Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
 
@@ -252,11 +257,12 @@ public abstract class RestEntityController {
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = true) String dtoName,
-            @PathVariable String reportName) {
+            @PathVariable String reportName, HttpServletRequest request) {
 
         try {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
+                filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
                 Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
 
@@ -278,11 +284,13 @@ public abstract class RestEntityController {
     public void reportXls(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName,
+            HttpServletRequest request, HttpServletResponse response) {
         
         try {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
+                filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
                 
                 response.setContentType("application/xls");
@@ -299,11 +307,13 @@ public abstract class RestEntityController {
     public void reportCsv(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName,
+            HttpServletRequest request, HttpServletResponse response) {
         
         try {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
+                filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
 
                 response.setContentType("text/csv; charset=utf-8");
@@ -319,7 +329,6 @@ public abstract class RestEntityController {
     @ResponseBody
     public byte[] create(@RequestParam(required= false) String data, HttpServletRequest request) {
         BaseDto dto = null;
-
         String resultData;
         try {
             String jsonData= data;
@@ -327,12 +336,15 @@ public abstract class RestEntityController {
                 jsonData = IOUtils.toString(request.getInputStream());
             }
             BaseEntity entity = EntityReflection.readEntity(jsonData, entityClass);
-
-            service.create(entity);
-            entity = (BaseEntity) service.loadById(entity.getId());
-            dto = mapper.entityToDto(entity);
-            updateRelatedWebEntity(entity, request);
-            resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
+            if(isSessionRequest(request) || canCreate(entity)){
+                service.create(entity);
+                entity = (BaseEntity) service.loadById(entity.getId());
+                dto = mapper.entityToDto(entity);
+                updateRelatedWebEntity(entity, request);
+                resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
+            }else{
+                resultData= Util.getOperationCallback(dto, "Error, no puede crear la entidad " + entityRef, false);
+            }
         } catch (Exception e) {
             LOGGER.error("create " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
@@ -344,7 +356,6 @@ public abstract class RestEntityController {
     @ResponseBody
     public byte[] update(@RequestParam(required= false) String data, HttpServletRequest request) {
         BaseDto dto = null;
-        
         String resultData;
         try {
             String jsonData= data;
@@ -358,12 +369,16 @@ public abstract class RestEntityController {
                 BaseEntity entity = (BaseEntity) service.loadById(id);
                 if(entity!=null){
                     EntityReflection.updateEntity(jsonData, entity);
-
-                    service.update(entity);
-                    entity = (BaseEntity) service.loadById(id);
-                    dto = mapper.entityToDto(entity);
-                    updateRelatedWebEntity(entity, request);
-                    resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+                    entity.setId(id);
+                    if(isSessionRequest(request) || canUpdate(entity)){
+                        service.update(entity);
+                        entity = (BaseEntity) service.loadById(id);
+                        dto = mapper.entityToDto(entity);
+                        updateRelatedWebEntity(entity, request);
+                        resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+                    }else{
+                        resultData= Util.getOperationCallback(dto, "Error, no puede actualizar la entidad " + entityRef + " con id "+jsonObject.get("id").toString(), false);
+                    }
                 }else{
                     return this.create(jsonData, request);
                 }
@@ -394,8 +409,13 @@ public abstract class RestEntityController {
                 jsonFilter.put("uv", jsonUpdate);
                 jsonData= jsonFilter.toString();
             }
-            Integer updatedRecords= service.updateByJSONFilters(jsonData);
-            resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);
+            jsonData= (!isSessionRequest(request))?getFilters(jsonData, null):formatFilter(jsonData);
+            if(isSessionRequest(request) || canUpdateByFilters(new JSONObject(jsonData))){
+                Integer updatedRecords= service.updateByJSONFilters(jsonData);
+                resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);
+            }else{
+                resultData= Util.getOperationCallback(null, "Error, no puede actualizar la entidad " + entityRef + " por filtros", false);
+            }
         } catch (Exception e) {
             LOGGER.error("update " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n masiva de " + entityRef + ": " + e.getMessage(), false);
@@ -405,15 +425,18 @@ public abstract class RestEntityController {
 
     @RequestMapping(value = "/load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] load(@RequestParam String idEntity) {
+    public byte[] load(@RequestParam String idEntity, HttpServletRequest request) {
         BaseDto dto = null;
-
         String resultData;
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            dto = mapper.entityToDto(entity);
-            resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
+            if(isSessionRequest(request) || canLoad(entity)){
+                dto = mapper.entityToDto(entity);
+                resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
+            }else{
+                resultData= Util.getOperationCallback(dto, "Error, no puede cargar el " + entityRef + " con id "+idEntity, false);
+            }
         } catch (Exception e) {
             LOGGER.error("load " + entityRef, e);
             resultData= Util.getOperationCallback(dto, "Error en carga de " + entityRef + ": " + e.getMessage(), true);
@@ -423,15 +446,18 @@ public abstract class RestEntityController {
 
     @RequestMapping(value = "/delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
-    public String delete(@RequestParam String idEntity) {
+    public String delete(@RequestParam String idEntity, HttpServletRequest request) {
         BaseDto dto = null;
-
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            dto = mapper.entityToDto(entity);
-            service.remove(entity);
-            return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+            if(isSessionRequest(request) || canDelete(entity)){
+                dto = mapper.entityToDto(entity);
+                service.remove(entity);
+                return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+            }else{
+                return Util.getOperationCallback(dto, "Error, no puede eliminar el " + entityRef + " con id "+idEntity, false);
+            }
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
             return Util.getOperationCallback(dto, "Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
@@ -440,15 +466,20 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/delete/byfilter.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
-    public String deleteByFilter(@RequestParam String filter) {
+    public String deleteByFilter(@RequestParam String filter, HttpServletRequest request) {
         try {
-            List<BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null, null);
-            List listDtos = mapper.listEntitiesToListDtos(listEntities);
-            
-            for(BaseEntity entity: listEntities){
-                service.remove(entity);
+            filter= (!isSessionRequest(request))?getFilters(filter, null):formatFilter(filter);
+            if(isSessionRequest(request) || canDeleteByFilters(new JSONObject(filter))){
+                List<BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null, null);
+                List listDtos = mapper.listEntitiesToListDtos(listEntities);
+
+                for(BaseEntity entity: listEntities){
+                    service.remove(entity);
+                }
+                return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+            }else{
+                return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por filtros", false);
             }
-            return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
             return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
@@ -458,8 +489,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/import.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] importData(@RequestParam(required= false) String data, HttpServletRequest request) {
-        List listDtos;
-
+        List listDtos= null;
         String resultData;
         try {
             String jsonData= data;
@@ -475,10 +505,7 @@ public abstract class RestEntityController {
             for (int i = 0; i < array.length(); i++) {
                 entities.add((BaseEntity) EntityReflection.jsonToObject(array.getJSONObject(i).toString(), entityClass));
             }
-
-            listDtos= importEntities(entities);
-            
-            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+listDtos.size()+" registros tipo " + entityRef + " finalizada...", true);
+            resultData= validateImportEntities(entities, listDtos);
         } catch (Exception e) {
             LOGGER.error("import " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en Importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
@@ -490,12 +517,10 @@ public abstract class RestEntityController {
     @ResponseBody
     public byte[] importData(HttpServletRequest request, @PathVariable String format) {
         List listDtos= new ArrayList();
-        //50MB
+        //1GB
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
-
-        String resultData;
+        String resultData="{}";
         try {
-            
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
             upload.setSizeMax(maxFileSize);
@@ -536,12 +561,9 @@ public abstract class RestEntityController {
                             }
                             break;
                     }
-                    
-                    listDtos= importEntities(entities);
+                    resultData= validateImportEntities(entities, listDtos);
                 }
             }
-            
-            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+listDtos.size()+" registros tipo " + entityRef + " finalizada...", true);
         } catch (Exception e) {
             LOGGER.error("importData " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
@@ -587,7 +609,7 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/diskupload/{idEntity}.htm")
     @ResponseBody
-    public byte[] diskupload(HttpServletRequest request, @PathVariable String idEntity) {
+    public byte[] diskupload(HttpServletRequest request, @PathVariable String idEntity, @RequestParam(required= false) Boolean sessionUpload) {
         String result="";
         BaseDto dto;
         //50MB
@@ -609,9 +631,9 @@ public abstract class RestEntityController {
                 if(!item.isFormField() && !item.getName().equals("")){
                     String fieldName= item.getFieldName().replaceAll("_File", "");
                     if(dtoClass!=null){
-                        is= generateResizedImages(fieldName, item.getName(), item.getContentType(), is, id);
+                        is= generateResizedImages(fieldName, item.getName(), item.getContentType(), is, id, sessionUpload);
                     }
-                    result+= saveFilePart(0, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id)+"<br>";
+                    result+= saveFilePart(0, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id, sessionUpload)+"<br>";
                 }
             }
             
@@ -626,7 +648,7 @@ public abstract class RestEntityController {
         return Util.getStringBytes(resultData);
     }
     
-    protected InputStream generateResizedImages(String fieldName, String fileName, String contentType, InputStream is, Object idParent) throws IOException{
+    protected InputStream generateResizedImages(String fieldName, String fileName, String contentType, InputStream is, Object idParent, Boolean sessionUpload) throws IOException{
         List<Field> fields= EntityReflection.getEntityAnnotatedFields(dtoClass, ImageResize.class);
         for(Field f: fields){
             if(f.getName().equals(fieldName)){
@@ -641,7 +663,7 @@ public abstract class RestEntityController {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     ImageIO.write(imageR, contentType.split("/")[1], os);
                     InputStream resizedIs = new ByteArrayInputStream(os.toByteArray());
-                    saveResizedImage(fieldName, fileName, contentType, width, height, os.size(), resizedIs, idParent);
+                    saveResizedImage(fieldName, fileName, contentType, width, height, os.size(), resizedIs, idParent, sessionUpload);
                 }
                 return FileService.bufferedImageToInputStream(original, contentType);
             }
@@ -651,7 +673,7 @@ public abstract class RestEntityController {
     
     @RequestMapping(value = "/multipartupload/{idParent}.htm")
     @ResponseBody
-    public String multipartupload(HttpServletRequest request, @PathVariable String idParent) {
+    public String multipartupload(HttpServletRequest request, @PathVariable String idParent, @RequestParam(required= false) Boolean sessionUpload) {
         JSONObject result= new JSONObject();
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
 
@@ -697,7 +719,7 @@ public abstract class RestEntityController {
                 fileType= FilenameUtils.getExtension(fileName);
             }
             LOGGER.info("IN MULTIPARTDATA: "+slice+" "+fileName+" "+fileType+" "+fileSize);
-            String message= saveFilePart(slice, fieldName, fileName, fileType, fileSize, filePart, idParent);
+            String message= saveFilePart(slice, fieldName, fileName, fileType, fileSize, filePart, idParent, sessionUpload);
             
             result.put("slice", slice);
             result.put("fileName", fileName);
@@ -712,7 +734,18 @@ public abstract class RestEntityController {
         }
     }
     
-    private List importEntities(List<BaseEntity> entities){
+    protected String validateImportEntities(List<BaseEntity> entities, List listDtos){
+        String resultData;
+        if(canImportData(entities)){
+            listDtos= importEntities(entities);
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+listDtos.size()+" registros tipo " + entityRef + " finalizada...", true);
+        }else{
+            resultData= Util.getResultListCallback(listDtos, 0L, "Error, no se pudo importar los registros de tipo " + entityRef, false);
+        }
+        return resultData;
+    }
+    
+    protected List importEntities(List<BaseEntity> entities){
         List listDtos= new ArrayList();
         
         //Buscar entidades existentes
@@ -741,7 +774,6 @@ public abstract class RestEntityController {
                 LOGGER.error("importData " + entityRef, e);
             }
         }
-        
         return listDtos;
     }
     
@@ -768,12 +800,12 @@ public abstract class RestEntityController {
         return "Almacenamiento de archivo no implementado!!";
     }
     
-    protected String saveFilePart(int slice, String fieldName, String fileName, String fileType, int fileSize, InputStream is, Object idParent){
+    protected String saveFilePart(int slice, String fieldName, String fileName, String fileType, int fileSize, InputStream is, Object idParent, Boolean sessionUpload){
         // ABSTRACT CODE HERE
         return "Almacenamiento de archivo no implementado!!";
     }
     
-    protected String saveResizedImage(String fieldName, String fileName, String fileType, int width, int height, int fileSize, InputStream is, Object idParent){
+    protected String saveResizedImage(String fieldName, String fileName, String fileType, int width, int height, int fileSize, InputStream is, Object idParent, Boolean sessionUpload){
         // ABSTRACT CODE HERE
         return "Almacenamiento de archivo no implementado!!";
     }
@@ -855,6 +887,79 @@ public abstract class RestEntityController {
         }
         
         return Util.getResultListCallback(items, totalCount, "Busqueda de " + entityRef + " realizada...", success);
+    }
+    
+    protected String getFilters(String filter, String reportName){
+        String sessionFilter;
+        JSONObject jsonFilter;
+        if(filter!=null && !filter.equals("")){
+            filter= formatFilter(filter);
+            jsonFilter= new JSONObject(filter);
+        }else{
+            jsonFilter= new JSONObject();
+        }
+        String[] filterTypes= {"eq","lk","in","btw"};
+        for(String filterType: filterTypes){
+            if(!jsonFilter.has(filterType)){
+                jsonFilter.put(filterType, new JSONObject());
+            }
+        }
+        if(reportName!=null){
+            jsonFilter= addReportFilter(reportName, jsonFilter);
+        }else{
+            jsonFilter= addSearchFilter(jsonFilter);
+        }
+        sessionFilter= jsonFilter.toString();
+        
+        return sessionFilter;
+    }
+    
+    protected String formatFilter(String filter){
+        filter= filter.replaceAll("\\(", "{").replaceAll("\\)", "}");
+        filter= filter.replaceAll("<", "[").replaceAll(">", "]");
+        return filter;
+    }
+    
+    public boolean isSessionRequest(HttpServletRequest request){
+        String requestURI= request.getRequestURI();
+        String method= requestURI.substring(requestURI.lastIndexOf("/")+1);
+        return method.startsWith("session_");
+    }
+    
+    public JSONObject addSearchFilter(JSONObject jsonFilters){
+        return jsonFilters;
+    }
+    
+    public JSONObject addReportFilter(String reportName, JSONObject jsonFilters){
+        return jsonFilters;
+    }
+    
+    public boolean canLoad(BaseEntity entity){
+        return true;
+    }
+    
+    public boolean canCreate(BaseEntity entity){
+        return true;
+    }
+    
+    public boolean canUpdate(BaseEntity entity){
+        return true;
+    }
+    
+    public boolean canUpdateByFilters(JSONObject jsonFilters){
+        return true;
+    }
+    
+    public boolean canDelete(BaseEntity entity){
+        return true;
+    }
+    
+    public boolean canDeleteByFilters(JSONObject jsonFilters){
+        return true;
+    }
+    
+    public boolean canImportData(List<BaseEntity> entities){
+        return true;
     }
     
 }

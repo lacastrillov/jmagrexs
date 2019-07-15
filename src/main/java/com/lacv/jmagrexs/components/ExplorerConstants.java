@@ -33,9 +33,7 @@ public class ExplorerConstants {
     @Value("${local.rootfolder}")
     private String LOCAL_ROOT_FOLDER;
     
-    @Autowired
-    @Value("${local.noexiste}")
-    private String LOCAL_NO_EXISTE;
+    private final String LOCAL_ROOT_USER_FOLDER="uf/";
     
     
     public String getLocalStaticDomain(){
@@ -52,6 +50,10 @@ public class ExplorerConstants {
     
     public String getLocalRootFolder(){
         return LOCAL_ROOT_FOLDER;
+    }
+    
+    public String getLocalRootUserFolder(){
+        return LOCAL_ROOT_USER_FOLDER;
     }
 
 }

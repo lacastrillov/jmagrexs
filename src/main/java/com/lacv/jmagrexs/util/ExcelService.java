@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,11 +65,11 @@ public class ExcelService {
             HashSet<String> hideFields= FCBA.getHideFields(dtoClass);
             
             HSSFCellStyle style = workbook.createCellStyle();
-            style.setBorderTop((short) 6);
-            style.setBorderBottom((short) 1);
+            style.setBorderTop(BorderStyle.MEDIUM);
+            style.setBorderBottom(BorderStyle.MEDIUM);
             HSSFFont font = workbook.createFont();
             font.setFontHeightInPoints((short) 13);
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font.setBold(true);
             style.setFont(font);                 
             
             HSSFRow row = sheet1.createRow(rowIndex);
@@ -147,11 +148,11 @@ public class ExcelService {
             int rowIndex = 0;
             
             HSSFCellStyle style = workbook.createCellStyle();
-            style.setBorderTop((short) 6);
-            style.setBorderBottom((short) 1);
+            style.setBorderTop(BorderStyle.MEDIUM);
+            style.setBorderBottom(BorderStyle.MEDIUM);
             HSSFFont font = workbook.createFont();
             font.setFontHeightInPoints((short) 13);
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font.setBold(true);
             style.setFont(font);                 
             
             HSSFRow row = sheet1.createRow(rowIndex);

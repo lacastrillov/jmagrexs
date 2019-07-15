@@ -41,7 +41,7 @@ public abstract class ExtEntityController extends ExtReportController {
     
     private JSONArray jsonModel;
     
-    private JSONArray jsonTemplateModel;
+    private JSONArray jsonTemplateModel = new JSONArray();;
     
     private JSONArray jsonModelValidations;
     
@@ -250,7 +250,6 @@ public abstract class ExtEntityController extends ExtReportController {
         }
         
         jsonModel = jm.getJSONModel(viewConfig.getDtoClass());
-        jsonTemplateModel = new JSONArray();
         jsonModelValidations= jm.getJSONModelValidations(viewConfig.getDtoClass());
         
         if(viewConfig.getGridTemplate()!=null){

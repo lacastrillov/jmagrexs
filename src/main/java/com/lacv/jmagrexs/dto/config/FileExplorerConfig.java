@@ -20,6 +20,8 @@ public class FileExplorerConfig {
     
     private String entityRef;
     
+    private String pathRef;
+    
     private String entityName;
     
     private String labelField;
@@ -73,6 +75,7 @@ public class FileExplorerConfig {
     
     public FileExplorerConfig(String entityRef, EntityService entityService, Class dtoClass) {
         this.entityRef= entityRef;
+        this.pathRef= entityRef;
         this.entityName= entityService.getEntityClass().getSimpleName();
         this.labelField= "name";
         this.entityService= entityService;
@@ -142,6 +145,22 @@ public class FileExplorerConfig {
      */
     public void setEntityRef(String entityRef) {
         this.entityRef = entityRef;
+    }
+    
+    /**
+     * 
+     * @return pathRef
+     */
+    public String getPathRef() {
+        return pathRef;
+    }
+
+    /**
+     * 
+     * @param pathRef 
+     */
+    public void setPathRef(String pathRef) {
+        this.pathRef = pathRef;
     }
 
     /**

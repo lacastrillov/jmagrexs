@@ -434,6 +434,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 if (Instance.formUpload.isVisible()) {
                     Instance.formUpload.hide(this.down('#fileMenu'), function() {});
                 } else {
+                    Instance.progressbar.updateProgress(0,'0%');
                     Instance.formUpload.show(this.down('#fileMenu'), function() {});
                 }
             },
@@ -506,7 +507,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
 
     function getFormUpload(){
-        var progressbar = Ext.widget('progressbar', {
+        Instance.progressbar = Ext.widget('progressbar', {
             animate: true,
             value: 0.0
         });
@@ -523,7 +524,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
 
             items: [
-                progressbar,
+                Instance.progressbar,
                 {
                 id: 'multifilefieldId',
                 xtype: 'multifilefield',
@@ -551,9 +552,13 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             buttons: [{
                 text: 'Subir',
                 handler: function(){
-                    var endpoint= "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/multipartupload/"+parentExtController.filter.eq.webFile+".htm";
+                    var baseAction= "";    
+                    <c:if test="${viewConfig.restSession}">
+                    baseAction= "session_";
+                    </c:if>
+                    var endpoint= "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"multipartupload/"+parentExtController.filter.eq.webFile+".htm";
                     fileUploader.startFileUpload('multifilefieldId-button-fileInputEl', endpoint, function(fileName, percentComplete, loadFinished){
-                        progressbar.updateProgress(percentComplete/100, fileName+' '+percentComplete+'% completado...');
+                        Instance.progressbar.updateProgress(percentComplete/100, fileName+' '+percentComplete+'% completado...');
                         if(loadFinished){
                             Instance.reloadPageStore(Instance.store.currentPage);
                             setTimeout(function(){ Instance.formUpload.hide()},1000);
@@ -563,7 +568,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },{
                 text: 'Cancelar',
                 handler: function(){
-                    progressbar.updateProgress(0,'0%');
+                    Instance.progressbar.updateProgress(0,'0%');
                     Instance.formUpload.hide();
                 }
             }]

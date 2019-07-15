@@ -444,7 +444,7 @@ public abstract class RestDirectController {
     
     @RequestMapping(value = "/{tableName}/diskupload/{idEntity}.htm")
     @ResponseBody
-    public byte[] diskupload(HttpServletRequest request, @PathVariable String tableName, @PathVariable String idEntity) {
+    public byte[] diskupload(HttpServletRequest request, @PathVariable String tableName, @PathVariable String idEntity, @RequestParam(required= false) Boolean sessionUpload) {
         String result="";
         //50MB
         long maxFileSize= maxFileSizeToUpload * 1024 * 1024;
@@ -465,7 +465,7 @@ public abstract class RestDirectController {
                     InputStream is= item.getInputStream();
                     if(!item.isFormField() && !item.getName().equals("")){
                         String fieldName= item.getFieldName().replaceAll("_File", "");
-                        result+= saveFilePart(tableName, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id)+"<br>";
+                        result+= saveFilePart(tableName, fieldName, item.getName(), item.getContentType(), (int)item.getSize(), is, id, sessionUpload)+"<br>";
                     }
                 }
 
@@ -487,7 +487,7 @@ public abstract class RestDirectController {
         return "Almacenamiento de archivo no implementado!!";
     }
     
-    protected String saveFilePart(String tableName, String fieldName, String fileName, String fileType, int fileSize, InputStream is, Integer idParent){
+    protected String saveFilePart(String tableName, String fieldName, String fileName, String fileType, int fileSize, InputStream is, Integer idParent, Boolean sessionUpload){
         // ABSTRACT CODE HERE
         return "Almacenamiento de archivo no implementado!!";
     }

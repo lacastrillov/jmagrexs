@@ -204,10 +204,11 @@ public abstract class ExtFileExplorerController extends ExtController {
     }
     
     private void generateGeneralObjects(){
-        modelsEntityRef.add(viewConfig.getEntityRef());
-        
         List<String> associatedEntityRef= getAssociatedEntityRef(viewConfig.getEntityService().getEntityClass());
         for(String er: associatedEntityRef){
+            if(!er.equals(viewConfig.getEntityRef())){
+                modelsEntityRef.add(er);
+            }
             interfacesEntityRef.add(er);
         }
         

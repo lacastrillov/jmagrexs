@@ -4,10 +4,9 @@ import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.Util;
-import java.io.InputStream;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -27,22 +26,23 @@ public abstract class RestSessionController extends RestEntityController {
     public HttpEntity<byte[]> sessionFind(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns) {
+            @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
+            HttpServletRequest request) {
 
         
         String sessionFilter= getSessionFilters(filter, null);
             
-        return find(sessionFilter, query, limit, page, sort, dir, templateName, numColumns);
+        return find(sessionFilter, query, limit, page, sort, dir, templateName, numColumns, request);
     }
 
     @RequestMapping(value = "/session_find/xml.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public HttpEntity<byte[]> sessionFindXml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
-            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir) {
+            @RequestParam(required = false) String sort, @RequestParam(required = false) String dir, HttpServletRequest request) {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return findXml(sessionFilter, query, limit, page, sort, dir);
+        return findXml(sessionFilter, query, limit, page, sort, dir, request);
     }
 
     @RequestMapping(value = "/session_find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -50,11 +50,11 @@ public abstract class RestSessionController extends RestEntityController {
     public void sessionFindXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, null);
         
-        findXls(sessionFilter, query, limit, page, sort, dir, response);
+        findXls(sessionFilter, query, limit, page, sort, dir, request, response);
     }
     
     @RequestMapping(value = "/session_find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -62,11 +62,11 @@ public abstract class RestSessionController extends RestEntityController {
     public void sessionFindCsv(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, null);
         
-        findCsv(sessionFilter, query, limit, page, sort, dir, response);
+        findCsv(sessionFilter, query, limit, page, sort, dir, request, response);
     }
     
     @RequestMapping(value = "/session_find/yaml.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -74,11 +74,11 @@ public abstract class RestSessionController extends RestEntityController {
     public byte[] sessionFindYaml(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) Boolean yalmFormat) {
+            @RequestParam(required = true) Boolean yalmFormat, HttpServletRequest request) {
 
         String sessionFilter= getSessionFilters(filter, null);
         
-        return findYaml(sessionFilter, query, limit, page, sort, dir, yalmFormat);
+        return findYaml(sessionFilter, query, limit, page, sort, dir, yalmFormat, request);
     }
     
     @RequestMapping(value = "/session_report/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -87,24 +87,22 @@ public abstract class RestSessionController extends RestEntityController {
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
-            @RequestParam(required = true) String dtoName,
-            @PathVariable String reportName) {
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletRequest request) {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return report(sessionFilter, limit, page, sort, dir, templateName, numColumns, dtoName, reportName);
+        return report(sessionFilter, limit, page, sort, dir, templateName, numColumns, dtoName, reportName, request);
     }
     
     @RequestMapping(value = "/session_report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public HttpEntity<byte[]> sessionReportXml(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName,
-            @PathVariable String reportName) {
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletRequest request) {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return reportXml(sessionFilter, limit, page, sort, dir, dtoName, reportName);
+        return reportXml(sessionFilter, limit, page, sort, dir, dtoName, reportName, request);
     }
     
     @RequestMapping(value = "/session_report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -112,18 +110,18 @@ public abstract class RestSessionController extends RestEntityController {
     public void sessionReportXls(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletResponse response) {
+            @RequestParam(required = true) String dtoName, @PathVariable String reportName,
+            HttpServletRequest request, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        reportXls(sessionFilter, limit, page, sort, dir, dtoName, reportName, response);
+        reportXls(sessionFilter, limit, page, sort, dir, dtoName, reportName, request, response);
     }
 
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] sessionCreate(@RequestParam(required= false) String data, HttpServletRequest request) {
         BaseDto dto = null;
-
         String resultData;
         try {
             String jsonData= data;
@@ -131,12 +129,10 @@ public abstract class RestSessionController extends RestEntityController {
                 jsonData = IOUtils.toString(request.getInputStream());
             }
             BaseEntity entity = EntityReflection.readEntity(jsonData, entityClass);
-            if(canCreate(entity)){
-                service.create(entity);
-                dto = mapper.entityToDto(entity);
-                resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
+            if(canSessionCreate(entity)){
+                return super.create(data, request);
             }else{
-                resultData= "{\"success\":false,\"message\":\"Error, no puede crear la entidad " + entityRef + "\"}";
+                resultData= Util.getOperationCallback(dto, "Error, no puede crear la entidad " + entityRef, false);
             }
         } catch (Exception e) {
             LOGGER.error("create " + entityRef, e);
@@ -149,7 +145,6 @@ public abstract class RestSessionController extends RestEntityController {
     @ResponseBody
     public byte[] sessionUpdate(@RequestParam(required= false) String data, HttpServletRequest request) {
         BaseDto dto = null;
-        
         String resultData;
         try {
             String jsonData= data;
@@ -159,19 +154,21 @@ public abstract class RestSessionController extends RestEntityController {
             JSONObject jsonObject= new JSONObject(jsonData);
             
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", jsonObject.get("id").toString());
-            BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(entity!=null){
-                EntityReflection.updateEntity(jsonData, entity);
-                entity.setId(id);
-                if(canUpdate(entity)){
-                    service.update(entity);
-                    dto = mapper.entityToDto(entity);
-                    resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+            if(id!=null){
+                BaseEntity entity = (BaseEntity) service.loadById(id);
+                if(entity!=null){
+                    EntityReflection.updateEntity(jsonData, entity);
+                    entity.setId(id);
+                    if(canSessionUpdate(entity)){
+                        return super.update(data, request);
+                    }else{
+                        resultData= Util.getOperationCallback(dto, "Error, no puede actualizar la entidad " + entityRef + " con id "+jsonObject.get("id").toString(), false);
+                    }
                 }else{
-                    resultData= "{\"success\":false,\"message\":\"Error, no puede actualizar la entidad " + entityRef + " con id "+jsonObject.get("id").toString() + "\"}";
+                    return this.sessionCreate(data, request);
                 }
             }else{
-                return this.create(data, request);
+                return this.sessionCreate(jsonData, request);
             }
         } catch (Exception e) {
             LOGGER.error("update " + entityRef, e);
@@ -190,11 +187,10 @@ public abstract class RestSessionController extends RestEntityController {
                 jsonData = IOUtils.toString(request.getInputStream());
             }
             String sessionFilters= getSessionFilters(jsonData, null);
-            if(canUpdateByFilters(new JSONObject(sessionFilters))){
-                Integer updatedRecords= service.updateByJSONFilters(sessionFilters);
-                resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);
+            if(canSessionUpdateByFilters(new JSONObject(sessionFilters))){
+                return super.updateByFilter(filter, jsonData, request);
             }else{
-                resultData= "{\"success\":false,\"message\":\"Error, no puede actualizar la entidad " + entityRef + " por filtros\"}";
+                resultData= Util.getOperationCallback(null, "Error, no puede actualizar la entidad " + entityRef + " por filtros", false);
             }
         } catch (Exception e) {
             LOGGER.error("update " + entityRef, e);
@@ -205,18 +201,17 @@ public abstract class RestSessionController extends RestEntityController {
 
     @RequestMapping(value = "/session_load.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public byte[] sessionLoad(@RequestParam String idEntity) {
+    public byte[] sessionLoad(@RequestParam String idEntity, HttpServletRequest request) {
         BaseDto dto = null;
-
         String resultData;
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(canLoad(entity)){
+            if(canSessionLoad(entity)){
                 dto = mapper.entityToDto(entity);
                 resultData= Util.getOperationCallback(dto, "Carga de " + entityRef + " realizada...", true);
             }else{
-                resultData= "{\"success\":false,\"message\":\"Error, no puede cargar el " + entityRef + " con id "+idEntity+"\"}";
+                resultData= Util.getOperationCallback(dto, "Error, no puede cargar el " + entityRef + " con id "+idEntity, false);
             }
         } catch (Exception e) {
             LOGGER.error("load " + entityRef, e);
@@ -227,18 +222,17 @@ public abstract class RestSessionController extends RestEntityController {
 
     @RequestMapping(value = "/session_delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
-    public String sessionDelete(@RequestParam String idEntity) {
+    public String sessionDelete(@RequestParam String idEntity, HttpServletRequest request) {
         BaseDto dto = null;
-
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(canDelete(entity)){
+            if(canSessionDelete(entity)){
                 dto = mapper.entityToDto(entity);
                 service.remove(entity);
                 return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
             }else{
-                return "{\"success\":false,\"message\":\"Error, no puede eliminar el " + entityRef + " con id "+idEntity+"\"}";
+                return Util.getOperationCallback(dto, "Error, no puede eliminar el " + entityRef + " con id "+idEntity, false);
             }
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
@@ -248,34 +242,37 @@ public abstract class RestSessionController extends RestEntityController {
     
     @RequestMapping(value = "/session_delete/byfilter.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
-    public String sessionDeleteByFilter(@RequestParam String filter) {
+    public String sessionDeleteByFilter(@RequestParam String filter, HttpServletRequest request) {
         String sessionFilter= getSessionFilters(filter, null);
-        
-        if(canDeleteByFilters(new JSONObject(sessionFilter))){
-            return deleteByFilter(sessionFilter);
+        if(canSessionDeleteByFilters(new JSONObject(sessionFilter))){
+            return deleteByFilter(sessionFilter, request);
         }else{
-            return "{\"success\":false,\"message\":\"Error, no puede eliminar la entidad " + entityRef + " por filtros\"}";
+            return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por filtros", false);
         }
     }
     
     @RequestMapping(value = "/session_import.htm", method = {RequestMethod.POST})
     @ResponseBody
     public byte[] sessionImportData(@RequestParam(required= false) String data, HttpServletRequest request) {
-        if(canImportData()){
-            return importData(data, request);
-        }else{
-            return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
-        }
+        return importData(data, request);
     }
     
     @RequestMapping(value = "/session_import/{format}.htm")
     @ResponseBody
     public byte[] sessionImportData(HttpServletRequest request, @PathVariable String format) {
-        if(canImportData()){
-            return importData(request, format);
+        return importData(request, format);
+    }
+    
+    @Override
+    protected String validateImportEntities(List<BaseEntity> entities, List listDtos){
+        String resultData;
+        if(canSessionImportData(entities)){
+            listDtos= importEntities(entities);
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(),"Importaci&oacute;n de "+listDtos.size()+" registros tipo " + entityRef + " finalizada...", true);
         }else{
-            return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede importar datos tipo " + entityRef + "\"}");
+            resultData= Util.getResultListCallback(listDtos, 0L, "Error, no se pudo importar los registros de tipo " + entityRef, false);
         }
+        return resultData;
     }
     
     @RequestMapping(value = "/session_upload/{idEntity}.htm")
@@ -284,7 +281,7 @@ public abstract class RestSessionController extends RestEntityController {
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(canUpdate(entity)){
+            if(canSessionUpdate(entity)){
                 return upload(request, idEntity);
             }
         } catch (ClassNotFoundException e) {
@@ -299,13 +296,15 @@ public abstract class RestSessionController extends RestEntityController {
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(canUpdate(entity)){
-                return diskupload(request, idEntity);
+            if(canSessionUpdate(entity)){
+                return diskupload(request, idEntity, true);
             }
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
-        return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity+ "\"}");
+        return Util.getStringBytes(
+                Util.getOperationCallback(null, "Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity, false)
+        );
     }
     
     @RequestMapping(value = "/session_multipartupload/{idParent}.htm")
@@ -314,19 +313,20 @@ public abstract class RestSessionController extends RestEntityController {
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idParent);
             BaseEntity entity = (BaseEntity) service.loadById(id);
-            if(canUpdate(entity)){
-                return multipartupload(request, idParent);
+            if(canSessionUpdate(entity)){
+                return multipartupload(request, idParent, true);
             }
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
-        return "{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idParent+ "\"}";
+        return Util.getOperationCallback(null, "Error, no puede subir archivo en la entidad " + entityRef + "con id "+idParent, false);
     }
         
-    private String getSessionFilters(String filter, String reportName){
+    protected String getSessionFilters(String filter, String reportName){
         String sessionFilter;
         JSONObject jsonFilter;
         if(filter!=null && !filter.equals("")){
+            filter= formatFilter(filter);
             jsonFilter= new JSONObject(filter);
         }else{
             jsonFilter= new JSONObject();
@@ -351,32 +351,18 @@ public abstract class RestSessionController extends RestEntityController {
     
     public abstract JSONObject addSessionReportFilter(String reportName, JSONObject jsonFilters);
     
-    public abstract boolean canLoad(BaseEntity entity);
+    public abstract boolean canSessionLoad(BaseEntity entity);
     
-    public abstract boolean canCreate(BaseEntity entity);
+    public abstract boolean canSessionCreate(BaseEntity entity);
     
-    public abstract boolean canUpdate(BaseEntity entity);
+    public abstract boolean canSessionUpdate(BaseEntity entity);
     
-    public abstract boolean canUpdateByFilters(JSONObject jsonFilters);
+    public abstract boolean canSessionUpdateByFilters(JSONObject jsonFilters);
     
-    public abstract boolean canDelete(BaseEntity entity);
+    public abstract boolean canSessionDelete(BaseEntity entity);
     
-    public abstract boolean canDeleteByFilters(JSONObject jsonFilters);
+    public abstract boolean canSessionDeleteByFilters(JSONObject jsonFilters);
     
-    public boolean canImportData(){ return false; }
-    
-    public String getUserCode(){
-        return "";
-    }
-    
-    protected String saveSessionFile(FileItemStream fileIS, Object idEntity){
-        // ABSTRACT CODE HERE
-        return "Almacenamiento de archivo no implementado!!";
-    }
-    
-    protected String saveSessionFilePart(int slice, String fileName, String fileType, int fileSize, InputStream is, Object idParent){
-        // ABSTRACT CODE HERE
-        return "Almacenamiento de archivo no implementado!!";
-    }
+    public abstract boolean canSessionImportData(List<BaseEntity> entities);
     
 }
