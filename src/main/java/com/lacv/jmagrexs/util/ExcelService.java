@@ -97,16 +97,19 @@ public class ExcelService {
                     if (value != null) {
                         try{
                             if(Formats.TYPES_LIST.contains(typeWrapper.getName())){
-                                if(typeWrapper.getName().equals("java.util.Date")){
-                                    String format= extViewConfig.getDateFormatJava();
-                                    if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){
-                                        format= extViewConfig.getDatetimeFormatJava();
-                                    }
-                                    row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.dateToString((Date)value, format)));
-                                }else if(typeWrapper.getName().equals("java.sql.Time")){
-                                    row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())));
-                                }else{
-                                    row.createCell(colIndex++).setCellValue(new XSSFRichTextString(value.toString()));
+                                switch (typeWrapper.getName()) {
+                                    case "java.util.Date":
+                                        String format= extViewConfig.getDateFormatJava();
+                                        if(typeFormFields.containsKey(fieldName) && typeFormFields.get(fieldName)[0].equals(FieldType.DATETIME.name())){
+                                            format= extViewConfig.getDatetimeFormatJava();
+                                        }   row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.dateToString((Date)value, format)));
+                                        break;
+                                    case "java.sql.Time":
+                                        row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())));
+                                        break;
+                                    default:
+                                        row.createCell(colIndex++).setCellValue(new XSSFRichTextString(value.toString()));
+                                        break;
                                 }
                             }else{
                                 BeanWrapperImpl internalWrapper = new BeanWrapperImpl(value);
@@ -172,16 +175,19 @@ public class ExcelService {
                 String propertyType = column.getDataType();
                 if (value != null) {
                     try{
-                        if(propertyType.equals("java.util.Date")){
-                            String format= extViewConfig.getDateFormatJava();
-                            if(typeFormFields.containsKey(column.getColumnAlias()) && typeFormFields.get(column.getColumnAlias())[0].equals(FieldType.DATETIME.name())){
-                                format= extViewConfig.getDatetimeFormatJava();
-                            }
-                            row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.dateToString((Date)value, format)));
-                        }else if(propertyType.equals("java.sql.Time")){
-                            row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())));
-                        }else{
-                            row.createCell(colIndex++).setCellValue(new XSSFRichTextString(value.toString()));
+                        switch (propertyType) {
+                            case "java.util.Date":
+                                String format= extViewConfig.getDateFormatJava();
+                                if(typeFormFields.containsKey(column.getColumnAlias()) && typeFormFields.get(column.getColumnAlias())[0].equals(FieldType.DATETIME.name())){
+                                    format= extViewConfig.getDatetimeFormatJava();
+                                }   row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.dateToString((Date)value, format)));
+                                break;
+                            case "java.sql.Time":
+                                row.createCell(colIndex++).setCellValue(new XSSFRichTextString(Formats.timeToString((Time)value, extViewConfig.getTimeFormatJava())));
+                                break;
+                            default:
+                                row.createCell(colIndex++).setCellValue(new XSSFRichTextString(value.toString()));
+                                break;
                         }
                     }catch(Exception e){
                         LOGGER.error("ERROR generateExcelReport2", e);
