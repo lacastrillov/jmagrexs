@@ -45,7 +45,7 @@ public abstract class RestSessionController extends RestEntityController {
         return findXml(sessionFilter, query, limit, page, sort, dir, request);
     }
 
-    @RequestMapping(value = "/session_find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/session_find/xlsx.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public void sessionFindXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
@@ -287,7 +287,7 @@ public abstract class RestSessionController extends RestEntityController {
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
-        return Util.getStringBytes("{\"success\":false,\"message\":\"Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity+ "\"}");
+        return Util.getStringBytes(Util.getOperationCallback(null, "Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity, false));
     }
     
     @RequestMapping(value = "/session_diskupload/{idEntity}.htm")
@@ -302,9 +302,7 @@ public abstract class RestSessionController extends RestEntityController {
         } catch (ClassNotFoundException e) {
             LOGGER.error("upload " + entityRef, e);
         }
-        return Util.getStringBytes(
-                Util.getOperationCallback(null, "Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity, false)
-        );
+        return Util.getStringBytes(Util.getOperationCallback(null, "Error, no puede subir archivo en la entidad " + entityRef + "con id "+idEntity, false));
     }
     
     @RequestMapping(value = "/session_multipartupload/{idParent}.htm")

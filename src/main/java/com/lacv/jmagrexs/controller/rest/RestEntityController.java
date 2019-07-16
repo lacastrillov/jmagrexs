@@ -151,15 +151,15 @@ public abstract class RestEntityController {
         }
     }
 
-    @RequestMapping(value = "/find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/find/xlsx.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public void findXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletRequest request, HttpServletResponse response) {
         
-        response.setContentType("application/xls");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + entityRef + "_report.xls\"");
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + entityRef + "_report.xlsx\"");
 
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
@@ -293,8 +293,8 @@ public abstract class RestEntityController {
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
                 
-                response.setContentType("application/xls");
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.xls\"");
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.xlsx\"");
                 ExcelService.generateExcelReport(listDtos, response.getOutputStream(), dtoReportClass);
             }
         } catch (Exception e) {

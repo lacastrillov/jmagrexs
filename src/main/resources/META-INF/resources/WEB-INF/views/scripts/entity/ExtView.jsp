@@ -375,7 +375,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 window.open(urlFind+data,'_blank');
                                 break;
                             case "xls":
-                                var urlFind= store.proxy.api.read.replace("find.htm","find/xls.htm");
+                                var urlFind= store.proxy.api.read.replace("find.htm","find/xlsx.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
                         }

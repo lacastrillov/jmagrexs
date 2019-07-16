@@ -105,7 +105,7 @@ public abstract class RestDirectController {
         }
     }
 
-    @RequestMapping(value = "/{tableName}/find/xls.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/{tableName}/find/xlsx.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public void findXls(@PathVariable String tableName, @RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
@@ -117,8 +117,8 @@ public abstract class RestDirectController {
             if(tableColumnsConfig.existLeadTable(tableName)){
                 List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
 
-                response.setContentType("application/xls");
-                response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.xls\"");
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.xlsx\"");
                 ExcelService.generateExcelReport(listItems, response.getOutputStream(), columns);
             }
         } catch (Exception e) {
