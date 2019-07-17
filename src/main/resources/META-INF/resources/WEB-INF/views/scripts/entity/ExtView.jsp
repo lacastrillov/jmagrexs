@@ -857,12 +857,14 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             buttons: [{
                 text: 'Ejecutar',
                 handler: function(){
-                    var jsonData= processForm.getForm().getValues();
-                    Instance.entityExtStore.doProcess('${processForm.mainProcessRef}', '${processForm.processName}', jsonData, function(responseText){
-                        Ext.MessageBox.alert('Status', responseText);
-                        parentExtController.loadGridData();
-                        win.hide();
-                    });
+                    if (processForm.getForm().isValid()) {
+                        var jsonData= processForm.getForm().getValues();
+                        Instance.entityExtStore.doProcess('${processForm.mainProcessRef}', '${processForm.processName}', jsonData, function(responseText){
+                            Ext.MessageBox.alert('Status', responseText);
+                            parentExtController.loadGridData();
+                            win.hide();
+                        });
+                    }
                 }
             },{
                 text: 'Cancelar',
