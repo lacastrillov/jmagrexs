@@ -4,7 +4,7 @@ import com.lacv.jmagrexs.annotation.LabelField;
 import com.lacv.jmagrexs.components.ExtViewConfig;
 import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
 import com.lacv.jmagrexs.components.FieldConfigurationByTableColumns;
-import com.lacv.jmagrexs.domain.BaseEntity;
+import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.enums.HideView;
@@ -156,10 +156,10 @@ public class CSVService {
         for (Map.Entry<String, String> entry : titledFieldsMap.entrySet()){
             invertedTitledFieldsMap.put(HtmlUtils.htmlUnescape(entry.getValue()), entry.getKey());
         }
-        Set<String> baseEntityTypes= new HashSet<>();
+        Set<String> baseDtoTypes= new HashSet<>();
         for(PropertyDescriptor pd: propertyDescriptors){
-            if(BaseEntity.class.isAssignableFrom(pd.getPropertyType())){
-                baseEntityTypes.add(pd.getName());
+            if(BaseDto.class.isAssignableFrom(pd.getPropertyType())){
+                baseDtoTypes.add(pd.getName());
             }
         }
         String[] records= csvRecords.split("\n");
@@ -176,7 +176,7 @@ public class CSVService {
             for(int j=0; j<record.length; j++){
                 String fieldName= columns[j];
                 String value= record[j];
-                if(baseEntityTypes.contains(fieldName)){
+                if(baseDtoTypes.contains(fieldName)){
                     object.put(fieldName, value.split(" - ")[0]);
                 }else{
                     object.put(fieldName, value);
