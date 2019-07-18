@@ -625,17 +625,18 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             },
                 
             onMassiveUpdate: function(){
-                if(!Instance.massiveUpdateExecuteInProgress){
-                    if(parentExtController.typeController==="Child" && parentExtController.parentEntityId===null){
-                        Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No se ha seleccionado "+parentExtController.parentEntityTitle+" padre!!!");
-                    }else{
+                if(parentExtController.typeController==="Child" && parentExtController.parentEntityId===null){
+                    Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No se ha seleccionado "+parentExtController.parentEntityTitle+" padre!!!");
+                }else{
+                    if(!Instance.massiveUpdateExecuteInProgress){
                         Instance.massiveUpdateExecuteInProgress= true;
                         Instance.gridComponent.store.autoSync= false;
                         Instance.gridComponent.down('#massiveUpdateButton').setIconCls('icon-red');
                         var apiUpdate= Instance.gridComponent.store.proxy.api.update;
                         Instance.gridComponent.store.proxy.api.update= apiUpdate.replaceAll("update.htm","update/byfilter.htm");
                         console.log(Instance.gridComponent.store.proxy.api.update);
-
+                    }
+                    if(this.store.getAt(0).get("id")!==-1 && this.store.getAt(0).get("id")!=="-1"){
                         //Agregar registro en editor
                         Instance.createEmptyRecUpdater();
                         var edit= Instance.cellEditing;
@@ -644,7 +645,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         this.store.insert(0, rec);
                         edit.startEdit();
                     }
-                    
                 }
             },
             
