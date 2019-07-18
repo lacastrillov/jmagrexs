@@ -311,13 +311,14 @@ function Util() {
     this.downloadURI= function(uri){
         var fileName= uri.substring(uri.lastIndexOf('/')+1);
         var xhr = new XMLHttpRequest();
+        uri+=(uri.endsWith(".jsp"))?"/":"";
         xhr.open("GET", uri, true);
         xhr.responseType = "blob";
         xhr.onload = function(){
             var urlCreator = window.URL || window.webkitURL;
-            var imageUrl = urlCreator.createObjectURL(this.response);
+            var fileUrl = urlCreator.createObjectURL(this.response);
             var tag = document.createElement('a');
-            tag.href = imageUrl;
+            tag.href = fileUrl;
             tag.download = fileName;
             document.body.appendChild(tag);
             tag.click();
