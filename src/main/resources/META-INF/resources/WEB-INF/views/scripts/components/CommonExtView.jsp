@@ -84,7 +84,11 @@ function CommonExtView(parentExtController, parentExtView, model){
         dataArray.forEach(function(item) {
             if((item+"").indexOf(':')!==-1){
                 var itemValue= item.split(':');
-                data.push({value:itemValue[0],text:itemValue[1]});
+                var value= itemValue[0];
+                if (!isNaN(value)){
+                    value=Number(value);
+                }
+                data.push({value:value,text:itemValue[1]});
             }else{
                 data.push({value:item,text:item});
             }
@@ -168,7 +172,11 @@ function CommonExtView(parentExtController, parentExtView, model){
         dataArray.forEach(function(item) {
             if((item+"").indexOf(':')!==-1){
                 var itemValue= item.split(':');
-                data.push({name: fieldName, inputValue:itemValue[0], boxLabel:itemValue[1]});
+                var value= itemValue[0];
+                if (!isNaN(value)){
+                    value=Number(value);
+                }
+                data.push({name: fieldName, inputValue:value, boxLabel:itemValue[1]});
             }else{
                 data.push({name: fieldName, inputValue:item, boxLabel:item});
             }
