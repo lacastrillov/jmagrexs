@@ -677,7 +677,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     Instance.gridComponent.down('#massiveUpdateButton').setIconCls('icon-save');
                     Instance.massiveUpdateExecuteInProgress= false;
                     Instance.gridComponent.store.autoSync= ${viewConfig.defaultAutoSave};
-                    Instance.gridComponent.store.proxy.api.update= apiUpdate.replaceAll("update.htm","update/byfilter.htm");
+                    Instance.gridComponent.store.proxy.api.update= apiUpdate.replaceAll("update/byfilter.htm","update.htm");
                     Instance.reloadPageStore(1);
                 }else{
                     Ext.MessageBox.alert('Operaci&oacute;n cancelada', "No hay Actualizaci&oacute;n masiva en progreso!!!");
