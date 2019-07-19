@@ -226,7 +226,7 @@ public abstract class RestEntityController {
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletRequest request) {
+            @PathVariable String reportName, HttpServletRequest request) {
 
         String resultData;
         try {
@@ -256,7 +256,6 @@ public abstract class RestEntityController {
     public HttpEntity<byte[]> reportXml(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName,
             @PathVariable String reportName, HttpServletRequest request) {
 
         try {
@@ -284,8 +283,7 @@ public abstract class RestEntityController {
     public void reportXls(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName,
-            HttpServletRequest request, HttpServletResponse response) {
+            @PathVariable String reportName, HttpServletRequest request, HttpServletResponse response) {
         
         try {
             if(this.enabledReports.containsKey(reportName)){
@@ -307,8 +305,7 @@ public abstract class RestEntityController {
     public void reportCsv(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName,
-            HttpServletRequest request, HttpServletResponse response) {
+            @PathVariable String reportName, HttpServletRequest request, HttpServletResponse response) {
         
         try {
             if(this.enabledReports.containsKey(reportName)){
@@ -505,7 +502,11 @@ public abstract class RestEntityController {
             for (int i = 0; i < array.length(); i++) {
                 entities.add((BaseEntity) EntityReflection.jsonToObject(array.getJSONObject(i).toString(), entityClass));
             }
-            resultData= validateImportEntities(entities, listDtos);
+            if(!isSessionRequest(request)){
+                resultData= validateImportEntities(entities, listDtos);
+            }else{
+                resultData= validateSessionImportEntities(entities, listDtos);
+            }
         } catch (Exception e) {
             LOGGER.error("import " + entityRef, e);
             resultData= Util.getOperationCallback(null, "Error en Importaci&oacute;n de registros tipo " + entityRef + ": " + e.getMessage(), false);
@@ -531,29 +532,32 @@ public abstract class RestEntityController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && item.getFieldName().equals("data")){
-                    String data, csvData, xlsData, jsonData=null;
+                    String data, jsonData=null;
                     List<BaseEntity> entities= new ArrayList<>();
                     JSONArray array;
                     switch(format){
                         case "csv":
                             data= FileService.getLinesFromInputStream(is);
-                            csvData= CSVService.csvRecordsToJSON(data, dtoClass);
-                            array= new JSONArray(csvData);
+                            jsonData= CSVService.csvRecordsToJSON(data, dtoClass);
+                            array= new JSONArray(jsonData);
                             for (int i = 0; i < array.length(); i++) {
                                 entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
                             }
                             break;
                         case "xls":
-                            xlsData= ExcelService.xlsTableToJSON(is, dtoClass);
-                            array= new JSONArray(xlsData);
+                            jsonData= ExcelService.xlsTableToJSON(is, dtoClass);
+                            array= new JSONArray(jsonData);
                             for (int i = 0; i < array.length(); i++) {
                                 entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
                             }
                             break;
-                        case "xml":
-                            data= FileService.getStringFromInputStream(is);
-                            jsonData= XMLMarshaller.convertXMLToJSON(data);
-                        case "json":
+                        default:
+                            if(format.equals("xml")){
+                                data= FileService.getStringFromInputStream(is);
+                                jsonData= XMLMarshaller.convertXMLToJSON(data);
+                            }else if(format.equals("json")){
+                                jsonData= FileService.getStringFromInputStream(is);
+                            }
                             JSONObject object= new JSONObject(jsonData);
                             array= object.getJSONArray("data");
                             for (int i = 0; i < array.length(); i++) {
@@ -561,7 +565,11 @@ public abstract class RestEntityController {
                             }
                             break;
                     }
-                    resultData= validateImportEntities(entities, listDtos);
+                    if(!isSessionRequest(request)){
+                        resultData= validateImportEntities(entities, listDtos);
+                    }else{
+                        resultData= validateSessionImportEntities(entities, listDtos);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -743,6 +751,10 @@ public abstract class RestEntityController {
             resultData= Util.getResultListCallback(listDtos, 0L, "Error, no se pudo importar los registros de tipo " + entityRef, false);
         }
         return resultData;
+    }
+    
+    protected String validateSessionImportEntities(List<BaseEntity> entities, List listDtos){
+        return validateImportEntities(entities, listDtos);
     }
     
     protected List importEntities(List<BaseEntity> entities){

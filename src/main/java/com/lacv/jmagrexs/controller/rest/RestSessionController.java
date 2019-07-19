@@ -87,22 +87,22 @@ public abstract class RestSessionController extends RestEntityController {
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @RequestParam(required = false) String templateName, @RequestParam(required = false) Long numColumns,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletRequest request) {
+            @PathVariable String reportName, HttpServletRequest request) {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return report(sessionFilter, limit, page, sort, dir, templateName, numColumns, dtoName, reportName, request);
+        return report(sessionFilter, limit, page, sort, dir, templateName, numColumns, reportName, request);
     }
     
     @RequestMapping(value = "/session_report/xml/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public HttpEntity<byte[]> sessionReportXml(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName, HttpServletRequest request) {
+            @PathVariable String reportName, HttpServletRequest request) {
 
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        return reportXml(sessionFilter, limit, page, sort, dir, dtoName, reportName, request);
+        return reportXml(sessionFilter, limit, page, sort, dir, reportName, request);
     }
     
     @RequestMapping(value = "/session_report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -110,12 +110,11 @@ public abstract class RestSessionController extends RestEntityController {
     public void sessionReportXls(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
-            @RequestParam(required = true) String dtoName, @PathVariable String reportName,
-            HttpServletRequest request, HttpServletResponse response) {
+            @PathVariable String reportName, HttpServletRequest request, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        reportXls(sessionFilter, limit, page, sort, dir, dtoName, reportName, request, response);
+        reportXls(sessionFilter, limit, page, sort, dir, reportName, request, response);
     }
 
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)
@@ -264,7 +263,7 @@ public abstract class RestSessionController extends RestEntityController {
     }
     
     @Override
-    protected String validateImportEntities(List<BaseEntity> entities, List listDtos){
+    protected String validateSessionImportEntities(List<BaseEntity> entities, List listDtos){
         String resultData;
         if(canSessionImportData(entities)){
             listDtos= importEntities(entities);
