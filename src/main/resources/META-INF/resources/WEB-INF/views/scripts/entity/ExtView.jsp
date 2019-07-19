@@ -636,7 +636,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                         Instance.gridComponent.store.proxy.api.update= apiUpdate.replaceAll("update.htm","update/byfilter.htm");
                         console.log(Instance.gridComponent.store.proxy.api.update);
                     }
-                    if(this.store.getAt(0).get("id")!==-1 && this.store.getAt(0).get("id")!=="-1"){
+                    if(this.store.getAt(0)!==undefined && this.store.getAt(0).get("id")!==-1 && this.store.getAt(0).get("id")!=="-1"){
                         //Agregar registro en editor
                         Instance.createEmptyRecUpdater();
                         var edit= Instance.cellEditing;
