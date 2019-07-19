@@ -9,7 +9,7 @@ function GoogleMaps() {
     var Instance = this;
 
     Instance.init = function () {
-        Instance.DEFAULT_LAT= 4.668912;
+        Instance.DEFAULT_LAT= 4.66891;
         Instance.DEFAULT_LON= -74.08287;
     };
     
@@ -29,32 +29,11 @@ function GoogleMaps() {
 
             center = new GLatLng(latitude, longitude);
             
-            //var fields= document.getElementsByName(fieldName);
-            //fields[fields.length-1].value= latitude+","+longitude;
             map.setCenter(center, 13);
-            geocoder = new GClientGeocoder();
+            Instance.geocoder = new GClientGeocoder();
             var marker = new GMarker(center, {draggable: true});
             map.addOverlay(marker);
-
-            GEvent.addListener(marker, "dragend", function () {
-                var point = marker.getPoint();
-                map.panTo(point);
-                //fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
-            });
-
-            GEvent.addListener(map, "moveend", function () {
-                map.clearOverlays();
-                var center = map.getCenter();
-                var marker = new GMarker(center, {draggable: true});
-                map.addOverlay(marker);
-                //fields[fields.length-1].value= center.lat().toFixed(5)+","+center.lng().toFixed(5);
-
-                GEvent.addListener(marker, "dragend", function () {
-                    var point = marker.getPoint();
-                    map.panTo(point);
-                    //fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
-                });
-            });
+            Instance.addMapEvents(fieldName, map, marker);
         }
     };
     
@@ -64,40 +43,51 @@ function GoogleMaps() {
         var map = new GMap2(document.getElementById(mapId));
         map.addControl(new GSmallMapControl());
         map.addControl(new GMapTypeControl());
-        if (geocoder) {
-            geocoder.getLatLng(address, function (point) {
+        if (Instance.geocoder) {
+            Instance.geocoder.getLatLng(address, function (point) {
                 if (!point) {
                     alert(address + " not found");
                 } else {
-                    var fields= document.getElementsByName(fieldName);
-                    fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
+                    Instance.setLatLng(fieldName, point);
                     map.clearOverlays();
                     map.setCenter(point, 14);
                     var marker = new GMarker(point, {draggable: true});
                     map.addOverlay(marker);
-
-                    GEvent.addListener(marker, "dragend", function () {
-                        var pt = marker.getPoint();
-                        map.panTo(pt);
-                        fields[fields.length-1].value= pt.lat().toFixed(5)+","+pt.lng().toFixed(5);
-                    });
-
-                    GEvent.addListener(map, "moveend", function () {
-                        map.clearOverlays();
-                        var center = map.getCenter();
-                        var marker = new GMarker(center, {draggable: true});
-                        map.addOverlay(marker);
-                        fields[fields.length-1].value= center.lat().toFixed(5)+","+center.lng().toFixed(5);
-
-                        GEvent.addListener(marker, "dragend", function () {
-                            var pt = marker.getPoint();
-                            map.panTo(pt);
-                            fields[fields.length-1].value= pt.lat().toFixed(5)+","+pt.lng().toFixed(5);
-                        });
-
-                    });
+                    Instance.addMapEvents(fieldName, map, marker);
                 }
             });
+        }
+    };
+    
+    this.addMapEvents= function(fieldName, map, marker){
+        GEvent.addListener(marker, "dragend", function () {
+            var point = marker.getPoint();
+            map.panTo(point);
+            Instance.setLatLng(fieldName, point);
+        });
+
+        GEvent.addListener(map, "moveend", function () {
+            map.clearOverlays();
+            var center = map.getCenter();
+            var marker = new GMarker(center, {draggable: true});
+            map.addOverlay(marker);
+            Instance.setLatLng(fieldName, center);
+
+            GEvent.addListener(marker, "dragend", function () {
+                var point = marker.getPoint();
+                map.panTo(point);
+                Instance.setLatLng(fieldName, point);
+            });
+        });
+    };
+    
+    this.setLatLng= function(fieldName, point){
+        if(point!==undefined){
+            var coordinates= point.lat().toFixed(5)+","+point.lng().toFixed(5);
+            if(coordinates !== Instance.DEFAULT_LAT+","+Instance.DEFAULT_LON){
+                var fields= document.getElementsByName(fieldName);
+                fields[fields.length-1].value= point.lat().toFixed(5)+","+point.lng().toFixed(5);
+            }
         }
     };
 
