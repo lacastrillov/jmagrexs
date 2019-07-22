@@ -28,12 +28,12 @@ function GoogleMaps() {
             var center;
 
             center = new GLatLng(latitude, longitude);
-            
-            map.setCenter(center, 13);
+            var zoom= (latitude+","+longitude !== Instance.DEFAULT_LAT+","+Instance.DEFAULT_LON)?16:13;
+            map.setCenter(center, zoom);
             Instance.geocoder = new GClientGeocoder();
             var marker = new GMarker(center, {draggable: true});
             map.addOverlay(marker);
-            Instance.addMapEvents(fieldName, map, marker);
+            //Instance.addMapEvents(fieldName, map, marker);
         }
     };
     

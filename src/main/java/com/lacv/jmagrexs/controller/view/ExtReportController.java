@@ -32,6 +32,10 @@ public abstract class ExtReportController extends ExtController {
     
     private final Map<String,ReportConfig> reportsConfig= new HashMap<>();
     
+    protected final LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
+    
+    protected final HashMap<String, Integer> positionColumnForm = new HashMap<>();
+    
     
     protected void addReportMapping(ReportConfig reportConfig) {
         reportsConfig.put(reportConfig.getReportName(), reportConfig);
@@ -174,12 +178,12 @@ public abstract class ExtReportController extends ExtController {
         
         HashMap<String, String> titledFieldsMap= fcba.getTitledFieldsMap(propertyDescriptors, reportConfig.getDtoClass());
         HashMap<String, Integer> widhColumnMap= fcba.getWidthColumnMap(propertyDescriptors, reportConfig.getDtoClass());
+        HashMap<String, String> groupFieldsMap= fcba.getGroupFieldsMap(reportConfig.getDtoClass());
         HashSet<String> hideFields= fcba.getHideFields(reportConfig.getDtoClass());
         HashSet<String> valueMapFields= fcba.getValueMapFields(reportConfig.getDtoClass());
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(reportConfig.getDtoClass());
-        HashMap<String, Integer[]> sizeColumnMap= new HashMap<>();
-        LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
-        HashMap<String, Integer> positionColumnForm = new HashMap<>();
+        HashMap<String, Integer[]> sizeColumnMap= fcba.getSizeColumnMap(reportConfig.getDtoClass());
+        positionColumnForm.put("", 0);
         
         if(!reportConfig.isActiveGridTemplate()){
             JSONObject numbererColumn= new JSONObject();
@@ -196,14 +200,39 @@ public abstract class ExtReportController extends ExtController {
                 String fieldName= propertyDescriptor.getName();
                 String fieldTitle= titledFieldsMap.get(fieldName);
                 Integer widthColumn= widhColumnMap.get(fieldName);
+                boolean readOnly= true;
+                boolean isEditableForm= false;
                 
                 // ADD TO jsonFormFields
                 if(reportConfig.isVisibleForm() && !hideFields.contains(fieldName + HideView.FORM.name())){
+                    String titleGroup="";
+                    if(groupFieldsMap.containsKey(fieldName)){
+                        titleGroup= groupFieldsMap.get(fieldName);
+                        if(!fieldGroups.containsKey(titleGroup)){
+                            JSONObject fieldDefaults= new JSONObject();
+                            fieldDefaults.put("anchor", "49%");
+                            fieldDefaults.put("minWidth", 280);
+                            fieldDefaults.put("labelAlign", "right");
+                            
+                            JSONObject objectField= new JSONObject();
+                            objectField.put("xtype", "fieldset");
+                            objectField.put("title", titleGroup);
+                            objectField.put("collapsible", true);
+                            objectField.put("layout", "anchor");
+                            objectField.put("defaultType", "textfield");
+                            objectField.put("cls", "my-fieldset");
+                            objectField.put("fieldDefaults", fieldDefaults);
+                            objectField.put("items", new JSONArray());
+                            
+                            fieldGroups.put(titleGroup, objectField);
+                            positionColumnForm.put(titleGroup, 0);
+                        }
+                    }
                     
                     if(Formats.TYPES_LIST.contains(type)){
                         jfef.addJSONField(jsonFormFields, reportName, type, fieldName,
-                                fieldTitle, "", typeFormFields, sizeColumnMap, fieldGroups,
-                                positionColumnForm, reportConfig.getNumColumnsForm(), false, true, false);
+                                fieldTitle, titleGroup, typeFormFields, sizeColumnMap, fieldGroups,
+                                positionColumnForm, reportConfig.getNumColumnsForm(), isEditableForm, readOnly, false);
                         
                     }
                 }

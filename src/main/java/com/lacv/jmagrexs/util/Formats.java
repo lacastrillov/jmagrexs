@@ -562,6 +562,7 @@ public class Formats {
                 return "video";
             case "text/javascript":
             case "application/javascript":
+            case "application/x-javascript":
                 return "js";
             case "text/css":
                 return "css";

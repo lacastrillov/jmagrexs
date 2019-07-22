@@ -23,13 +23,14 @@ import com.lacv.jmagrexs.enums.PageType;
 import com.lacv.jmagrexs.util.Formats;
 import com.google.gson.Gson;
 import com.lacv.jmagrexs.dto.ProcessGlobalAction;
-import java.util.LinkedHashMap;
 import javax.persistence.Embeddable;
 import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public abstract class ExtEntityController extends ExtReportController {
+    
+    protected static final Logger LOGGER1 = Logger.getLogger(ExtEntityController.class);
     
     private final List<String> modelsEntityRef= new ArrayList<>();
     
@@ -41,7 +42,7 @@ public abstract class ExtEntityController extends ExtReportController {
     
     private JSONArray jsonModel;
     
-    private JSONArray jsonTemplateModel = new JSONArray();;
+    private final JSONArray jsonTemplateModel = new JSONArray();;
     
     private JSONArray jsonModelValidations;
     
@@ -57,19 +58,13 @@ public abstract class ExtEntityController extends ExtReportController {
     
     private final JSONArray jsonGlobalActions= new JSONArray();
     
-    private final LinkedHashMap<String,JSONObject> fieldGroups= new LinkedHashMap<>();
-    
     private final JSONObject jsonEmptyModel= new JSONObject();
     
     private final Map<String, String> jsonFormFieldsProcessMap= new HashMap();
     
     private HashMap<String, String> titledFieldsMap;
-
-    protected static final Logger LOGGER1 = Logger.getLogger(ExtEntityController.class);
     
     private EntityConfig viewConfig;
-    
-    private final HashMap<String, Integer> positionColumnForm = new HashMap<>();
     
     
     protected void addControlMapping(EntityConfig viewConfig) {

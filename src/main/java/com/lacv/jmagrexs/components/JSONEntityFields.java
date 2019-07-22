@@ -53,7 +53,9 @@ public class JSONEntityFields {
                 formField.put("inputType", "password");
             }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
                 formField.put("xtype", "textarea");
-                formField.put("height", 200);
+                if(isEditableForm){
+                    formField.put("height", 200);
+                }
             }else if(typeForm.equals(FieldType.DATETIME.name())){
                 formField.put("xtype", "datefield");
                 formField.put("format", extViewConfig.getDatetimeFormat());
@@ -62,7 +64,9 @@ public class JSONEntityFields {
                 formField.put("xtype", "htmleditor");
                 formField.put("enableColors", true);
                 formField.put("enableAlignments", true);
-                formField.put("height", 400);
+                if(isEditableForm){
+                    formField.put("height", 400);
+                }
             }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
                 addField= false;
                 String[] data= typeFormFields.get(fieldName);

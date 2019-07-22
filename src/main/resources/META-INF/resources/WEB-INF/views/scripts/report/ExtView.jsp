@@ -101,6 +101,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         
         childExtControllers.forEach(function(childExtController) {
             var itemTab= {
+                id: childExtController.reportName+'SubEntity',
                 xtype:'tabpanel',
                 title: childExtController.entityExtView.pluralReportTitle,
                 plain:true,
@@ -144,7 +145,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                 //this.addEvents('create');
                 
                 var buttons= [
-                <c:if test="${viewConfig.visibleSeeAllButton}">
+                <c:if test="${reportConfig.visibleSeeAllButton}">
                 {
                     text: '&#x25BC; Ver todo',
                     scope: this,
@@ -543,7 +544,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
             if(Instance.typeView==="Parent"){
                 return "<a style='font-size: 15px;' href='#?id="+record.data.${reportConfig.idColumnName}+"&tab=1'>"+value+"</a>";
             }else{
-                return value;
+                return "<a style='font-size: 15px;' href='javascript:Ext.getCmp(\"${reportName}TabsContainer\").clickInTab(\"Detalle\")'>"+value+"</a>";
             }
         }else{
             return value;
@@ -600,6 +601,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
         </c:forEach>
         
         Instance.tabsContainer= Ext.widget('tabpanel', {
+            id: "${reportName}TabsContainer",
             region: 'center',
             activeTab: 0,
             style: 'background-color:#dfe8f6; margin:0px',
@@ -621,6 +623,13 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                         mvcExt.navigate(url);
                     }
                 }
+            },
+            clickInTab: function(labelTab){
+                $("#${reportName}SubEntity").find("span.x-tab-inner").each(function() {
+                    if(this.innerText===labelTab){
+                        util.eventFire(document.getElementById(this.id), "click");
+                    }
+                });
             }
         });
         
