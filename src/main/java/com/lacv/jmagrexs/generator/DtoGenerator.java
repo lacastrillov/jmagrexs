@@ -92,6 +92,7 @@ public class DtoGenerator extends ClassGenerator {
                             ((fieldsRO.contains(fieldName))?"    @ReadOnly\n":"") +
                             sizeAnnotation +
                             "    @ColumnWidth("+columnWidth+")\n" +
+                            ((type.equals("java.util.Date"))?"    @TypeFormField(value = FieldType.DATETIME)\n":"") +
                             "    @TextField(\""+fieldTitle+"\")\n";
                         index++;
                     }
@@ -128,7 +129,9 @@ public class DtoGenerator extends ClassGenerator {
                     "import com.lacv.jmagrexs.annotation.ReadOnly;\n" +
                     "import com.lacv.jmagrexs.annotation.Size;\n" +
                     "import com.lacv.jmagrexs.annotation.TextField;\n" +
+                    "import com.lacv.jmagrexs.annotation.TypeFormField;\n" +
                     "import com.lacv.jmagrexs.domain.BaseDto;\n" +
+                    "import com.lacv.jmagrexs.enums.FieldType;\n" +
                     "import java.sql.Time;\n" +
                     "import java.util.Date;\n" +
                     "import java.util.List;\n" +

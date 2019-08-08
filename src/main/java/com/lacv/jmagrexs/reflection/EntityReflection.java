@@ -4,6 +4,7 @@ import com.lacv.jmagrexs.annotation.HideField;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.GenericTableColumn;
 import com.lacv.jmagrexs.enums.HideView;
+import com.lacv.jmagrexs.service.EntityService;
 import com.lacv.jmagrexs.util.Formats;
 import com.lacv.jmagrexs.util.JSONService;
 import com.lacv.jmagrexs.util.Util;
@@ -31,6 +32,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.ContextLoader;
 
 /**
  * Clase utilitaria que permite inspeccionar metadata de las clase entidades.
@@ -167,9 +171,10 @@ public final class EntityReflection {
                         BaseEntity currentChildEntity= (BaseEntity) targetWrapper.getPropertyValue(propertyDescriptor.getName());
                         Object id= getParsedFieldValue(typeWrapper, "id", value);
                         if(currentChildEntity==null || !currentChildEntity.getId().equals(id)){
-                            BaseEntity childEntity = (BaseEntity) getObjectForClass(typeWrapper);
-                            childEntity.setId(id);
-                            targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
+                            BaseEntity childEntity= getEntityById(id, typeWrapper);
+                            if(childEntity!=null){
+                                targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
+                            }
                         }
                     }
                 }catch(Exception e){
@@ -250,9 +255,10 @@ public final class EntityReflection {
                         targetWrapper.setPropertyValue(propertyDescriptor.getName(), null);
                     } else {
                         Object id= getParsedFieldValue(typeWrapper, "id", value);
-                        BaseEntity childEntity = (BaseEntity) getObjectForClass(typeWrapper);
-                        childEntity.setId(id);
-                        targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
+                        BaseEntity childEntity= getEntityById(id, typeWrapper);
+                        if(childEntity!=null){
+                            targetWrapper.setPropertyValue(propertyDescriptor.getName(), childEntity);
+                        }
                     }
                 }catch(Exception e){
                     Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, e);
@@ -663,6 +669,19 @@ public final class EntityReflection {
      */
     public static Long getEntityId(Object entity) {
         return (Long) ReflectionUtils.getFieldValueRecursively(entity, Id.class);
+    }
+    
+    /**
+     * 
+     * @param id
+     * @param entityClass
+     * @return 
+     */
+    public static BaseEntity getEntityById(Object id, Class entityClass){
+        String serviceName= StringUtils.uncapitalize(entityClass.getSimpleName())+"Service";
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        EntityService entityService = (EntityService) ctx.getBean(serviceName);
+        return (BaseEntity) entityService.loadById(id);
     }
 
 }

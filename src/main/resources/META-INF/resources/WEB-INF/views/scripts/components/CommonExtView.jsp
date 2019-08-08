@@ -11,14 +11,14 @@ function CommonExtView(parentExtController, parentExtView, model){
     var MAX_LIST_ITEMS= 20;
     
     Instance.init= function(){
+        Instance.errorGeneral= "Error de servidor";
+        Instance.error403= "Usted no tiene permisos para realizar esta operaci&oacute;n";
         if(model!==undefined && model!==null){
             Instance.modelNameCombobox= "ComboboxModelIn"+model;
             Instance.combobox={};
             Instance.comboboxRender={};
             Instance.multiselect={};
             Instance.radiogroup={};
-            Instance.errorGeneral= "Error de servidor";
-            Instance.error403= "Usted no tiene permisos para realizar esta operaci&oacute;n";
             Ext.define(Instance.modelNameCombobox, {
                 extend: 'Ext.data.Model',
                 fields: [
