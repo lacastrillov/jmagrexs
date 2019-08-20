@@ -153,7 +153,7 @@ public abstract class RestEntityController {
 
     @RequestMapping(value = "/find/xlsx.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void findXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
+    public void findXlsx(@RequestParam(required = false) String filter, @RequestParam(required = false) String query, 
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletRequest request, HttpServletResponse response) {
@@ -278,9 +278,9 @@ public abstract class RestEntityController {
         }
     }
     
-    @RequestMapping(value = "/report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/report/xlsx/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void reportXls(@RequestParam(required = false) String filter,
+    public void reportXlsx(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @PathVariable String reportName, HttpServletRequest request, HttpServletResponse response) {
@@ -544,8 +544,8 @@ public abstract class RestEntityController {
                                 entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
                             }
                             break;
-                        case "xls":
-                            jsonData= ExcelService.xlsTableToJSON(is, dtoClass);
+                        case "xlsx":
+                            jsonData= ExcelService.xlsxTableToJSON(is, dtoClass);
                             array= new JSONArray(jsonData);
                             for (int i = 0; i < array.length(); i++) {
                                 entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));

@@ -83,11 +83,7 @@ public class JSONModels {
                         break;
                     case "java.util.Date":
                         field.put("type", "date");
-                        if(typeForm.equals(FieldType.DATETIME.name())){
-                            field.put("dateFormat", extViewConfig.getDatetimeFormat());
-                        }else{
-                            field.put("dateFormat", extViewConfig.getDateFormat());
-                        }
+                        field.put("dateFormat", extViewConfig.getDatetimeFormat());
                         break;
                     default:
                         break;

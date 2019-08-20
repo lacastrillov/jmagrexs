@@ -25,6 +25,7 @@ function EntityExtInit(){
             'Ext.tree.*',
             'Ext.selection.*',
             'Ext.tab.Panel',
+            'Ext.util.Format',
             'Ext.util.History',
             'Ext.ux.form.MultiSelect',
             'Ext.ux.layout.Center',

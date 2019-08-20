@@ -107,7 +107,7 @@ public abstract class RestDirectController {
 
     @RequestMapping(value = "/{tableName}/find/xlsx.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void findXls(@PathVariable String tableName, @RequestParam(required = false) String filter,
+    public void findXlsx(@PathVariable String tableName, @RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletResponse response) {
@@ -329,7 +329,7 @@ public abstract class RestDirectController {
                     FileItem item = (FileItem) iterator.next();
                     InputStream is= item.getInputStream();
                     if(!item.isFormField() && item.getFieldName().equals("data")){
-                        String data, csvData, xlsData, jsonData=null;
+                        String data, csvData, xlsxData, jsonData=null;
                         List<Map<String, Object>> entities= new ArrayList<>();
                         JSONArray array;
                         switch(format){
@@ -341,9 +341,9 @@ public abstract class RestDirectController {
                                     entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
                                 }
                                 break;
-                            case "xls":
-                                xlsData= ExcelService.xlsTableToJSON(is, columns);
-                                array= new JSONArray(xlsData);
+                            case "xlsx":
+                                xlsxData= ExcelService.xlsxTableToJSON(is, columns);
+                                array= new JSONArray(xlsxData);
                                 for (int i = 0; i < array.length(); i++) {
                                     entities.add(EntityReflection.readEntity(array.getJSONObject(i).toString(), columns));
                                 }

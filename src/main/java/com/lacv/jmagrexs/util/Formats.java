@@ -1,5 +1,6 @@
 package com.lacv.jmagrexs.util;
 
+import com.lacv.jmagrexs.components.ExtViewConfig;
 import java.math.BigInteger;
 import java.sql.Time;
 import java.text.DateFormat;
@@ -16,12 +17,17 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 /**
  *
  * @author lacastrillov@gmail.com
  *
  */
 public class Formats {
+    
+    protected static final Logger LOGGER = Logger.getLogger(Formats.class);
 
     private static final Integer DIAS_ANYOS = 365;
 
@@ -341,6 +347,7 @@ public class Formats {
             long dateLong= Long.parseLong(value);
             return new Date(dateLong);
         }catch(NumberFormatException ex){
+            LOGGER.error("ERROR stringToDate", ex);
             return null;
         }
     }
@@ -354,6 +361,7 @@ public class Formats {
         String time= value;
         SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm:ss");
         String[] inFormats= new String[]{
+            "HH:mm:ss",
             "hh:mm:ss a",
             "hh:mm a",
             "h:mm a",
@@ -583,6 +591,44 @@ public class Formats {
         }
     }
     
+    public static Object getDefaultValueByType(String type, String typeField){
+        switch (type) {
+                case "java.util.Date": {
+                    try {
+                        return dateToString(stringToDate("31-01-2000 00:00:00"), getExtViewConfig().getDatetimeFormatJava());
+                    } catch (ParseException ex) {
+                        LOGGER.error("ERROR getDefaultValueByType", ex);
+                    }
+                }
+                case "java.sql.Time": {
+                    try{
+                        return timeToString(stringToTime("00:00:00"), getExtViewConfig().getTimeFormat());
+                    } catch (ParseException ex) {
+                        LOGGER.error("ERROR getDefaultValueByType", ex);
+                    }
+                }
+                case "short":
+                case "java.lang.Short":
+                case "int":
+                case "java.lang.Integer":
+                case "long":
+                case "java.lang.Long":
+                case "java.math.BigInteger":
+                case "double":
+                case "java.lang.Double":
+                case "float":
+                case "java.lang.Float": {
+                    return -1;
+                }
+                case "boolean":
+                case "java.lang.Boolean": {
+                    return false;
+                }
+                default:
+                    return "-";
+            }
+    }
+    
     public static String getContentTypeByExtension(String extension){
         if(contentTypeByExtension==null){
             contentTypeByExtension= new HashMap<>();
@@ -594,6 +640,12 @@ public class Formats {
             return contentTypeByExtension.get(extension);
         }
         return null;
+    }
+    
+    public static ExtViewConfig getExtViewConfig(){
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ExtViewConfig extViewConfig= (ExtViewConfig) ctx.getBean("extViewConfig");
+        return extViewConfig;
     }
 
 }

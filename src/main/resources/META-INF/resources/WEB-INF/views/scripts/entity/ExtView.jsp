@@ -374,7 +374,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 var urlFind= store.proxy.api.read.replace("find.htm","find/csv.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
-                            case "xls":
+                            case "xlsx":
                                 var urlFind= store.proxy.api.read.replace("find.htm","find/xlsx.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
@@ -399,11 +399,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     
     Instance.createEmptyRecUpdater= function(){
         if(Instance.emptyModelUpdater===undefined){
-            Instance.emptyModelUpdater= ${jsonEmptyModel};
-            for (var property in Instance.emptyModelUpdater) {
-                Instance.emptyModelUpdater[property]="-";
-            }
-            Instance.emptyModelUpdater["id"]= "-1";
+            Instance.emptyModelUpdater= ${jsonDefaultModel};
             Instance.getEmptyRecUpdater= function(){
                 return new ${entityName}Model(Instance.emptyModelUpdater);
             };
@@ -556,7 +552,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'A CSV', handler: function(){this.exportTo('csv');}, scope: this},
-                                {text: 'A Excel', handler: function(){this.exportTo('xls');}, scope: this},
+                                {text: 'A Excel', handler: function(){this.exportTo('xlsx');}, scope: this},
                                 {text: 'A JSON', handler: function(){this.exportTo('json');}, scope: this},
                                 {text: 'A XML', handler: function(){this.exportTo('xml');}, scope: this}]
                         },{
@@ -565,7 +561,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'De CSV', handler: function(){this.importFrom('csv');}, scope: this},
-                                {text: 'De Excel', handler: function(){this.importFrom('xls');}, scope: this},
+                                {text: 'De Excel', handler: function(){this.importFrom('xlsx');}, scope: this},
                                 {text: 'De JSON', handler: function(){this.importFrom('json');}, scope: this},
                                 {text: 'De XML', handler: function(){this.importFrom('xml');}, scope: this}]
                         }

@@ -299,8 +299,8 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                                 var urlFind= store.proxy.api.read.replace("report/","report/xml/");
                                 window.open(urlFind+data,'_blank');
                                 break;
-                            case "xls":
-                                var urlFind= store.proxy.api.read.replace("report/","report/xls/");
+                            case "xlsx":
+                                var urlFind= store.proxy.api.read.replace("report/","report/xlsx/");
                                 window.open(urlFind+data,'_blank');
                                 break;
                             case "csv":
@@ -406,7 +406,7 @@ function ${reportName}ExtView(parentExtController, parentExtView){
                             //iconCls: 'add16',
                             menu: [
                                 {text: 'A CSV', handler: function(){this.exportTo('csv')}, scope: this},
-                                {text: 'A Excel', handler: function(){this.exportTo('xls')}, scope: this},
+                                {text: 'A Excel', handler: function(){this.exportTo('xlsx')}, scope: this},
                                 {text: 'A JSON', handler: function(){this.exportTo('json')}, scope: this},
                                 {text: 'A XML', handler: function(){this.exportTo('xml')}, scope: this}]
                         }

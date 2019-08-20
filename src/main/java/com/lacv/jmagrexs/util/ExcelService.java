@@ -202,7 +202,7 @@ public class ExcelService {
         workbook.write(outputStream);
     }
     
-    public static String xlsTableToJSON(InputStream is, Class dtoClass) throws IOException {
+    public static String xlsxTableToJSON(InputStream is, Class dtoClass) throws IOException {
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
         HashMap<String, String> titledFieldsMap= FCBA.getTitledFieldsMap(propertyDescriptors, dtoClass);
         HashMap<String, String> invertedTitledFieldsMap= new HashMap<>();
@@ -256,7 +256,7 @@ public class ExcelService {
         return objects.toString();
     }
     
-    public static String xlsTableToJSON(InputStream is, List<GenericTableColumn> tableColumns) throws IOException{
+    public static String xlsxTableToJSON(InputStream is, List<GenericTableColumn> tableColumns) throws IOException{
         HashMap<String, String> nameColumnsMap= new HashMap<>();
         for (GenericTableColumn column : tableColumns){
             nameColumnsMap.put(column.getColumnName(), column.getColumnAlias());

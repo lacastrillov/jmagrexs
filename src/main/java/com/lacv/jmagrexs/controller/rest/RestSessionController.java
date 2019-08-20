@@ -47,14 +47,14 @@ public abstract class RestSessionController extends RestEntityController {
 
     @RequestMapping(value = "/session_find/xlsx.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void sessionFindXls(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
+    public void sessionFindXlsx(@RequestParam(required = false) String filter, @RequestParam(required = false) String query,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             HttpServletRequest request, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, null);
         
-        findXls(sessionFilter, query, limit, page, sort, dir, request, response);
+        findXlsx(sessionFilter, query, limit, page, sort, dir, request, response);
     }
     
     @RequestMapping(value = "/session_find/csv.htm", method = {RequestMethod.GET, RequestMethod.POST})
@@ -105,16 +105,16 @@ public abstract class RestSessionController extends RestEntityController {
         return reportXml(sessionFilter, limit, page, sort, dir, reportName, request);
     }
     
-    @RequestMapping(value = "/session_report/xls/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/session_report/xlsx/{reportName}.htm", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public void sessionReportXls(@RequestParam(required = false) String filter,
+    public void sessionReportXlsx(@RequestParam(required = false) String filter,
             @RequestParam(required = false) Long limit, @RequestParam(required = false) Long page,
             @RequestParam(required = false) String sort, @RequestParam(required = false) String dir,
             @PathVariable String reportName, HttpServletRequest request, HttpServletResponse response) {
         
         String sessionFilter= getSessionFilters(filter, reportName);
         
-        reportXls(sessionFilter, limit, page, sort, dir, reportName, request, response);
+        reportXlsx(sessionFilter, limit, page, sort, dir, reportName, request, response);
     }
 
     @RequestMapping(value = "/session_create.htm", method = RequestMethod.POST)

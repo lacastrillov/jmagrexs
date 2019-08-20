@@ -35,30 +35,30 @@ public class JSONColumns {
         JSONObject field= null;
         JSONObject editor= null;
         if(typeFormFields.containsKey(fieldName)){
-            String typeForm= typeFormFields.get(fieldName)[0];
-            if(typeForm.equals(FieldType.EMAIL.name())){
+            String typeField= typeFormFields.get(fieldName)[0];
+            if(typeField.equals(FieldType.EMAIL.name())){
                 editor= new JSONObject();
                 editor.put("vtype", "email");
-            }else if(typeForm.equals(FieldType.PASSWORD.name())){
+            }else if(typeField.equals(FieldType.PASSWORD.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.passwordGridRender@");
                 editor= new JSONObject();
                 editor.put("inputType", "password");
-            }else if(typeForm.equals(FieldType.DURATION.name())){
+            }else if(typeField.equals(FieldType.DURATION.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.durationGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.PRICE.name())){
+            }else if(typeField.equals(FieldType.PRICE.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.priceGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.DATETIME.name())){
+            }else if(typeField.equals(FieldType.DATETIME.name())){
                 gridColumn.put("xtype", "datecolumn");
                 gridColumn.put("format", extViewConfig.getDatetimeFormat());
                 editor = new JSONObject();
                 editor.put("xtype", "datefield");
                 editor.put("format", extViewConfig.getDatetimeFormat());
-            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name()) ||
-                    typeForm.equals(FieldType.RADIOS.name())){
+            }else if(typeField.equals(FieldType.LIST.name()) || typeField.equals(FieldType.MULTI_SELECT.name()) ||
+                    typeField.equals(FieldType.RADIOS.name())){
                 String[] data= typeFormFields.get(fieldName);
                 JSONArray dataArray = new JSONArray();
                 for(int i=1; i<data.length; i++){
@@ -68,19 +68,19 @@ public class JSONColumns {
                     gridColumn.put("renderer", "@Instance.commonExtView.getSimpleComboboxRender('grid','"+fieldName+"')@");
                     gridColumn.put("editor", "@Instance.commonExtView.getSimpleCombobox('"+fieldName+"','"+fieldTitle+"','grid',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")@");
                 }
-            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+            }else if(typeField.equals(FieldType.FILE_SIZE.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.fileSizeGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+            }else if(typeField.equals(FieldType.PERCENTAJE.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.percentageGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.COLOR.name())){
+            }else if(typeField.equals(FieldType.COLOR.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.colorGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.CONDITIONAL_COLOR.name())){
+            }else if(typeField.equals(FieldType.CONDITIONAL_COLOR.name())){
                 String[] data= typeFormFields.get(fieldName);
                 JSONArray dataArray = new JSONArray();
                 for(int i=1; i<data.length; i++){
@@ -90,26 +90,26 @@ public class JSONColumns {
                 gridColumn.put("renderer", "@Instance.commonExtView.conditionalColorGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.ON_OFF.name())){
+            }else if(typeField.equals(FieldType.ON_OFF.name())){
                 gridColumn.put("xtype", "checkcolumn");
                 gridColumn.put("disabled", readOnly);
                 gridColumn.put("renderer", "@Instance.commonExtView.onOffGridRender@");
-            }else if(typeForm.equals(FieldType.URL.name()) || typeForm.equals(FieldType.FILE_UPLOAD.name()) ||
-                    typeForm.equals(FieldType.VIDEO_YOUTUBE.name()) || typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
-                    typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+            }else if(typeField.equals(FieldType.URL.name()) || typeField.equals(FieldType.FILE_UPLOAD.name()) ||
+                    typeField.equals(FieldType.VIDEO_YOUTUBE.name()) || typeField.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || 
+                    typeField.equals(FieldType.MULTI_FILE_TYPE.name())){
 
                 gridColumn.put("renderer", "@Instance.commonExtView.urlGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
+            }else if(typeField.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.imageGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
+            }else if(typeField.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                 gridColumn.put("renderer", "@Instance.commonExtView.audioGridRender@");
                 field= new JSONObject();
                 field.put("type", "textfield");
-            }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
+            }else if(typeField.equals(FieldType.HTML_EDITOR.name())){
             }else{
                 field= new JSONObject();
                 field.put("type", "textfield");
@@ -121,7 +121,8 @@ public class JSONColumns {
             switch (type) {
                 case "java.util.Date": {
                     gridColumn.put("xtype", "datecolumn");
-                    gridColumn.put("format", extViewConfig.getDateFormat());
+                    gridColumn.put("format", extViewConfig.getDatetimeFormat());
+                    gridColumn.put("renderer", "@Ext.util.Format.dateRenderer('"+extViewConfig.getDateFormat()+"')@");
                     editor = new JSONObject();
                     editor.put("xtype", "datefield");
                     editor.put("format", extViewConfig.getDateFormat());

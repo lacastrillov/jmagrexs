@@ -230,7 +230,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                                 var urlFind= store.proxy.api.read.replace("/find.htm","/find/xml.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
-                            case "xls":
+                            case "xlsx":
                                 var urlFind= store.proxy.api.read.replace("/find.htm","/find/xlsx.htm");
                                 window.open(urlFind+data,'_blank');
                                 break;
@@ -356,7 +356,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             text: 'Exportar',
                             //iconCls: 'add16',
                             menu: [
-                                {text: 'A Excel', handler: function(){this.exportTo('xls');}, scope: this},
+                                {text: 'A Excel', handler: function(){this.exportTo('xlsx');}, scope: this},
                                 {text: 'A JSON', handler: function(){this.exportTo('json');}, scope: this},
                                 {text: 'A XML', handler: function(){this.exportTo('xml');}, scope: this}]
                         }

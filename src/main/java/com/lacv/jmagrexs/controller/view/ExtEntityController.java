@@ -60,6 +60,8 @@ public abstract class ExtEntityController extends ExtReportController {
     
     private final JSONObject jsonEmptyModel= new JSONObject();
     
+    private final JSONObject jsonDefaultModel= new JSONObject();
+    
     private final Map<String, String> jsonFormFieldsProcessMap= new HashMap();
     
     private HashMap<String, String> titledFieldsMap;
@@ -177,6 +179,7 @@ public abstract class ExtEntityController extends ExtReportController {
         mav.addObject("jsonGridColumns", jsonGridColumns.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("jsonGlobalActions", jsonGlobalActions.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
+        mav.addObject("jsonDefaultModel", jsonDefaultModel.toString());
         mav.addObject("sortColumns", sortColumns.toString());
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(viewConfig.getTypeChildExtViews()));
         mav.addObject("jsonFormFieldsProcessMap", jsonFormFieldsProcessMap);
@@ -377,6 +380,17 @@ public abstract class ExtEntityController extends ExtReportController {
                 // ADD TO jsonEmptyModel
                 if(fieldName.equals("id")==false){
                     jsonEmptyModel.put(fieldName, (defaultValueMap.containsKey(fieldName))?defaultValueMap.get(fieldName):"");
+                }
+                
+                // ADD TO jsonDefaultModel
+                if(fieldName.equals("id")){
+                    jsonDefaultModel.put(fieldName, -1);
+                }else{
+                    String typeField="";
+                    if(typeFormFields.containsKey(fieldName)){
+                        typeField= typeFormFields.get(fieldName)[0];
+                    }
+                    jsonDefaultModel.put(fieldName, Formats.getDefaultValueByType(type, typeField));
                 }
             }
         }

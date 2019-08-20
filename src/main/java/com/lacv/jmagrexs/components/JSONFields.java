@@ -48,24 +48,24 @@ public class JSONFields {
         
         String checkFieldName= fieldName.split("\\[")[0];
         if(typeFormFields.containsKey(checkFieldName)){
-            String typeForm= typeFormFields.get(checkFieldName)[0];
-            if(typeForm.equals(FieldType.EMAIL.name())){
+            String typeField= typeFormFields.get(checkFieldName)[0];
+            if(typeField.equals(FieldType.EMAIL.name())){
                 formField.put("vtype", "email");
-            }else if(typeForm.equals(FieldType.PASSWORD.name())){
+            }else if(typeField.equals(FieldType.PASSWORD.name())){
                 formField.put("inputType", "password");
-            }else if(typeForm.equals(FieldType.TEXT_AREA.name())){
+            }else if(typeField.equals(FieldType.TEXT_AREA.name())){
                 formField.put("xtype", "textarea");
                 formField.put("height", 200);
-            }else if(typeForm.equals(FieldType.DATETIME.name())){
+            }else if(typeField.equals(FieldType.DATETIME.name())){
                 formField.put("xtype", "datefield");
                 formField.put("format", extViewConfig.getDatetimeFormat());
                 formField.put("tooltip", "Seleccione la fecha");
-            }else if(typeForm.equals(FieldType.HTML_EDITOR.name())){
+            }else if(typeField.equals(FieldType.HTML_EDITOR.name())){
                 formField.put("xtype", "htmleditor");
                 formField.put("enableColors", true);
                 formField.put("enableAlignments", true);
                 formField.put("height", 400);
-            }else if(typeForm.equals(FieldType.LIST.name()) || typeForm.equals(FieldType.MULTI_SELECT.name())){
+            }else if(typeField.equals(FieldType.LIST.name()) || typeField.equals(FieldType.MULTI_SELECT.name())){
                 addField= false;
                 String[] data= typeFormFields.get(checkFieldName);
                 JSONArray dataArray = new JSONArray();
@@ -73,7 +73,7 @@ public class JSONFields {
                     dataArray.put(data[i]);
                 }
                 jsonFormFields.put("@Instance.commonExtView.getSimpleCombobox('"+parent + fieldName+"','"+fieldTitle+"','"+processName+"',"+dataArray.toString().replaceAll("\"", "'")+","+(!fieldNN)+")@");
-            }else if(typeForm.equals(FieldType.RADIOS.name())){
+            }else if(typeField.equals(FieldType.RADIOS.name())){
                 addField= false;
                 String[] data= typeFormFields.get(checkFieldName);
                 JSONArray dataArray = new JSONArray();
@@ -81,21 +81,21 @@ public class JSONFields {
                     dataArray.put(data[i]);
                 }
                 jsonFormFields.put("@Instance.commonExtView.getRadioGroup('"+parent + fieldName+"','"+fieldTitle+"',"+dataArray.toString().replaceAll("\"", "'")+")@");
-            }else if(typeForm.equals(FieldType.FILE_SIZE.name())){
+            }else if(typeField.equals(FieldType.FILE_SIZE.name())){
                 formField.put("xtype", "numberfield");
                 formField.put("fieldLabel", fieldTitle+" (bytes)");
 
                 //Add file Size Text
                 rendererField.put("renderer", "@Instance.commonExtView.fileSizeRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.PERCENTAJE.name())){
+            }else if(typeField.equals(FieldType.PERCENTAJE.name())){
                 formField.put("xtype", "numberfield");
                 formField.put("fieldLabel", fieldTitle+" (%)");
                 formField.put("minValue", 0);
                 formField.put("maxValue", 100);
-            }else if(typeForm.equals(FieldType.COLOR.name())){
+            }else if(typeField.equals(FieldType.COLOR.name())){
                 formField.put("xtype", "customcolorpicker");
-            }else if(typeForm.equals(FieldType.ON_OFF.name())){
+            }else if(typeField.equals(FieldType.ON_OFF.name())){
                 formField.put("xtype", "checkbox");
                 formField.put("inputValue", "true");
                 formField.put("uncheckedValue", "false");
@@ -104,21 +104,21 @@ public class JSONFields {
                 //Add Button ON/OFF
                 rendererField.put("renderer", "@Instance.commonExtView.onOffRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.VIDEO_YOUTUBE.name())){
+            }else if(typeField.equals(FieldType.VIDEO_YOUTUBE.name())){
                 formField.put("fieldLabel", "Link "+fieldTitle);
                 formField.put("emptyText", "Url Youtube");
 
                 //Add Video Youtube
                 rendererField.put("renderer", "@Instance.commonExtView.videoYoutubeRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.GOOGLE_MAP.name())){
+            }else if(typeField.equals(FieldType.GOOGLE_MAP.name())){
                 formField.put("fieldLabel", "Coordenadas "+fieldTitle);
                 formField.put("emptyText", "Google Maps Point");
 
                 //Add GoogleMap
                 rendererField.put("renderer", "@Instance.commonExtView.googleMapsRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.FILE_UPLOAD.name())){
+            }else if(typeField.equals(FieldType.FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
                 formField.put("fieldLabel", "Subir "+fieldTitle);
@@ -127,7 +127,7 @@ public class JSONFields {
                 //Add Url File
                 rendererField.put("renderer", "@Instance.commonExtView.fileRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
+            }else if(typeField.equals(FieldType.IMAGE_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
                 formField.put("fieldLabel", "Subir "+fieldTitle);
@@ -136,7 +136,7 @@ public class JSONFields {
                 //Add Image
                 rendererField.put("renderer", "@Instance.commonExtView.imageRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
+            }else if(typeField.equals(FieldType.VIDEO_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
                 formField.put("fieldLabel", "Subir "+fieldTitle);
@@ -145,7 +145,7 @@ public class JSONFields {
                 //Add Video
                 rendererField.put("renderer", "@Instance.commonExtView.videoFileUploadRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
+            }else if(typeField.equals(FieldType.AUDIO_FILE_UPLOAD.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
                 formField.put("fieldLabel", "Subir "+fieldTitle);
@@ -154,7 +154,7 @@ public class JSONFields {
                 //Add Audio
                 rendererField.put("renderer", "@Instance.commonExtView.audioFileUploadRender@");
                 jsonFormFields.put(rendererField);
-            }else if(typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+            }else if(typeField.equals(FieldType.MULTI_FILE_TYPE.name())){
                 formField.put("name", parent + fieldName + "_File");
                 formField.put("xtype", "filefield");
                 formField.put("fieldLabel", "Subir "+fieldTitle);
@@ -164,9 +164,9 @@ public class JSONFields {
                 rendererField.put("renderer", "@Instance.commonExtView.multiFileRender@");
                 jsonFormFields.put(rendererField);
             }
-            if(typeForm.equals(FieldType.FILE_UPLOAD.name()) || typeForm.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
-                    typeForm.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeForm.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
-                    typeForm.equals(FieldType.MULTI_FILE_TYPE.name())){
+            if(typeField.equals(FieldType.FILE_UPLOAD.name()) || typeField.equals(FieldType.IMAGE_FILE_UPLOAD.name()) ||
+                    typeField.equals(FieldType.VIDEO_FILE_UPLOAD.name()) || typeField.equals(FieldType.AUDIO_FILE_UPLOAD.name()) ||
+                    typeField.equals(FieldType.MULTI_FILE_TYPE.name())){
                 
                 formField.put("allowBlank", true);
                 //Add link Field
@@ -182,6 +182,7 @@ public class JSONFields {
                 case "java.util.Date":
                     formField.put("xtype", "datefield");
                     formField.put("format", extViewConfig.getDateFormat());
+                    formField.put("altFormats", extViewConfig.getDatetimeFormat());
                     formField.put("tooltip", "Seleccione la fecha");
                     break;
                 case "java.sql.Time":

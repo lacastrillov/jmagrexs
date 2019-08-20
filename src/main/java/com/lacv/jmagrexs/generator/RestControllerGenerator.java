@@ -67,7 +67,7 @@ public class RestControllerGenerator extends ClassGenerator {
                     "    @Override\n" +
                     "    public String saveFilePart(int slice, String fieldName, String fileName, String fileType, int fileSize, InputStream is, Object idParent, Boolean sessionUpload){\n" +
                     "        return \"Almacenamiento de archivo no implementado!!\";\n" +
-                    "    }" +
+                    "    }\n" +
                     "    \n" +
                     "}" +
                     "";
