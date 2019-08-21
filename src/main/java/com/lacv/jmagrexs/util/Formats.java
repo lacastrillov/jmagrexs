@@ -602,7 +602,7 @@ public class Formats {
                 }
                 case "java.sql.Time": {
                     try{
-                        return timeToString(stringToTime("00:00:00"), getExtViewConfig().getTimeFormat());
+                        return timeToString(stringToTime("00:00:00"), getExtViewConfig().getTimeFormatJava());
                     } catch (ParseException ex) {
                         LOGGER.error("ERROR getDefaultValueByType", ex);
                     }
