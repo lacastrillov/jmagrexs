@@ -99,6 +99,8 @@ public class EntityConfig {
     
     private int gridHeightChildView;
     
+    private int gridAutoReloadInterval;
+    
     private String defaultOrderBy;
     
     private String defaultOrderDir;
@@ -157,6 +159,7 @@ public class EntityConfig {
         this.entityRefNNMulticheckChild= null;
         this.numColumnsForm= 1;
         this.gridHeightChildView= 0;
+        this.gridAutoReloadInterval= 0;
         this.defaultOrderBy= "id";
         this.defaultOrderDir= "DESC";
         this.maxResultsPerPage= 50L;
@@ -682,6 +685,22 @@ public class EntityConfig {
      */
     public void setGridHeightChildView(int gridHeightChildView) {
         this.gridHeightChildView = gridHeightChildView;
+    }
+
+    /**
+     * 
+     * @return gridAutoReloadInterval
+     */
+    public int getGridAutoReloadInterval() {
+        return gridAutoReloadInterval;
+    }
+
+    /**
+     * 
+     * @param gridAutoReloadInterval 
+     */
+    public void setGridAutoReloadInterval(int gridAutoReloadInterval) {
+        this.gridAutoReloadInterval = gridAutoReloadInterval;
     }
 
     /**

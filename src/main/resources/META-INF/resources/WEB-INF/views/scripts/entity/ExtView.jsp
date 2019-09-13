@@ -347,6 +347,11 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                 store: store,
                 disableSelection: ${viewConfig.activeGridTemplate},
                 trackMouseOver: !${viewConfig.activeGridTemplate},
+                <c:if test="${viewConfig.gridAutoReloadInterval > 1000}">
+                viewConfig: {
+                    loadMask: false
+                },
+                </c:if>
                 listeners: {
                     selectionchange: function(selModel, selected) {
                         if(selected[0] && parentExtController.typeController==="Child"){
@@ -529,6 +534,21 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                             itemId: 'delete',
                             scope: this,
                             handler: this.onDeleteClick
+                        },
+                        </c:if>
+                        <c:if test="${viewConfig.gridAutoReloadInterval > 1000}">
+                        {
+                            text: 'Auto-recarga',
+                            enableToggle: true,
+                            pressed: true,
+                            tooltip: 'Cuando est&aacute; activa, la tabla se recarga automaticamente cada ${viewConfig.gridAutoReloadInterval} milisegundos.',
+                            scope: this,
+                            toggleHandler: function(btn, pressed){
+                                this.store.gridAutoReload = pressed;
+                                if(pressed){
+                                    parentExtController.doGridAutoReload();
+                                }
+                            }
                         },
                         </c:if>
                         <c:if test="${fn:length(viewConfig.processGlobalActions)>0}">

@@ -4,6 +4,7 @@ import com.lacv.jmagrexs.annotation.ImageResize;
 import com.lacv.jmagrexs.components.ExplorerConstants;
 import com.lacv.jmagrexs.components.FieldConfigurationByAnnotations;
 import com.lacv.jmagrexs.components.ServerDomain;
+import com.lacv.jmagrexs.dao.Parameters;
 import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.dto.ItemTemplate;
@@ -113,9 +114,10 @@ public abstract class RestEntityController {
         String resultData;
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
-            List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listEntities = service.findByParameters(p);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = service.countByJSONFilters(filter, query);
+            Long totalCount = p.getTotalResults();
             
             if(templateName!=null){
                 resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
@@ -137,9 +139,10 @@ public abstract class RestEntityController {
 
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
-            List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listEntities = service.findByParameters(p);
             List<BaseEntity> listDtos = mapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = service.countByJSONFilters(filter, query);
+            Long totalCount = p.getTotalResults();
 
             String resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
             String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
@@ -163,7 +166,8 @@ public abstract class RestEntityController {
 
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
-            List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
+            List<Object> listEntities = service.findByParameters(p);
             
             ExcelService.generateExcelReport(listEntities, response.getOutputStream(), dtoClass);
         } catch (Exception e) {
@@ -183,7 +187,8 @@ public abstract class RestEntityController {
 
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
-            List<Object> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
+            List<Object> listEntities = service.findByParameters(p);
             
             response.getWriter().print(CSVService.generateCSVReport(listEntities, dtoClass));
         } catch (Exception e) {
@@ -201,9 +206,10 @@ public abstract class RestEntityController {
         String resultData;
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
-            List<BaseEntity> listEntities = service.findByJSONFilters(filter, query, page, limit, sort, dir);
+            Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listEntities = service.findByParameters(p);
             List listDtos = mapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = service.countByJSONFilters(filter, query);
+            Long totalCount = p.getTotalResults();
             
             resultData = Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
             resultData= JSONService.jsonToYaml(resultData);
@@ -233,8 +239,9 @@ public abstract class RestEntityController {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
-                List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
-                Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
+                Parameters p= service.buildParameters(filter, null, page, limit, sort, dir, dtoReportClass);
+                List<Object> listDtos = service.findByParameters(reportName, p, dtoReportClass);
+                Long totalCount = p.getTotalResults();
 
                 if(templateName!=null){
                     resultData= generateTemplateData(listDtos, totalCount, entityRef, true, templateName, numColumns);
@@ -262,8 +269,9 @@ public abstract class RestEntityController {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
-                List<Object> listDtos = service.findByJSONFilters(reportName, filter, page, limit, sort, dir, dtoReportClass);
-                Long totalCount = service.countByJSONFilters(reportName, filter, dtoReportClass);
+                Parameters p= service.buildParameters(filter, null, page, limit, sort, dir, dtoReportClass);
+                List<Object> listDtos = service.findByParameters(reportName, p, dtoReportClass);
+                Long totalCount = p.getTotalResults();
 
                 String resultData = Util.getResultListCallback(listDtos, totalCount, "Buequeda reporte " + reportName + " realizada...", true);
                 String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
@@ -289,7 +297,8 @@ public abstract class RestEntityController {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
-                List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
+                Parameters p= service.buildParameters(filter, null, null, null, sort, dir, dtoReportClass);
+                List<Object> listDtos = service.findByParameters(reportName, p, dtoReportClass);
                 
                 response.setContentType("application/vnd.ms-excel");
                 response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.xlsx\"");
@@ -311,7 +320,8 @@ public abstract class RestEntityController {
             if(this.enabledReports.containsKey(reportName)){
                 Class dtoReportClass= this.enabledReports.get(reportName);
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
-                List<Object> listDtos = service.findByJSONFilters(reportName, filter, null, null, sort, dir, dtoReportClass);
+                Parameters p= service.buildParameters(filter, null, null, null, sort, dir, dtoReportClass);
+                List<Object> listDtos = service.findByParameters(reportName, p, dtoReportClass);
 
                 response.setContentType("text/csv; charset=utf-8");
                 response.setHeader("Content-Disposition", "attachment; filename=\"" + reportName + "_report.csv\"");
@@ -401,14 +411,15 @@ public abstract class RestEntityController {
             }
             if(JSONService.isJSONObject(updateData)){
                 JSONObject jsonFilter= new JSONObject(filter);
-                JSONObject jsonUpdate=new JSONObject(updateData);
+                JSONObject jsonUpdate= new JSONObject(updateData);
                 jsonUpdate.remove("id");
                 jsonFilter.put("uv", jsonUpdate);
                 jsonData= jsonFilter.toString();
             }
             jsonData= (!isSessionRequest(request))?getFilters(jsonData, null):formatFilter(jsonData);
             if(isSessionRequest(request) || canUpdateByFilters(new JSONObject(jsonData))){
-                Integer updatedRecords= service.updateByJSONFilters(jsonData);
+                Parameters p= service.buildParameters(jsonData, null, null, null, null, null);
+                Integer updatedRecords= service.updateByParameters(p);
                 resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);
             }else{
                 resultData= Util.getOperationCallback(null, "Error, no puede actualizar la entidad " + entityRef + " por filtros", false);
@@ -467,7 +478,8 @@ public abstract class RestEntityController {
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):formatFilter(filter);
             if(isSessionRequest(request) || canDeleteByFilters(new JSONObject(filter))){
-                List<BaseEntity> listEntities = service.findByJSONFilters(filter, null, null, null, null, null);
+                Parameters p= service.buildParameters(filter, null, null, null, null, null);
+                List<BaseEntity> listEntities = service.findByParameters(p);
                 List listDtos = mapper.listEntitiesToListDtos(listEntities);
 
                 for(BaseEntity entity: listEntities){

@@ -31,12 +31,7 @@ function ${reportName}ExtController(parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={
-            eq:{},
-            lk:{},
-            btw:{},
-            vm:{}
-        };
+        Instance.filter={};
     };
     
     Instance.services.index= function(request){
@@ -116,8 +111,8 @@ function ${reportName}ExtController(parentExtView){
         }
     };
     
-    Instance.doFilter= function(){
-        var url= "?filter="+JSON.stringify(Instance.filter);
+    Instance.doFilter= function(filter){
+        var url= "?filter="+JSON.stringify(filter);
         mvcExt.navigate(url);
     };
 

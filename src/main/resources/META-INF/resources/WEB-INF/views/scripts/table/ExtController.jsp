@@ -29,12 +29,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={
-            eq:{},
-            lk:{},
-            btw:{},
-            in:{}
-        };
+        Instance.filter={};
     };
     
     Instance.services.index= function(request){
@@ -184,8 +179,8 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
     };
     
-    Instance.doFilter= function(){
-        var url= "?filter="+JSON.stringify(Instance.filter);
+    Instance.doFilter= function(filter){
+        var url= "?filter="+JSON.stringify(filter);
         console.log(url);
         mvcExt.navigate(url);
     };

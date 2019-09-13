@@ -523,6 +523,26 @@ public class Formats {
     }
     
     /**
+     * getObjectTypeByNative
+     *
+     * @param type
+     * @return
+     */
+    public static String getObjectTypeByNative(String type) {
+        switch (type) {
+            case "short": return "Short";
+            case "int": return "Integer";
+            case "long": return "Long";
+            case "boolean": return "Boolean";
+            case "double": return "Double";
+            case "float": return "Float";
+            case "char": return "Character";
+            default: break;
+        }
+        return type;
+    }
+    
+    /**
      * 
      * @param contentType
      * @return 

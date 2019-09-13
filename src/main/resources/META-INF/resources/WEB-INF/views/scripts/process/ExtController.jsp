@@ -33,10 +33,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.initFilter= function(){
         Instance.filter={
-            eq:{"mainProcessRef":"${viewConfig.mainProcessRef}"},
-            lk:{},
-            btw:{},
-            in:{}
+            eq:{"mainProcessRef":"${viewConfig.mainProcessRef}"}
         };
     };
     

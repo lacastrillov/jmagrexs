@@ -60,20 +60,24 @@ function CommonExtView(parentExtController, parentExtView, model){
             valueField: 'value',
             queryMode: 'local',
             dataStore: data,
+            hideLabel: true,
             listeners: {
                 change: function(record){
                     if(component==='filter'){
-                        if(record.getValue()!==0){
+                        /*if(record.getValue()!==0){
                             parentExtController.filter.eq[fieldName]= record.getValue();
                         }else{
                             delete parentExtController.filter.eq[fieldName];
-                        }
+                        }*/
                     }
                 }
             }
         });
-        if(component!=='grid'){
+        if(component!=='filter' && component!=='grid'){
             Instance.combobox[component+'_'+fieldName].fieldLabel=fieldTitle;
+            Instance.combobox[component+'_'+fieldName].hideLabel= false;
+        }else if(component==='filter'){
+            Instance.combobox[component+'_'+fieldName].columnWidth= 0.6;
         }
         
         return Instance.combobox[component+'_'+fieldName];
@@ -101,7 +105,6 @@ function CommonExtView(parentExtController, parentExtView, model){
         Instance.multiselect[fieldName]= {
             id: 'multiselect'+fieldName+'In'+model,
             name: fieldName,
-            fieldLabel: fieldTitle,
             xtype: 'multiselect',
             displayField: 'text',
             valueField: 'value',
@@ -112,6 +115,8 @@ function CommonExtView(parentExtController, parentExtView, model){
             arrayValues:[],
             lastSelected: null,
             store: store,
+            hideLabel: true,
+            columnWidth: 0.6,
             listeners: {
                 change: function(record){
                     var value= record.getValue();
@@ -129,11 +134,11 @@ function CommonExtView(parentExtController, parentExtView, model){
                             selector.arrayValues.splice(index, 1);
                         }
                         selector.setValue(selector.arrayValues);
-                        if(selector.arrayValues.length>0){
+                        /*if(selector.arrayValues.length>0){
                             parentExtController.filter.in[fieldName]= selector.arrayValues;
                         }else{
                             delete parentExtController.filter.in[fieldName];
-                        }
+                        }*/
                     },
                     scope: this
                 }
@@ -165,6 +170,93 @@ function CommonExtView(parentExtController, parentExtView, model){
         };
         
         return Instance.comboboxRender[component+'_'+fieldName];
+    };
+    
+    Instance.getOperatorCombobox= function(fieldName, typeField){
+        var dataArray= Instance.getDataOperatorCombobox(typeField);
+        var data=[];
+        dataArray.forEach(function(item) {
+            var itemValue= item.split(':');
+            data.push({value:itemValue[0],text:itemValue[1]});
+        });
+        var store = Ext.create('Ext.data.Store', {
+            autoDestroy: false,
+            model: Instance.modelNameCombobox,
+            data: data
+        });
+        Instance.combobox['operator_'+fieldName]= new Ext.form.ComboBox({
+            id: 'operator_'+fieldName,
+            name: 'operator_'+fieldName,
+            fieldLabel: "&nbsp;",
+            editable: false,
+            allowBlank: false,
+            store: store,
+            displayField: 'text',
+            valueField: 'value',
+            queryMode: 'local',
+            dataStore: data,
+            matchFieldWidth: false,
+            hideLabel: true,
+            columnWidth: 0.1,
+            listConfig: {
+                getInnerTpl: function(displayField) {
+                    return '<img style="margin-bottom:-5px;" src="/libimg/ext/operators/{value}.png"/> {'+displayField+'}';
+                }
+            },
+            listeners: {
+                change: function(record){
+                    Instance.combobox['operator_'+fieldName].inputEl.setStyle({
+                        'color': 'white',
+                        'background-image':    'url(/libimg/ext/operators/'+record.getValue()+'.png)',
+                        'background-repeat':   'no-repeat',
+                        'background-position': '3px center',
+                        'padding-left':        '25px'
+                    });
+                },
+                afterrender: function(comboBox){
+                    if(typeField==='string'){
+                        comboBox.defaultOperator="lk";
+                    }else if(typeField==='range'){
+                        comboBox.defaultOperator="btw";
+                    }else if(typeField==='multiselect'){
+                        comboBox.defaultOperator="in";
+                    }else{
+                        comboBox.defaultOperator="eq";
+                    }
+                    comboBox.setValue(comboBox.defaultOperator);
+                }
+            }
+        });
+        
+        return Instance.combobox['operator_'+fieldName];
+    };
+    
+    Instance.getDataOperatorCombobox= function(typeField){
+        var dataArray= [];
+        if(typeField!=='multiselect'){
+            dataArray.push("eq:Igual");
+        }
+        if(typeField==='string'){
+            dataArray.push("lk:Contiene");
+        }
+        dataArray.push("isnn:No nulo");
+        dataArray.push("isn:Nulo");
+        if(typeField!=='multiselect'){
+            dataArray.push("dt:Diferente");
+        }
+        if(typeField==='multiselect'){
+            dataArray.push("in:Entre");
+        }
+        if(typeField==='range'){
+            dataArray.push("btw:Desde - hasta");
+        }
+        if(typeField==='range' || typeField==='number'){
+            dataArray.push("gt:Mayor que");
+            dataArray.push("gte:Mayor o igual");
+            dataArray.push("lt:Menor que");
+            dataArray.push("lte:Menor o igual");
+        }
+        return dataArray;
     };
     
     Instance.getRadioGroup= function(fieldName, fieldTitle, dataArray){

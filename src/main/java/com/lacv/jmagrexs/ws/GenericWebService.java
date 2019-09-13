@@ -5,6 +5,7 @@
  */
 package com.lacv.jmagrexs.ws;
 
+import com.lacv.jmagrexs.dao.Parameters;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.mapper.BasicEntityMapper;
 import com.lacv.jmagrexs.reflection.EntityReflection;
@@ -62,9 +63,10 @@ public abstract class GenericWebService {
         BasicEntityMapper entityMapper = (BasicEntityMapper) ctx.getBean(mappers.get(entityRef));
 
         try {
-            List<? extends BaseEntity> listEntities = entityService.findByJSONFilters(filter, query, page, limit, sort, dir);
-            List<? extends BaseEntity> listDtos = entityMapper.listEntitiesToListDtos(listEntities);
-            Long totalCount = entityService.countByJSONFilters(filter, query);
+            Parameters p= entityService.buildParameters(filter, query, page, limit, sort, dir);
+            List<BaseEntity> listEntities = entityService.findByParameters(p);
+            List listDtos = entityMapper.listEntitiesToListDtos(listEntities);
+            Long totalCount = p.getTotalResults();
 
             return Util.getResultListCallback(listDtos, totalCount, "Busqueda de " + entityRef + " realizada...", true);
         } catch (Exception e) {

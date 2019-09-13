@@ -30,12 +30,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={
-            eq:{},
-            lk:{},
-            btw:{},
-            in:{}
-        };
+        Instance.filter={};
     };
     
     Instance.services.index= function(request){
@@ -60,7 +55,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         if(activeTab!=="1"){
             <c:forEach var="associatedER" items="${interfacesEntityRef}">
                 <c:set var="associatedEntityName" value="${fn:toUpperCase(fn:substring(associatedER, 0, 1))}${fn:substring(associatedER, 1,fn:length(associatedER))}"></c:set>
-            if(Instance.filter.eq!==undefined && Instance.filter.eq.${associatedER}!==undefined && Instance.filter.eq.${associatedER}!==''){
+            if('eq' in Instance.filter && Instance.filter.eq!==undefined && Instance.filter.eq.${associatedER}!==undefined && Instance.filter.eq.${associatedER}!==''){
                 Instance.entityExtView.${associatedER}ExtInterfaces.entityExtStore.load(Instance.filter.eq.${associatedER}, Instance.entityExtView.${associatedER}ExtInterfaces.addLevel);
             }else{
                 Instance.entityExtView.${associatedER}ExtInterfaces.addLevel(null);
@@ -175,8 +170,8 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
     };
     
-    Instance.doFilter= function(){
-        var url= "?filter="+JSON.stringify(Instance.filter);
+    Instance.doFilter= function(filter){
+        var url= "?filter="+JSON.stringify(filter);
         console.log(url);
         mvcExt.navigate(url);
     };

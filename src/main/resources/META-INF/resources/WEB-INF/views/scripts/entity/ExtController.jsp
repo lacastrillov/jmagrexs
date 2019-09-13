@@ -34,12 +34,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.initFilter= function(){
-        Instance.filter={
-            eq:{},
-            lk:{},
-            btw:{},
-            in:{}
-        };
+        Instance.filter={};
     };
     
     Instance.services.index= function(request){
@@ -66,7 +61,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         
         <c:forEach var="associatedER" items="${interfacesEntityRef}">
             <c:set var="associatedEntityName" value="${fn:toUpperCase(fn:substring(associatedER, 0, 1))}${fn:substring(associatedER, 1,fn:length(associatedER))}"></c:set>
-        if(Instance.filter.eq.${associatedER}!==undefined && Instance.filter.eq.${associatedER}!==''){
+        if('eq' in Instance.filter && Instance.filter.eq.${associatedER}!==undefined && Instance.filter.eq.${associatedER}!==''){
             Instance.entityExtView.${associatedER}ExtInterfaces.entityExtStore.load(Instance.filter.eq.${associatedER}, Instance.entityExtView.${associatedER}ExtInterfaces.addLevel);
         }else{
             Instance.entityExtView.${associatedER}ExtInterfaces.addLevel(null);
@@ -87,6 +82,10 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
         <c:if test="${viewConfig.preloadedForm && formRecordId!=null}">
         Instance.loadFormData(${formRecordId});
+        </c:if>
+        <c:if test="${viewConfig.gridAutoReloadInterval > 1000}">
+        Instance.entityExtView.store.gridAutoReload= true;
+        Instance.doGridAutoReload();
         </c:if>
     };
     
@@ -151,6 +150,15 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         });
     };
     
+    Instance.doGridAutoReload= function(){
+        if(Instance.entityExtView.store.gridAutoReload){
+            setTimeout(function(){
+                Instance.entityExtView.reloadPageStore(1);
+                Instance.doGridAutoReload();
+            },${viewConfig.gridAutoReloadInterval});
+        }
+    };
+    
     Instance.loadNNMulticheckData= function(){
         Instance.entityExtView.clearNNMultichecks();
         Instance.entityExtView.findAndLoadNNMultichecks(JSON.stringify(Instance.filter));
@@ -164,25 +172,17 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     childExtController.parentEntityId= idEntitySelected;
                     childExtController.filter= {"eq":{"${entityRef}":idEntitySelected}};
                     childExtController.entityExtView.setValueInEmptyModel("${entityRef}", idEntitySelected);
-                    if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
-                        childExtController.loadGridData();
-                        childExtController.loadFormData("");
-                    }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
-                        childExtController.loadFormFirstItem();
-                    }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_n_to_n"){
-                        childExtController.loadNNMulticheckData();
-                    }
                 }else{
                     childExtController.parentEntityId= null;
                     childExtController.filter= {"eq":{"id":"0"}};
-                    if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
-                        childExtController.loadGridData();
-                        childExtController.loadFormData("");
-                    }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
-                        childExtController.loadFormFirstItem();
-                    }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_n_to_n"){
-                        childExtController.loadNNMulticheckData();
-                    }
+                }
+                if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
+                    childExtController.loadGridData();
+                    childExtController.loadFormData("");
+                }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_1"){
+                    childExtController.loadFormFirstItem();
+                }else if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_n_to_n"){
+                    childExtController.loadNNMulticheckData();
                 }
             });
         }
@@ -265,8 +265,9 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
     };
     
-    Instance.doFilter= function(){
-        var url= "?filter="+JSON.stringify(Instance.filter);
+    Instance.doFilter= function(filter){
+        var url= "?filter="+JSON.stringify(filter);
+        Instance.reloadGrid= true;
         console.log(url);
         mvcExt.navigate(url);
     };

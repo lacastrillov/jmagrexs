@@ -406,8 +406,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     scope: this,
                     handler: function(){
                         Instance.filters.getForm().reset();
-                        parentExtController.initFilter();
-                        parentExtController.doFilter();
+                        parentExtController.doFilter({});
                     }
                 }]
             }]

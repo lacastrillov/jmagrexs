@@ -127,35 +127,16 @@ public interface JdbcDirectService {
     int removeByParameters(String tableName, Parameters parameters);
     
     /**
-     *
-     * @param tableName
+     * 
      * @param columns
      * @param jsonFilters
      * @param page
      * @param limit
      * @param sort
      * @param dir
-     * @return
+     * @return 
      */
-    List<Map<String, Object>> findByJSONFilters(String tableName, List<GenericTableColumn> columns, String jsonFilters, Long page, Long limit, String sort, String dir);
-    
-    /**
-     *
-     * @param tableName
-     * @param columns
-     * @param jsonFilters
-     * @return
-     */
-    Long countByJSONFilters(String tableName, List<GenericTableColumn> columns, String jsonFilters);
-    
-    /**
-     *
-     * @param tableName
-     * @param columns
-     * @param jsonFilters
-     * @return
-     */
-    Integer updateByJSONFilters(String tableName, List<GenericTableColumn> columns, String jsonFilters);
+    public Parameters buildParameters(List<GenericTableColumn> columns, String jsonFilters, Long page, Long limit, String sort, String dir);
     
     /**
      * 

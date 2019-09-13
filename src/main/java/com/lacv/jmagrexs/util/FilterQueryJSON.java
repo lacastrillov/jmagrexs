@@ -187,6 +187,14 @@ public class FilterQueryJSON {
                     Object parseValue = Formats.castParameter(typeField.getName(), value);
                     if(parseValue!=null){
                         parameters.whereDifferentThan(filterName, parseValue);
+                    }else {
+                        PropertyDescriptor[] propertiesParam = EntityReflection.getPropertyDescriptors(typeField);
+                        BaseEntity entityObject = (BaseEntity) EntityReflection.getObjectForClass(typeField);
+                        if (entityObject != null) {
+                            Class typeParam = EntityReflection.getPropertyType(propertiesParam, "id");
+                            entityObject.setId(Formats.castParameter(typeParam.getName(), value));
+                            parameters.whereDifferentThan(filterName, entityObject);
+                        }
                     }
                 }
             } catch (NumberFormatException | ClassNotFoundException ex) {
@@ -220,7 +228,8 @@ public class FilterQueryJSON {
             String filterName = (String)key;
             String value = filters.get(filterName).toString();
             Class typeField = EntityReflection.getPropertyType(properties, filterName);
-            if(typeField!=null && typeField.getName().equals("java.lang.String")){
+            if(typeField!=null && (typeField.getName().equals("java.lang.String") ||
+                    typeField.getName().equals("char") || typeField.getName().equals("java.lang.Character"))){
                 parameters.whereLike(filterName, value);
             }
         }

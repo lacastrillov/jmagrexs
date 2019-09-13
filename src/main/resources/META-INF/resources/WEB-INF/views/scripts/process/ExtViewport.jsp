@@ -71,9 +71,6 @@ function ${entityName}ExtViewport(){
             <c:if test="${viewConfig.visibleMenu}">
             Instance.menuBar,
             </c:if>
-            <c:if test="${viewConfig.visibleFilters}">
-            Instance.filters,
-            </c:if>
             Instance.border
             ],
             renderTo: Ext.getBody()

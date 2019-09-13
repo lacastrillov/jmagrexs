@@ -5,7 +5,6 @@
  */
 package com.lacv.jmagrexs.components;
 
-import com.lacv.jmagrexs.enums.PageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ public class RangeFunctions {
     @Autowired
     public ExtViewConfig extViewConfig;
     
-    public String getListenerFuntionSingleValue(String typeFilter, String fieldName, PageType pageType){
+    /*public String getListenerFuntionSingleValue(String typeFilter, String fieldName, PageType pageType){
         String container= "Instance.entityExtController";
         if(pageType.equals(PageType.PROCESS)){
             container= "parentExtController";
@@ -66,6 +65,6 @@ public class RangeFunctions {
                 "}";
         
         return functionOnChange;
-    }
+    }*/
     
 }

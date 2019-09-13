@@ -209,7 +209,8 @@ public class FilterQueryDirectJSON {
             String filterName = (String)key;
             String value = filters.get(filterName).toString();
             String typeField = getPropertyType(columns, filterName);
-            if(typeField!=null && typeField.equals("java.lang.String")){
+            if(typeField!=null && (typeField.equals("java.lang.String") ||
+                    typeField.equals("char") || typeField.equals("java.lang.Character"))){
                 parameters.whereLike(filterName, value);
             }
         }

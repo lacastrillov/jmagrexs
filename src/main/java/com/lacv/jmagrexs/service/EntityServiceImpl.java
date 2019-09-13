@@ -173,14 +173,18 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     public int removeByParameters(Parameters parameters) {
         return getGenericDao().removeByParameters(parameters);
     }
-
+    
     @Override
-    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public List<T> findByJSONFilters(String jsonfilters, String query, Long page, Long limit, String sort, String dir) {
+    public Parameters buildParameters(String jsonfilters, String query, Long page, Long limit, String sort, String dir){
+        return buildParameters(jsonfilters, query, page, limit, sort, dir, entityClass);
+    }
+    
+    @Override
+    public Parameters buildParameters(String jsonfilters, String query, Long page, Long limit, String sort, String dir, Class c){
         Parameters parameters= new Parameters();
 
         if (jsonfilters != null && !jsonfilters.equals("")) {
-            parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
+            parameters = FilterQueryJSON.processFilters(jsonfilters, c);
         }
         if(query!=null && !query.equals("")){
             parameters.whereQuery(getQueryParams(), query);
@@ -197,36 +201,7 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
             parameters.orderBy(sort, dir);
         }
         
-        List<T> listEntities = findByParameters(parameters);
-
-        return listEntities;
-    }
-    
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Long countByJSONFilters(String jsonfilters, String query) {
-        Parameters parameters= new Parameters();
-
-        if (jsonfilters != null && !jsonfilters.equals("")) {
-            parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
-        }
-        if(query!=null && !query.equals("")){
-            parameters.whereQuery(getQueryParams(), query);
-        }
-
-        return this.getGenericDao().countByParameters(parameters);
-    }
-    
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER)
-    public Integer updateByJSONFilters(String jsonfilters) {
-        Parameters parameters= new Parameters();
-
-        if (jsonfilters != null && !jsonfilters.equals("")) {
-            parameters = FilterQueryJSON.processFilters(jsonfilters, entityClass);
-        }
-
-        return this.getGenericDao().updateByParameters(parameters);
+        return parameters;
     }
     
     private String[] getQueryParams(){
@@ -279,61 +254,6 @@ public abstract class EntityServiceImpl<T extends BaseEntity> implements EntityS
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
     public Long countByParameters(String nameQuerySource, Parameters parameters){
-        return this.getGenericDao().countByParameters(nameQuerySource, parameters);
-    }
-    
-    /**
-     *
-     * @param nameQuerySource
-     * @param filters
-     * @param page
-     * @param limit
-     * @param sort
-     * @param dir
-     * @param c
-     * @return
-     */
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public List<Object> findByJSONFilters(String nameQuerySource, String filters, Long page, Long limit, String sort, String dir, Class c) {
-        Parameters parameters= new Parameters();
-
-        if (filters != null && !filters.equals("")) {
-            parameters = FilterQueryJSON.processFilters(filters, c);
-        }
-        
-        if(page!=null){
-            parameters.setPage(page);
-        }
-        if(limit!=null){
-            parameters.setMaxResults(limit);
-        }
-
-        if(sort!=null && !sort.equals("") && dir!=null && !dir.equals("")){
-            parameters.orderBy(sort, dir);
-        }
-        
-        List<Object> listEntities = findByParameters(nameQuerySource, parameters, c);
-
-        return listEntities;
-    }
-    
-    /**
-     *
-     * @param nameQuerySource
-     * @param jsonfilters
-     * @param c
-     * @return
-     */
-    @Override
-    @Transactional(value = TRANSACTION_MANAGER, readOnly = true)
-    public Long countByJSONFilters(String nameQuerySource, String jsonfilters, Class c) {
-        Parameters parameters= new Parameters();
-
-        if (jsonfilters != null && !jsonfilters.equals("")) {
-            parameters = FilterQueryJSON.processFilters(jsonfilters, c);
-        }
-
         return this.getGenericDao().countByParameters(nameQuerySource, parameters);
     }
     

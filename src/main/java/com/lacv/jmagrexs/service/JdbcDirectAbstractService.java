@@ -195,19 +195,17 @@ public abstract class JdbcDirectAbstractService implements JdbcDirectService {
     }
     
     /**
-     *
-     * @param tableName
+     * 
      * @param columns
      * @param jsonFilters
      * @param page
      * @param limit
      * @param sort
      * @param dir
-     * @return
+     * @return 
      */
     @Override
-    @Transactional(readOnly = true)
-    public List<Map<String, Object>> findByJSONFilters(String tableName, List<GenericTableColumn> columns, String jsonFilters, Long page, Long limit, String sort, String dir){
+    public Parameters buildParameters(List<GenericTableColumn> columns, String jsonFilters, Long page, Long limit, String sort, String dir){
         Parameters parameters= new Parameters();
 
         if (jsonFilters != null && !jsonFilters.equals("")) {
@@ -225,46 +223,7 @@ public abstract class JdbcDirectAbstractService implements JdbcDirectService {
             parameters.orderBy(sort, dir);
         }
         
-        List<Map<String, Object>> listEntities = jdbcDirectRepository.findByParameters(tableName, parameters);
-
-        return listEntities;
-    }
-    
-    /**
-     *
-     * @param tableName
-     * @param columns
-     * @param jsonFilters
-     * @return
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Long countByJSONFilters(String tableName, List<GenericTableColumn> columns, String jsonFilters){
-        Parameters parameters= new Parameters();
-
-        if (jsonFilters != null && !jsonFilters.equals("")) {
-            parameters = FilterQueryDirectJSON.processFilters(jsonFilters, columns);
-        }
-
-        return jdbcDirectRepository.countByParameters(tableName, parameters);
-    }
-    
-    /**
-     *
-     * @param tableName
-     * @param columns
-     * @param jsonFilters
-     * @return
-     */
-    @Override
-    public Integer updateByJSONFilters(String tableName, List<GenericTableColumn> columns, String jsonFilters){
-        Parameters parameters= new Parameters();
-
-        if (jsonFilters != null && !jsonFilters.equals("")) {
-            parameters = FilterQueryDirectJSON.processFilters(jsonFilters, columns);
-        }
-
-        return jdbcDirectRepository.updateByParameters(tableName, parameters);
+        return parameters;
     }
 
     /**

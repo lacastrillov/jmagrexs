@@ -62,17 +62,18 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             valueField: 'id',
             queryMode: 'remote',
             optionAll: false,
+            hideLabel: true,
             comboboxDependent: [],
             reloadData: false,
             realGridValue: null,
             listeners: {
                 change: function(record){
                     if(component==='filter'){
-                        if(record.getValue()!==0){
+                        /*if(record.getValue()!==0){
                             parentExtController.filter.eq[fieldName]= record.getValue();
                         }else{
                             delete parentExtController.filter.eq[fieldName];
-                        }
+                        }*/
                     }
                     this.comboboxDependent.forEach(function(combobox) {
                         var filter= {"eq":{"${entityRef}":record.getValue()}};
@@ -139,8 +140,11 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             }
         });
         
-        if(component!=='grid'){
+        if(component!=='filter' && component!=='grid'){
             Instance.combobox[component].fieldLabel= fieldTitle;
+            Instance.combobox[component].hideLabel= false;
+        }else if(component==='filter'){
+            Instance.combobox[component].columnWidth= 0.6;
         }
         
         return Instance.combobox[component];
@@ -153,7 +157,7 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
         Instance.multiselect= {
             id: 'multiselect'+fieldName+'In'+entityDestination,
             name: fieldName,
-            fieldLabel: fieldTitle,
+            //fieldLabel: fieldTitle,
             xtype: 'multiselect',
             displayField: '${labelField}',
             valueField: 'id',
@@ -164,6 +168,8 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
             arrayValues:[],
             lastSelected: null,
             store: Instance.store,
+            hideLabel: true,
+            columnWidth: 0.6,
             listeners: {
                 change: function(record){
                     var value= record.getValue();
@@ -181,11 +187,11 @@ function ${entityName}ExtInterfaces(parentExtController, parentExtView){
                             selector.arrayValues.splice(index, 1);
                         }
                         selector.setValue(selector.arrayValues);
-                        if(selector.arrayValues.length>0){
+                        /*if(selector.arrayValues.length>0){
                             parentExtController.filter.in[fieldName]= selector.arrayValues;
                         }else{
                             delete parentExtController.filter.in[fieldName];
-                        }
+                        }*/
                     },
                     scope: this
                 },

@@ -66,8 +66,9 @@ public abstract class RestDirectController {
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
             if(tableColumnsConfig.existLeadTable(tableName)){
-                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
-                Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
+                Parameters p= directService.buildParameters(columns, filter, page, limit, sort, dir);
+                List<Map<String, Object>> listItems = directService.findByParameters(tableName, p);
+                Long totalCount = p.getTotalResults();
 
                 resultData=Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
             }else{
@@ -89,8 +90,9 @@ public abstract class RestDirectController {
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
             if(tableColumnsConfig.existLeadTable(tableName)){
-                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, page, limit, sort, dir);
-                Long totalCount = directService.countByJSONFilters(tableName, columns, filter);
+                Parameters p= directService.buildParameters(columns, filter, page, limit, sort, dir);
+                List<Map<String, Object>> listItems = directService.findByParameters(tableName, p);
+                Long totalCount = p.getTotalResults();
 
                 String resultData = Util.getResultListCallback(listItems, totalCount, "Busqueda de " + tableName + " realizada...", true);
                 String xml = XMLMarshaller.convertJSONToXML(resultData, ResultListCallback.class.getSimpleName());
@@ -115,7 +117,8 @@ public abstract class RestDirectController {
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
             if(tableColumnsConfig.existLeadTable(tableName)){
-                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
+                Parameters p= directService.buildParameters(columns, filter, null, null, sort, dir);
+                List<Map<String, Object>> listItems = directService.findByParameters(tableName, p);
 
                 response.setContentType("application/vnd.ms-excel");
                 response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.xlsx\"");
@@ -136,7 +139,8 @@ public abstract class RestDirectController {
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
             if(tableColumnsConfig.existLeadTable(tableName)){
-                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, sort, dir);
+                Parameters p= directService.buildParameters(columns, filter, null, null, sort, dir);
+                List<Map<String, Object>> listItems = directService.findByParameters(tableName, p);
 
                 response.setContentType("text/csv; charset=utf-8");
                 response.setHeader("Content-Disposition", "attachment; filename=\""+ tableName + "_report.csv\"");
@@ -236,7 +240,8 @@ public abstract class RestDirectController {
                     jsonFilter.put("uv", jsonUpdate);
                     jsonData= jsonFilter.toString();
                 }
-                Integer updatedRecords= directService.updateByJSONFilters(tableName, columns, jsonData);
+                Parameters p= directService.buildParameters(columns, jsonData, null, null, null, null);
+                Integer updatedRecords= directService.updateByParameters(tableName, p);
                 resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + tableName + " realizada...", true);
             }else{
                 resultData= Util.getOperationCallback(null, LEAD_TABLE_ERROR_MESSAGE + tableName, false);
@@ -292,7 +297,8 @@ public abstract class RestDirectController {
         try {
             List<GenericTableColumn> columns= tableColumnsConfig.getColumnsFromTableName(tableName);
             if(tableColumnsConfig.existLeadTable(tableName)){
-                List<Map<String, Object>> listItems = directService.findByJSONFilters(tableName, columns, filter, null, null, null, null);
+                Parameters p= directService.buildParameters(columns, filter, null, null, null, null);
+                List<Map<String, Object>> listItems = directService.findByParameters(tableName, p);
 
                 for(Map<String, Object> entity: listItems){
                     directService.removeByParameter(tableName, "id", entity.get("id"));

@@ -176,31 +176,29 @@ public interface EntityService<T> {
     int removeByParameters(Parameters parameters);
     
     /**
-     *
-     * @param jsonFilters
+     * 
+     * @param jsonfilters
      * @param query
      * @param page
      * @param limit
      * @param sort
      * @param dir
-     * @return
+     * @return 
      */
-    List<T> findByJSONFilters(String jsonFilters, String query, Long page, Long limit, String sort, String dir);
+    public Parameters buildParameters(String jsonfilters, String query, Long page, Long limit, String sort, String dir);
     
     /**
-     *
-     * @param jsonFilters
+     * 
+     * @param jsonfilters
      * @param query
-     * @return
+     * @param page
+     * @param limit
+     * @param sort
+     * @param dir
+     * @param c
+     * @return 
      */
-    Long countByJSONFilters(String jsonFilters, String query);
-    
-    /**
-     *
-     * @param jsonFilters
-     * @return
-     */
-    Integer updateByJSONFilters(String jsonFilters);
+    public Parameters buildParameters(String jsonfilters, String query, Long page, Long limit, String sort, String dir, Class c);
     
     /**
      * *************************************************************************
@@ -232,28 +230,6 @@ public interface EntityService<T> {
      * @return
      */
     Long countByParameters(String nameQuerySource, Parameters parameters);
-    
-    /**
-     *
-     * @param nameQuerySource
-     * @param jsonFilters
-     * @param page
-     * @param limit
-     * @param sort
-     * @param dir
-     * @param c
-     * @return
-     */
-    List<Object> findByJSONFilters(String nameQuerySource, String jsonFilters, Long page, Long limit, String sort, String dir, Class c);
-    
-    /**
-     *
-     * @param nameQuerySource
-     * @param jsonFilters
-     * @param c
-     * @return
-     */
-    Long countByJSONFilters(String nameQuerySource, String jsonFilters, Class c);
     
     /**
      *

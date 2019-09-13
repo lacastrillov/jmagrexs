@@ -48,6 +48,7 @@ public class DtoGenerator extends ClassGenerator {
 
                 if(type.equals("java.lang.Class")==false){
                     String simpleType= propertyDescriptor.getPropertyType().getSimpleName();
+                    simpleType= Formats.getObjectTypeByNative(simpleType);
                     String simpleTypeSet= simpleType;
                     String fieldName= propertyDescriptor.getName();
                     String fieldEntity= StringUtils.capitalize(fieldName);

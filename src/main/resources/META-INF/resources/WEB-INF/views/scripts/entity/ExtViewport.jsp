@@ -75,19 +75,85 @@ function ${entityName}ExtViewport(){
                     text: 'Filtrar',
                     scope: this,
                     handler: function(){
-                        Instance.entityExtController.doFilter();
+                        Instance.doFilter();
                     }
                 },{
                     text: 'Limpiar Filtros',
                     scope: this,
                     handler: function(){
                         Instance.filters.getForm().reset();
-                        Instance.entityExtController.initFilter();
-                        Instance.entityExtController.doFilter();
+                        var filterData= Instance.filters.getForm().getValues();
+                        for(var fieldName in filterData){
+                            if(fieldName.startsWith("operator_")){
+                                var operatorCombobox= Instance.entityExtController.entityExtView.commonExtView.combobox[fieldName];
+                                operatorCombobox.setValue(operatorCombobox.defaultOperator);
+                            }
+                        }
+                        Instance.entityExtController.doFilter({});
                     }
                 }]
             }]
         });
+        
+        Instance.doFilter= function(){
+            var filterData= Instance.filters.getForm().getValues();
+            var filter= {};
+            for(var fieldName in filterData){
+                if(!fieldName.startsWith("operator_") && !fieldName.endsWith("_end")){
+                    var finalFieldName= fieldName;
+                    var isRangeField= fieldName.endsWith("_start");
+                    if(isRangeField){
+                        finalFieldName= fieldName.replace("_start","");
+                    }
+                    var operatorFieldName= "operator_"+finalFieldName;
+                    var operator= filterData[operatorFieldName];
+                    if(!filter.hasOwnProperty(operator)){
+                        if(operator==="isn" || operator==="isnn"){
+                            filter[operator]= [];
+                        }else{
+                            filter[operator]= {};
+                        }
+                    }
+                    switch(operator){
+                        case "eq":
+                        case "lk":
+                        case "dt":
+                        case "gt":
+                        case "gte":
+                        case "lt":
+                        case "lte":
+                            var value= filterData[fieldName];
+                            if(value!==""){
+                                filter[operator][finalFieldName]= value;
+                            }
+                            break;
+                        case "isn":
+                        case "isnn":
+                            filter[operator].push(finalFieldName);
+                            break;
+                        case "in":
+                            var value= filterData[fieldName];
+                            if(value!==""){
+                                filter[operator][finalFieldName]= value.split(",");
+                            }
+                            break;
+                        case "btw":
+                            var startValue= filterData[finalFieldName+"_start"];
+                            var endValue= filterData[finalFieldName+"_end"];
+                            if(startValue!=="" && endValue!==""){
+                                filter[operator][finalFieldName]= [startValue, endValue];
+                            }
+                            break;
+                    }
+                }
+            }
+            for(var typeF in filter){
+                if(Object.keys(filter[typeF]).length===0){
+                    delete filter[typeF];
+                }
+            }
+            Instance.entityExtController.doFilter(filter);
+        };
         </c:if>
         
         <c:if test="${viewConfig.visibleMenu}">
