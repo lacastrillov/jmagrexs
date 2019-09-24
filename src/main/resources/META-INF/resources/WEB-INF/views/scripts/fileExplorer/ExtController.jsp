@@ -218,6 +218,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.doFilter= function(filter){
         var url= "?filter="+JSON.stringify(filter);
+        Instance.reloadGrid= true;
         console.log(url);
         mvcExt.navigate(url);
     };
