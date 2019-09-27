@@ -101,7 +101,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                 });
             }else{
                 Instance.idEntitySelected= "";
-                if(Object.keys(Instance.filter.eq).length !== 0){
+                if('eq' in Instance.filter && Object.keys(Instance.filter.eq).length !== 0){
                     var record= Ext.create(Instance.modelName);
                     for (var key in Instance.filter.eq) {
                         record.data[key]= Instance.filter.eq[key];
