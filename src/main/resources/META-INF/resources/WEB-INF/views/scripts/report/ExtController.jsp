@@ -113,6 +113,7 @@ function ${reportName}ExtController(parentExtView){
     
     Instance.doFilter= function(filter){
         var url= "?filter="+JSON.stringify(filter);
+        Instance.reloadGrid= true;
         mvcExt.navigate(url);
     };
 
