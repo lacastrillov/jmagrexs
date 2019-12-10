@@ -198,7 +198,7 @@ public class JSONFilters {
 
             if(fieldName.equals("id")){
                 formField.put("name", fieldName);
-                formField.put("xtype", "numberfield");
+                formField.put("xtype", "textfield");
                 formField.put("columnWidth", "0.6");
 
                 String operatorCombobox= "@"+container+".commonExtView.getOperatorCombobox('"+fieldName+"','number')@";

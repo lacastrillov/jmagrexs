@@ -173,7 +173,7 @@ function CommonExtView(parentExtController, parentExtView, model){
     };
     
     Instance.getOperatorCombobox= function(fieldName, typeField){
-        var dataArray= Instance.getDataOperatorCombobox(typeField);
+        var dataArray= Instance.getDataOperatorCombobox(fieldName, typeField);
         var data=[];
         dataArray.forEach(function(item) {
             var itemValue= item.split(':');
@@ -231,7 +231,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         return Instance.combobox['operator_'+fieldName];
     };
     
-    Instance.getDataOperatorCombobox= function(typeField){
+    Instance.getDataOperatorCombobox= function(fieldName, typeField){
         var dataArray= [];
         if(typeField!=='multiselect'){
             dataArray.push("eq:Igual");
@@ -244,7 +244,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(typeField!=='multiselect'){
             dataArray.push("dt:Diferente");
         }
-        if(typeField==='multiselect'){
+        if(typeField==='select' || typeField==='multiselect' || typeField==='string' || fieldName==='id'){
             dataArray.push("in:Entre");
         }
         if(typeField==='range'){
