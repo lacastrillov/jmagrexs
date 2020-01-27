@@ -456,7 +456,7 @@ public abstract class ExtEntityController extends ExtReportController {
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass());
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass(), false, false);
                 jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             }
             gridColumn.put("items", gridActions);
@@ -477,7 +477,7 @@ public abstract class ExtEntityController extends ExtReportController {
                 jsonGlobalActions.put(globalAction);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processGlobalActions.getProcessName(), "", processGlobalActions.getDtoClass());
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processGlobalActions.getProcessName(), "", processGlobalActions.getDtoClass(), false, false);
                 jsonFormFieldsProcessMap.put(processGlobalActions.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             }
         }

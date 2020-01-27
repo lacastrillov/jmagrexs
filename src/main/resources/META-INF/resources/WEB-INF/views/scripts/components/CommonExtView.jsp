@@ -384,6 +384,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                                     visible=upFieldset.isVisible();
                                     upFieldset= upFieldset.up('fieldset');
                                 };
+                                c.setVisible(visible);
                                 c.setDisabled(!c.isVisible() || !visible);
                             });
                         }
@@ -395,7 +396,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                             linkField.setVisible(true);
                             linkField.setDisabled(false);
                         }
-                        itemsGroup.itemTop=i+1;
+                        itemsGroup.itemTop=i;
                     }else{
                         itemField.setVisible(false);
                         itemField.setDisabled(true);
@@ -415,12 +416,12 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.addListItem= function(processName, parent, fieldName){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
-        if(itemsGroup.itemTop<MAX_LIST_ITEMS){
+        if(itemsGroup.itemTop<MAX_LIST_ITEMS-1){
+            itemsGroup.itemTop+= 1;
             var itemField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
             var rendererField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
             var linkField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Link");
             
-            itemsGroup.itemTop+= 1;
             itemField.setVisible(true);
             itemField.setDisabled(false);
             if(itemField.query){
@@ -431,6 +432,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                         visible=upFieldset.isVisible();
                         upFieldset= upFieldset.up('fieldset');
                     };
+                    c.setVisible(visible);
                     c.setDisabled(!c.isVisible() || !visible);
                 });
             }
@@ -447,11 +449,11 @@ function CommonExtView(parentExtController, parentExtView, model){
     
     Instance.removeListItem= function(processName, parent, fieldName){
         var itemsGroup= Ext.getCmp(processName+"_"+parent+fieldName);
-        if(itemsGroup.itemTop>0){
-            itemsGroup.itemTop-= 1;
+        if(itemsGroup.itemTop>=0){
             var itemField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]");
             var rendererField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Renderer");
             var linkField= Ext.getCmp(processName+"_"+parent+fieldName+"["+itemsGroup.itemTop+"]Link");
+            itemsGroup.itemTop-= 1;
             
             itemField.setVisible(false);
             itemField.setDisabled(true);

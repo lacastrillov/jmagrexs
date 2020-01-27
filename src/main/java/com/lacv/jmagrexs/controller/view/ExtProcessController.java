@@ -80,6 +80,9 @@ public abstract class ExtProcessController extends ExtController {
             JSONArray menuItems= getMenuItems(session, menuComponent);
             mav.addObject("menuItems",menuItems.toString());
         }
+        if(processConfig.isVisibleFilters()){
+            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
+        }
         
         return mav;
     }
@@ -144,10 +147,6 @@ public abstract class ExtProcessController extends ExtController {
         mav.addObject("jsonEmptyModel", jsonEmptyModel.toString());
         mav.addObject("jsonTypeChildExtViews", new Gson().toJson(processConfig.getTypeChildExtViews()));
         
-        if(processConfig.isVisibleFilters()){
-            mav.addObject("jsonFieldsFilters", jsonFieldsFilters.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
-        }
-        
         return mav;
     }
     
@@ -191,7 +190,7 @@ public abstract class ExtProcessController extends ExtController {
             JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
             
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue(), false, false);
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             
             if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){

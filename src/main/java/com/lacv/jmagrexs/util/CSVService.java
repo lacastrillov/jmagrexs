@@ -163,7 +163,11 @@ public class CSVService {
             }
         }
         String[] records= csvRecords.split("\n");
-        String[] columns= records[0].split(DEFAULT_SEPARATOR);
+        String SEPARATOR= DEFAULT_SEPARATOR;
+        if(records[0].contains(",") && !records[0].contains(";")){
+            SEPARATOR=",";
+        }
+        String[] columns= records[0].split(SEPARATOR);
         for(int i=0; i<columns.length; i++){
             if(invertedTitledFieldsMap.containsKey(columns[i])){
                 columns[i]= invertedTitledFieldsMap.get(columns[i]);
@@ -172,10 +176,13 @@ public class CSVService {
         JSONArray objects= new JSONArray();
         for(int i=1; i<records.length; i++){
             JSONObject object= new JSONObject();
-            String[] record= records[i].split(DEFAULT_SEPARATOR);
+            String[] record= records[i].split(SEPARATOR);
             for(int j=0; j<record.length; j++){
                 String fieldName= columns[j];
                 String value= record[j];
+                if(value.startsWith("\"") && value.endsWith("\"")){
+                    value= value.replaceAll("\"", "");
+                }
                 if(baseDtoTypes.contains(fieldName)){
                     object.put(fieldName, value.split(" - ")[0]);
                 }else{
@@ -195,7 +202,11 @@ public class CSVService {
         }
         
         String[] records= csvRecords.split("\n");
-        String[] columns= records[0].split(DEFAULT_SEPARATOR);
+        String SEPARATOR= DEFAULT_SEPARATOR;
+        if(records[0].contains(",") && !records[0].contains(";")){
+            SEPARATOR=",";
+        }
+        String[] columns= records[0].split(SEPARATOR);
         for(int i=0; i<columns.length; i++){
             if(nameColumnsMap.containsKey(columns[i])){
                 columns[i]= nameColumnsMap.get(columns[i]);
@@ -204,10 +215,13 @@ public class CSVService {
         JSONArray objects= new JSONArray();
         for(int i=1; i<records.length; i++){
             JSONObject object= new JSONObject();
-            String[] record= records[i].split(DEFAULT_SEPARATOR);
+            String[] record= records[i].split(SEPARATOR);
             for(int j=0; j<record.length; j++){
                 String fieldName= columns[j];
                 String value= record[j];
+                if(value.startsWith("\"") && value.endsWith("\"")){
+                    value= value.replaceAll("\"", "");
+                }
                 object.put(fieldName, value);
             }
             objects.put(object);

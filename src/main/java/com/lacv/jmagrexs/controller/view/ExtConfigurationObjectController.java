@@ -10,11 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import com.lacv.jmagrexs.components.JSONForms;
-import com.lacv.jmagrexs.components.JSONModels;
 import com.lacv.jmagrexs.dto.config.ConfigurationObjectConfig;
 import javax.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public abstract class ExtConfigurationObjectController extends ExtController {
@@ -22,12 +19,6 @@ public abstract class ExtConfigurationObjectController extends ExtController {
     protected static final Logger LOGGER = Logger.getLogger(ExtConfigurationObjectController.class);
     
     private ConfigurationObjectConfig viewConfig;
-    
-    @Autowired
-    public JSONModels jm;
-    
-    @Autowired
-    public JSONForms jfo;
     
     private final Map<String, String> jsonModelMap= new HashMap();
     
@@ -153,7 +144,7 @@ public abstract class ExtConfigurationObjectController extends ExtController {
             JSONArray jsonModel = jm.getJSONRecursiveModel("", entry.getValue());
             jsonModelMap.put(entry.getKey(), jsonModel.toString());
             
-            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue());
+            JSONArray jsonFormFields = jfo.getJSONProcessForm(entry.getKey(), "", entry.getValue(), false, false);
             jsonFormFieldsMap.put(entry.getKey(), jsonFormFields.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             
             if(jfo.getInterfacesEntityRefMap().containsKey(entry.getKey())){

@@ -47,7 +47,7 @@ public class JSONForms {
         return interfacesEntityRefMap;
     }
     
-    public JSONArray getJSONProcessForm(String processName, String parent, Class dtoClass){
+    public JSONArray getJSONProcessForm(String processName, String parent, Class dtoClass, boolean hidden, boolean disabled){
         JSONArray jsonFormFields= new JSONArray();
         
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
@@ -73,12 +73,12 @@ public class JSONForms {
                 if(!hideFields.contains(fieldName + HideView.FORM.name())){
                     if(fieldsEC.containsKey(fieldName)){
                         jfi.addEntityCombobox(jsonFormFields, processName, parent, fieldsEC.get(fieldName).getSimpleName(),
-                                fieldName, fieldTitle, getInterfacesEntityRefMap(), readOnly, fieldsNN.contains(fieldName), false, false);
+                                fieldName, fieldTitle, getInterfacesEntityRefMap(), readOnly, fieldsNN.contains(fieldName), hidden, disabled);
                         
                     }else if(Formats.TYPES_LIST.contains(type)){
                         jfi.addJSONField(jsonFormFields, processName, parent, type, fieldName,
                                 titledFieldsMap.get(fieldName), typeFormFields, sizeColumnMap,
-                                readOnly, fieldsNN.contains(fieldName), false, false);
+                                readOnly, fieldsNN.contains(fieldName), hidden, disabled);
                         
                     }else{
                         Class childClass = propertyDescriptor.getPropertyType();
@@ -94,7 +94,7 @@ public class JSONForms {
                         objectField.put("defaultType", "textfield");
                         objectField.put("minWidth", 300);
                         objectField.put("fieldDefaults", fieldDefaults);
-                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+".", childClass));
+                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+".", childClass, hidden, disabled));
                         
                         jsonFormFields.put(objectField);
                     }
@@ -119,8 +119,8 @@ public class JSONForms {
                 
                 JSONArray jsonList= new JSONArray();
                 for(int i=0; i<MAX_LIST_ITEMS; i++){
-                    boolean hidden= (i>0);
-                    boolean disabled= (i>0);
+                    hidden= (i>0);
+                    disabled= (i>0);
                     fieldTitle= "Item "+(i+1);
                     if(fieldsEC.containsKey(fieldName)){
                         jfi.addEntityCombobox(jsonList, processName, parent, fieldsEC.get(fieldName).getSimpleName(),
@@ -146,7 +146,7 @@ public class JSONForms {
                         fieldDefaultsChild.put("labelAlign", "right");
                         fieldDefaultsChild.put("disabled", disabled);
                         objectField.put("fieldDefaults", fieldDefaultsChild);
-                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+"["+i+"].", childClass));
+                        objectField.put("items", getJSONProcessForm(processName, parent+fieldName+"["+i+"].", childClass, hidden, disabled));
                         jsonList.put(objectField);
                     }
                 }

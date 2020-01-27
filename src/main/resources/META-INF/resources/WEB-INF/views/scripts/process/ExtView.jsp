@@ -37,7 +37,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.store= Instance.entityExtStore.getStore(Instance.modelName);
         Instance.extInterfaces={};
         
-        Instance.createMainView();
     };
     
     Instance.setFilterStore= function(filter){
@@ -360,59 +359,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     </c:if>
     
     <c:if test="${viewConfig.visibleGrid}">
-        
-    function getFiltersPanel(){
-        return Ext.create('Ext.form.Panel', {
-            id: 'filters-panel',
-            title: 'Filtros',
-            region: 'west',
-            plain: true,
-            bodyBorder: false,
-            bodyPadding: 10,
-            margins: '0 0 0 0',
-            split: true,
-            collapsible: true,
-            collapsed: ${viewConfig.collapsedFilters},
-            height: '100%',
-            autoScroll: true,
-            width: 400,
-            minSize: 200,
-
-            fieldDefaults: {
-                labelWidth: "51%",
-                anchor: '100%',
-                labelAlign: 'right'
-            },
-
-            layout: {
-                type: 'vbox',
-                align: 'stretch'  // Child items are stretched to full width
-            },
-
-            items: ${jsonFieldsFilters},
-            
-            dockedItems: [{
-                xtype: 'toolbar',
-                dock: 'bottom',
-                ui: 'footer',
-                items: ['->',{
-                    text: 'Filtrar',
-                    scope: this,
-                    handler: function(){
-                        parentExtController.doFilter();
-                    }
-                },{
-                    text: 'Limpiar Filtros',
-                    scope: this,
-                    handler: function(){
-                        Instance.filters.getForm().reset();
-                        parentExtController.doFilter({});
-                    }
-                }]
-            }]
-        });
-    }
-        
     function getGridContainer(){
         var idGrid= 'grid${viewConfig.entityNameLogProcess}';
         var gridColumns= ${jsonGridColumns};
@@ -622,7 +568,6 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         Instance.gridContainer = getGridContainer();
         Instance.gridComponent= Instance.gridContainer.child('#grid${viewConfig.entityNameLogProcess}');
         Instance.store.gridComponent= Instance.gridComponent;
-        Instance.filters= getFiltersPanel();
         </c:if>
             
         createFormJson();
@@ -663,7 +608,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     layout: 'border',
                     bodyStyle: 'padding:0px',
                     items: [
-                        Instance.filters,
+                        parentExtController.parentExtView.filters,
                         Instance.gridContainer
                     ]
                 }
@@ -696,6 +641,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
     };
     
     Instance.getMainView= function(){
+        Instance.createMainView();
         return Instance.mainView;
     };
 

@@ -54,9 +54,6 @@ public class JSONFilters {
         HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
         
         String container= "Instance.entityExtController.entityExtView";
-        if(pageType.equals(PageType.PROCESS)){
-            container= "Instance";
-        }
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();

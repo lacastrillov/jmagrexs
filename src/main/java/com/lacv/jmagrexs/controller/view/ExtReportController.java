@@ -340,7 +340,7 @@ public abstract class ExtReportController extends ExtController {
                 jsonInternalViewButtons.put(internalViewButton);
                 
                 //Add Form Fields by Process
-                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass());
+                JSONArray jsonFormFieldsProcess = jfo.getJSONProcessForm(processButton.getProcessName(), "", processButton.getDtoClass(), false, false);
                 jsonFormFieldsProcessMap.put(processButton.getProcessName(), jsonFormFieldsProcess.toString().replaceAll("\"@", "").replaceAll("@\"", ""));
             }
             gridColumn.put("items", gridActions);

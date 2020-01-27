@@ -10,6 +10,8 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.modelName="${entityName}Model";
     
+    Instance.parentExtView= parentExtView;
+    
     Instance.services= {};
     
     var util= new Util();
@@ -192,8 +194,8 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         }
     };
     
-    Instance.doFilter= function(){
-        var url= "?filter="+JSON.stringify(Instance.filter)+"&tab=1";
+    Instance.doFilter= function(filter){
+        var url= "?filter="+JSON.stringify(filter)+"&tab=1";
         Instance.reloadGrid= true;
         console.log(url);
         mvcExt.navigate(url);
