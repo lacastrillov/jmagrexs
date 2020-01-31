@@ -12,6 +12,7 @@ import com.lacv.jmagrexs.reflection.EntityReflection;
 import java.beans.PropertyDescriptor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.Embeddable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -89,6 +90,8 @@ public class FilterQueryJSON {
                     Object parseValue = Formats.castParameter(typeField.getName(), value);
                     if (parseValue != null) {
                         parameters.whereEqual(filterName, parseValue);
+                    } else if(typeField.getAnnotation(Embeddable.class)!=null){
+                        parameters.whereEqual(filterName, Util.decodeObject(value, typeField));
                     } else {
                         PropertyDescriptor[] propertiesParam = EntityReflection.getPropertyDescriptors(typeField);
                         BaseEntity entityObject = (BaseEntity) EntityReflection.getObjectForClass(typeField);
@@ -247,6 +250,10 @@ public class FilterQueryJSON {
                         for(int i = 0 ; i < values.length(); i++){
                             inValues[i]= Formats.castParameter(typeField.getName(), values.get(i).toString());
                         }
+                    }else if(typeField.getAnnotation(Embeddable.class)!=null){
+                        for(int i = 0 ; i < values.length(); i++){
+                            inValues[i]= Util.decodeObject(values.get(i).toString(), typeField);
+                        }
                     }else{
                         PropertyDescriptor[] propertiesParam = EntityReflection.getPropertyDescriptors(typeField);
                         for(int i = 0 ; i < values.length(); i++){
@@ -277,6 +284,10 @@ public class FilterQueryJSON {
                     if(Formats.castParameter(typeField.getName(), values.get(0).toString())!=null){
                         for(int i = 0 ; i < values.length(); i++){
                             inValues[i]= Formats.castParameter(typeField.getName(), values.get(i).toString());
+                        }
+                    }else if(typeField.getAnnotation(Embeddable.class)!=null){
+                        for(int i = 0 ; i < values.length(); i++){
+                            inValues[i]= Util.decodeObject(values.get(i).toString(), typeField);
                         }
                     }else{
                         PropertyDescriptor[] propertiesParam = EntityReflection.getPropertyDescriptors(typeField);

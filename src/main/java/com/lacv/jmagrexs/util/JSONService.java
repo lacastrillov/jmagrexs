@@ -60,7 +60,11 @@ public class JSONService {
      * @return 
      */
     public static Object jsonToObject(String json, Class objectClass) {
-        return getGson().fromJson(json, objectClass);
+        if(objectClass==JSONObject.class){
+            return new JSONObject(json);
+        }else{
+            return getGson().fromJson(json, objectClass);
+        }
     }
     
     /**

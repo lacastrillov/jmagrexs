@@ -38,7 +38,7 @@ public class DaoImplGenerator extends ClassGenerator {
                     "\n" +
                     "import "+groupId+".daos."+entityName+"Jpa;\n" +
                     "import "+entityPackage+"."+entityName+";\n" +
-                    "import com.lacv.jmagrexs.dao.JPAGenericDao;\n" +
+                    "import com.lacv.jmagrexs.dao.JPAGenericDao"+this.indexDataSource+";\n" +
                     "import org.springframework.stereotype.Repository;\n" +
                     "\n" +
                     "/**\n" +

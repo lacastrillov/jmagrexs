@@ -26,7 +26,7 @@ public class JdbcDirectRepository {
     
     protected String dbEngine= "MySQL";
     
-    public static final String MY_SQL="MySQL", SQL_SERVER="SQLServer", ORACLE="Oracle";
+    public static final String MY_SQL="MySQL", SQL_SERVER="SQLServer", ORACLE="Oracle", DB2="DB2";
     
     private final String PAGINATE_QUERY="SELECT * FROM (SELECT ROWNUM R, A.* FROM ( %s ) A  WHERE ROWNUM <= %s )  WHERE R >= %s";
     
@@ -557,16 +557,10 @@ public class JdbcDirectRepository {
      */
     private StringBuilder getPaginateQuery(StringBuilder sql, Parameters parameters){
         if (parameters.getFirstResult() != null && parameters.getLastResult() != null) {
-            switch(dbEngine){
-                case MY_SQL:
-                    sql.append(" LIMIT ").append(parameters.getFirstResult()).append(", ").append(parameters.getMaxResults());
-                    break;
-                case ORACLE:
-                    sql = new StringBuilder(String.format(PAGINATE_QUERY, sql.toString(), parameters.getLastResult(), parameters.getFirstResult()));
-                    break;
-                case SQL_SERVER:
-                    sql.append(" LIMIT ").append(parameters.getFirstResult()).append(", ").append(parameters.getMaxResults());
-                    break;
+            if(dbEngine.endsWith(MY_SQL) || dbEngine.endsWith(SQL_SERVER) || dbEngine.endsWith(DB2)){
+                sql.append(" LIMIT ").append(parameters.getFirstResult()).append(", ").append(parameters.getMaxResults());
+            }else if(dbEngine.endsWith(ORACLE)){
+                sql = new StringBuilder(String.format(PAGINATE_QUERY, sql.toString(), parameters.getLastResult(), parameters.getFirstResult()));
             }
         }
         return sql;

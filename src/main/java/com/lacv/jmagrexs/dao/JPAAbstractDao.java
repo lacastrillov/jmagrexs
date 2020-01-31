@@ -55,7 +55,11 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      */
     @Override
     public void create(T entity) {
-        this.getEntityManager().persist(entity);
+        if(!super.embeddedId){
+            this.getEntityManager().persist(entity);
+        }else{
+            super.insert(entity);
+        }
     }
     
     /**

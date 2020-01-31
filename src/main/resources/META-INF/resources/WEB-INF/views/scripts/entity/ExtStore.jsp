@@ -342,6 +342,28 @@ function ${entityName}ExtStore(){
             }
         });
     };
+    
+    Instance.deleteByIds= function(ids, func){
+        Ext.MessageBox.show({
+            msg: 'Eliminando...',
+            width:200,
+            wait:true,
+            waitConfig: {interval:200}
+        });
+        Ext.Ajax.request({
+            url: "${serverDomain.applicationContext}${serverDomain.restContext}/rest/${entityRef}/"+baseAction+"delete/byids.htm",
+            method: "GET",
+            params: (ids!==null && ids!=="")?"ids="+ids:"",
+            success: function(response){
+                var responseText= Ext.decode(response.responseText);
+                func(responseText);
+                Ext.MessageBox.hide();
+            },
+            failure: function(response){
+                commonExtView.processFailure(response);
+            }
+        });
+    };
 
 }
 <c:if test="${!jsLib}">

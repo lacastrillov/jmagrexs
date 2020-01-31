@@ -1,9 +1,11 @@
 package com.lacv.jmagrexs.controller.rest;
 
+import static com.lacv.jmagrexs.controller.rest.RestEntityController.LOGGER;
 import com.lacv.jmagrexs.domain.BaseDto;
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.Util;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -247,6 +249,30 @@ public abstract class RestSessionController extends RestEntityController {
             return deleteByFilter(sessionFilter, request);
         }else{
             return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por filtros", false);
+        }
+    }
+    
+    @RequestMapping(value = "/session_delete/byids.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @ResponseBody
+    public String sessionDeleteByIds(@RequestParam String ids, HttpServletRequest request) {
+        try {
+            List listDtos= new ArrayList();
+            for(String idEntity: ids.split(",")){
+                Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
+                BaseEntity entity = (BaseEntity) service.loadById(id);
+                if(canSessionDelete(entity)){
+                    listDtos.add(mapper.entityToDto(entity));
+                    service.remove(entity);
+                }
+            }
+            if(listDtos.size()>0){
+                return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+            }else{
+                return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por ids", false);
+            }
+        } catch (Exception e) {
+            LOGGER.error("delete " + entityRef, e);
+            return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
         }
     }
     

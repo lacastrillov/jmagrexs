@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
@@ -51,6 +52,8 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     
     private final List<Field> joinColumnFields;
     
+    protected boolean embeddedId;
+    
     /**
      *
      */
@@ -60,6 +63,7 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
         table= (Table) EntityReflection.getClassAnnotation(persistentClass, Table.class);
         columnFields= getEntityAnnotatedFields(persistentClass, Column.class);
         joinColumnFields= getEntityAnnotatedFields(persistentClass, JoinColumn.class);
+        embeddedId= !(getEntityAnnotatedFields(persistentClass, EmbeddedId.class).isEmpty());
     }
     
     /**

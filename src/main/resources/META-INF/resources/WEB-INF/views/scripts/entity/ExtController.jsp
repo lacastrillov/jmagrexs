@@ -244,18 +244,24 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.deleteRecords= function(){
-        var ids= Instance.getSelectedIds();
-        if(ids.length>0){
-            var filter={"in":{"id":ids}};
-            if(ids.length===1){
-                Instance.entityExtView.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+        var selectedIds= Instance.getSelectedIds();
+        if(selectedIds.length>0){
+            var ids="";
+            for(var i=0; i<selectedIds.length; i++){
+                ids+=selectedIds[i];
+                if(i<selectedIds.length-1){
+                    ids+=",";
+                }
+            };
+            if(selectedIds.length===1){
+                Instance.entityExtView.entityExtStore.deleteByIds(ids, function(responseText){
                     Instance.loadFormData("");
                     Instance.entityExtView.reloadPageStore(Instance.entityExtView.store.currentPage);
                 });
             }else{
-                Ext.MessageBox.confirm('Confirmar', 'Esta seguro que desea eliminar '+ids.length+' registros?', function(result){
+                Ext.MessageBox.confirm('Confirmar', 'Esta seguro que desea eliminar '+selectedIds.length+' registros?', function(result){
                     if(result==="yes"){
-                        Instance.entityExtView.entityExtStore.deleteByFilter(JSON.stringify(filter), function(responseText){
+                        Instance.entityExtView.entityExtStore.deleteByIds(ids, function(responseText){
                             Instance.loadFormData("");
                             Instance.entityExtView.reloadPageStore(Instance.entityExtView.store.currentPage);
                         });

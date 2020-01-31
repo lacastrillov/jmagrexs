@@ -495,6 +495,30 @@ public abstract class RestEntityController {
         }
     }
     
+    @RequestMapping(value = "/delete/byids.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
+    @ResponseBody
+    public String deleteByIds(@RequestParam String ids, HttpServletRequest request) {
+        try {
+            List listDtos= new ArrayList();
+            for(String idEntity: ids.split(",")){
+                Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
+                BaseEntity entity = (BaseEntity) service.loadById(id);
+                if(isSessionRequest(request) || canDelete(entity)){
+                    listDtos.add(mapper.entityToDto(entity));
+                    service.remove(entity);
+                }
+            }
+            if(listDtos.size()>0){
+                return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+            }else{
+                return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por ids", false);
+            }
+        } catch (Exception e) {
+            LOGGER.error("delete " + entityRef, e);
+            return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
+        }
+    }
+    
     @RequestMapping(value = "/import.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] importData(@RequestParam(required= false) String data, HttpServletRequest request) {

@@ -79,9 +79,11 @@ public class ViewControllerGenerator extends ClassGenerator {
                     "        view.setDefaultOrder(\"id\", \"DESC\");\n" +
                     "        super.addControlMapping(view);\n" +
                     "        \n" +
-                    "        MenuItem menuParent= new MenuItem(\"Entidades\", 1);\n" +
                     "        MenuItem menuItem= new MenuItem(\""+entityVar+"\", \"Gestionar "+entityTitle+"s\", 1);\n" +
+                    "        \n" +
+                    "        MenuItem menuParent= new MenuItem(\"Entidades\", 1);\n" +
                     "        menuParent.addSubMenu(menuItem);\n" +
+                    "        \n" +
                     "        menuComponent.addItemMenu(menuParent);\n" +
                     "    }\n" +
                     "    \n" +
