@@ -406,10 +406,10 @@ public class JdbcDirectRepository {
             i = 0;
             for (Map.Entry<String, String> entry : parameters.getLikeParameters().entrySet()) {
                 String parameter = entry.getKey();
-                String value = entry.getValue();
+                String value = entry.getValue().toUpperCase();
 
                 mapParameters.addValue(parameter + "_l" + i, "%" + value + "%");
-                sql.append("o.").append(parameter).append(" like :").append(parameter).append("_l").append(i);
+                sql.append("UPPER(o.").append(parameter).append(") like :").append(parameter).append("_l").append(i);
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
@@ -482,8 +482,7 @@ public class JdbcDirectRepository {
                 mapParameters.addValue(parameter + "_b0", range[0]);
                 mapParameters.addValue(parameter + "_b1", range[1]);
 
-                sql.append("o.").append(parameter).append(" between ").append(":").append(parameter).append("_b0").append(" and ").append(":")
-                        .append(parameter).append("_b1");
+                sql.append("o.").append(parameter).append(" between :").append(parameter).append("_b0 and :").append(parameter).append("_b1");
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
@@ -501,20 +500,20 @@ public class JdbcDirectRepository {
                 sql.append(" AND ");
             } else {
                 sql.append(" WHERE ");
-                parametersSet = true;
+                //parametersSet = true;
             }
             i = 0;
             for (Map.Entry<String, String[]> entry : parameters.getQueryParameters().entrySet()) {
-                String query = entry.getKey();
+                String query = entry.getKey().toUpperCase();
                 String[] params= entry.getValue();
 
                 mapParameters.addValue("query_"+i, "%" + query + "%");
                 
-                sql.append("concat(");
+                sql.append("upper(concat(");
                 for(String parameter: params){
-                    sql.append("coalesce(").append("o.").append(parameter).append(",'')").append(",' ',");
+                    sql.append("coalesce(concat(o.").append(parameter).append(",''),''),' ',");
                 }
-                sql.append("'')").append(" like :query_").append(i);
+                sql.append("'')) like :query_").append(i);
 
                 if (i < numParameters - 1) {
                     sql.append(" AND ");
