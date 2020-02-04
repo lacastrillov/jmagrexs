@@ -114,9 +114,11 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     
     Instance.populateForm= function(processName, dataIn){
         var record= Ext.create(processName+"Model");
-        record.data= util.unremakeJSONObject(JSON.parse(dataIn));
+        var dataInObject= JSON.parse(dataIn);
+        record.data= util.unremakeJSONObject(dataInObject);
         var formComponent= Ext.getCmp('formContainer'+processName).child('#form'+processName);
         formComponent.setActiveRecord(record);
+        Instance.entityExtView.formJson.getForm().setValues({jsonData:JSON.stringify(dataInObject, null, 4)});
 
         Instance.entityExtView.commonExtView.showListItems(formComponent);
     };
