@@ -13,8 +13,11 @@ import com.lacv.jmagrexs.service.EntityService;
 import com.lacv.jmagrexs.util.Util;
 import com.lacv.jmagrexs.util.XMLMarshaller;
 import com.lacv.jmagrexs.dto.ResultListCallback;
+import com.lacv.jmagrexs.interfaces.MassiveOperationInterface;
 import com.lacv.jmagrexs.interfaces.WebEntityInterface;
 import com.lacv.jmagrexs.mapper.EntityMapper;
+import com.lacv.jmagrexs.service.DbOperationLogService;
+import com.lacv.jmagrexs.service.MassiveOperationLogService;
 import com.lacv.jmagrexs.util.CSVService;
 import com.lacv.jmagrexs.util.ExcelService;
 import com.lacv.jmagrexs.util.FileService;
@@ -93,6 +96,14 @@ public abstract class RestEntityController {
     
     @Autowired
     public FieldConfigurationByAnnotations fcba;
+    
+    @Autowired(required = false)
+    private DbOperationLogService dbOperationService;
+    
+    @Autowired(required = false)
+    private MassiveOperationLogService massiveOperationService;
+    
+    private Boolean dbLog= false, massLog=false;
     
 
     protected void addControlMapping(String entityRef, EntityService entityService, EntityMapper entityMapper) {
@@ -335,8 +346,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/create.htm", method = RequestMethod.POST)
     @ResponseBody
     public byte[] create(@RequestParam(required= false) String data, HttpServletRequest request) {
-        BaseDto dto = null;
-        String resultData;
+        String resultData, message;
         try {
             String jsonData= data;
             if(jsonData==null){
@@ -346,15 +356,20 @@ public abstract class RestEntityController {
             if(isSessionRequest(request) || canCreate(entity)){
                 service.create(entity);
                 entity = (BaseEntity) service.loadById(entity.getId());
-                dto = mapper.entityToDto(entity);
+                BaseDto dto = mapper.entityToDto(entity);
                 updateRelatedWebEntity(entity, request);
-                resultData= Util.getOperationCallback(dto, "Creaci&oacute;n de " + entityRef + " realizada...", true);
+                message= "Creaci&oacute;n de " + entityRef + " realizada...";
+                resultData= Util.getOperationCallback(dto, message, true);
+                if(dbLog) dbOperationService.save(entityRef, "create", dto, message, true, null);
             }else{
-                resultData= Util.getOperationCallback(dto, "Error, no puede crear la entidad " + entityRef, false);
+                BaseDto dto = mapper.entityToDto(entity);
+                message= "Error, no puede crear la entidad " + entityRef;
+                resultData= Util.getOperationCallback(dto, message, false);
+                if(dbLog) dbOperationService.save(entityRef, "create", dto, message, false, null);
             }
         } catch (Exception e) {
             LOGGER.error("create " + entityRef, e);
-            resultData= Util.getOperationCallback(dto, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
+            resultData= Util.getOperationCallback(null, "Error en creaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
         return Util.getStringBytes(resultData);
     }
@@ -362,8 +377,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/update.htm", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
     public byte[] update(@RequestParam(required= false) String data, HttpServletRequest request) {
-        BaseDto dto = null;
-        String resultData;
+        String resultData, message;
         try {
             String jsonData= data;
             if(jsonData==null){
@@ -380,11 +394,15 @@ public abstract class RestEntityController {
                     if(isSessionRequest(request) || canUpdate(entity)){
                         service.update(entity);
                         entity = (BaseEntity) service.loadById(id);
-                        dto = mapper.entityToDto(entity);
+                        BaseDto dto = mapper.entityToDto(entity);
                         updateRelatedWebEntity(entity, request);
-                        resultData= Util.getOperationCallback(dto, "Actualizaci&oacute;n de " + entityRef + " realizada...", true);
+                        message= "Actualizaci&oacute;n de " + entityRef + " realizada...";
+                        resultData= Util.getOperationCallback(dto, message, true);
+                        if(dbLog) dbOperationService.save(entityRef, "update", dto, message, true, null);
                     }else{
-                        resultData= Util.getOperationCallback(dto, "Error, no puede actualizar la entidad " + entityRef + " con id "+jsonObject.get("id").toString(), false);
+                        message= "Error, no puede actualizar la entidad " + entityRef + " con id "+jsonObject.get("id").toString();
+                        resultData= Util.getOperationCallback(null, message, false);
+                        if(dbLog) dbOperationService.save(entityRef, "update", jsonData, message, false, null);
                     }
                 }else{
                     return this.create(jsonData, request);
@@ -394,7 +412,7 @@ public abstract class RestEntityController {
             }
         } catch (Exception e) {
             LOGGER.error("update " + entityRef, e);
-            resultData= Util.getOperationCallback(dto, "Error en actualizaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
+            resultData= Util.getOperationCallback(null, "Error en actualizaci&oacute;n de " + entityRef + ": " + e.getMessage(), false);
         }
         return Util.getStringBytes(resultData);
     }
@@ -402,7 +420,7 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/update/byfilter.htm", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
     public byte[] updateByFilter(@RequestParam String filter, @RequestParam(required= false) String data, HttpServletRequest request) {
-        String resultData;
+        String resultData, message;
         try {
             String jsonData= filter;
             String updateData= data;
@@ -420,9 +438,13 @@ public abstract class RestEntityController {
             if(isSessionRequest(request) || canUpdateByFilters(new JSONObject(jsonData))){
                 Parameters p= service.buildParameters(jsonData, null, null, null, null, null);
                 Integer updatedRecords= service.updateByParameters(p);
-                resultData= Util.getOperationCallback(null, "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...", true);
+                message= "Actualizaci&oacute;n masiva de " + updatedRecords +" " + entityRef + " realizada...";
+                resultData= Util.getOperationCallback(null, message, true);
+                if(dbLog) dbOperationService.save(entityRef, "update_byfilter", jsonData, message, true, null);
             }else{
-                resultData= Util.getOperationCallback(null, "Error, no puede actualizar la entidad " + entityRef + " por filtros", false);
+                message= "Error, no puede actualizar la entidad " + entityRef + " por filtros";
+                resultData= Util.getOperationCallback(null, message, false);
+                if(dbLog) dbOperationService.save(entityRef, "update_byfilter", jsonData, message, false, null);
             }
         } catch (Exception e) {
             LOGGER.error("update " + entityRef, e);
@@ -455,68 +477,110 @@ public abstract class RestEntityController {
     @RequestMapping(value = "/delete.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
     public String delete(@RequestParam String idEntity, HttpServletRequest request) {
-        BaseDto dto = null;
+        String resultData, message;
         try {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
+            BaseDto dto = mapper.entityToDto(entity);
             if(isSessionRequest(request) || canDelete(entity)){
-                dto = mapper.entityToDto(entity);
                 service.remove(entity);
-                return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+                message= "Eliminaci&oacute;n de " + entityRef + " realizada...";
+                resultData= Util.getOperationCallback(dto, message, true);
+                if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, true, null);
             }else{
-                return Util.getOperationCallback(dto, "Error, no puede eliminar el " + entityRef + " con id "+idEntity, false);
+                message= "Error, no puede eliminar el " + entityRef + " con id "+idEntity;
+                resultData= Util.getOperationCallback(null, message, false);
+                if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, false, null);
             }
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
-            return Util.getOperationCallback(dto, "Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
+            resultData= Util.getOperationCallback(null, "Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
         }
+        return resultData;
     }
     
     @RequestMapping(value = "/delete/byfilter.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
     public String deleteByFilter(@RequestParam String filter, HttpServletRequest request) {
+        String resultData, message;
+        MassiveOperationInterface massiveOperation= null;
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):formatFilter(filter);
             if(isSessionRequest(request) || canDeleteByFilters(new JSONObject(filter))){
                 Parameters p= service.buildParameters(filter, null, null, null, null, null);
                 List<BaseEntity> listEntities = service.findByParameters(p);
-                List listDtos = mapper.listEntitiesToListDtos(listEntities);
-
-                for(BaseEntity entity: listEntities){
-                    service.remove(entity);
+                List listDtos =  new ArrayList();
+                message= "Proceso de eliminaci&oacute;n de "+ listDtos.size() +" "+ entityRef + " en curso...";
+                if(massLog){
+                    massiveOperation= massiveOperationService.start(entityRef, "DELETE", listEntities.size(), message);
                 }
-                return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+                for(BaseEntity entity: listEntities){
+                    if(massLog && massiveOperation.getStatus().equals("Cancelado")) break;
+                    BaseDto dto= mapper.entityToDto(entity);
+                    try{
+                        service.remove(entity);
+                        message= "Eliminaci&oacute;n de " + entityRef + " realizada...";
+                        if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, true, massiveOperation);
+                        listDtos.add(dto);
+                    }catch(Exception e){
+                        message= "Error, no puede eliminar el " + entityRef + " con id "+entity.getId();
+                        if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, false, massiveOperation);
+                    }
+                }
+                message= "Eliminaci&oacute;n de "+ listDtos.size() +" "+ entityRef + " realizada...";
+                resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(), message, true);
+                if(massLog) massiveOperationService.end(massiveOperation, message);
             }else{
-                return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por filtros", false);
+                message= "Error, no puede eliminar la entidad " + entityRef + " por filtros";
+                resultData= Util.getResultListCallback(null, 0L, message, false);
             }
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
-            return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
+            resultData= Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
         }
+        return resultData;
     }
     
     @RequestMapping(value = "/delete/byids.htm", method = {RequestMethod.DELETE, RequestMethod.GET})
     @ResponseBody
     public String deleteByIds(@RequestParam String ids, HttpServletRequest request) {
+        String resultData, message;
+        MassiveOperationInterface massiveOperation= null;
         try {
+            int total= ids.split(",").length;
             List listDtos= new ArrayList();
+            message= "Proceso de eliminaci&oacute;n de "+ total +" "+ entityRef + " en curso...";
+            if(massLog){
+                massiveOperation= massiveOperationService.start(entityRef, "DELETE", total, message);
+            }
             for(String idEntity: ids.split(",")){
+                if(massLog && massiveOperation.getStatus().equals("Cancelado")) break;
                 Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
                 BaseEntity entity = (BaseEntity) service.loadById(id);
-                if(isSessionRequest(request) || canDelete(entity)){
-                    listDtos.add(mapper.entityToDto(entity));
-                    service.remove(entity);
+                BaseDto dto= mapper.entityToDto(entity);
+                try{
+                    if(isSessionRequest(request) || canDelete(entity)){
+                        service.remove(entity);
+                        message= "Eliminaci&oacute;n de " + entityRef + " realizada...";
+                        if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, true, massiveOperation);
+                        listDtos.add(dto);
+                    }else{
+                        message= "Error, no puede eliminar el " + entityRef + " con id "+idEntity;
+                        if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, false, massiveOperation);
+                    }
+                }catch(Exception e){
+                    message= "Error, no puede eliminar el " + entityRef + " con id "+idEntity;
+                    if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, false, massiveOperation);
                 }
             }
-            if(listDtos.size()>0){
-                return Util.getResultListCallback(listDtos, (long)listDtos.size(),"Eliminaci&oacute;n de " + entityRef + " realizada...", true);
-            }else{
-                return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por ids", false);
-            }
+            message= "Eliminaci&oacute;n de "+ total +" "+ entityRef + " realizada...";
+            resultData= Util.getResultListCallback(listDtos, (long)total, message, true);
+            if(massLog) massiveOperationService.end(massiveOperation, message);
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
-            return Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
+            resultData= Util.getResultListCallback(new ArrayList(), 0L,"Error en eliminaci&oacute;n de " + entityRef + ": " + e.getMessage(), true);
         }
+        return resultData;
     }
     
     @RequestMapping(value = "/import.htm", method = RequestMethod.POST)
@@ -795,6 +859,7 @@ public abstract class RestEntityController {
     
     protected List importEntities(List<BaseEntity> entities){
         List listDtos= new ArrayList();
+        MassiveOperationInterface massiveOperation= null;
         
         //Buscar entidades existentes
         List ids= new ArrayList<>();
@@ -806,22 +871,38 @@ public abstract class RestEntityController {
         for(BaseEntity entity: existingEntities){
             mapExistingEntities.put(entity.getId(), entity);
         }
-
+        
         //Insertar o actualizar la entidad
+        int total= entities.size();
+        String message= "Almacenamiento de "+ total +" "+ entityRef + " en curso...";
+        if(massLog){
+            massiveOperation= massiveOperationService.start(entityRef, "SAVE", total, message);
+        }
         for(BaseEntity entity: entities){
+            if(massLog && massiveOperation.getStatus().equals("Cancelado")) break;
+            BaseDto dto = mapper.entityToDto(entity);
             try{
                 if(!mapExistingEntities.containsKey(entity.getId())){
                     service.insert(entity);
+                    message= "Creaci&oacute;n de " + entityRef + " realizada...";
+                    if(dbLog) dbOperationService.save(entityRef, "create", dto, message, true, massiveOperation);
                 }else{
                     BaseEntity existingEntity= mapExistingEntities.get(entity.getId());
                     EntityReflection.updateEntity(entity, existingEntity);
                     service.update(existingEntity);
+                    message= "Actualizaci&oacute;n de " + entityRef + " realizada...";
+                    if(dbLog) dbOperationService.save(entityRef, "update", dto, message, true, massiveOperation);
                 }
-                listDtos.add(entity);
+                listDtos.add(dto);
             }catch(Exception e){
                 LOGGER.error("importData " + entityRef, e);
+                message= "Error, no puede realizar el almacenamiento de " + entityRef;
+                if(dbLog) dbOperationService.save(entityRef, "create", dto, message, false, massiveOperation);
             }
         }
+        message= "Almacenamiento de "+ total +" "+ entityRef + " realizada...";
+        if(massLog) massiveOperationService.end(massiveOperation, message);
+        
         return listDtos;
     }
     
@@ -872,6 +953,15 @@ public abstract class RestEntityController {
      */
     protected void enableReport(String reportName, Class dtoReportClass){
         this.enabledReports.put(reportName, dtoReportClass);
+    }
+    
+    /**
+     * 
+     * @param enableOperationLog 
+     */
+    protected void setEnableOperationLog(Boolean enableOperationLog){
+        dbLog= (dbOperationService!=null && enableOperationLog);
+        massLog= (massiveOperationService!=null && enableOperationLog);
     }
 
     protected String generateTemplateData(List<Object> listDtos, Long totalCount, String entityRef,

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import com.lacv.jmagrexs.domain.BaseEntity;
+import com.lacv.jmagrexs.reflection.EntityReflection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +88,8 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      */
     @Override
     public void reload(T entity) {
-        this.getEntityManager().refresh(entity);
+        T reload= this.loadById(entity.getId());
+        EntityReflection.updateEntity(reload, entity);
     }
 
     /**

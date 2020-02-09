@@ -31,6 +31,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         Instance.reloadGrid= false;
         mvcExt.mappingController(Instance.id, Instance);
         Instance.initFilter();
+        Instance.gridAutoReloadTO= null;
     };
     
     Instance.initFilter= function(){
@@ -151,8 +152,11 @@ function ${entityName}ExtController(parentExtController, parentExtView){
     };
     
     Instance.doGridAutoReload= function(){
+        if(Instance.gridAutoReloadTO!==null){
+            clearTimeout(Instance.gridAutoReloadTO);
+        }
         if(Instance.entityExtView.store.gridAutoReload){
-            setTimeout(function(){
+            Instance.gridAutoReloadTO= setTimeout(function(){
                 Instance.entityExtView.reloadPageStore(1);
                 Instance.doGridAutoReload();
             },${viewConfig.gridAutoReloadInterval});

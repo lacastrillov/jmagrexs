@@ -13,16 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -232,13 +228,6 @@ public abstract class RestProcessController {
             long endTime= endDate.getTime();
             long remaining= endTime - initTime;
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(initDate);
-            cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 5);
-
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("EST"));
-
             LogProcesInterface logProcess= (LogProcesInterface) EntityReflection.getObjectForClass(logProcessClass);
             try{
                 logProcess.setClientId(getClientId());
@@ -271,7 +260,7 @@ public abstract class RestProcessController {
             logProcess.setMainProcessRef(mainProcessRef);
             logProcess.setMessage(message);
             logProcess.setProcessName(processName);
-            logProcess.setRecordTime(Time.valueOf(sdf.format(new Date())));
+            logProcess.setRecordTime(Util.getCurrentTime(0));
             logProcess.setRegistrationDate(initDate);
             logProcess.setSuccess(success);
             
