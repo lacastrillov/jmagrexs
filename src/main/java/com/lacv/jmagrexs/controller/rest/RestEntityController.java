@@ -573,8 +573,8 @@ public abstract class RestEntityController {
                     if(dbLog) dbOperationService.save(entityRef, "delete", dto, message, false, massiveOperation);
                 }
             }
-            message= "Eliminaci&oacute;n de "+ total +" "+ entityRef + " realizada...";
-            resultData= Util.getResultListCallback(listDtos, (long)total, message, true);
+            message= "Eliminaci&oacute;n de "+ listDtos.size() +" "+ entityRef + " realizada...";
+            resultData= Util.getResultListCallback(listDtos, (long)listDtos.size(), message, true);
             if(massLog) massiveOperationService.end(massiveOperation, message);
         } catch (Exception e) {
             LOGGER.error("delete " + entityRef, e);
@@ -900,7 +900,7 @@ public abstract class RestEntityController {
                 if(dbLog) dbOperationService.save(entityRef, "create", dto, message, false, massiveOperation);
             }
         }
-        message= "Almacenamiento de "+ total +" "+ entityRef + " realizada...";
+        message= "Almacenamiento de "+ listDtos.size() +" "+ entityRef + " realizada...";
         if(massLog) massiveOperationService.end(massiveOperation, message);
         
         return listDtos;

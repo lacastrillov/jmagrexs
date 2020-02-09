@@ -6,7 +6,6 @@
 package com.lacv.jmagrexs.components;
 
 import com.lacv.jmagrexs.dto.GenericTableColumn;
-import com.lacv.jmagrexs.enums.FieldType;
 import com.lacv.jmagrexs.reflection.EntityReflection;
 import com.lacv.jmagrexs.util.Formats;
 import java.beans.PropertyDescriptor;
@@ -42,15 +41,10 @@ public class JSONModels {
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String type = propertyDescriptor.getPropertyType().getName();
             HashMap<String, String> defaultValueMap= fcba.getDefaultValueMap(dtoClass);
-            HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
                 JSONObject field= new JSONObject();
                 String fieldName= propertyDescriptor.getName();
-                String typeForm= "";
-                if(typeFormFields.containsKey(fieldName)){
-                    typeForm= typeFormFields.get(fieldName)[0];
-                }
                 field.put("name", fieldName);
                 if(propertyDescriptor.getName().equals("id")){
                     field.put("useNull", true);
@@ -104,16 +98,11 @@ public class JSONModels {
         PropertyDescriptor[] propertyDescriptors = EntityReflection.getPropertyDescriptors(dtoClass);
         
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-            HashMap<String,String[]> typeFormFields= fcba.getTypeFormFields(dtoClass);
             String type = propertyDescriptor.getPropertyType().getName();
             
             if(type.equals("java.util.List")==false && type.equals("java.lang.Class")==false){
                 JSONObject field= new JSONObject();
                 String fieldName= propertyDescriptor.getName();
-                String typeForm= "";
-                if(typeFormFields.containsKey(fieldName)){
-                    typeForm= typeFormFields.get(fieldName)[0];
-                }
                 field.put("name", parent + fieldName);
                 
                 if(Formats.TYPES_LIST.contains(type)){
@@ -144,11 +133,7 @@ public class JSONModels {
                             break;
                         case "java.util.Date":
                             field.put("type", "date");
-                            if(typeForm.equals(FieldType.DATETIME.name())){
-                                field.put("dateFormat", extViewConfig.getDatetimeFormat());
-                            }else{
-                                field.put("dateFormat", extViewConfig.getDateFormat());
-                            }
+                            field.put("dateFormat", extViewConfig.getDatetimeFormat());
                             break;
                         default:
                             break;
@@ -209,11 +194,7 @@ public class JSONModels {
                         break;
                     case "java.util.Date":
                         field.put("type", "date");
-                        if(column.getFieldType()!=null && column.getFieldType().equals(FieldType.DATETIME.name())){
-                            field.put("dateFormat", extViewConfig.getDatetimeFormat());
-                        }else{
-                            field.put("dateFormat", extViewConfig.getDateFormat());
-                        }
+                        field.put("dateFormat", extViewConfig.getDatetimeFormat());
                         break;
                     default:
                         break;

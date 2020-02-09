@@ -24,6 +24,7 @@ function EntityExtInit(){
             'Ext.tree.*',
             'Ext.selection.*',
             'Ext.tab.Panel',
+            'Ext.util.Format',
             'Ext.util.History',
             'Ext.ux.layout.Center',
             'Ext.ux.GroupTabPanel',
