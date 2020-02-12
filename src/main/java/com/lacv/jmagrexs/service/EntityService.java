@@ -45,6 +45,13 @@ public interface EntityService<T> {
     void createForced(T entity);
     
     /**
+     * Persists a new entity.
+     *
+     * @param entity the new entity.
+     */
+    void createNatively(T entity);
+    
+    /**
      * 
      * @param entity 
      */

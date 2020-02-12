@@ -46,11 +46,11 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     
     private final Class<T> persistentClass;
     
-    private final Table table;
+    protected final Table table;
     
-    private final List<Field> columnFields;
+    protected final List<Field> columnFields;
     
-    private final List<Field> joinColumnFields;
+    protected final List<Field> joinColumnFields;
     
     protected boolean embeddedId;
     

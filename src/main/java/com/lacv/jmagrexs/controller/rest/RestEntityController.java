@@ -883,7 +883,7 @@ public abstract class RestEntityController {
             BaseDto dto = mapper.entityToDto(entity);
             try{
                 if(!mapExistingEntities.containsKey(entity.getId())){
-                    service.insert(entity);
+                    service.createNatively(entity);
                     message= "Creaci&oacute;n de " + entityRef + " realizada...";
                     if(dbLog) dbOperationService.save(entityRef, "create", dto, message, true, massiveOperation);
                 }else{

@@ -6,12 +6,16 @@ import javax.persistence.Query;
 
 import com.lacv.jmagrexs.domain.BaseEntity;
 import com.lacv.jmagrexs.reflection.EntityReflection;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.JoinColumn;
 import javax.persistence.Persistence;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -59,7 +63,7 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
         if(!super.embeddedId){
             this.getEntityManager().persist(entity);
         }else{
-            super.insert(entity);
+            createNatively(entity);
         }
     }
     
@@ -71,6 +75,54 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
     public void createForced(T entity) {
         this.getEntityManager().persist(entity);
         this.getEntityManager().flush();
+    }
+    
+    /**
+     *
+     * @param entity
+     */
+    @Override
+    public void createNatively(T entity) {
+        BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(entity);
+        Map<String,Object> data= new HashMap<>();
+
+        for(Field f: columnFields){
+            Column an= f.getAnnotation(Column.class);
+            Object value= sourceWrapper.getPropertyValue(f.getName());
+            if(value!=null){
+                data.put(an.name(), value);
+            }
+        }
+
+        for(Field f: joinColumnFields){
+            JoinColumn an= f.getAnnotation(JoinColumn.class);
+            BaseEntity joinEntity= (BaseEntity) sourceWrapper.getPropertyValue(f.getName());
+            if(joinEntity!=null){
+                data.put(an.name(), joinEntity.getId());
+            }
+        }
+        StringBuilder sql = new StringBuilder("");
+        StringBuilder columnsSql = new StringBuilder("");
+        StringBuilder valuesSql = new StringBuilder("");
+
+        for (Map.Entry<String, Object> entry : data.entrySet()){
+            String parameter = entry.getKey();
+            columnsSql.append(parameter).append(", ");
+            valuesSql.append("?").append(parameter).append(", ");
+        }
+
+        sql.append("INSERT INTO ").append(table.name());
+        sql.append(" (").append(columnsSql.substring(0, columnsSql.length()-2)).append(")");
+        sql.append(" VALUES ( ").append(valuesSql.substring(0, valuesSql.length()-2)).append(" )");
+        System.out.println("SQL :: "+sql.toString());
+        Query q = entityManager.createNativeQuery(sql.toString());
+
+        for (Map.Entry<String, Object> entry : data.entrySet()){
+            String parameter = entry.getKey();
+            Object value = entry.getValue();
+            q.setParameter(parameter, value);
+        }
+        q.executeUpdate();
     }
 
     /**

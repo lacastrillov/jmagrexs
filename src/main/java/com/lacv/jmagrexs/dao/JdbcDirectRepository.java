@@ -85,6 +85,7 @@ public class JdbcDirectRepository {
             sql.append("INSERT INTO ").append(tableName);
             sql.append(" (").append(columnsSql.substring(0, columnsSql.length()-2)).append(")");
             sql.append(" VALUES ( ").append(valuesSql.substring(0, valuesSql.length()-2)).append(" )");
+            System.out.println("SQL :: "+sql.toString());
 
             namedParameterJdbcTemplate.update(sql.toString(), mapParameters);
         }

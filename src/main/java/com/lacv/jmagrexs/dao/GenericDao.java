@@ -52,6 +52,12 @@ public interface GenericDao<T extends BaseEntity> {
      * 
      * @param entity 
      */
+    void createNatively(T entity);
+    
+    /**
+     * 
+     * @param entity 
+     */
     void insert(T entity);
     
     /**
