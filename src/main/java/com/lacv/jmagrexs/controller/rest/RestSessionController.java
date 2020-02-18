@@ -229,9 +229,7 @@ public abstract class RestSessionController extends RestEntityController {
             Object id = EntityReflection.getParsedFieldValue(entityClass, "id", idEntity);
             BaseEntity entity = (BaseEntity) service.loadById(id);
             if(canSessionDelete(entity)){
-                dto = mapper.entityToDto(entity);
-                service.remove(entity);
-                return Util.getOperationCallback(dto, "Eliminaci&oacute;n de " + entityRef + " realizada...", true);
+                return super.delete(idEntity, request);
             }else{
                 return Util.getOperationCallback(dto, "Error, no puede eliminar el " + entityRef + " con id "+idEntity, false);
             }
@@ -246,7 +244,7 @@ public abstract class RestSessionController extends RestEntityController {
     public String sessionDeleteByFilter(@RequestParam String filter, HttpServletRequest request) {
         String sessionFilter= getSessionFilters(filter, null);
         if(canSessionDeleteByFilters(new JSONObject(sessionFilter))){
-            return deleteByFilter(sessionFilter, request);
+            return super.deleteByFilter(sessionFilter, request);
         }else{
             return Util.getResultListCallback(null, 0L, "Error, no puede eliminar la entidad " + entityRef + " por filtros", false);
         }

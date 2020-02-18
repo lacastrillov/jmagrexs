@@ -24,6 +24,7 @@ function ${reportName}ExtController(parentExtView){
     Instance.init= function(){
         Instance.reportName= "${reportName}";
         Instance.typeController= "${typeController}";
+        Instance.idEntitySelected= null;
         Instance.requireValueMap= ${reportConfig.visibleValueMapForm};
         Instance.reloadGrid= false;
         mvcExt.mappingController(Instance.id, Instance);
@@ -60,7 +61,10 @@ function ${reportName}ExtController(parentExtView){
             Instance.appliedFilters= filter;
         }
         if(activeTab==="1"){
-            Instance.loadFormData(id);
+            if(id!==null && id!==Instance.idEntitySelected){
+                Instance.idEntitySelected= id;
+                Instance.loadFormData(Instance.idEntitySelected);
+            }
         }
     };
     
@@ -75,7 +79,6 @@ function ${reportName}ExtController(parentExtView){
     Instance.loadFormData= function(id){
         if(Instance.entityExtView.formComponent!==null){
             if(id!==null && id!==""){
-                Instance.idEntitySelected= id;
                 var activeRecord= Instance.entityExtView.formComponent.getActiveRecord();
 
                 if(activeRecord===null){
@@ -87,14 +90,16 @@ function ${reportName}ExtController(parentExtView){
                 }
                 Instance.loadChildExtControllers(Instance.idEntitySelected);
             }else{
+                Instance.entityExtView.formComponent.getForm().reset();
                 Instance.idEntitySelected= "";
-                if(Object.keys(Instance.filter.eq).length !== 0){
+                if('eq' in Instance.filter && Object.keys(Instance.filter.eq).length !== 0){
                     var record= Ext.create(Instance.modelName);
                     for (var key in Instance.filter.eq) {
                         record.data[key]= Instance.filter.eq[key];
                     }
                     Instance.entityExtView.formComponent.setActiveRecord(record || null);
                 }
+                Instance.loadChildExtControllers("");
             }
         }
     };
@@ -103,8 +108,15 @@ function ${reportName}ExtController(parentExtView){
         if(Instance.typeController==="Parent"){
             var jsonChildRefColumnNames= ${jsonChildRefColumnNames};
             Instance.entityExtView.childExtControllers.forEach(function(childExtController) {
-                childExtController.filter= {"eq":{}};
-                childExtController.filter.eq[jsonChildRefColumnNames[childExtController.reportName]]= idEntitySelected;
+                if(idEntitySelected!==""){
+                    childExtController.parentEntityId= idEntitySelected;
+                    childExtController.filter= {"eq":{}};
+                    childExtController.filter.eq[jsonChildRefColumnNames[childExtController.reportName]]= idEntitySelected;
+                }else{
+                    childExtController.parentEntityId= null;
+                    childExtController.filter= {"eq":{}};
+                    childExtController.filter.eq[jsonChildRefColumnNames[childExtController.reportName]]= 0;
+                }
                 childExtController.loadGridData();
                 childExtController.loadFormData("");
             });
