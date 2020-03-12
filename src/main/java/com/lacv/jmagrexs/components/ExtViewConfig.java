@@ -17,11 +17,9 @@ public class ExtViewConfig {
     
     private String jmagrexsBuildCode;
     
-    private String extJsLib4;
+    private String extJsLib;
     
-    private String extJsLib6;
-    
-    private Integer extJsVersion;
+    private String extJsVersion;
     
     private String favicon;
     
@@ -41,9 +39,8 @@ public class ExtViewConfig {
     public ExtViewConfig(){
         this.appName="";
         this.jmagrexsBuildCode="";
-        this.extJsLib4="";
-        this.extJsLib6="";
-        this.extJsVersion= 4;
+        this.extJsLib="";
+        this.extJsVersion= "4";
         this.favicon="";
         this.dateFormat= "d/m/Y";
         this.dateFormatJava= "dd/MM/yyyy";
@@ -79,44 +76,30 @@ public class ExtViewConfig {
     }
 
     /**
-     * @return the extJsLib4
+     * @return the extJsLib
      */
-    public String getExtJsLib4() {
-        return extJsLib4;
+    public String getExtJsLib() {
+        return extJsLib;
     }
 
     /**
-     * @param extJsLib4 the extJsLib4 to set
+     * @param extJsLib the extJsLib to set
      */
-    public void setExtJsLib4(String extJsLib4) {
-        this.extJsLib4 = extJsLib4;
-    }
-
-    /**
-     * @return the extJsLib6
-     */
-    public String getExtJsLib6() {
-        return extJsLib6;
-    }
-
-    /**
-     * @param extJsLib6 the extJsLib6 to set
-     */
-    public void setExtJsLib6(String extJsLib6) {
-        this.extJsLib6 = extJsLib6;
+    public void setExtJsLib(String extJsLib) {
+        this.extJsLib = extJsLib;
     }
 
     /**
      * @return the extJsVersion
      */
-    public Integer getExtJsVersion() {
+    public String getExtJsVersion() {
         return extJsVersion;
     }
 
     /**
      * @param extJsVersion the extJsVersion to set
      */
-    public void setExtJsVersion(Integer extJsVersion) {
+    public void setExtJsVersion(String extJsVersion) {
         this.extJsVersion = extJsVersion;
     }
 

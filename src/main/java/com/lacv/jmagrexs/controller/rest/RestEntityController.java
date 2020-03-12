@@ -1028,7 +1028,7 @@ public abstract class RestEntityController {
     }
     
     protected String getFilters(String filter, String reportName){
-        String sessionFilter;
+        String newFilter;
         JSONObject jsonFilter;
         if(filter!=null && !filter.equals("")){
             filter= formatFilter(filter);
@@ -1047,9 +1047,9 @@ public abstract class RestEntityController {
         }else{
             jsonFilter= addSearchFilter(jsonFilter);
         }
-        sessionFilter= jsonFilter.toString();
+        newFilter= jsonFilter.toString();
         
-        return sessionFilter;
+        return newFilter;
     }
     
     protected String formatFilter(String filter){
