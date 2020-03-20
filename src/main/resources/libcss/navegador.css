@@ -8,8 +8,8 @@ body {
     font-size:11px;
 }
 #header {
-    background: #7F99BE url(https://ext-js-4-dot-proven-signal-88616.appspot.com/ext/examples/layout-browser/images/layout-browser-hd-bg.gif) repeat-x center !important;
-    padding: 5px 10px;
+    background-color: #044e6b !important;
+    padding: 6px 10px;
 }
 .x-theme-neptune #header,
 .x-theme-access #header {

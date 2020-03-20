@@ -167,7 +167,7 @@ public class CSVService {
         if(records[0].contains(",") && !records[0].contains(";")){
             SEPARATOR=",";
         }
-        String[] columns= records[0].split(SEPARATOR);
+        String[] columns= records[0].replace("ï»¿","").split(SEPARATOR);
         for(int i=0; i<columns.length; i++){
             if(invertedTitledFieldsMap.containsKey(columns[i])){
                 columns[i]= invertedTitledFieldsMap.get(columns[i]);
