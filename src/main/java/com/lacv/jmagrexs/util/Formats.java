@@ -328,14 +328,15 @@ public class Formats {
      * @return 
      */
     public static Date stringToDate(String value){
-        String dateValue= value.replaceAll("/", "-");
+        String dateValue= value.replaceAll("/", "-").replaceAll("T", "");
         String[] inFormats= new String[]{
             "dd-MM-yyyy",
             "yyyy-MM-dd",
             "dd-MM-yyyy HH:mm:ss",
             "dd-MM-yyyy hh:mm:ss a",
-            "yyyy-MM-dd'T'HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss'.000-05:00'"
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd hh:mm:ss a",
+            "yyyy-MM-dd HH:mm:ss'.000-05:00'"
         };
         for (String inFormat : inFormats) {
             Date date= validDateFormat(inFormat, dateValue);
@@ -347,7 +348,7 @@ public class Formats {
             long dateLong= Long.parseLong(value);
             return new Date(dateLong);
         }catch(NumberFormatException ex){
-            LOGGER.error("ERROR stringToDate", ex);
+            LOGGER.error("ERROR stringToDate: "+ex.getMessage());
             return null;
         }
     }
@@ -421,6 +422,7 @@ public class Formats {
                 return date;
             }
         } catch (ParseException ex) {
+            LOGGER.info("stringToDate no match: "+format+" <!=> "+ex.getMessage());
         }
         return null;
     }

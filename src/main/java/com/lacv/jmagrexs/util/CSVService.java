@@ -169,6 +169,9 @@ public class CSVService {
         }
         String[] columns= records[0].replace("ï»¿","").split(SEPARATOR);
         for(int i=0; i<columns.length; i++){
+            if(columns[i].startsWith("\"") && columns[i].endsWith("\"")){
+                columns[i]= columns[i].replaceAll("\"", "");
+            }
             if(invertedTitledFieldsMap.containsKey(columns[i])){
                 columns[i]= invertedTitledFieldsMap.get(columns[i]);
             }
