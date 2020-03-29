@@ -309,6 +309,7 @@ public abstract class RestEntityController {
                 Class dtoReportClass= this.enabledReports.get(reportName);
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 Parameters p= service.buildParameters(filter, null, null, null, sort, dir, dtoReportClass);
+                p.setMaxResults(100000L);
                 List<Object> listDtos = service.findByParameters(reportName, p, dtoReportClass);
                 
                 response.setContentType("application/vnd.ms-excel");
@@ -332,6 +333,7 @@ public abstract class RestEntityController {
                 Class dtoReportClass= this.enabledReports.get(reportName);
                 filter= (!isSessionRequest(request))?getFilters(filter, reportName):filter;
                 Parameters p= service.buildParameters(filter, null, null, null, sort, dir, dtoReportClass);
+                p.setMaxResults(100000L);
                 List<Object> listDtos = service.findByParameters(reportName, p, dtoReportClass);
 
                 response.setContentType("text/csv; charset=utf-8");
@@ -632,43 +634,48 @@ public abstract class RestEntityController {
                 FileItem item = (FileItem) iterator.next();
                 InputStream is= item.getInputStream();
                 if(!item.isFormField() && item.getFieldName().equals("data")){
-                    String data, jsonData=null;
-                    List<BaseEntity> entities= new ArrayList<>();
-                    JSONArray array;
-                    switch(format){
-                        case "csv":
-                            data= FileService.getLinesFromInputStream(is);
-                            jsonData= CSVService.csvRecordsToJSON(data, dtoClass);
-                            array= new JSONArray(jsonData);
-                            for (int i = 0; i < array.length(); i++) {
-                                entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
-                            }
-                            break;
-                        case "xlsx":
-                            jsonData= ExcelService.xlsxTableToJSON(is, dtoClass);
-                            array= new JSONArray(jsonData);
-                            for (int i = 0; i < array.length(); i++) {
-                                entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
-                            }
-                            break;
-                        default:
-                            if(format.equals("xml")){
-                                data= FileService.getStringFromInputStream(is);
-                                jsonData= XMLMarshaller.convertXMLToJSON(data);
-                            }else if(format.equals("json")){
-                                jsonData= FileService.getStringFromInputStream(is);
-                            }
-                            JSONObject object= new JSONObject(jsonData);
-                            array= object.getJSONArray("data");
-                            for (int i = 0; i < array.length(); i++) {
-                                entities.add((BaseEntity) EntityReflection.jsonToObject(array.getJSONObject(i).toString(), entityClass));
-                            }
-                            break;
-                    }
-                    if(!isSessionRequest(request)){
-                        resultData= validateImportEntities(entities, listDtos);
+                    String extension = FilenameUtils.getExtension(item.getName()).toLowerCase();
+                    if(extension.equals(format)){
+                        String data, jsonData=null;
+                        List<BaseEntity> entities= new ArrayList<>();
+                        JSONArray array;
+                        switch(format){
+                            case "csv":
+                                data= FileService.getLinesFromInputStream(is);
+                                jsonData= CSVService.csvRecordsToJSON(data, dtoClass);
+                                array= new JSONArray(jsonData);
+                                for (int i = 0; i < array.length(); i++) {
+                                    entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
+                                }
+                                break;
+                            case "xlsx":
+                                jsonData= ExcelService.xlsxTableToJSON(is, dtoClass);
+                                array= new JSONArray(jsonData);
+                                for (int i = 0; i < array.length(); i++) {
+                                    entities.add((BaseEntity) EntityReflection.readEntity(array.getJSONObject(i).toString(), entityClass));
+                                }
+                                break;
+                            default:
+                                if(format.equals("xml")){
+                                    data= FileService.getStringFromInputStream(is);
+                                    jsonData= XMLMarshaller.convertXMLToJSON(data);
+                                }else if(format.equals("json")){
+                                    jsonData= FileService.getStringFromInputStream(is);
+                                }
+                                JSONObject object= new JSONObject(jsonData);
+                                array= object.getJSONArray("data");
+                                for (int i = 0; i < array.length(); i++) {
+                                    entities.add((BaseEntity) EntityReflection.jsonToObject(array.getJSONObject(i).toString(), entityClass));
+                                }
+                                break;
+                        }
+                        if(!isSessionRequest(request)){
+                            resultData= validateImportEntities(entities, listDtos);
+                        }else{
+                            resultData= validateSessionImportEntities(entities, listDtos);
+                        }
                     }else{
-                        resultData= validateSessionImportEntities(entities, listDtos);
+                        resultData= Util.getOperationCallback(null, "Error en importaci&oacute;n de registros tipo " + entityRef + ": Extensi&oacute;n incompatible" , false);
                     }
                 }
             }

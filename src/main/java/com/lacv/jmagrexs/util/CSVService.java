@@ -168,13 +168,12 @@ public class CSVService {
             SEPARATOR=",";
         }
         String[] columns= records[0].replace("ï»¿","").split(SEPARATOR);
+        LOGGER.info("columns: "+records[0]);
         for(int i=0; i<columns.length; i++){
-            if(columns[i].startsWith("\"") && columns[i].endsWith("\"")){
-                columns[i]= columns[i].replaceAll("\"", "");
-            }
             if(invertedTitledFieldsMap.containsKey(columns[i])){
                 columns[i]= invertedTitledFieldsMap.get(columns[i]);
             }
+            columns[i]= columns[i].replaceAll("\"", "");
         }
         JSONArray objects= new JSONArray();
         for(int i=1; i<records.length; i++){

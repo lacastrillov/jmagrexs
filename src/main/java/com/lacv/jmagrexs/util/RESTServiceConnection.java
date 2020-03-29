@@ -298,7 +298,7 @@ public class RESTServiceConnection {
      * @return
      * @throws UnsupportedEncodingException 
      */
-    public String restTemplate(Map<String, String> pathVars, Map<String, String> parameters, String data) throws UnsupportedEncodingException{
+    public String restTemplate(Map<String, String> pathVars, Map<String, String> parameters, String data) throws Exception{
         String result;
         String url = this.buildFullUrl(pathVars);        
         HttpHeaders headers = new HttpHeaders();
@@ -677,6 +677,24 @@ public class RESTServiceConnection {
         }
 
         return endpoint;
+    }
+    
+    public String executeCommand(String command) throws IOException, InterruptedException{
+        //Run a bat file
+        Process process = Runtime.getRuntime().exec(command);
+
+        StringBuilder output = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line).append("\n");
+        }
+        int exitVal = process.waitFor();
+        if (exitVal == 0) {
+            return output.toString();
+        } else {
+            return "";
+        }
     }
 
     private void addHeaders(HttpRequestBase httpRequestBase, Map<String, String> headers) throws UnsupportedEncodingException {

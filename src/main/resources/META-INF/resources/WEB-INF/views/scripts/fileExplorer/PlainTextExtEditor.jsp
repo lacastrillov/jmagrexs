@@ -12,7 +12,11 @@
         </style>
         <script src="<%=request.getContextPath()%>/libjs/jquery/jquery-3.1.0.min.js"></script>
         <script src="<%=request.getContextPath()%>/libjs/util/Util.js"></script>
-        <script src="${serverDomain.domain}:8080/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <c:set var="libDomain" value="http://${serverDomain.serverName}:8080" />
+        <c:if test="${pageContext.request.scheme eq 'https'}">
+            <c:set var="libDomain" value="https://${serverDomain.serverName}:8082" />
+        </c:if>
+        <script src="${libDomain}/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
             function PlainTextExtEditor() {
                 

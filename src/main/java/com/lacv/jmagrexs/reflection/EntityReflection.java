@@ -261,7 +261,7 @@ public final class EntityReflection {
                         }
                     }
                 }catch(Exception e){
-                    Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, e);
+                    Logger.getLogger(EntityReflection.class.getName()).log(Level.WARNING, null, e.getMessage());
                 }
             }
         }
@@ -296,7 +296,7 @@ public final class EntityReflection {
                         }
                     }
                 }catch(Exception e){
-                    Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, e);
+                    Logger.getLogger(EntityReflection.class.getName()).log(Level.WARNING, null, e.getMessage());
                 }
             }
         }
@@ -378,7 +378,7 @@ public final class EntityReflection {
                             targetWrapper.setPropertyValue(fieldName, childObject);
                         }
                     }catch(Exception e){
-                        Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, e);
+                        Logger.getLogger(EntityReflection.class.getName()).log(Level.WARNING, null, e.getMessage());
                     }
                 }
             }else if(type.equals("java.util.List")){
@@ -397,7 +397,7 @@ public final class EntityReflection {
                                     itemsObject.add(childObject);
                                 }
                             } catch (ClassNotFoundException | NumberFormatException ex) {
-                                Logger.getLogger(EntityReflection.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(EntityReflection.class.getName()).log(Level.WARNING, null, ex.getMessage());
                             }
                         }
                     }

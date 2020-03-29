@@ -13,8 +13,7 @@
         <org.springframework.version>5.1.6.RELEASE</org.springframework.version>
         <spring.security.version>5.1.5.RELEASE</spring.security.version>
         <appengine.target.version>1.9.38</appengine.target.version>
-        <jmagrexs.buildcode>${maven.build.timestamp}</jmagrexs.buildcode>
-        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <jmagrexs.buildcode>${build.time}</jmagrexs.buildcode>
     </properties>
 
     <dependencies>
@@ -354,7 +353,7 @@
             <url>https://code.lds.org/nexus/content/groups/main-repo</url>
         </repository>
     </repositories>
-
+    
     <build>
         <finalName>jmagrexs</finalName>
         <plugins>
@@ -366,6 +365,24 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>build.time</name>
+                            <pattern>yyyyMMdd.HHmmss</pattern>
+                            <timeZone>GMT-5</timeZone>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>

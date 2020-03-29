@@ -135,6 +135,9 @@ function ${entityName}ExtViewport(){
                             var value= filterData[fieldName];
                             if(value!==""){
                                 filter[operator][finalFieldName]= value.split(",");
+                                for(var i=0; i<filter[operator][finalFieldName].length; i++){
+                                    filter[operator][finalFieldName][i]= filter[operator][finalFieldName][i].trim();
+                                }
                             }
                             break;
                         case "btw":

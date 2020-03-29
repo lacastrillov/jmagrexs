@@ -37,6 +37,10 @@ public class ServerDomain {
     
     private String domain;
     
+    private String scheme;
+    
+    private String serverName;
+    
     private String domainWithPort;
     
     private final List<String> modules= new ArrayList<>();
@@ -49,6 +53,8 @@ public class ServerDomain {
     
     public void initDomain(HttpServletRequest req){
         if(domain==null){
+            setScheme(req.getScheme());
+            setServerName(req.getServerName());
             setDomain(req.getScheme() + "://" + req.getServerName());
             setDomainWithPort(req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort());
         }
@@ -146,6 +152,34 @@ public class ServerDomain {
     public void setRestContext(String restContext) {
         this.restContext = restContext;
         this.modules.add(restContext);
+    }
+    
+    /**
+     * @return the scheme
+     */
+    public String getScheme() {
+        return scheme;
+    }
+
+    /**
+     * @param scheme the scheme to set
+     */
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+    
+    /**
+     * @return the serverName
+     */
+    public String getServerName() {
+        return serverName;
+    }
+
+    /**
+     * @param serverName the serverName to set
+     */
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
     }
 
     /**
