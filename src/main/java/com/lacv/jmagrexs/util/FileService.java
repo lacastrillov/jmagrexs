@@ -157,6 +157,11 @@ public class FileService {
         return f.exists();
     }
     
+    public static String[] listFiles(String fileName){
+        File f = new File(fileName);
+        return f.list();
+    }
+    
     public static boolean existsFileUrl(String fileUrl) throws MalformedURLException, IOException, URISyntaxException {
         URI uri = new URI(fileUrl.replace(" ", "%20"));
         URL u = uri.toURL();
