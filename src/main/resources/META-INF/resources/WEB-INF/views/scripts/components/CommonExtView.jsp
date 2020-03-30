@@ -244,13 +244,13 @@ function CommonExtView(parentExtController, parentExtView, model){
         if(typeField!=='multiselect'){
             dataArray.push("dt:Diferente");
         }
-        if(typeField==='select' || typeField==='multiselect' || typeField==='string' || fieldName==='id'){
+        if(['select', 'multiselect', 'string', 'number'].includes(typeField)){
             dataArray.push("in:Entre");
         }
-        if(typeField==='range'){
-            dataArray.push("btw:Desde - hasta");
-        }
         if(typeField==='range' || typeField==='number'){
+            if(fieldName!=='id'){
+                dataArray.push("btw:Desde - hasta");
+            }
             dataArray.push("gt:Mayor que");
             dataArray.push("gte:Mayor o igual");
             dataArray.push("lt:Menor que");

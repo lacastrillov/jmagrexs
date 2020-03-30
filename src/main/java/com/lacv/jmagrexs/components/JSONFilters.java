@@ -203,15 +203,15 @@ public class JSONFilters {
             }else{
                 JSONObject formField0= new JSONObject();
                 formField0.put("name", fieldName+"_start");
-                formField0.put("xtype", "numberfield");
+                formField0.put("xtype", "textfield");
                 formField0.put("columnWidth", RANGE_COLUMN_WIDTH);
 
                 JSONObject formField1= new JSONObject();
                 formField1.put("name", fieldName+"_end");
-                formField1.put("xtype", "numberfield");
+                formField1.put("xtype", "textfield");
                 formField1.put("columnWidth", RANGE_COLUMN_WIDTH);
 
-                String operatorCombobox= "@"+container+".commonExtView.getOperatorCombobox('"+fieldName+"','range')@";
+                String operatorCombobox= "@"+container+".commonExtView.getOperatorCombobox('"+fieldName+"','number')@";
                 addFieldFilter(jsonFieldsFilters, fieldTitle, operatorCombobox, formField0, formField1);
             }
 
