@@ -158,7 +158,7 @@ public abstract class RestProcessController {
         }    
         
         if(logProcessClass!=null && logProcessService!=null){
-            Integer processId= this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
+            Long processId= this.createLogProcess(processName, jsonIn, jsonOut, initDate, initTime,
                     jsonResult.getString("message"), jsonResult.getBoolean("success"));
             if(response!=null && processId!=null){
                 response.addHeader("Process-Id", processId.toString());
@@ -220,7 +220,7 @@ public abstract class RestProcessController {
     }
     
     @Async
-    private Integer createLogProcess(String processName, String dataIn, String dataOut,
+    private Long createLogProcess(String processName, String dataIn, String dataOut,
             Date initDate, long initTime, String message, boolean success){
         
         try{
@@ -266,7 +266,7 @@ public abstract class RestProcessController {
             
             logProcessService.create(logProcess);
             
-            return (Integer) logProcess.getId();
+            return (Long) logProcess.getId();
         }catch(Exception e){
             LOGGER.error("ERROR doProcess", e);
         }
