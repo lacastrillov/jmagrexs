@@ -60,6 +60,9 @@ public class JSONEntityFields {
                 formField.put("xtype", "datefield");
                 formField.put("format", extViewConfig.getDatetimeFormat());
                 formField.put("tooltip", "Seleccione la fecha");
+                if(!isEditableForm){
+                    formField.put("renderer", "@Ext.util.Format.dateRenderer('"+extViewConfig.getDatetimeFormat()+"')@");
+                }
             }else if(typeField.equals(FieldType.HTML_EDITOR.name())){
                 formField.put("xtype", "htmleditor");
                 formField.put("enableColors", true);
@@ -215,11 +218,17 @@ public class JSONEntityFields {
                     formField.put("format", extViewConfig.getDateFormat());
                     formField.put("altFormats", extViewConfig.getDatetimeFormat());
                     formField.put("tooltip", "Seleccione la fecha");
+                    if(!isEditableForm){
+                        formField.put("renderer", "@Ext.util.Format.dateRenderer('"+extViewConfig.getDateFormat()+"')@");
+                    }
                     break;
                 case "java.sql.Time":
                     formField.put("xtype", "timefield");
                     formField.put("format", extViewConfig.getTimeFormat());
                     formField.put("tooltip", "Seleccione la hora");
+                    if(!isEditableForm){
+                        formField.put("renderer", "@Ext.util.Format.dateRenderer('"+extViewConfig.getTimeFormat()+"')@");
+                    }
                     break;
                 case "short":
                 case "java.lang.Short":
