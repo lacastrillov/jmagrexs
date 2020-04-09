@@ -48,16 +48,23 @@ function UserAuthentication() {
             wait:true,
             waitConfig: {interval:200}
         });
-        Instance.preAuthenticate(0, $("#"+idForm).serialize(), Instance.MODULES, function(){
-            $("#"+idForm).submit();
+        Instance.preAuthenticate(0, $("#"+idForm).serialize(), Instance.MODULES, function(data){
+            if(data.success){
+                $("#"+idForm).submit();
+            }else{
+                Ext.MessageBox.show({
+                    title: 'ERROR REMOTO',
+                    msg: "Error de servidor",
+                    icon: Ext.MessageBox.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
         });
     };
     
     Instance.ajaxAuthenticate = function (idForm, callback) {
         Instance.userData=null;
-        Instance.preAuthenticate(0, $("#"+idForm).serialize(), Instance.ALL_MODULES, function(){
-            callback(Instance.userData);
-        });
+        Instance.preAuthenticate(0, $("#"+idForm).serialize(), Instance.ALL_MODULES, callback);
     };
     
     Instance.preAuthenticate= function(index, formData, modules, callback){
@@ -75,10 +82,11 @@ function UserAuthentication() {
                 },
                 error: function (xhr, status) {
                     console.log(xhr.status);
+                    callback({success:false, message:"Error de servidor"});
                 }
             });
         }else{
-            callback();
+            callback(Instance.userData);
         }
     };
     
@@ -97,9 +105,7 @@ function UserAuthentication() {
     
     Instance.ajaxLogout= function (callback) {
         Instance.userData=null;
-        Instance.preLogout(0, Instance.ALL_MODULES, function(){
-            callback();
-        });
+        Instance.preLogout(0, Instance.ALL_MODULES, callback);
     };
     
     Instance.preLogout= function(index, modules, callback){
@@ -114,10 +120,11 @@ function UserAuthentication() {
                 },
                 error: function (xhr, status) {
                     console.log(xhr.status);
+                    callback(false);
                 }
             });
         }else{
-            callback();
+            callback(true);
         }
     };
     
