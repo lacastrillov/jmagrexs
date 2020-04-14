@@ -52,7 +52,7 @@ public class ServerDomain {
     }
     
     public void initDomain(HttpServletRequest req){
-        if(domain==null){
+        if(domain==null || req.getRequestURI().endsWith("/account/resetServerDomain")){
             setScheme(req.getScheme());
             setServerName(req.getServerName());
             setDomain(req.getScheme() + "://" + req.getServerName());
