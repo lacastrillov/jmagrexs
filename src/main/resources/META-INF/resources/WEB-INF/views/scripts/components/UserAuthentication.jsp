@@ -53,8 +53,8 @@ function UserAuthentication() {
                 $("#"+idForm).submit();
             }else{
                 Ext.MessageBox.show({
-                    title: 'ERROR REMOTO',
-                    msg: "Error de servidor",
+                    title: 'ERROR',
+                    msg: data.message,
                     icon: Ext.MessageBox.ERROR,
                     buttons: Ext.Msg.OK
                 });
