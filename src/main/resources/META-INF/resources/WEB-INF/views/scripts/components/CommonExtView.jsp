@@ -635,6 +635,16 @@ function CommonExtView(parentExtController, parentExtView, model){
         }
     };
     
+    Instance.imageExplorerRender= function(value, field) {
+        Instance.setLinkFieldValue(field, value);
+        if(value){
+            return '<a href="'+value+'" target="_blank">'+
+                    '<div style="background-image: url('+value+'); background-repeat:no-repeat; background-size:contain; background-position: center; width:100%; height:100%;"></div></a>';
+        }else{
+            return "";
+        }
+    };
+    
     Instance.downloadRender= function(value, field) {
         var fileName= value.split('/').pop();
         if(value){
@@ -747,7 +757,7 @@ function CommonExtView(parentExtController, parentExtView, model){
                 case "jpg":
                 case "jpeg":
                 case "png":
-                    htmlView= Instance.imageRender(value, field);
+                    htmlView= Instance.imageExplorerRender(value, field);
                     break;
                 case "pdf":
                     htmlView= Instance.pdfRender(value, field);
