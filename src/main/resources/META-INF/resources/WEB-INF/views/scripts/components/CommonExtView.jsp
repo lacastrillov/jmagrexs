@@ -639,7 +639,7 @@ function CommonExtView(parentExtController, parentExtView, model){
         Instance.setLinkFieldValue(field, value);
         if(value){
             return '<a href="'+value+'" target="_blank">'+
-                    '<div style="background-image: url('+value+'); background-repeat:no-repeat; background-size:contain; background-position: center; width:100%; height:100%;"></div></a>';
+                    '<div style="background-image: url(\''+value+'\'); background-repeat:no-repeat; background-size:contain; background-position: center; width:100%; height:100%;"></div></a>';
         }else{
             return "";
         }
