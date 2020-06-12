@@ -1067,8 +1067,7 @@ public abstract class RestEntityController {
     
     public boolean isSessionRequest(HttpServletRequest request){
         String requestURI= request.getRequestURI();
-        String method= requestURI.substring(requestURI.lastIndexOf("/")+1);
-        return method.startsWith("session_");
+        return requestURI.contains("/session_");
     }
     
     public JSONObject addSearchFilter(JSONObject jsonFilters){
