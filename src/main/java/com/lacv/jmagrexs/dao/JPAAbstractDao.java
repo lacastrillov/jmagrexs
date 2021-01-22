@@ -133,6 +133,93 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
     public void update(T entity) {
         this.getEntityManager().merge(entity);
     }
+    
+    /**
+     * 
+     * @param entity 
+     */
+    @Override
+    public void updateNatively(T entity) {
+        BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(entity);
+        Map<String,Object> data= new HashMap<>();
+        Map<String,Object> dataId= new HashMap<>();
+        
+        for(Field f: columnFields){
+            Column an= f.getAnnotation(Column.class);
+            Object value= sourceWrapper.getPropertyValue(f.getName());
+            if(f.getName().equals("id")){
+                if(value!=null){
+                    dataId.put(an.name(), value);
+                }
+            }else{
+                if(value!=null){
+                    data.put(an.name(), value);
+                }
+            }
+        }
+
+        for(Field f: joinColumnFields){
+            JoinColumn an= f.getAnnotation(JoinColumn.class);
+            BaseEntity joinEntity= (BaseEntity) sourceWrapper.getPropertyValue(f.getName());
+            if(joinEntity!=null){
+                data.put(an.name(), joinEntity.getId());
+            }
+        }
+        
+        if(embeddedId){
+            Object objectId= sourceWrapper.getPropertyValue("id");
+            BeanWrapperImpl sourceWrapperId = new BeanWrapperImpl(objectId);
+            for(Field f: columnEmbeddedIdFields){
+                Column an= f.getAnnotation(Column.class);
+                Object value= sourceWrapperId.getPropertyValue(f.getName());
+                if(value!=null){
+                    dataId.put(an.name(), value);
+                }
+            }
+        }
+        
+        StringBuilder sql = new StringBuilder("");
+        StringBuilder columnXvaluesSql = new StringBuilder("");
+        int numParameters = data.entrySet().size();
+        int i = 0;
+        for (Map.Entry<String, Object> entry : data.entrySet()){
+            String parameter = entry.getKey();
+            columnXvaluesSql.append(parameter).append("=?").append(parameter);
+            if (i < numParameters - 1) {
+                columnXvaluesSql.append(", ");
+            }
+            i++;
+        }
+
+        sql.append("UPDATE ").append(table.name());
+        sql.append(" SET ").append(columnXvaluesSql).append(" WHERE ");
+        numParameters= dataId.entrySet().size();
+        i = 0;
+        for (Map.Entry<String, Object> entry : dataId.entrySet()){
+            String parameter = entry.getKey();
+            sql.append(parameter).append("=?").append("pk_").append(parameter);
+            if (i < numParameters - 1) {
+                sql.append(" AND ");
+            }
+            i++;
+        }
+        
+        System.out.println("SQL :: "+sql.toString());
+        Query q = entityManager.createNativeQuery(sql.toString());
+
+        for (Map.Entry<String, Object> entry : data.entrySet()){
+            String parameter = entry.getKey();
+            Object value = entry.getValue();
+            q.setParameter(parameter, value);
+        }
+        for (Map.Entry<String, Object> entry : dataId.entrySet()){
+            String parameter = entry.getKey();
+            Object value = entry.getValue();
+            q.setParameter("pk_"+parameter, value);
+        }
+        
+        q.executeUpdate();
+    }
 
     /**
      *
@@ -598,5 +685,5 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
 
         return sql.toString();
     }
-
+    
 }

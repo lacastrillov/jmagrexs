@@ -72,6 +72,12 @@ public interface GenericDao<T extends BaseEntity> {
      * @param entity instancia de la entidad.
      */
     void update(T entity);
+    
+    /**
+     * 
+     * @param entity 
+     */
+    void updateNatively(T entity);
 
     /**
      * Discards any changes on the entity.

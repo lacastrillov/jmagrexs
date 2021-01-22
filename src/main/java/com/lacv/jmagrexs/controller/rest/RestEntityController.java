@@ -178,9 +178,10 @@ public abstract class RestEntityController {
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
-            List<Object> listEntities = service.findByParameters(p);
+            List<BaseEntity> listEntities = service.findByParameters(p);
+            List<Object> listDtos = mapper.listEntitiesToListDtos(listEntities);
             
-            ExcelService.generateExcelReport(listEntities, response.getOutputStream(), dtoClass);
+            ExcelService.generateExcelReport(listDtos, response.getOutputStream(), dtoClass);
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
         }
@@ -199,9 +200,10 @@ public abstract class RestEntityController {
         try {
             filter= (!isSessionRequest(request))?getFilters(filter, null):filter;
             Parameters p= service.buildParameters(filter, query, page, limit, sort, dir);
-            List<Object> listEntities = service.findByParameters(p);
+            List<BaseEntity> listEntities = service.findByParameters(p);
+            List<Object> listDtos = mapper.listEntitiesToListDtos(listEntities);
             
-            response.getWriter().print(CSVService.generateCSVReport(listEntities, dtoClass));
+            response.getWriter().print(CSVService.generateCSVReport(listDtos, dtoClass));
         } catch (Exception e) {
             LOGGER.error("find " + entityRef, e);
         }
@@ -868,17 +870,6 @@ public abstract class RestEntityController {
         List listDtos= new ArrayList();
         MassiveOperationInterface massiveOperation= null;
         
-        //Buscar entidades existentes
-        List ids= new ArrayList<>();
-        for(BaseEntity newEntity: entities){
-            ids.add(newEntity.getId());
-        }
-        List<BaseEntity> existingEntities = service.listAllByIds(ids);
-        Map<Object, BaseEntity> mapExistingEntities= new HashMap();
-        for(BaseEntity entity: existingEntities){
-            mapExistingEntities.put(entity.getId(), entity);
-        }
-        
         //Insertar o actualizar la entidad
         int total= entities.size();
         String message= "Almacenamiento de "+ total +" "+ entityRef + " en curso...";
@@ -887,16 +878,16 @@ public abstract class RestEntityController {
         }
         for(BaseEntity entity: entities){
             if(massLog && massiveOperation.getStatus().equals("Cancelado")) break;
+            BaseEntity existingEntity= (BaseEntity) service.loadById(entity.getId());
             BaseDto dto = mapper.entityToDto(entity);
             try{
-                if(!mapExistingEntities.containsKey(entity.getId())){
+                if(existingEntity==null){
                     service.createNatively(entity);
                     message= "Creaci&oacute;n de " + entityRef + " realizada...";
                     if(dbLog) dbOperationService.save(entityRef, "create", dto, message, true, massiveOperation);
                 }else{
-                    BaseEntity existingEntity= mapExistingEntities.get(entity.getId());
                     EntityReflection.updateEntity(entity, existingEntity);
-                    service.update(existingEntity);
+                    service.updateNatively(existingEntity);
                     message= "Actualizaci&oacute;n de " + entityRef + " realizada...";
                     if(dbLog) dbOperationService.save(entityRef, "update", dto, message, true, massiveOperation);
                 }

@@ -69,6 +69,12 @@ public interface EntityService<T> {
      * @param entity instancia de la entidad.
      */
     void update(T entity);
+    
+    /**
+     * Guarda los cambios en la entidad.
+     * @param entity
+     */
+    void updateNatively(T entity);
 
     /**
      * Discards any changes on the entity.

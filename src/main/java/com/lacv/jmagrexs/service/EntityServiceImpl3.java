@@ -104,6 +104,12 @@ public abstract class EntityServiceImpl3<T extends BaseEntity> implements Entity
     public void update(T entity) {
         this.getGenericDao().update(entity);
     }
+    
+    @Override
+    @Transactional(value = TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    public void updateNatively(T entity) {
+        this.getGenericDao().updateNatively(entity);
+    }
 
     @Override
     @Transactional(value = TRANSACTION_MANAGER, readOnly = true)

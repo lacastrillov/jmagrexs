@@ -52,6 +52,10 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
     
     protected final List<Field> joinColumnFields;
     
+    protected Field embeddedIdField;
+    
+    protected List<Field> columnEmbeddedIdFields;
+    
     protected boolean embeddedId;
     
     /**
@@ -64,6 +68,10 @@ public abstract class JdbcAbstractRepository<T extends BaseEntity> {
         columnFields= getEntityAnnotatedFields(persistentClass, Column.class);
         joinColumnFields= getEntityAnnotatedFields(persistentClass, JoinColumn.class);
         embeddedId= !(getEntityAnnotatedFields(persistentClass, EmbeddedId.class).isEmpty());
+        if(embeddedId){
+            embeddedIdField= getEntityAnnotatedFields(persistentClass, EmbeddedId.class).get(0);
+            columnEmbeddedIdFields= getEntityAnnotatedFields(embeddedIdField.getType(), Column.class);
+        }
     }
     
     /**
