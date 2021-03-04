@@ -238,7 +238,11 @@ public abstract class JPAAbstractDao<T extends BaseEntity> extends JdbcAbstractR
      */
     @Override
     public T loadById(Object id) {
-        return this.getEntityManager().find(getPersistentClass(), id);
+        if(id!=null){
+            return this.getEntityManager().find(getPersistentClass(), id);
+        }else{
+            return null;
+        }
     }
 
     /**

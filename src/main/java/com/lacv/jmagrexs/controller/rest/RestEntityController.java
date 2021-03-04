@@ -878,7 +878,10 @@ public abstract class RestEntityController {
         }
         for(BaseEntity entity: entities){
             if(massLog && massiveOperation.getStatus().equals("Cancelado")) break;
-            BaseEntity existingEntity= (BaseEntity) service.loadById(entity.getId());
+            BaseEntity existingEntity= null;
+            if(entity.getId()!=null && !entity.getId().equals("")){
+                existingEntity= (BaseEntity) service.loadById(entity.getId());
+            }
             BaseDto dto = mapper.entityToDto(entity);
             try{
                 if(existingEntity==null){
