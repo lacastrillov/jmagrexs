@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.springframework.version>5.3.5</org.springframework.version>
-        <spring.security.version>5.3.3.RELEASE</spring.security.version>
+        <spring.security.version>5.3.9.RELEASE</spring.security.version>
         <appengine.target.version>1.9.38</appengine.target.version>
         <jmagrexs.buildcode>${build.time}</jmagrexs.buildcode>
     </properties>
