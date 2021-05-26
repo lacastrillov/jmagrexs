@@ -135,6 +135,7 @@ function ${entityName}ExtView(parentExtController, parentExtView){
                     title: childExtController.entityExtView.pluralEntityTitle,
                     plain:true,
                     activeTab: 0,
+                    height: 600,
                     style: 'background-color:#dfe8f6; padding:10px;',
                     defaults: {bodyStyle: 'padding:15px', autoScroll:true},
                     items:[
@@ -169,6 +170,9 @@ function ${entityName}ExtView(parentExtController, parentExtView){
             xtype:'tabpanel',
             plain:true,
             activeTab: 0,
+            tools: [
+                {type:'toggle'}
+            ],
             style: 'padding:25px 15px 45px 15px;',
             items:items
         };
