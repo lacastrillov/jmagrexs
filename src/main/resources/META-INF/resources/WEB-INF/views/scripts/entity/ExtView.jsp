@@ -129,10 +129,12 @@ function ${entityName}ExtView(parentExtController, parentExtView){
         childExtControllers.forEach(function(childExtController) {
             var itemTab= null;
             if(jsonTypeChildExtViews[childExtController.entityRef]==="tcv_1_to_n"){
+                var subEntityPath='${serverDomain.applicationContext}${serverDomain.adminContext}${serverDomain.adminPath}/'+childExtController.entityRef+'/entity.htm';
+                var expand='<span style="text-decoration:underline 2px;" onclick=\'navegadorExtInit.homeExtViewport.entityExtController.viewInternalPage("'+subEntityPath+'")\'>&#9650;</span>';
                 itemTab= {
                     id: childExtController.entityRef+'SubEntity',
                     xtype:'tabpanel',
-                    title: childExtController.entityExtView.pluralEntityTitle,
+                    title: childExtController.entityExtView.pluralEntityTitle+' '+expand,
                     plain:true,
                     activeTab: 0,
                     maxHeight: 500,

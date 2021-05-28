@@ -451,6 +451,37 @@ public final class EntityReflection {
     
     /**
      * 
+     * @param entityClass
+     * @return 
+     */
+    public static Set<String> getClassAttributes(Class<?> entityClass){
+        Set attributes= new HashSet<>();
+        Field[] fields= entityClass.getDeclaredFields();
+        
+        for (Field field : fields) {
+            String fieldName= field.getName();
+            Class<?> typeField = field.getType();
+            String type = typeField.getName();
+            
+            if(Formats.TYPES_LIST.contains(type)){
+                attributes.add(fieldName);
+            }else if(!type.equals("java.lang.Class") && !type.equals("java.util.List")){
+                attributes.add(fieldName);
+                Field[] subFields= typeField.getDeclaredFields();
+                for(Field subField : subFields){
+                    String subFieldName= subField.getName();
+                    String subType= subField.getType().getName();
+                    if(!subType.equals("java.lang.Class") && !subType.equals("java.util.List")){
+                        attributes.add(fieldName+"."+subFieldName);
+                    }
+                }
+            }
+        }
+        return attributes;
+    }
+    
+    /**
+     * 
      * @param dtoClass
      * @return 
      */

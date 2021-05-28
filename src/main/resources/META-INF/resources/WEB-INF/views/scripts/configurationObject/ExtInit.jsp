@@ -39,9 +39,9 @@ function EntityExtInit(){
 
             Ext.History.init();
 
-            var homeExtViewport= new ${entityName}ExtViewport();
+            Instance.homeExtViewport= new ${entityName}ExtViewport();
 
-            homeExtViewport.renderViewport();
+            Instance.homeExtViewport.renderViewport();
 
             //Debe ser siempre la ultima linea**************************
             mvcExt.setHomeRequest("/${entityRef}");

@@ -287,7 +287,7 @@ function ${entityName}ExtController(parentExtController, parentExtView){
         if(Instance.idEntitySelected!==""){
             urlAction+='#?filter={"eq":{"${entityRef}":'+Instance.idEntitySelected+'}}';
         }
-        mvcExt.redirect(urlAction);
+        util.openInNewTab(urlAction);
     };
 
     Instance.init();
