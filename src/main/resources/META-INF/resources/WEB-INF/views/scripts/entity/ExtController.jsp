@@ -58,6 +58,14 @@ function ${entityName}ExtController(parentExtController, parentExtView){
                     Instance.reloadGrid= true;
                 }
             }
+            var filterFormData= {};
+            if('eq' in Instance.filter){
+                Object.assign(filterFormData, Instance.filter.eq);
+            }
+            if('lk' in Instance.filter){
+                Object.assign(filterFormData, Instance.filter.lk);
+            }
+            parentExtView.setFilterData(filterFormData);
         }
         
         <c:forEach var="associatedER" items="${interfacesEntityRef}">

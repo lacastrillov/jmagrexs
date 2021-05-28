@@ -95,6 +95,10 @@ function ${entityName}ExtViewport(){
             }]
         });
         
+        Instance.setFilterData= function(filters){
+            Instance.filters.getForm().setValues(filters);
+        };
+        
         Instance.doFilter= function(){
             var filterData= Instance.filters.getForm().getValues();
             var filter= {};
